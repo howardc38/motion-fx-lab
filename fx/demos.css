@@ -1,4 +1,4 @@
-/* Styles for the effect tiles in fx/demos.js. Colours are fixed: each tile is a video frame. */
+/* Styles for the effect tiles in fx/demos.js. */
   .stage { position: relative; aspect-ratio: 4 / 5; max-width: 100%; overflow: hidden; border-radius: 10px; container-type: inline-size; isolation: isolate; background: #111;
     --zh: "Noto Sans TC", "PingFang HK", "PingFang TC", "Microsoft JhengHei", sans-serif;
     --lat: "Archivo", "Helvetica Neue", Arial, sans-serif;

@@ -9,9 +9,10 @@ One bar is 2.4 s. Sections:
   build  a bass pulse joins, its filter opening; a snare roll in the bar before the drop
   drop   four-on-the-floor, off-beat hats, bass and pad on Am-F-C-G
   lift   the same with claps
-  break  pad and heartbeat only
+  break  pad, drone, heartbeat and ticks; no drums or bass
   final  full again, with claps
-  tail   the pad fades out
+  tail   the pad and the drone fade out over 2.2 s
+Chords follow absolute time in 2.4 s bars, so put the drop on a bar line.
 """
 import json
 import math
@@ -117,6 +118,9 @@ def main(cues_path, out_path):
     if not spec.get("music"):
         raise SystemExit(f"{cues_path} has no music sections: declare window.__music in the page")
     PLAN[:] = sorted((float(s), n) for s, n in spec["music"])
+    known = {"intro", "build", "drop", "lift", "break", "final", "tail"}
+    if not {n for _, n in PLAN} <= known:
+        raise SystemExit(f"unknown music section(s) {sorted({n for _, n in PLAN} - known)}; use {sorted(known)}")
     B0 = starts("build", 0.0)
     D0 = starts("drop", B0 + 4.8)
     T0 = starts("tail", dur)
@@ -192,6 +196,8 @@ def main(cues_path, out_path):
         phd[1] += 82.41 / SR
         ad = 1 - math.exp(-2 * math.pi * 260 / SR)
         y_d += ad * ((saw(phd[0]) + 0.7 * saw(phd[1])) / 1.7 - y_d)
+        if sec == "tail":
+            drone_on *= max(0.0, 1 - (t - T0) / 2.2)
         d = y_d * drone_on * 0.45 * (0.8 + 0.2 * math.sin(2 * math.pi * 0.25 * t))
         mix[i] += b + p + d
 

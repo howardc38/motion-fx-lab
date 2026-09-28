@@ -36,6 +36,13 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
 | Archivo, JetBrains Mono, Noto Sans TC | Google Fonts | SIL Open Font License 1.1 |
 | Playwright (development dependency) | npm | Apache-2.0 |
 
+## Drawn by the operating system
+
+Emoji and a few symbols in the tiles and the intro (for example ✅ 💬 ✓ ★) are not in the web fonts
+above, so the browser draws them with the system's fonts at render time. On macOS, where
+`media/intro.mp4` was rendered, these were Apple Color Emoji, Lucida Grande and PingFang HK. No
+system font is bundled; renders on other systems use that system's glyphs.
+
 ## Made here
 
 The music and sound effects in `media/intro.mp4` are synthesised by `video/music.py` and

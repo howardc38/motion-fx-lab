@@ -119,10 +119,10 @@
     <div class="box" style="left:1024px;top:330px" data-fx="pop" data-at="1.0" data-sfx="tap"><b>4 browsers<br>in parallel</b><span>round-robin frames</span></div>
     <div class="arrow" style="left:1416px;top:412px;width:50px" data-fx="grow" data-at="1.2"></div>
     <div class="box" style="left:1476px;top:330px;width:324px" data-fx="pop" data-at="1.3" data-sfx="tap"><b>ffmpeg</b><span>master · web · HQ</span></div>
-    <div class="a mono" style="left:124px;top:640px;font-size:34px;color:#8f8a9c;text-decoration:line-through" data-fx="fade" data-at="1.8">before: 399.6 s</div>
-    <div class="a wide" style="left:120px;top:700px;font-size:150px" data-fx="pop" data-at="2.2" data-sfx="impact">26.4 s</div>
-    <div class="sticker" style="left:760px;top:740px;background:var(--pink);transform:rotate(-4deg)" data-fx="slam" data-at="2.7" data-base="rotate(-4deg)" data-sfx="stamp">15× faster</div>
-    <div class="a mono" style="left:124px;top:890px;font-size:24px;color:#5c5868" data-fx="fade" data-at="3.0">56-second video · 1693 frames · Apple M4</div>
+    <div class="a mono" style="left:124px;top:640px;font-size:34px;color:#8f8a9c;text-decoration:line-through" data-fx="fade" data-at="1.8">default headless Chromium: 399.6 s</div>
+    <div class="a wide" style="left:120px;top:700px;font-size:150px" data-fx="pop" data-at="2.2" data-sfx="impact">52.9 s</div>
+    <div class="sticker" style="left:760px;top:740px;background:var(--pink);transform:rotate(-4deg)" data-fx="slam" data-at="2.7" data-base="rotate(-4deg)" data-sfx="stamp">7.5× faster</div>
+    <div class="a mono" style="left:124px;top:890px;font-size:24px;color:#5c5868" data-fx="fade" data-at="3.0">56-second video · 1693 frames · every frame rendered twice and compared · Apple M4</div>
   </section>
 
   <!-- 06 fails closed -->
@@ -156,6 +156,8 @@
 (() => {
   // Music sections for music.py, in seconds (one bar = 2.4 s).
   window.__music = [[0, "intro"], [4.8, "build"], [9.6, "drop"], [21.6, "lift"], [28.8, "final"], [32.4, "tail"]];
+  // Clips for the README's GIF, in seconds: the hook, the effects grid, the characters, the call to action.
+  window.__gif = [[0.4, 4.4], [10.3, 15.3], [17.4, 21.4], [30.2, 34.2]];
 
   // Library tiles hosted in the scenes. Each runs on the video's clock from its own start.
   const hosted = [...document.querySelectorAll("[data-demo]")].map((el) => {
@@ -184,7 +186,7 @@
     }
     const i = starts.filter((s) => t >= s).length;
     hudScene.textContent = `${String(i).padStart(2, "0")} / ${String(starts.length).padStart(2, "0")}`;
-    const f = Math.floor(t * 30);
+    const f = Math.round(t * 30);   // a 30 fps timecode; t = frame / 30 is not exact in floating point
     hudTc.textContent = `${String(Math.floor(f / 1800)).padStart(2, "0")}:${String(Math.floor(f / 30) % 60).padStart(2, "0")}:${String(f % 30).padStart(2, "0")}`;
   });
 })();

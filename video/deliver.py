@@ -4,10 +4,11 @@
 
   out_dir/name_hq.mp4  high quality for upload: H.264 CRF 18, peaks held under 25 Mbps (Meta's Reels limit)
   out_dir/name.mp4     for the web: the high-quality file if it fits in CAP bytes, else two-pass to CAP
-  out_dir/name.jpg     poster frame from the web file
+  out_dir/name.jpg     poster frame from the web file (default: a third of the way in)
 
-Audio is brought to -14 LUFS with a true peak under -1 dBTP, and AAC 128 kbps at 48 kHz,
-which is Meta's audio ceiling. Every check that fails raises; nothing is written half-checked.
+Audio is limited and then brought to -14 LUFS by a linear gain, with a true peak under -1 dBTP,
+as AAC at 128 kbps and 48 kHz, which is Meta's audio ceiling. Video is BT.709, tagged. Everything
+is made and checked in a scratch folder and moved into out_dir only when every check has passed.
 """
 import json
 import os
@@ -15,6 +16,8 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
+from fractions import Fraction
 
 TARGET_I = -14.0      # LUFS; Meta publishes no target, this is the -14 convention
 TARGET_TP = -1.5      # dBTP handed to loudnorm; the final file must measure <= MAX_TP
@@ -27,7 +30,7 @@ CAP = 15_000_000      # web file ceiling in bytes
 
 
 def run(*args, capture=False):
-    r = subprocess.run(args, capture_output=True, text=True)
+    r = subprocess.run(args, capture_output=True, text=True, timeout=3600)
     if r.returncode != 0:
         raise SystemExit(f"FAILED ({r.returncode}): {' '.join(args)}\n{r.stderr[-2000:]}")
     return r.stderr if capture else r.stdout
@@ -59,7 +62,8 @@ def master_audio(mix, work):
     # plain linear gain can reach TARGET_I with the true peak under TARGET_TP.
     gain = TARGET_I - i0 + 1.0
     staged = os.path.join(work, "staged.wav")
-    base = f"loudnorm=I={TARGET_I}:TP={TARGET_TP}:LRA=11"
+    # LRA only matters to loudnorm's dynamic mode; linear mode needs the measured LRA under it.
+    base = f"loudnorm=I={TARGET_I}:TP={TARGET_TP}:LRA=20"
     ceiling = LIMIT_DBFS
     for attempt in range(4):
         run("ffmpeg", "-y", "-loglevel", "error", "-i", mix, "-af",
@@ -81,7 +85,7 @@ def master_audio(mix, work):
                                "-c:a", "pcm_f32le", "-ar", "48000", out, capture=True))
     if second["normalization_type"] != "linear":
         raise SystemExit(f"loudnorm fell back to {second['normalization_type']} normalisation: {second}")
-    print(f"audio: {i0:.1f} LUFS / {tp0:.1f} dBTP -> +{gain:.2f} dB into a {ceiling:.1f} dBFS limiter at 4x "
+    print(f"audio: {i0:.1f} LUFS / {tp0:.1f} dBTP -> {gain:+.2f} dB into a {ceiling:.1f} dBFS limiter at 4x "
           f"({float(first['input_i']):.1f} LUFS / {float(first['input_tp']):.1f} dBTP, attempt {attempt + 1}) -> loudnorm linear")
     return out
 
@@ -121,8 +125,11 @@ def check(path, master, cap=None, max_bps=None):
     v = next(s for s in info["streams"] if s["codec_type"] == "video")
     a = next(s for s in info["streams"] if s["codec_type"] == "audio")
     m = next(s for s in probe(master)["streams"] if s["codec_type"] == "video")
-    fps = eval(v["r_frame_rate"])
+    fps = float(Fraction(v["r_frame_rate"]))
     problems = []
+    colour = (v.get("color_space"), v.get("color_primaries"), v.get("color_transfer"), v.get("color_range"))
+    if colour != ("bt709", "bt709", "bt709", "tv"):
+        problems.append(f"colour tags {colour}, expected BT.709 limited range")
     if v["codec_name"] != "h264" or v["pix_fmt"] != "yuv420p":
         problems.append(f"video {v['codec_name']} {v['pix_fmt']}")
     if (v["width"], v["height"]) != (m["width"], m["height"]) or v["r_frame_rate"] != m["r_frame_rate"]:
@@ -153,7 +160,9 @@ def check(path, master, cap=None, max_bps=None):
     print("ok  " + line)
 
 
-COMMON_OUT = ["-pix_fmt", "yuv420p", "-profile:v", "high", "-x264-params", "open-gop=0",
+# ffmpeg 8.1 drops -color_primaries/-color_trc for libx264, so x264 writes the colour description itself.
+COMMON_OUT = ["-pix_fmt", "yuv420p", "-profile:v", "high",
+              "-x264-params", "open-gop=0:colorprim=bt709:transfer=bt709:colormatrix=bt709", "-color_range", "tv",
               "-c:a", "aac", "-b:a", str(AUDIO_BPS), "-ar", "48000", "-shortest",
               "-use_editlist", "0", "-movflags", "+faststart"]
 
@@ -184,14 +193,14 @@ def encode_preview(master, audio, out, work, dur):
 
 def main():
     master, mix, out_dir, name = sys.argv[1:5]
-    poster_at = sys.argv[5] if len(sys.argv) > 5 else "1"
-    work = os.path.join(out_dir, f".deliver-{name}")
-    os.makedirs(work, exist_ok=True)
+    work = tempfile.mkdtemp(prefix=f".deliver-{name}-", dir=out_dir)
     try:
         dur = float(probe(master)["format"]["duration"])
+        poster_at = sys.argv[5] if len(sys.argv) > 5 else f"{dur / 3:.2f}"
         audio = master_audio(mix, work)
-        hq = os.path.join(out_dir, f"{name}_hq.mp4")
-        preview = os.path.join(out_dir, f"{name}.mp4")
+        hq = os.path.join(work, f"{name}_hq.mp4")
+        preview = os.path.join(work, f"{name}.mp4")
+        poster = os.path.join(work, f"{name}.jpg")
         encode_hq(master, audio, hq)
         check(hq, master, max_bps=HQ_MAX_BPS)
         if os.path.getsize(hq) <= CAP:
@@ -201,9 +210,10 @@ def main():
         else:
             kbps = encode_preview(master, audio, preview, work, dur)
             print(f"web video {kbps}k two-pass")
-        check(preview, master, cap=CAP)
-        run("ffmpeg", "-y", "-loglevel", "error", "-ss", poster_at, "-i", preview, "-frames:v", "1", "-q:v", "3",
-            os.path.join(out_dir, f"{name}.jpg"))
+        check(preview, master, cap=CAP, max_bps=HQ_MAX_BPS)
+        run("ffmpeg", "-y", "-loglevel", "error", "-ss", poster_at, "-i", preview, "-frames:v", "1", "-q:v", "3", poster)
+        for f in (hq, preview, poster):
+            os.replace(f, os.path.join(out_dir, os.path.basename(f)))
     finally:
         shutil.rmtree(work, ignore_errors=True)
 

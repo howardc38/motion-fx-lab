@@ -3,6 +3,20 @@
   "version": "1.0.0",
   "private": true,
   "description": "Motion-graphics effects drawn in the browser and rendered frame-exact to MP4.",
+  "keywords": [
+    "motion-graphics",
+    "html-to-video",
+    "video-rendering",
+    "threejs",
+    "webgl",
+    "playwright",
+    "ffmpeg"
+  ],
+  "homepage": "https://howardc38.github.io/motion-fx-lab/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/howardc38/motion-fx-lab.git"
+  },
   "license": "0BSD",
   "scripts": {
     "render": "bash video/build.sh intro.html"

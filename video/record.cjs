@@ -1,18 +1,21 @@
-// Usage:
-//   node record.cjs frames page.html 3.2 10 30.5 ...  -> PNG stills in ./stills/<name>/
-//   node record.cjs cues   page.html out.json         -> sound cues and music sections
+// Usage (page paths are relative to the current directory):
+//   node record.cjs frames page.html 3.2 10 30.5 ...  -> PNG stills in video/stills/<name>/
+//   node record.cjs cues   page.html out.json         -> sound cues, music sections and GIF clips
 //   node record.cjs video  page.html master.mkv [--fps 30] [--workers 4] [--no-verify]
-//                                                     -> frame-exact lossless silent master
+//                                                     -> frame-exact lossless silent master, BT.709
 //   node record.cjs measure page.html t "css selector" ...
+// Exit codes: 3 when the two renders of a verified video disagree (worth retrying), 1 otherwise.
 // Every mode renders WebGL on the GPU through ANGLE Metal and refuses to run if the browser
 // falls back to SwiftShader. --cpu renders on SwiftShader on purpose. One backend per run:
 // the two do not produce the same pixels, so a run never mixes them.
 const path = require("path");
 const fs = require("fs");
 const { spawn, spawnSync, execFileSync } = require("child_process");
+const { pathToFileURL } = require("url");
 const { chromium } = require("@playwright/test");
 
-const url = (file) => "file://" + path.join(__dirname, file);
+const url = (file) => pathToFileURL(path.resolve(file)).href;
+const MINUTE = 60_000;
 
 // Record every WebGL context the page creates, so each frame can prove none was lost.
 // A lost context screenshots as a blank frame without any error (seen with 8 SwiftShader browsers).
@@ -88,7 +91,12 @@ async function renderPass(ws, out, fps, dur, count, offset, label) {
   const ff = spawn("ffmpeg", [
     "-y", "-loglevel", "error",
     "-f", "image2pipe", "-framerate", String(fps), "-c:v", "png", "-i", "-",
-    "-c:v", "libx264", "-preset", "ultrafast", "-qp", "0", "-pix_fmt", "yuv420p", out,
+    // RGB screenshots to BT.709 YUV, tagged as such; untagged video is read as BT.709 by browsers
+    // anyway, so a BT.601 conversion showed #ff90e8 as #ff9fe8.
+    "-vf", "scale=out_color_matrix=bt709:out_range=tv,format=yuv420p",
+    // ffmpeg 8.1 drops -color_primaries/-color_trc here; x264 writes all three into the stream itself.
+    "-colorspace", "bt709", "-color_range", "tv",
+    "-c:v", "libx264", "-preset", "ultrafast", "-qp", "0", "-x264-params", "colorprim=bt709:transfer=bt709:colormatrix=bt709", out,
   ], { stdio: ["pipe", "inherit", "inherit"] });
   let ffFailed = null;
   const ffClosed = new Promise((r) => ff.on("close", (code) => { if (code !== 0) ffFailed = `ffmpeg exited ${code}`; r(code); }));
@@ -132,12 +140,17 @@ function diffCounts(a, b, level) {
   const lut = `gt(val\\,${level})*255`;
   const r = spawnSync("ffmpeg", ["-nostdin", "-hide_banner", "-i", a, "-i", b, "-lavfi",
     `[0][1]blend=all_mode=difference,lutyuv=y=${lut}:u=${lut}:v=${lut},signalstats,metadata=print`, "-f", "null", "-"],
-    { encoding: "utf8", maxBuffer: 1 << 30 });
+    { encoding: "utf8", maxBuffer: 1 << 30, timeout: 30 * MINUTE });
   if (r.status !== 0) throw new Error(`ffmpeg compare failed: ${(r.stderr || "").slice(-400)}`);
   const frames = [];
   for (const block of r.stderr.split(/frame:(?=\d+ )/).slice(1)) {
     const n = +block.match(/^\d+/)[0];
-    const v = (k) => +(block.match(new RegExp(`signalstats\\.${k}=([\\d.]+)`)) || [0, 0])[1] / 255;
+    // signalstats prints small averages in %g form (6.9e-05); a missing key is an error, not zero.
+    const v = (k) => {
+      const m = block.match(new RegExp(`signalstats\\.${k}=([-+0-9.eE]+)`));
+      if (!m) throw new Error(`ffmpeg compare printed no ${k} for frame ${n}`);
+      return +m[1] / 255;
+    };
     frames[n] = Math.max(v("YAVG"), v("UAVG"), v("VAVG"));
   }
   return frames;
@@ -146,10 +159,14 @@ function diffCounts(a, b, level) {
 // The GPU rasterises edges of rotated text, SVG strokes and GL points with a little noise from
 // run to run (seen: 36 pixels at most 14 levels off; 5 pixels at most 43 off). Real differences
 // cover an area: a missing line of text was 396 pixels, up to 165 off; a frame from the wrong t
-// is 100,000+. So both limits count pixels, as a share of the frame.
-const OVER = 8, MAX_OVER_SHARE = 0.0001, STRONG = 48, MAX_STRONG_SHARE = 20 / (1920 * 1080);
+// is 100,000+. Both limits count samples in the luma or either chroma plane: more than 0.01 %
+// off by more than 8 levels, or more than 20 luma-sized samples off by more than 48, fails.
+const OVER = 8, MAX_OVER_SHARE = 0.0001, STRONG = 48, MAX_STRONG_PX = 20;
+const probeFrames = (file) => +execFileSync("ffprobe", ["-v", "error", "-select_streams", "v:0", "-count_packets",
+  "-show_entries", "stream=nb_read_packets", "-of", "csv=p=0", file], { timeout: 10 * MINUTE }).toString().trim();
 
 async function video(file, out, fps, n, gpu, verify) {
+  if (verify && n < 2) throw new Error("verification renders every frame on a second browser: use --workers 2 or more, or --no-verify");
   const ws = await Promise.all(Array.from({ length: n }, () => open(file, gpu)));
   const renderers = new Set(ws.map((w) => w.renderer));
   if (renderers.size !== 1) throw new Error(`workers disagree on the renderer: ${[...renderers].join(" / ")}`);
@@ -159,8 +176,7 @@ async function video(file, out, fps, n, gpu, verify) {
   console.error(`${name}: ${count} frames, ${n} browser(s), ${[...renderers][0]}`);
 
   const sec = await renderPass(ws, out, fps, dur, count, 0, name);
-  const packets = +execFileSync("ffprobe", ["-v", "error", "-select_streams", "v:0", "-count_packets",
-    "-show_entries", "stream=nb_read_packets", "-of", "csv=p=0", out]).toString().trim();
+  const packets = probeFrames(out);
   if (packets !== count) throw new Error(`${out} holds ${packets} frames, expected ${count}`);
 
   let note = "not verified (--no-verify)";
@@ -170,19 +186,25 @@ async function video(file, out, fps, n, gpu, verify) {
     // of a run (cause not found; see README). Sampling missed it; a full second pass cannot.
     const again = out.replace(/(\.\w+)?$/, ".verify$1");
     try {
-      const sec2 = await renderPass(ws, again, fps, dur, count, n > 1 ? 1 : 0, `${name} verify`);
+      const sec2 = await renderPass(ws, again, fps, dur, count, 1, `${name} verify`);
+      if (probeFrames(again) !== count) throw new Error(`${again} does not hold ${count} frames`);
       const over = diffCounts(out, again, OVER), strong = diffCounts(out, again, STRONG);
+      if (over.length !== count || strong.length !== count) throw new Error(`compared ${over.length} of ${count} frames`);
+      const maxStrongShare = MAX_STRONG_PX / (ws[0].size.w * ws[0].size.h);
       const bad = [];
-      for (let i = 0; i < count; i++) if ((over[i] || 0) > MAX_OVER_SHARE || (strong[i] || 0) > MAX_STRONG_SHARE) bad.push(i);
-      if (over.length < count) throw new Error(`compared ${over.length} of ${count} frames`);
+      for (let i = 0; i < count; i++) if (over[i] > MAX_OVER_SHARE || strong[i] > maxStrongShare) bad.push(i);
       if (bad.length) {
+        const dir = path.join(__dirname, "mismatch");
+        fs.mkdirSync(dir, { recursive: true });
         for (const i of bad.slice(0, 3)) for (const [src, tag] of [[out, "a"], [again, "b"]]) {
           execFileSync("ffmpeg", ["-nostdin", "-v", "error", "-y", "-i", src, "-vf", `select=eq(n\\,${i})`, "-frames:v", "1",
-            path.join(path.dirname(out), `mismatch_${i}_${tag}.png`)]);
+            path.join(dir, `${name}_${i}_${tag}.png`)], { timeout: 10 * MINUTE });
         }
         const px = (s) => Math.round(s * ws[0].size.w * ws[0].size.h);
-        throw new Error(`${bad.length}/${count} frames differ between two renders (first: ${bad.slice(0, 8).map((i) => `${i} [${px(over[i])} px > ${OVER}, ${px(strong[i])} px > ${STRONG}]`).join(", ")}); ` +
-          `the first three are saved as mismatch_<frame>_a/b.png`);
+        const e = new Error(`${bad.length}/${count} frames differ between two renders (first: ${bad.slice(0, 8).map((i) => `${i} [${px(over[i])} px > ${OVER}, ${px(strong[i])} px > ${STRONG}]`).join(", ")}); ` +
+          `the first three are saved in video/mismatch/`);
+        e.exitCode = 3;
+        throw e;
       }
       const worst = over.reduce((m, v, i) => (v > over[m] ? i : m), 0);
       note = `second render with every frame on another browser matches all ${count} frames (worst: frame ${worst}, ` +
@@ -202,12 +224,15 @@ async function video(file, out, fps, n, gpu, verify) {
   const gpu = !bool("--cpu");
   const verify = !bool("--no-verify");
   const fps = +flag("--fps", 30);
-  // A 56-second, 3D-heavy page on an M4 with 16 GB: 4 browsers rendered in 19.4 s, 6 in 20.1 s, 8 in 22.6 s.
+  // One render pass of a 56-second, 3D-heavy page on an M4 with 16 GB: 4 browsers 19.4 s, 6 20.1 s, 8 22.6 s.
   const workers = +flag("--workers", 4);
   if (!Number.isInteger(workers) || workers < 1 || !(fps > 0)) {
     throw new Error(`--workers needs a whole number >= 1 and --fps a positive number (got ${workers}, ${fps})`);
   }
   const [mode, file, ...rest] = argv;
+  if (!["frames", "cues", "video", "measure"].includes(mode)) throw new Error(`usage: node record.cjs frames|cues|video|measure page.html ... (got ${mode})`);
+  if (!file || !fs.existsSync(file)) throw new Error(`page not found: ${file} (paths are relative to ${process.cwd()})`);
+  if ((mode === "video" || mode === "cues") && !rest[0]) throw new Error(`${mode} needs an output path`);
   if (mode === "video") {
     const out = rest[0];
     try { await video(file, out, fps, workers, gpu, verify); }
@@ -224,7 +249,7 @@ async function video(file, out, fps, n, gpu, verify) {
       fs.writeFileSync(path.join(dir, `t${t.toFixed(2).padStart(6, "0")}.png`), await shot(w, t));
     }
   } else if (mode === "cues") {
-    const cues = await w.page.evaluate(() => ({ dur: window.__DUR, cues: window.__cues(), music: window.__music || null }));
+    const cues = await w.page.evaluate(() => ({ dur: window.__DUR, cues: window.__cues(), music: window.__music || null, gif: window.__gif || null }));
     fs.writeFileSync(rest[0], JSON.stringify(cues, null, 1));
     console.error(`${cues.cues.length} cues`);
   } else if (mode === "measure") {
@@ -243,4 +268,4 @@ async function video(file, out, fps, n, gpu, verify) {
     throw new Error(`unknown mode ${mode}`);
   }
   await w.browser.close();
-})().catch((e) => { console.error(e.message || e); process.exit(1); });
+})().catch((e) => { console.error(e.message || e); process.exit(e.exitCode || 1); });

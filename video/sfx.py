@@ -80,7 +80,7 @@ def build():
     body = noise(0.24, 0.02, 0.35)
     envd = [v * math.sin(math.pi * i / len(body)) for i, v in enumerate(body)]
     s["send"] = normalise([a + b for a, b in zip(normalise(envd, 0.8),
-                                                 tone([(520, 0.35)], 0.24, 9, glide_to=1150) + [0.0] * 0)])
+                                                 tone([(520, 0.35)], 0.24, 9, glide_to=1150))])
     s["bonk"] = normalise(seq([(0, tone([(392.0, 1)], 0.34, 6, partials=((1, 1), (3, 0.11)))),
                                (0.2, tone([(293.7, 1)], 0.5, 5, partials=((1, 1), (3, 0.11))))]))
     s["tick"] = normalise([a + b for a, b in zip(tone([(1900, 1)], 0.08, 60, attack=0.001),
@@ -126,7 +126,7 @@ LEVEL = {"ping": 0.32, "tg": 0.3, "send": 0.26, "bonk": 0.34, "tick": 0.26, "tap
          "pop": 0.18, "alert": 0.24, "chime": 0.26, "whoosh": 0.2, "type": 0.07,
          "impact": 0.5, "riser": 0.2, "stamp": 0.38, "scan": 0.14, "thump": 0.42, "ding": 0.26}
 
-# Every track is normalised to the same peak, so no video needs a gain step at mux time.
+# Every effects track is normalised to the same peak before mixing; deliver.py sets the loudness.
 TARGET_PEAK = 0.63
 
 
@@ -134,6 +134,12 @@ def main(cues_path, out_path):
     data = json.load(open(cues_path))
     sounds = build()
     track = [0.0] * n(data["dur"] + 1.0)
+    unknown = sorted({c["name"] for c in data["cues"]} - set(LEVEL))
+    if unknown:
+        raise SystemExit(f"unknown sound cue(s) {unknown}; available: {sorted(LEVEL)}")
+    early = [c for c in data["cues"] if c["t"] < 0]
+    if early:
+        raise SystemExit(f"cue(s) before t=0: {early[:3]}")
     for c in data["cues"]:
         name = c["name"]
         gain = LEVEL[name] * c.get("gain", 1)

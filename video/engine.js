@@ -1,11 +1,22 @@
 // Deterministic timeline: render(t) is a pure function of t, so an exported frame is exact.
-// Elements declare: data-fx, data-at, data-dur, data-out, data-on, data-base,
-// and optionally data-sfx / data-sfx-at / data-sfx-gain for the sound track.
+// Page: #frame > #stage[data-w][data-h][data-dur] > section.scene[data-start] (data-trans="cut" for no wipe;
+// a child .edge draws the wipe's edge). Elements in a scene declare:
+//   data-fx     one of FX below; data-at (s after the scene starts), data-dur, data-out (fade out at),
+//               data-on (adds class "on" from), data-base (a transform kept after the effect's own)
+//   per effect  count: data-to · move: data-x0 data-y0 data-x1 data-y1 · chars: data-stagger ·
+//               whip: data-dx · mark: data-mark-h · drift/blurin: data-amt · spin: data-speed ·
+//               bgpan: data-vx data-vy · shake/pulse/float: data-amp, pulse/float: data-period ·
+//               pathtext: data-from data-to data-ease="linear"
+//   sound       data-sfx (a name from sfx.py), data-sfx-at, data-sfx-gain, data-sfx-repeat, data-sfx-every
+// window.__renderHooks may hold functions called with t after each render.
 (() => {
   const stage = document.getElementById("stage");
   const W = +stage.dataset.w, H = +stage.dataset.h, DUR = +stage.dataset.dur;
   const WIPE = 0.5;
   const DEFAULT_DUR = { up: 0.5, down: 0.5, fade: 0.4, pop: 0.42, left: 0.5, right: 0.5, zoom: 0.5, type: 1, count: 1.4, mark: 0.45, grow: 0.35, move: 0.6, ring: 0.5, chars: 0.34, slam: 0.38, whip: 0.45, blurin: 0.6, sweep: 0.9, orb: 1.2, flash: 0.35, scan: 0.8, shake: 0.5 };
+  const FX = new Set(["up", "down", "left", "right", "fade", "zoom", "pop", "grow", "mark", "type", "count", "move", "ring",
+    "chars", "slam", "drift", "spin", "bgpan", "shake", "pulse", "float", "flash", "blink", "pathtext", "whip", "sweep", "orb", "blurin", "scan"]);
+  let filterId = 0;
   const scenes = [...stage.querySelectorAll(".scene")].map((el) => ({ el, start: +el.dataset.start, edge: el.querySelector(".edge") }));
 
   const items = [];
@@ -14,6 +25,7 @@
     if (i > 0) cues.push({ t: s.start, name: "whoosh", gain: 1 });
     s.el.querySelectorAll("[data-fx],[data-on],[data-out],[data-sfx]").forEach((el) => {
       const d = el.dataset;
+      if (d.fx && !FX.has(d.fx)) throw new Error(`unknown data-fx="${d.fx}"; known: ${[...FX].join(", ")}`);
       const it = {
         el, s, fx: d.fx || null,
         at: +(d.at || 0),
@@ -34,7 +46,7 @@
           defs = document.createElementNS("http://www.w3.org/2000/svg", "defs"); defs.id = "__fxdefs";
           svg.appendChild(defs); stage.appendChild(svg);
         }
-        const id = `__mb${items.length}_${Math.floor(Math.random() * 1e6)}`;
+        const id = `__mb${filterId++}`;
         const f = document.createElementNS("http://www.w3.org/2000/svg", "filter");
         f.id = id; f.setAttribute("x", "-60%"); f.setAttribute("width", "220%"); f.setAttribute("y", "-10%"); f.setAttribute("height", "120%");
         const g = document.createElementNS("http://www.w3.org/2000/svg", "feGaussianBlur");

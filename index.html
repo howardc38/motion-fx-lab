@@ -49,6 +49,7 @@
   .lede { font-size: 17px; color: var(--muted); max-width: 68ch; }
   .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; color: var(--muted); align-items: center; }
   .legend b { color: var(--ink); font-weight: 700; }
+  video.intro { width: 100%; max-width: 960px; aspect-ratio: 16 / 9; border-radius: 12px; background: #000; display: block; }
   .toolbar { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; padding-block: 12px; border-block: 1px solid var(--line); }
   .group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .group > span { font: 700 11px var(--mono); letter-spacing: .12em; color: var(--muted); margin-right: 4px; text-transform: uppercase; }
@@ -90,7 +91,7 @@
   .box p, .box li { font-size: 14px; color: var(--muted); line-height: 1.55; }
   .box ul { margin: 0; padding-left: 1.1em; }
   .bars { display: flex; flex-direction: column; gap: 8px; }
-  .bar { display: grid; grid-template-columns: minmax(96px, 190px) minmax(0, 1fr); gap: 10px; align-items: center; font-size: 14px; }
+  .bar { display: grid; grid-template-columns: minmax(96px, 240px) minmax(0, 1fr); gap: 10px; align-items: center; font-size: 14px; }
   .bar span { color: var(--muted); }
   .bar i { display: block; height: 22px; border-radius: 4px; background: var(--accent); position: relative; min-width: 2px; }
   .bar i.old { background: var(--muted); }
@@ -104,8 +105,9 @@
   <header>
     <span class="eyebrow">Open source · 0BSD</span>
     <h1>Motion FX Lab</h1>
-    <p class="lede">Every tile below is drawn live in your browser by the same code we use to render videos to MP4, frame by frame. Pink cards are used in our three promo cuts; yellow ones are worth adding; red ones should not go on dense CJK text. Each card says how it is drawn, how hard it is and what it is for. The filter covers the 5 ways a tile is drawn; a finished video with sound uses 15 stacks, listed in the table further down.</p>
+    <p class="lede">Every tile below is drawn live in your browser by the same code we use to render videos to MP4, frame by frame. Pink cards are effects we have shipped in our own promo videos (not part of this repo); yellow ones are worth adding; red ones should not go on dense CJK text. Each card says how it is drawn, how hard it is and what it is for. The filter covers the 5 ways a tile is drawn; a finished video with sound uses 15 stacks, listed in the table further down.</p>
     <div class="legend" id="legend"></div>
+    <video class="intro" controls playsinline preload="metadata" poster="media/intro.jpg" src="media/intro.mp4" aria-label="Intro video, 35 seconds, with sound"></video>
   </header>
 
   <section id="mascot">
@@ -125,7 +127,7 @@
         <li>Out of reach for code: an illustrator's line and personality, subtle expressions, real hair and cloth motion.</li>
       </ul></div>
       <div class="box"><h3>Our pick: option B</h3><ul>
-        <li>Same flat style as the Telegram card, the chat and the stickers in the videos.</li>
+        <li>Same flat style as the card, chat and sticker tiles in this gallery.</li>
         <li>No 3D shading, so text on top stays readable.</li>
         <li>The same SVG works as a post image, a chat sticker or a site avatar.</li>
         <li>Option A suits the 3D scenes, next to the 3D “6%” or the chrome logo.</li>
@@ -141,16 +143,16 @@
       <button id="play" type="button" aria-pressed="false">⏸ Pause</button>
     </div>
     <div class="gallery" id="gallery"></div>
-    <p class="note">One more recommendation from the research, a 1–3 second seamless loop teaser, is an editing format rather than an effect, so it has no tile. The grading tile previews the look with a CSS filter; a real grade would use the LUT pass that ships with three.js r128, and the glow stays off the text. The 3D and shader tiles are scaled-down versions of the code in our videos, drawn in turn on one shared WebGL canvas.</p>
+    <p class="note">One more idea, a 1–3 second seamless loop teaser, is an editing format rather than an effect, so it has no tile. The grading tile previews the look with a CSS filter; a real grade would use the LUT pass that ships with three.js r128, and the glow stays off the text. The 3D and shader tiles are scaled-down versions of the code in our videos, drawn in turn on one shared WebGL canvas.</p>
   </section>
 
   <section>
     <span class="eyebrow">Stack</span>
-    <h2>What each video uses, and what each part does</h2>
-    <p class="note">15 stacks: 5 for the picture, 6 for 3D, 2 for sound and 2 for rendering. The 5 drawing methods in the filter above are the part that draws effects; the other 10 handle fonts, the timeline, 3D details, sound and output. None of the 12 “can add” effects needs a new stack. Motion cut = 45 s, no 3D; Cinematic cut = 48 s Three.js; All-FX cut = 56 s.</p>
+    <h2>The 15 stacks, and what each one does</h2>
+    <p class="note">15 stacks: 5 for the picture, 6 for 3D, 2 for sound and 2 for rendering. The 5 drawing methods in the filter above are the part that draws effects; the other 10 handle fonts, the timeline, 3D details, sound and output. None of the 12 “can add” effects needs a new stack.</p>
     <div class="scroll">
       <table>
-        <thead><tr><th>Stack</th><th>What it is</th><th>Why</th><th>What it does in the videos</th><th>Motion</th><th>Cinematic</th><th>All-FX</th></tr></thead>
+        <thead><tr><th>Stack</th><th>What it is</th><th>Why</th><th>What it does here</th></tr></thead>
         <tbody id="stackRows"></tbody>
       </table>
     </div>
@@ -159,7 +161,7 @@
   <section id="pipeline">
     <span class="eyebrow">Rendering</span>
     <h2>From HTML to MP4, measured</h2>
-    <p class="note">The All-FX cut is 56 seconds and 1693 frames. Timed from launching the browsers to a finished lossless master, including 8 frames rendered twice as a check: the old pipeline took 399.6 s, the new one 26.4 s, 15× faster. Encoding both deliverables with every check takes another 33.6 s. All measured on 2026-09-28 on an Apple M4 laptop.</p>
+    <p class="note">Measured on a 56-second, 1,693-frame promo of ours with heavy 3D (the promo itself is not in this repo). Timed from launching the browsers to a finished lossless master. The old pipeline took 399.6 s. The recorder now renders the whole video twice and compares every frame, in 52.9 s: 7.5× faster, with nothing left unchecked. Before that, with only an 8-frame spot check, it took 26.4 s. Encoding both deliverables with every check takes another 33.6 s. All measured on 2026-09-28 on an Apple M4 laptop.</p>
     <div class="box bars" id="bars"></div>
     <p class="note">Past 4 browsers there is no gain: the bottleneck moves to the single ffmpeg process that decodes the PNGs and writes the master.</p>
     <div class="scroll"><table>
@@ -167,7 +169,7 @@
       <tbody>
         <tr><td class="name">3D rendering</td><td>SwiftShader (GPU emulated on the CPU)</td><td>ANGLE Metal (the Apple M4 GPU)</td><td>The browser's WebGL renderer string is read at start; SwiftShader stops the run</td></tr>
         <tr><td class="name">Screenshots</td><td>page.screenshot</td><td>CDP captureScreenshot with optimizeForSpeed</td><td>At 8 fast-moving moments the decoded pixels matched the old method 8/8, with no stale frame</td></tr>
-        <tr><td class="name">Parallelism</td><td>1 browser</td><td>4 independent browsers, frames dealt round-robin</td><td>Sample frames are rendered again on another browser and compared; worst case 36 pixels off by 14 of 255</td></tr>
+        <tr><td class="name">Parallelism</td><td>1 browser</td><td>4 independent browsers, frames dealt round-robin</td><td>The whole video is rendered a second time with every frame on another browser, and all frames are compared; GPU noise stays at a few dozen pixels, 14 levels at most</td></tr>
         <tr><td class="name">Master</td><td>x264 CRF 17 (lossy)</td><td>x264 lossless</td><td>Deliverables are compressed once; the master must hold every frame</td></tr>
         <tr><td class="name">Look</td><td colspan="2">Mean SSIM 0.989 between old and new; the 71 frames under 0.95 are dense particle and dust frames that look identical side by side</td><td>ffmpeg ssim, frame by frame</td></tr>
         <tr><td class="name">Sound</td><td class="num">−21.2 LUFS · −2.1 dBTP · AAC 160 kbps</td><td class="num">−14.1 LUFS · −1.6 dBTP · AAC 127 kbps</td><td>Limit, then two-pass loudnorm that must report “linear”; the file is measured with ebur128. 160 kbps was over Meta's 128 kbps ceiling</td></tr>
@@ -177,14 +179,14 @@
     <div class="cols">
       <div class="box"><h3>The new checks stopped 4 runs on day one; no broken video shipped</h3><ul>
         <li>A writer-loop bug: too few frames, stop.</li>
-        <li>Re-rendered frames differed: GPU edge noise on rotated text. The rule moved from byte-identical to a pixel tolerance; a wrong frame differs by 100,000+ pixels and still stops the run.</li>
-        <li>A decoder deadlock: decoding now goes through temp files with a 60-second timeout, so a hang fails loudly.</li>
+        <li>Re-rendered frames differed: GPU edge noise on rotated text. The rule moved from byte-identical to a pixel tolerance; a wrong frame differs by 100,000+ pixels and still stops the run. Later, a spot check of 8 frames missed a browser that drew a label wrongly, so every frame is now rendered twice.</li>
+        <li>A decoder deadlock: the frame comparison, the frame counts and every delivery step now have a time limit, so a hang there fails loudly.</li>
         <li>A bad argument: refused before starting.</li>
       </ul></div>
       <div class="box"><h3>Not done, and why</h3><ul>
         <li><b>HEVC</b>: the high-quality file has no size pressure and H.264 is enough; the web preview must play in every browser.</li>
-        <li><b>Less grain</b>: the All-FX cut has no film grain; the cinematic cut gets it next time.</li>
-        <li>The GPU speed-up is verified on macOS only; a GPU-less Linux box falls back to <code>--cpu</code>.</li>
+        <li><b>Less grain</b>: the measured promo has no film grain, so it did not apply.</li>
+        <li>The GPU speed-up is verified on macOS only; without a Metal GPU, render with <code>--cpu</code>.</li>
       </ul></div>
     </div>
   </section>
@@ -206,7 +208,7 @@
     </div>
   </section>
 
-  <footer>Source: <a href="https://github.com/howardc38/motion-fx-lab">github.com/howardc38/motion-fx-lab</a>. Code: 0BSD. The Helvetiker glyph subset keeps its MgOpen licence; see THIRD_PARTY.md. three.js and the fonts load from public CDNs.</footer>
+  <footer>Source: <a href="https://github.com/howardc38/motion-fx-lab">github.com/howardc38/motion-fx-lab</a>. Code: 0BSD. The Helvetiker glyph subset keeps its MgOpen licence; see <a href="https://github.com/howardc38/motion-fx-lab/blob/main/THIRD_PARTY.md">THIRD_PARTY.md</a>. three.js and the fonts load from public CDNs.</footer>
 </main>
 
 <script src="fx/font-helvetiker-subset.js"></script>
@@ -222,13 +224,13 @@
   for (const d of DEMOS) {
     const fig = document.createElement("figure"); fig.className = "tile";
     const stage = document.createElement("div"); stage.className = "stage";
-    const where = d.status === "used" ? `In use · ${d.videos.join(", ")}` : STATUS[d.status];
+    const where = STATUS[d.status];
     fig.innerHTML = `<figcaption><div class="pills"><span class="pill ${d.status}">${where}</span>${d.grade !== "—" ? `<span class="grade" title="Difficulty">${d.grade}</span>` : ""}</div><h3>${d.name}</h3><p>${d.purpose}</p><div class="chips">${d.chips.map((c) => `<code>${c}</code>`).join("")}</div></figcaption>`;
     fig.prepend(stage);
     (d.host ? document.getElementById(d.host) : gallery).appendChild(fig);
     d.fig = fig;
     try {
-      if (d.gl && !R3) { stage.innerHTML = `<div class="nogl">WebGL is not available on this device, so 3D tiles cannot draw.</div>`; continue; }
+      if (d.gl && !R3) { stage.innerHTML = `<div class="nogl">3D tiles need WebGL and three.js from its CDN; one of them did not load here.</div>`; continue; }
       const built = d.build(stage);
       d.frame = typeof built === "function" ? built : built.frame;
     } catch (e) {
@@ -285,31 +287,31 @@
   requestAnimationFrame(tick);
 
   // render-time bars, to scale
-  const bars = [["Before (1 browser, CPU-emulated GPU)", 399.6, "old", false], ["Now: 1 browser", 71.0, "", false], ["Now: 4 browsers (default)", 26.4, "", true], ["Now: 6 browsers", 28.5, "", false], ["Now: 8 browsers", 31.9, "", false]];
+  const bars = [["Before: 1 browser, CPU-emulated GPU", 399.6, "old", false], ["Now: 4 browsers, every frame rendered twice (default)", 52.9, "", true],
+    ["Spot check only: 1 browser", 71.0, "", false], ["Spot check only: 4 browsers", 26.4, "", false], ["Spot check only: 6 browsers", 28.5, "", false], ["Spot check only: 8 browsers", 31.9, "", false]];
   document.getElementById("bars").innerHTML = bars.map(([l, v, c, best]) => `<div class="bar${best ? " best" : ""}"><span>${l}</span><div style="padding-right:90px"><i class="${c}" style="width:${(v / 399.6 * 100).toFixed(1)}%"><b>${v.toFixed(1)} s</b></i></div></div>`).join("");
 
   // stack table
-  const Y = "●", N = "—";
   const rows = [
     ["Picture"],
-    ["HTML + CSS", "Web layout", "Type and UI mock-ups", "Telegram card, chat, character pops, highlighter, stamp, frosted glass (backdrop-filter), halftone multiply (mix-blend-mode)", Y, Y, Y],
-    ["SVG", "Vector shapes and filters", "Lines and filters", "Cinematic: text on a path. All-FX: horizontal motion blur on letters (feGaussianBlur)", N, Y, Y],
-    ["Canvas 2D", "Pixels drawn in code", "Textures and text sampling", "Cinematic: film grain. All-FX: ray textures, particle text sampling, the studio map the chrome reflects", N, Y, Y],
-    ["Google Fonts", "Web fonts", "Chinese, wide Latin, monospace", "Noto Sans TC, Archivo, JetBrains Mono", Y, Y, Y],
-    ["engine.js (ours)", "Timeline engine", "Every frame depends on t alone, so frames can be captured one by one", "30-odd animations (pop, whip, stamp, type, scan…), scene wipes, the sound-cue list", Y, Y, Y],
+    ["HTML + CSS", "Web layout", "Type and UI mock-ups", "Telegram card, chat, character pops, highlighter, stamp, frosted glass (backdrop-filter), halftone multiply (mix-blend-mode)"],
+    ["SVG", "Vector shapes and filters", "Lines and filters", "Text on a path, horizontal motion blur on letters (feGaussianBlur), callouts and flow charts"],
+    ["Canvas 2D", "Pixels drawn in code", "Textures and text sampling", "Film grain, ray textures, particle text sampling, the studio map the chrome reflects"],
+    ["Google Fonts", "Web fonts", "Chinese, wide Latin, monospace", "Noto Sans TC, Archivo, JetBrains Mono"],
+    ["engine.js (ours)", "Timeline engine", "Every frame depends on t alone, so frames can be captured one by one", "30-odd animations (pop, whip, slam, type, scan…), scene wipes, the sound-cue list"],
     ["3D"],
-    ["three.js r128 core", "3D engine for the browser", "Camera, lights, particles, 3D objects", "Cinematic: line tunnel, rings, particles. All-FX: 3D type, dust, particle text, mascot", N, Y, Y],
-    ["three.js post-processing", "Effects after the render (EffectComposer)", "Bloom and halftone", "UnrealBloomPass bloom; HalftonePass comic dots", N, N, Y],
-    ["TextGeometry + Helvetiker", "3D text and its font", "Extruded Latin and digits", "“6%”, “4.5%”, “social_ops”; the font has no CJK, so Chinese stays flat", N, N, Y],
-    ["Custom GLSL", "Small GPU programs that colour each pixel", "What stock materials cannot do", "Smoke (fbm noise), noise dissolve (onBeforeCompile)", N, N, Y],
-    ["PBR + PMREM", "Physically based materials", "Chrome needs something to reflect", "The chrome social_ops logo", N, N, Y],
-    ["Shadows (SpotLight, soft)", "Lights that cast shadows", "Depth", "The 3D “6%” casting on the floor", N, N, Y],
+    ["three.js r128 core", "3D engine for the browser", "Camera, lights, particles, 3D objects", "Line tunnel, particles, 3D type, dust, particle text, mascots"],
+    ["three.js post-processing", "Effects after the render (EffectComposer)", "Bloom and halftone", "UnrealBloomPass bloom; HalftonePass comic dots"],
+    ["TextGeometry + Helvetiker", "3D text and its font", "Extruded Latin and digits", "“6%”, “4.5%”, “social_ops”; the font has no CJK, so Chinese stays flat"],
+    ["Custom GLSL", "Small GPU programs that colour each pixel", "What stock materials cannot do", "Smoke (fbm noise), noise dissolve (onBeforeCompile)"],
+    ["PBR + PMREM", "Physically based materials", "Chrome needs something to reflect", "The chrome social_ops logo"],
+    ["Shadows (SpotLight, soft)", "Lights that cast shadows", "Depth", "The 3D “6%” casting on the floor"],
     ["Sound"],
-    ["Python synth (sfx.py)", "Sound effects from maths", "Every move has a sound", "17 sounds: pop, whoosh, stamp, typing…", Y, Y, Y],
-    ["Python synth (music.py)", "Music from maths", "A music bed", "100 BPM, Am–F–C–G; the motion cut has effects only", N, Y, Y],
+    ["Python synth (sfx.py)", "Sound effects from maths", "Every move has a sound", "17 sounds: pop, whoosh, stamp, typing…"],
+    ["Python synth (music.py)", "Music from maths", "A music bed", "100 BPM, Am–F–C–G, sections declared by the video page"],
     ["Rendering"],
-    ["Playwright + Chromium", "A headless browser", "Seek to t, capture the frame", "Every frame of all three videos", Y, Y, Y],
-    ["ffmpeg", "Audio and video tool", "Encode and mix", "x264, amix, alimiter, AAC", Y, Y, Y],
+    ["Playwright + Chromium", "A headless browser", "Seek to t, capture the frame", "Every frame of every video"],
+    ["ffmpeg", "Audio and video tool", "Encode and mix", "x264, amix, alimiter, AAC"],
   ];
   const newRows = [
     ["ANGLE Metal (M4 GPU)", "WebGL on the real GPU", "Fast 3D", "The old runs emulated the GPU on the CPU (SwiftShader)"],
@@ -319,10 +321,10 @@
     ["Fail-closed checks", "A check at every step", "No silently broken video", "GPU, lost WebGL context, page errors, fonts, re-render match, frame count, size, loudness"],
   ];
   document.getElementById("stackRows").innerHTML = rows.map((r) => r.length === 1
-    ? `<tr class="grp"><th colspan="7">${r[0]}</th></tr>`
-    : `<tr><td class="name">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td>${r.slice(4).map((x) => `<td class="dot${x === N ? " no" : ""}">${x}</td>`).join("")}</tr>`).join("")
-    + `<tr class="grp"><th colspan="7">Added to the render pipeline (used by all videos from now on)</th></tr>`
-    + newRows.map((r) => `<tr class="new"><td class="name">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td class="dot" colspan="3">new</td></tr>`).join("");
+    ? `<tr class="grp"><th colspan="4">${r[0]}</th></tr>`
+    : `<tr><td class="name">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join("")
+    + `<tr class="grp"><th colspan="4">In the render pipeline</th></tr>`
+    + newRows.map((r) => `<tr class="new"><td class="name">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join("");
 })();
 </script>
 </body>

@@ -1,4 +1,7 @@
 node_modules/
 media/*_hq.mp4
-.DS_Store
+media/.deliver-*
 video/stills/
+video/mismatch/
+*.mkv
+.DS_Store
