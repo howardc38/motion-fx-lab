@@ -1,0 +1,13 @@
+{
+  "name": "motion-fx-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Motion-graphics effects drawn in the browser and rendered frame-exact to MP4.",
+  "license": "0BSD",
+  "scripts": {
+    "render": "bash video/build.sh intro.html"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.59.1"
+  }
+}
