@@ -117,8 +117,8 @@
   .tg-q { font: 700 4.4cqw/1.55 var(--zh); background: #fff; border-radius: 2.5cqw; padding: 3cqw; }
   .tg-kb { display: grid; grid-template-columns: 1fr 1fr; gap: 1.8cqw; }
   .tg-kb span { background: #e2dfe9; border-radius: 2cqw; padding: 2.4cqw 1.5cqw; text-align: center; font: 700 3.5cqw/1.35 var(--zh); display: grid; place-items: center; }
-  .gz { position: absolute; inset: 0; display: grid; place-items: center; }
-  .gz span { grid-area: 1 / 1; font: 900 15cqw var(--zh); white-space: nowrap; }
+  .glitch { position: absolute; inset: 0; display: grid; place-items: center; }
+  .glitch span { grid-area: 1 / 1; font: 900 19cqw var(--lat); letter-spacing: -.02em; white-space: nowrap; }
   .g0 { color: #fff; }
   .g1 { color: #ff2a4a; mix-blend-mode: screen; }
   .g2 { color: #00e5ff; mix-blend-mode: screen; }

@@ -21,7 +21,6 @@
 <style>
   :root {
     --bg: #eceef3; --surface: #ffffff; --ink: #17141d; --muted: #5c5868; --line: #d6d6df; --accent: #b8217a;
-    --dont-bg: #ffdcdc; --dont-fg: #a1111f;
     --lat: "Archivo", "Helvetica Neue", Arial, sans-serif;
     --body: "Archivo", "Helvetica Neue", Arial, sans-serif;
     --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
@@ -29,13 +28,11 @@
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --bg: #0c0b10; --surface: #16141d; --ink: #f2f0f6; --muted: #a9a4b6; --line: #2d2a37; --accent: #ff90e8;
-      --dont-bg: #3d1216; --dont-fg: #ff8a8f;
       color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
     --bg: #0c0b10; --surface: #16141d; --ink: #f2f0f6; --muted: #a9a4b6; --line: #2d2a37; --accent: #ff90e8;
-    --dont-bg: #3d1216; --dont-fg: #ff8a8f;
     color-scheme: dark;
   }
   body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); padding-inline: 16px; padding-block: 28px 64px; }
@@ -67,7 +64,6 @@
   .pills { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
   .pill { font: 700 12px var(--body); padding: 2px 9px; border-radius: 999px; }
   .pill.kind { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
-  .pill.dont { background: var(--dont-bg); color: var(--dont-fg); }
   .grade { font: 700 11px var(--mono); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; }
   .tile h3 { font: 900 17px/1.3 var(--body); }
   .tile p { font-size: 14px; line-height: 1.55; color: var(--muted); }
@@ -107,7 +103,7 @@
   <header>
     <span class="eyebrow">Open source · 0BSD</span>
     <h1>Motion FX Lab</h1>
-    <p class="lede">Every tile below is drawn live in your browser by the same code that renders our videos to MP4, frame by frame. Each card says what it does, how it is drawn and what it needs; filter them by kind or by the way they are drawn. The two cards marked “Don't” show what goes wrong when halftone or glitch meets dense Chinese text. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch. The sample text comes from our own videos for an Instagram DM assistant; swap in your own words. A finished video with sound uses 16 stacks, listed in the table further down.</p>
+    <p class="lede">Every tile below is drawn live in your browser by the same code that renders our videos to MP4, frame by frame. Each card says what it does, how it is drawn and what it needs; filter them by kind or by the way they are drawn. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch. The sample text comes from our own videos for an Instagram DM assistant; swap in your own words. A finished video with sound uses 16 stacks, listed in the table further down.</p>
     <div class="legend" id="legend"></div>
     <video class="intro" controls playsinline preload="metadata" poster="media/intro.jpg" src="media/intro.mp4" aria-label="Intro video, 35 seconds, with sound"></video>
   </header>
@@ -220,18 +216,18 @@
 <script>
 (() => {
   const { DEMOS, R3 } = window.FX;
-  const KINDS = { shader: "3D and shaders", sim: "Simulations", character: "Characters", motion: "Motion", backdrop: "Backgrounds", ui: "UI and charts", type: "Type", dont: "Don't" };
-  // Tiles are shown most striking first. One missing from this list follows the listed ones in the
-  // order it was registered; the “Don't” tiles always come last.
+  const KINDS = { shader: "3D and shaders", sim: "Simulations", character: "Characters", motion: "Motion", backdrop: "Backgrounds", ui: "UI and charts", type: "Type" };
+  // Tiles are shown most striking first. One missing from this list follows the listed ones, in the
+  // order it was registered.
   const ORDER = ["gpuparticles", "clay", "liquid", "reaction", "domainrep", "chrome", "styles", "rigid", "particles", "lit3d", "rays", "dissolve", "smoke", "tunnel",
-    "vartype", "morph", "cardflip", "ridgelines", "rhythm", "coderain", "timing", "datachart", "whip", "uifly", "drawflow", "blueprint", "glass", "sweep",
-    "hook", "chars", "karaoke", "stamp", "count", "type", "mark", "scan", "sticker", "ring", "beat", "wipe", "orbs", "gradient", "lut", "grain",
+    "vartype", "glitch", "morph", "cardflip", "ridgelines", "rhythm", "coderain", "timing", "datachart", "whip", "uifly", "drawflow", "blueprint", "glass", "sweep",
+    "hook", "chars", "karaoke", "stamp", "count", "type", "mark", "scan", "sticker", "ring", "beat", "wipe", "orbs", "gradient", "lut", "grain", "halftonetype",
     "ditherpeek", "dithercards", "ditheravatar", "dithercharacter", "toon", "flat", "bounce", "halftone"];
-  // What a tile needs beyond the page itself; "—" marks the two “Don't” tiles.
+  // What a tile needs beyond the page itself.
   const NEEDS = { "A": ["Base stack only", "Needs nothing beyond HTML, CSS, SVG, Canvas and three.js r128"],
     "A+": ["Plus a three.js add-on", "Loads one more file from three.js r128's examples, such as a bloom or halftone pass"],
     "B": ["Custom shader", "Needs a GLSL shader written for it"], "C": ["Plus a library", "Needs one more library"] };
-  const rank = (d) => (d.kind === "dont" ? ORDER.length + 1 : ORDER.includes(d.id) ? ORDER.indexOf(d.id) : ORDER.length);
+  const rank = (d) => (ORDER.includes(d.id) ? ORDER.indexOf(d.id) : ORDER.length);
   const STACKS = { css: "HTML/CSS", svg: "SVG", canvas: "Canvas 2D", three: "Three.js", glsl: "Custom GLSL", physics: "Matter.js" };
   const gallery = document.getElementById("gallery");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -239,13 +235,13 @@
   for (const d of [...DEMOS].sort((a, b) => rank(a) - rank(b))) {
     const fig = document.createElement("figure"); fig.className = "tile";
     const stage = document.createElement("div"); stage.className = "stage";
-    fig.innerHTML = `<figcaption><div class="pills"><span class="pill ${d.kind === "dont" ? "dont" : "kind"}">${KINDS[d.kind] || "?"}</span>${NEEDS[d.grade] ? `<span class="grade" title="${NEEDS[d.grade][1]}">${NEEDS[d.grade][0]}</span>` : ""}</div><h3>${d.name}</h3><p>${d.purpose}</p>${d.seen ? `<p class="seen">Seen in: ${d.seen}</p>` : ""}<div class="chips">${d.chips.map((c) => `<code>${c}</code>`).join("")}</div></figcaption>`;
+    fig.innerHTML = `<figcaption><div class="pills"><span class="pill kind">${KINDS[d.kind] || "?"}</span>${NEEDS[d.grade] ? `<span class="grade" title="${NEEDS[d.grade][1]}">${NEEDS[d.grade][0]}</span>` : ""}</div><h3>${d.name}</h3><p>${d.purpose}</p>${d.seen ? `<p class="seen">Seen in: ${d.seen}</p>` : ""}<div class="chips">${d.chips.map((c) => `<code>${c}</code>`).join("")}</div></figcaption>`;
     fig.prepend(stage);
     (d.host ? document.getElementById(d.host) : gallery).appendChild(fig);
     d.fig = fig;
     try {
       if (!KINDS[d.kind]) throw new Error(`unknown kind “${d.kind}”`);
-      if (d.grade !== "—" && !NEEDS[d.grade]) throw new Error(`unknown grade “${d.grade}”`);
+      if (!NEEDS[d.grade]) throw new Error(`unknown grade “${d.grade}”`);
       if (d.gl && !R3) { stage.innerHTML = `<div class="nogl">3D tiles need WebGL and three.js from its CDN; one of them did not load here.</div>`; continue; }
       const built = d.build(stage);
       d.frame = typeof built === "function" ? built : built.frame;

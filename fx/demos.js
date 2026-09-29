@@ -820,38 +820,48 @@
       return { ready, frame: (t, abs) => { u.uT.value = abs; R3.render(scene, cam); blit(); } };
     } });
 
-  // ================= avoid =================
-  demo({ id: "ditherzh", name: "Halftone or dither on CJK text", kind: "dont", stacks: ["canvas"], chips: ["Canvas 2D"], grade: "—",
-    purpose: "Dense Chinese strokes vanish as soon as the dots grow.", period: 4, hero: 3.2,
+  demo({ id: "halftonetype", name: "Halftone type", kind: "type", stacks: ["canvas"], chips: ["Canvas 2D", "dot size from ink coverage"], grade: "A",
+    purpose: "A word printed as halftone dots whose size breathes from fine to coarse and back. Once the dots grow, thin and dense strokes, such as small Chinese characters, break up.", period: 4, hero: 2,
     build(s) {
-      s.style.background = "#fff";
-      const c = document.createElement("canvas"); c.width = 360; c.height = 450; c.className = "fill"; s.appendChild(c);
-      const g = c.getContext("2d"), off = document.createElement("canvas"); off.width = 360; off.height = 150;
-      const og = off.getContext("2d");
-      let data = null;
-      const prep = () => { og.clearRect(0, 0, 360, 150); og.fillStyle = "#000"; og.textAlign = "center"; og.textBaseline = "middle"; og.font = `900 64px ${ZH}`; og.fillText("條款細則", 180, 75); data = og.getImageData(0, 0, 360, 150).data; };
-      prep(); document.fonts.load(`900 64px ${ZH}`, "條款細則").then(prep);
-      return (t) => {
-        g.fillStyle = "#fff"; g.fillRect(0, 0, 360, 450);
-        g.fillStyle = "#888"; g.font = "700 13px JetBrains Mono, monospace"; g.textAlign = "left";
-        g.fillText("Original", 18, 34); g.drawImage(off, 0, 50);
-        const cell = Math.round(3 + 6 * smooth(0.2, 3.0, t));
-        g.fillText(`Halftone ${cell}px`, 18, 244); g.fillStyle = "#000";
-        for (let y = 0; y < 150; y += cell) for (let x = 0; x < 360; x += cell) {
-          let a = 0, n = 0;
-          for (let yy = y; yy < Math.min(150, y + cell); yy++) for (let xx = x; xx < Math.min(360, x + cell); xx++) { a += data[(yy * 360 + xx) * 4 + 3]; n++; }
-          const r = Math.sqrt(a / n / 255) * cell * 0.62;
-          if (r > 0.3) { g.beginPath(); g.arc(x + cell / 2, 260 + y + cell / 2, r, 0, Math.PI * 2); g.fill(); }
-        }
+      s.style.background = "#ffd400";
+      const W = 360, H = 450, c = document.createElement("canvas"); c.width = W; c.height = H; c.className = "fill"; s.appendChild(c);
+      const g = c.getContext("2d"), off = document.createElement("canvas"); off.width = W; off.height = H;
+      const og = off.getContext("2d", { willReadFrequently: true });
+      let ink = null, last = null;
+      const prep = () => {
+        og.font = `900 100px ${LAT}`;
+        const px = Math.floor((100 * 300) / Math.max(og.measureText("HALF").width, og.measureText("TONE").width));
+        og.clearRect(0, 0, W, H); og.fillStyle = "#000"; og.textAlign = "center"; og.textBaseline = "middle"; og.font = `900 ${px}px ${LAT}`;
+        og.fillText("HALF", W / 2, H / 2 - px * 0.52); og.fillText("TONE", W / 2, H / 2 + px * 0.52);
+        const d = og.getImageData(0, 0, W, H).data; ink = new Float32Array(W * H);
+        for (let i = 0; i < W * H; i++) ink[i] = d[i * 4 + 3] / 255;
       };
+      const frame = (t) => {
+        last = t;
+        g.fillStyle = "#ffd400"; g.fillRect(0, 0, W, H);
+        if (!ink) return;
+        const cell = 4 + 8 * (0.5 - 0.5 * Math.cos((2 * Math.PI * t) / 4));
+        g.fillStyle = "#111016";
+        // Cells tile the canvas without gaps or overlaps: each spans floor(x) to floor(x + cell).
+        for (let y = 0; y < H; y += cell) for (let x = 0; x < W; x += cell) {
+          const x0 = Math.floor(x), y0 = Math.floor(y), x1 = Math.min(W, Math.floor(x + cell)), y1 = Math.min(H, Math.floor(y + cell));
+          let a = 0, n = 0;
+          for (let yy = y0; yy < y1; yy++) for (let xx = x0; xx < x1; xx++) { a += ink[yy * W + xx]; n++; }
+          const r = n ? Math.sqrt(a / n) * cell * 0.62 : 0;
+          if (r > 0.25) { g.beginPath(); g.arc(x + cell / 2, y + cell / 2, r, 0, Math.PI * 2); g.fill(); }
+        }
+        g.font = "700 13px JetBrains Mono, monospace"; g.textAlign = "left"; g.fillText(`dot grid ${cell.toFixed(1)} px`, 18, H - 22);
+      };
+      const ready = document.fonts.load(`900 100px ${LAT}`, "HALFTONE").then(() => { prep(); if (last !== null) frame(last); });
+      return { ready, frame };
     } });
 
-  demo({ id: "glitchzh", name: "RGB-split glitch on CJK text", kind: "dont", stacks: ["css"], chips: ["CSS clip-path", "mix-blend-mode"], grade: "—",
-    purpose: "Reads as broken and unreliable, and split colour edges make dense characters hard to read.", period: 2.4, hero: 0.83,
+  demo({ id: "glitch", name: "RGB-split glitch", kind: "type", stacks: ["css"], chips: ["CSS transform", "clip-path slices", "mix-blend-mode: screen"], grade: "A",
+    purpose: "The red and blue channels split and jitter in bursts while slices of the word jump sideways, like a broken signal. Split edges make thin, dense strokes, such as small Chinese characters, hard to read.", period: 2.4, hero: 0.83,
     build(s) {
       s.style.background = "#0b0a0f";
-      s.innerHTML = `<div class="gz"><span class="g1">條款及細則</span><span class="g2">條款及細則</span><span class="g0">條款及細則</span></div>`;
-      const [g1, g2, g0] = qa(s, ".gz span");
+      s.innerHTML = `<div class="glitch"><span class="g1">GLITCH</span><span class="g2">GLITCH</span><span class="g0">GLITCH</span></div>`;
+      const [g1, g2, g0] = qa(s, ".glitch span");
       return (t) => {
         const f = Math.floor(t * 16), strong = t > 0.4 && t < 1.5, amp = strong ? 3.2 : 0.6;
         g1.style.transform = `translate(${(hash(f) - 0.5) * amp}cqw, ${(hash(f + 3) - 0.5) * amp * 0.4}cqw)`;

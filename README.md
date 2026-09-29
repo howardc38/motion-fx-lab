@@ -28,7 +28,7 @@ GitHub does not play video files from a repository inline, so the loop above is 
 | Silent wrong frames | The whole video is rendered twice, each frame on a different browser, and every frame is compared. The recorder also stops on a CPU fallback, a lost WebGL context, a page error or a font that did not load. |
 | Colour shifts | Screenshots are converted with the BT.709 matrix and every file is tagged BT.709; the checks refuse an untagged file. |
 | Quiet or rejected uploads | Audio is limited, then brought to −14 LUFS by a linear gain, and its loudness and true peak are measured on the final file. Video and audio are checked against Meta's Reels limits. |
-| CJK text | Particle text is drawn on a canvas and sampled, so it works in any script. Two tiles marked “Don't” show which effects not to put on dense Chinese text. |
+| CJK text | Particle text is drawn on a canvas and sampled, so it works in any script. The halftone and glitch captions say where dense strokes break up. |
 | Licence worries | Code under 0BSD: use it for anything, no attribution needed. Music and sound effects are synthesised in code, so there is no sample to license. |
 
 ## Quick start
@@ -115,7 +115,7 @@ Then run `bash video/build.sh video/yours.html`.
 
 ## The effects
 
-54 effects: 46 in the gallery, most striking first, and 8 in its character section. Each card gives its kind, how it is drawn and what it needs beyond the page: the base stack only (32 effects), one more three.js r128 add-on file (7), a custom shader (12), or one more library (only the rigid bodies, which use Matter.js).
+54 effects: 46 in the gallery, most striking first, and 8 in its character section. Each card gives its kind, how it is drawn and what it needs beyond the page: the base stack only (34 effects), one more three.js r128 add-on file (7), a custom shader (12), or one more library (only the rigid bodies, which use Matter.js).
 
 - **3D and shaders (12, three.js r128):** 200,000 particles moved on the GPU, ray-marched clay with smooth blending, liquid-glass refraction, an endless grid by domain repetition, chrome with a painted environment map, one object in five styles (Bayer dither, halftone, ASCII, pixel sort, risograph), particles that assemble into words, lit 3D type with soft shadows, rays with bloom and dust, a noise dissolve patched into a lit material, fbm smoke, a line tunnel.
 - **Simulations (2):** reaction–diffusion (Gray–Scott) growing out of a word, and rigid bodies falling and stacking, stepped at a fixed 240 Hz.
@@ -123,8 +123,7 @@ Then run `bash video/build.sh video/yours.html`.
 - **Motion (4):** a 0.5 s wipe, beat sync, squash and stretch next to its timing graph, a polar shape morph on a spring.
 - **Backgrounds (7):** film grain, glow orbs, a low-contrast flowing gradient, a warm grade with a soft glow, Bauhaus tile rhythm, noise ridgelines, a code-rain backdrop.
 - **UI and charts (9):** light sweep, frosted glass, scan and check, a camera move over a UI card, blueprint callouts on a dot grid, a self-drawing flow chart, a self-drawing data chart, a 3D card-flip grid, a 24-hour countdown ring.
-- **Type (10):** whip-in letters with motion blur, character pops, highlighter, counting numbers, typewriter, a red flash with a shake and a stamp, a 3-second headline hook, word-synced captions, sticker labels, variable-font kinetic type.
-- **Don't (2):** halftone and RGB-split glitch on dense Chinese text, to show how the strokes disappear.
+- **Type (12):** whip-in letters with motion blur, an RGB-split glitch, halftone dots on a word, character pops, highlighter, counting numbers, typewriter, a red flash with a shake and a stamp, a 3-second headline hook, word-synced captions, sticker labels, variable-font kinetic type.
 
 The first 36 effects were built for short promo videos about an Instagram DM assistant for insurance agents in Hong Kong, which is why the sample text talks about DMs, drafts and savings plans. Swap in your own words.
 
