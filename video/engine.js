@@ -15,7 +15,8 @@
   // Chromium lays SVG text out for its on-screen size and did not always lay it out again when an
   // ancestor's transform changed: a label drawn before a pop (which starts at scale 0.6) kept that
   // size in one browser and not in another. Reproduced by rendering 10.0 s, then 11.4 s, of
-  // intro.html in one browser; with geometricPrecision the two agree with a fresh render.
+  // video/intro.html as of commit 83b2727 in one browser; with geometricPrecision the two agree
+  // with a fresh render.
   const svgText = document.createElement("style");
   svgText.textContent = "#stage svg text { text-rendering: geometricPrecision; }";
   document.head.appendChild(svgText);

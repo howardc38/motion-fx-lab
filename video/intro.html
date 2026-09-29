@@ -41,105 +41,226 @@
   .pk { color: var(--pink); }
   #hud { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: difference; color: #fff; font: 700 17px var(--mono); letter-spacing: .12em; }
   #hud span { position: absolute; }
+  /* each use-case scene names its use and the effects it shows */
+  .uc { left: 150px; top: 96px; font: 700 30px var(--mono); letter-spacing: .14em; }
+  .fxl { left: 150px; top: 146px; display: flex; gap: 10px; }
+  .fxl span { font: 700 19px var(--mono); padding: 7px 14px; border-radius: 999px; border: 2px solid currentColor; opacity: .8; white-space: nowrap; }
   .tile { position: absolute; }
   .tile .stage { width: 100%; border-radius: 14px; }
   .tile .lab { margin-top: 12px; font: 700 16px var(--mono); letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
-  .bar { position: absolute; height: 10px; border-radius: 5px; background: rgba(14,13,18,.12); }
-  .head { position: absolute; top: -21px; width: 4px; height: 52px; margin-left: -2px; background: var(--pink); border-radius: 2px; }
-  .ticks { position: absolute; inset: 0; background-image: linear-gradient(90deg, rgba(14,13,18,.35) 2px, transparent 2px); background-size: 10% 100%; }
+  .sticker { position: absolute; padding: 20px 34px; border-radius: 20px; border: 6px solid #fff; box-shadow: 0 8px 0 rgba(0,0,0,.16), 0 16px 34px rgba(0,0,0,.2); font: 900 44px var(--lat); white-space: nowrap; }
+  .glow { width: 1100px; height: 1100px; margin: -550px 0 0 -550px; border-radius: 50%; mix-blend-mode: screen; filter: blur(70px); }
+  /* 01 logo */
+  .wm { left: 640px; top: 420px; font: 900 132px/1 var(--lat); font-stretch: 112%; letter-spacing: -.02em; color: #b9b4c4; white-space: nowrap; }
+  /* the shine is a gradient clipped to the letters, so it lights the glyphs and never the background */
+  .wmShine { position: absolute; left: 0; top: 0; color: transparent; background: linear-gradient(105deg, rgba(255,255,255,0) 42%, rgba(255,255,255,.95) 50%, rgba(255,255,255,0) 58%) no-repeat; background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; }
+  /* 02 titles */
+  .lt { left: 150px; top: 790px; display: flex; flex-direction: column; gap: 10px; }
+  .lt b { font: 900 60px var(--lat); font-stretch: 112%; background: var(--paper); color: var(--ink); padding: 8px 24px; align-self: flex-start; }
+  .lt span { font: 700 26px var(--mono); background: var(--pink); color: var(--ink); padding: 8px 16px; align-self: flex-start; }
+  /* 03 social */
+  .reel { left: 735px; top: 225px; width: 450px; height: 800px; border-radius: 40px; background: var(--ink); border: 10px solid #fff; box-shadow: 0 30px 70px rgba(14,13,18,.28); overflow: hidden; }
+  .reel .ep { position: absolute; left: 34px; top: 40px; font: 700 18px var(--mono); letter-spacing: .12em; color: var(--sun); }
+  .reel .hk { position: absolute; left: 34px; right: 34px; top: 84px; font: 900 50px/1.02 var(--lat); color: #fff; }
+  .wave { position: absolute; left: 40px; right: 40px; top: 400px; height: 130px; display: flex; align-items: center; gap: 7px; }
+  .wave i { flex: 1; border-radius: 6px; background: var(--pink); }
+  .cap { position: absolute; left: 34px; right: 34px; top: 600px; font: 900 44px/1.15 var(--lat); color: rgba(255,255,255,.28); }
+  .cap span.on { color: #fff; }
+  .cap span.now { color: var(--sun); }
+  /* 04 product */
+  .win { left: 760px; top: 250px; width: 1000px; height: 640px; border-radius: 22px; background: #fff; box-shadow: 0 40px 90px rgba(14,13,18,.22); overflow: hidden; transform-origin: 50% 50%; }
+  .win .bar { height: 56px; background: #ebe9e2; display: flex; align-items: center; gap: 10px; padding: 0 22px; }
+  .win .bar i { width: 14px; height: 14px; border-radius: 50%; background: #c9c6bd; }
+  .win .bar b { margin-left: 16px; font: 700 18px var(--mono); color: #5c5868; }
+  .row { position: absolute; left: 40px; right: 40px; height: 120px; border-radius: 20px; background: #f6f5f0; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; }
+  .row b { font: 900 38px var(--lat); }
+  .row em { font: 700 22px var(--mono); font-style: normal; color: #5c5868; margin-left: 18px; }
+  .btn { font: 800 28px var(--lat); padding: 16px 28px; border-radius: 999px; background: var(--ink); color: #fff; white-space: nowrap; }
+  .btn .bOn { display: none; }
+  .btn.on { background: #1e9e5a; }
+  .btn.on .bOff { display: none; }
+  .btn.on .bOn { display: inline; }
+  .ring { width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; border: 8px solid var(--pink); }
+  .cursor { width: 44px; height: 54px; }
+  /* 05 data */
+  .qrow { position: absolute; left: 150px; height: 70px; display: flex; align-items: center; gap: 18px; }
+  .qrow .q { width: 50px; font: 700 24px var(--mono); color: var(--muted); }
+  .qrow .bar { height: 46px; border-radius: 8px; background: var(--paper); transform-origin: left center; }
+  .qrow .v { font: 800 30px var(--lat); color: var(--paper); font-variant-numeric: tabular-nums; }
+  .leg { position: absolute; left: 1530px; display: flex; align-items: center; gap: 14px; font: 800 30px var(--lat); color: var(--paper); }
+  .leg i { width: 22px; height: 22px; border-radius: 6px; }
+  /* 06 b-roll */
+  .panel { position: absolute; top: 230px; width: 520px; height: 690px; border-radius: 22px; overflow: hidden; background: var(--ink); }
+  .panel .glow { width: 700px; height: 700px; margin: -350px 0 0 -350px; filter: blur(50px); }
+  .plab { position: absolute; top: 940px; font: 700 22px var(--mono); letter-spacing: .08em; color: var(--muted); }
+  /* 07 template */
+  .code { left: 150px; top: 220px; font: 700 34px var(--mono); color: var(--paper); }
+  .card { top: 300px; width: 500px; height: 600px; border-radius: 28px; background: #fff; overflow: hidden; }
+  .card .top { height: 380px; padding: 38px; box-sizing: border-box; position: relative; }
+  .card .name { font: 900 76px/.95 var(--lat); font-stretch: 112%; letter-spacing: -.02em; }
+  .card .tag { position: absolute; left: 38px; bottom: 32px; font: 900 30px var(--lat); padding: 10px 20px; border-radius: 14px; background: #fff; color: var(--ink); border: 4px solid var(--ink); }
+  .card .rn { position: absolute; right: 32px; bottom: 42px; font: 700 20px var(--mono); opacity: .7; }
+  .card .price { padding: 40px 38px; font: 900 110px/1 var(--lat); font-variant-numeric: tabular-nums; color: var(--ink); }
+  .card .price small { font-size: 44px; margin-right: 8px; }
+  /* 09 render */
   .box { position: absolute; width: 380px; height: 170px; border: 3px solid var(--ink); border-radius: 18px; background: #fff; padding: 22px 26px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px; }
   .box b { font: 900 30px/1.1 var(--lat); }
   .box span { font: 700 17px var(--mono); color: #5c5868; }
   .arrow { position: absolute; height: 6px; background: var(--ink); transform-origin: left center; }
   .arrow::after { content: ""; position: absolute; right: -4px; top: -9px; border-left: 18px solid var(--ink); border-top: 12px solid transparent; border-bottom: 12px solid transparent; }
-  .check { position: absolute; font: 800 44px var(--lat); color: var(--paper); display: flex; gap: 22px; align-items: center; }
-  .check i { font-style: normal; width: 54px; height: 54px; border-radius: 50%; background: var(--pink); color: var(--ink); display: grid; place-items: center; font-size: 30px; }
-  .sticker { position: absolute; padding: 20px 34px; border-radius: 20px; border: 6px solid #fff; box-shadow: 0 8px 0 rgba(0,0,0,.16), 0 16px 34px rgba(0,0,0,.2); font: 900 44px var(--lat); white-space: nowrap; }
 </style>
 </head>
 <body>
 <div id="frame">
-<div id="stage" data-w="1920" data-h="1080" data-dur="34.8">
+<div id="stage" data-w="1920" data-h="1080" data-dur="52.8">
 
-  <!-- 01 hook -->
+  <!-- 00 hook -->
   <section class="scene ink" data-start="0">
     <div class="a dots" style="inset:0" data-fx="bgpan" data-vx="-14" data-vy="0"></div>
-    <div class="a wide" style="left:150px;top:250px;font-size:170px;color:var(--paper)" data-fx="whip" data-at="0.25" data-dx="900" data-sfx="whoosh">Motion graphics</div>
-    <div class="a wide pk" style="left:150px;top:450px;font-size:170px" data-fx="chars" data-at="0.9" data-stagger="0.035" data-sfx="pop" data-sfx-repeat="4" data-sfx-every="0.12">in plain HTML.</div>
-    <div class="a mono" style="left:156px;top:700px;font-size:30px;color:var(--muted);letter-spacing:.04em" data-fx="up" data-at="2.2">54 effects · one clock · frame-exact MP4</div>
+    <div class="a wide" style="left:150px;top:230px;font-size:170px" data-fx="whip" data-at="0.25" data-dx="900" data-sfx="whoosh">Motion graphics</div>
+    <div class="a wide pk" style="left:150px;top:430px;font-size:170px" data-fx="chars" data-at="0.9" data-stagger="0.035" data-sfx="pop" data-sfx-repeat="4" data-sfx-every="0.12">in plain HTML.</div>
+    <div class="a mono" style="left:156px;top:690px;font-size:32px;color:var(--paper)" data-fx="up" data-at="2.0">Infographics · social clips · product promos · B-roll</div>
+    <div class="a mono" style="left:156px;top:750px;font-size:26px;color:var(--muted)" data-fx="up" data-at="2.5">Written by you or an AI coding assistant. No AI-generated pixels.</div>
   </section>
 
-  <!-- 02 render(t) -->
-  <section class="scene paper dots darkdots" data-start="4.8">
+  <!-- 01 logo animation -->
+  <section class="scene ink" data-start="4.8">
     <div class="edge"></div>
-    <div class="a wide" style="left:150px;top:170px;font-size:104px" data-fx="up" data-at="0.2">Every frame is</div>
-    <div class="a wide" style="left:150px;top:280px;font-size:104px" data-fx="up" data-at="0.35">a function of <span class="pk" style="color:#c2267f">t</span>.</div>
-    <div class="a mono" style="left:156px;top:450px;font-size:40px;font-weight:700" data-fx="type" data-at="0.7" data-dur="0.9" data-sfx="type">frame = render(t)</div>
-    <div class="a mono" style="left:156px;top:520px;font-size:26px;color:#5c5868" data-fx="fade" data-at="1.4">Seek anywhere. Same t, same pixels.</div>
-    <div class="bar" style="left:156px;top:690px;width:880px" data-fx="fade" data-at="0.5"><div class="ticks"></div><div class="head" id="head"></div></div>
-    <div class="a mono" id="tRead" style="left:156px;top:740px;font-size:30px;font-weight:700" data-fx="fade" data-at="0.5">t = 0.00 s</div>
-    <div class="tile" style="left:1180px;top:160px;width:600px" data-fx="pop" data-at="0.4" data-sfx="pop"><div class="stage" data-demo="type" data-scrub></div></div>
+    <div class="a uc" style="color:var(--sun)" data-fx="fade" data-at="0.1">01 · LOGO ANIMATION</div>
+    <div class="a fxl" style="color:var(--paper)" data-fx="fade" data-at="0.2"><span>stroke draw</span><span>bounce</span><span>mask reveal</span><span>light sweep</span></div>
+    <svg class="a" style="left:250px;top:330px" width="320" height="320" viewBox="0 0 320 320" aria-hidden="true">
+      <circle id="lgRing" cx="160" cy="160" r="130" fill="none" stroke="#ff90e8" stroke-width="22" transform="rotate(-90 160 160)"/>
+      <circle id="lgFill" cx="160" cy="160" r="119" fill="#ff90e8" opacity="0"/>
+    </svg>
+    <svg class="a" style="left:250px;top:330px" width="320" height="320" viewBox="0 0 320 320" data-fx="pop" data-at="1.25" data-sfx="pop" aria-hidden="true"><path d="M130 105 L225 160 L130 215 Z" fill="#0e0d12" stroke="#0e0d12" stroke-width="14" stroke-linejoin="round"/></svg>
+    <div class="a wm" id="lgWord">Motion FX Lab<span class="wmShine" id="lgShine" aria-hidden="true">Motion FX Lab</span></div>
+    <div class="a mono" style="left:648px;top:590px;font-size:30px;color:var(--muted)" data-fx="up" data-at="2.2">frame = render(t)</div>
   </section>
 
-  <!-- 03 the library -->
-  <section class="scene ink" data-start="9.6">
+  <!-- 02 titles and lower thirds -->
+  <section class="scene ink" data-start="9.6" id="scTitles">
     <div class="edge"></div>
-    <div class="a wide" style="left:154px;top:58px;font-size:66px;color:var(--paper)" data-fx="left" data-at="0.1">54 effects, live in the browser</div>
-    <div class="tile" style="left:154px;top:170px;width:300px" data-fx="pop" data-at="0.30" data-sfx="pop"><div class="stage" data-demo="lit3d" data-t0="0.3"></div><div class="lab">lit 3D type</div></div>
-    <div class="tile" style="left:482px;top:170px;width:300px" data-fx="pop" data-at="0.40" data-sfx="pop"><div class="stage" data-demo="clay" data-t0="0.4"></div><div class="lab">ray-marched clay</div></div>
-    <div class="tile" style="left:810px;top:170px;width:300px" data-fx="pop" data-at="0.50" data-sfx="pop"><div class="stage" data-demo="gpuparticles" data-t0="0.5"></div><div class="lab">200k GPU particles</div></div>
-    <div class="tile" style="left:1138px;top:170px;width:300px" data-fx="pop" data-at="0.60" data-sfx="pop"><div class="stage" data-demo="styles" data-t0="0.6"></div><div class="lab">5 shader styles</div></div>
-    <div class="tile" style="left:1466px;top:170px;width:300px" data-fx="pop" data-at="0.70" data-sfx="pop"><div class="stage" data-demo="chrome" data-t0="0.7"></div><div class="lab">chrome</div></div>
-    <div class="tile" style="left:154px;top:600px;width:300px" data-fx="pop" data-at="0.80" data-sfx="pop"><div class="stage" data-demo="reaction" data-t0="0.8"></div><div class="lab">reaction–diffusion</div></div>
-    <div class="tile" style="left:482px;top:600px;width:300px" data-fx="pop" data-at="0.90" data-sfx="pop"><div class="stage" data-demo="rigid" data-t0="0.9"></div><div class="lab">rigid bodies</div></div>
-    <div class="tile" style="left:810px;top:600px;width:300px" data-fx="pop" data-at="1.00" data-sfx="pop"><div class="stage" data-demo="morph" data-t0="1.0"></div><div class="lab">shape morph</div></div>
-    <div class="tile" style="left:1138px;top:600px;width:300px" data-fx="pop" data-at="1.10" data-sfx="pop"><div class="stage" data-demo="ridgelines" data-t0="1.1"></div><div class="lab">ridgelines</div></div>
-    <div class="tile" style="left:1466px;top:600px;width:300px" data-fx="pop" data-at="1.20" data-sfx="pop"><div class="stage" data-demo="uifly" data-t0="1.2"></div><div class="lab">real UI</div></div>
+    <div class="a glow" style="background:radial-gradient(circle, #ff90e8 0%, rgba(255,144,232,0) 62%)"></div>
+    <div class="a glow" style="background:radial-gradient(circle, #3b5bff 0%, rgba(59,91,255,0) 62%)"></div>
+    <div class="a glow" style="background:radial-gradient(circle, #19c3b0 0%, rgba(25,195,176,0) 60%)"></div>
+    <div class="a" style="inset:0;background:rgba(14,13,18,.35)"></div>
+    <div class="a uc" style="color:var(--sun)" data-fx="fade" data-at="0.1">02 · TITLES AND LOWER THIRDS</div>
+    <div class="a fxl" style="color:var(--paper)" data-fx="fade" data-at="0.2"><span>whip-in</span><span>character pop</span><span>lower third</span><span>gradient loop</span></div>
+    <div class="a wide" style="left:150px;top:300px;font-size:220px;color:#fff;white-space:nowrap" data-fx="whip" data-at="0.3" data-dx="1000" data-sfx="whoosh">SUMMER</div>
+    <div class="a wide" style="left:156px;top:520px;font-size:110px;color:var(--sun);white-space:nowrap" data-fx="chars" data-at="0.8" data-stagger="0.03">LAUNCH NIGHT</div>
+    <div class="a lt" data-fx="left" data-at="2.0" data-sfx="tap"><b>Your Name</b><span>Host · Sample Studio</span></div>
   </section>
 
-  <!-- 04 characters -->
-  <section class="scene ink dots" data-start="16.8">
+  <!-- 03 social clips and podcasts -->
+  <section class="scene pinkbg" data-start="14.4">
     <div class="edge"></div>
-    <div class="a wide" style="left:150px;top:200px;font-size:96px;color:var(--paper)" data-fx="up" data-at="0.2">Characters,</div>
-    <div class="a wide" style="left:150px;top:300px;font-size:96px;color:var(--paper)" data-fx="up" data-at="0.3">drawn</div>
-    <div class="a wide pk" style="left:150px;top:400px;font-size:96px" data-fx="up" data-at="0.4">in code.</div>
-    <div class="a mono" style="left:156px;top:580px;font-size:30px;line-height:1.6;color:var(--paper)" data-fx="fade" data-at="0.9">No AI art. Every pose,<br>blink and wave is<br>a function of t.</div>
-    <div class="tile" style="left:924px;top:265px;width:280px" data-fx="pop" data-at="0.5" data-sfx="pop"><div class="stage" data-demo="toon" data-t0="0.5"></div><div class="lab">3D toon + outline</div></div>
-    <div class="tile" style="left:1232px;top:265px;width:280px" data-fx="pop" data-at="0.7" data-sfx="pop"><div class="stage" data-demo="flat" data-t0="0.7"></div><div class="lab">2D flat SVG</div></div>
-    <div class="tile" style="left:1540px;top:265px;width:280px" data-fx="pop" data-at="0.9" data-sfx="pop"><div class="stage" data-demo="dithercards" data-t0="0.9"></div><div class="lab">dithered pixels</div></div>
+    <div class="a uc" style="color:var(--ink)" data-fx="fade" data-at="0.1">03 · SOCIAL CLIPS AND PODCASTS</div>
+    <div class="a fxl" style="color:var(--ink)" data-fx="fade" data-at="0.2"><span>word-synced captions</span><span>audio bars</span><span>9:16 · 4:5 · 16:9</span></div>
+    <div class="a wide" style="left:150px;top:420px;font-size:150px" data-fx="up" data-at="0.4">9:16</div>
+    <div class="a" style="left:156px;top:600px;font:800 40px/1.25 var(--lat);width:500px" data-fx="up" data-at="0.6">Captions that light up with every word.</div>
+    <div class="a reel" data-fx="up" data-at="0.3" data-dur="0.6">
+      <div class="ep">SAMPLE PODCAST · EP. 12</div>
+      <div class="hk">Why most posts get skipped</div>
+      <div class="wave" id="wave"></div>
+      <div class="cap" id="cap"></div>
+    </div>
+    <div class="sticker" style="left:1270px;top:780px;background:var(--sun);transform:rotate(-5deg)" data-fx="slam" data-at="1.6" data-base="rotate(-5deg)" data-sfx="stamp">Captions ✓</div>
   </section>
 
-  <!-- 05 render to MP4 -->
-  <section class="scene paper" data-start="21.6">
+  <!-- 04 product promos and UI demos -->
+  <section class="scene paper dots darkdots" data-start="19.2">
     <div class="edge"></div>
-    <div class="a wide" style="left:120px;top:110px;font-size:96px" data-fx="left" data-at="0.1">Render to MP4.</div>
-    <div class="box" style="left:120px;top:330px" data-fx="pop" data-at="0.4" data-sfx="tap"><b>Chromium<br>on the GPU</b><span>ANGLE Metal</span></div>
-    <div class="arrow" style="left:512px;top:412px;width:50px" data-fx="grow" data-at="0.6"></div>
-    <div class="box" style="left:572px;top:330px" data-fx="pop" data-at="0.7" data-sfx="tap"><b>Lossless<br>capture</b><span>CDP, optimizeForSpeed</span></div>
-    <div class="arrow" style="left:964px;top:412px;width:50px" data-fx="grow" data-at="0.9"></div>
-    <div class="box" style="left:1024px;top:330px" data-fx="pop" data-at="1.0" data-sfx="tap"><b>4 browsers<br>in parallel</b><span>round-robin frames</span></div>
-    <div class="arrow" style="left:1416px;top:412px;width:50px" data-fx="grow" data-at="1.2"></div>
-    <div class="box" style="left:1476px;top:330px;width:324px" data-fx="pop" data-at="1.3" data-sfx="tap"><b>ffmpeg</b><span>master · web · HQ</span></div>
-    <div class="a mono" style="left:124px;top:640px;font-size:34px;color:#8f8a9c;text-decoration:line-through" data-fx="fade" data-at="1.8">default headless Chromium: 399.6 s</div>
-    <div class="a wide" style="left:120px;top:700px;font-size:150px" data-fx="pop" data-at="2.2" data-sfx="impact">52.9 s</div>
-    <div class="sticker" style="left:760px;top:740px;background:var(--pink);transform:rotate(-4deg)" data-fx="slam" data-at="2.7" data-base="rotate(-4deg)" data-sfx="stamp">7.5× faster</div>
-    <div class="a mono" style="left:124px;top:890px;font-size:24px;color:#5c5868" data-fx="fade" data-at="3.0">56-second video · 1693 frames · every frame rendered twice and compared · Apple M4</div>
+    <div class="a uc" style="color:#c2267f" data-fx="fade" data-at="0.1">04 · PRODUCT PROMOS AND UI DEMOS</div>
+    <div class="a fxl" style="color:var(--ink)" data-fx="fade" data-at="0.2"><span>3D camera move</span><span>cursor and tap</span><span>state change</span><span>callout</span></div>
+    <div class="a wide" style="left:150px;top:340px;font-size:84px;width:560px" data-fx="up" data-at="0.3">Show the product,</div>
+    <div class="a wide" style="left:150px;top:520px;font-size:84px;width:560px;color:#c2267f" data-fx="up" data-at="0.5">not a slide.</div>
+    <div class="a" style="left:0;top:0;width:1920px;height:1080px;perspective:1800px">
+      <div class="a win" id="win">
+        <div class="bar"><i></i><i></i><i></i><b>sample-studio.app / tonight</b></div>
+        <div class="row" style="top:96px"><div><b>Vinyasa</b><em>7:00 pm · 3 spots</em></div><div class="btn" data-on="2.05"><span class="bOff">Book</span><span class="bOn">Booked ✓</span></div></div>
+        <div class="row" style="top:236px"><div><b>Yin</b><em>8:15 pm · full</em></div><div class="btn" style="background:#e3e1da;color:#5c5868">Waitlist</div></div>
+        <div class="row" style="top:376px"><div><b>Pilates</b><em>9:00 pm · 5 spots</em></div><div class="btn">Book</div></div>
+        <div class="row" style="top:516px"><div><b>Barre</b><em>9:45 pm · 8 spots</em></div><div class="btn">Book</div></div>
+      </div>
+    </div>
+    <div class="a ring" style="left:1611px;top:437px" data-fx="ring" data-at="1.95" data-sfx="tap"></div>
+    <svg class="a cursor" data-fx="move" data-x0="1500" data-y0="930" data-x1="1600" data-y1="425" data-at="1.2" data-dur="0.7" viewBox="0 0 44 54" aria-hidden="true"><path d="M4 3 L4 44 L15 34 L23 51 L31 47 L23 31 L38 31 Z" fill="#0e0d12" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>
+    <svg class="a" style="left:0;top:0" width="1920" height="1080" aria-hidden="true"><path id="callout" d="M1300 960 L1470 960 L1560 470" fill="none" stroke="#c2267f" stroke-width="5" stroke-linecap="round"/></svg>
+    <div class="a" style="left:1010px;top:935px;font:800 36px var(--lat);color:#c2267f" data-fx="fade" data-at="2.6">One tap to book</div>
   </section>
 
-  <!-- 06 fails closed -->
-  <section class="scene ink dots" data-start="26.4">
+  <!-- 05 infographics -->
+  <section class="scene ink dots" data-start="24">
     <div class="edge"></div>
-    <div class="a wide" style="left:150px;top:120px;font-size:110px;color:var(--paper)" data-fx="up" data-at="0.1">It fails <span class="pk">closed.</span></div>
-    <div class="check" style="left:156px;top:380px" data-fx="pop" data-at="0.50" data-sfx="tick"><i>✓</i>GPU, or stop</div>
-    <div class="check" style="left:156px;top:500px" data-fx="pop" data-at="0.75" data-sfx="tick"><i>✓</i>Lost WebGL context, stop</div>
-    <div class="check" style="left:156px;top:620px" data-fx="pop" data-at="1.00" data-sfx="tick"><i>✓</i>Re-rendered frames must match</div>
-    <div class="check" style="left:1020px;top:380px" data-fx="pop" data-at="1.25" data-sfx="tick"><i>✓</i>Every frame counted</div>
-    <div class="check" style="left:1020px;top:500px" data-fx="pop" data-at="1.50" data-sfx="tick"><i>✓</i>−14 LUFS, measured</div>
-    <div class="check" style="left:1020px;top:620px" data-fx="pop" data-at="1.75" data-sfx="tick"><i>✓</i>Size and bitrate checked</div>
+    <div class="a uc" style="color:var(--sun)" data-fx="fade" data-at="0.1">05 · INFOGRAPHICS AND DATA</div>
+    <div class="a fxl" style="color:var(--paper)" data-fx="fade" data-at="0.2"><span>counting number</span><span>bars from data</span><span>donut from data</span></div>
+    <div class="a mono" style="left:150px;top:250px;font-size:26px;color:var(--muted)" data-fx="up" data-at="0.3">CUPS SOLD · SAMPLE DATA</div>
+    <div class="a wide" style="left:146px;top:290px;font-size:140px;color:var(--paper);font-variant-numeric:tabular-nums" data-fx="count" data-to="128450" data-at="0.3" data-dur="1.5" data-sfx="riser">0</div>
+    <div id="qrows"></div>
+    <svg class="a" style="left:1030px;top:250px" width="480" height="480" viewBox="0 0 200 200" aria-hidden="true"><g id="donut" transform="rotate(-90 100 100)" fill="none" stroke-width="34"></g></svg>
+    <div class="a wide" style="left:1030px;top:440px;width:480px;text-align:center;font-size:96px;color:var(--paper)" data-fx="pop" data-at="1.3" data-sfx="impact"><span data-fx="count" data-to="38" data-at="1.3" data-dur="0.8">0</span>%</div>
+    <div id="legs"></div>
   </section>
 
-  <!-- 07 call to action -->
-  <section class="scene pinkbg" data-start="30.0">
+  <!-- 06 b-roll and backgrounds -->
+  <section class="scene ink" data-start="28.8">
+    <div class="edge"></div>
+    <div class="a uc" style="color:var(--sun)" data-fx="fade" data-at="0.1">06 · B-ROLL AND BACKGROUNDS</div>
+    <div class="a fxl" style="color:var(--paper)" data-fx="fade" data-at="0.2"><span>seamless loops</span><span>any resolution</span><span>under your titles</span></div>
+    <div class="panel" style="left:150px" id="pnGrad" data-fx="up" data-at="0.3">
+      <div class="a glow" style="background:radial-gradient(circle, #ff90e8 0%, rgba(255,144,232,0) 62%)"></div>
+      <div class="a glow" style="background:radial-gradient(circle, #3b5bff 0%, rgba(59,91,255,0) 62%)"></div>
+      <div class="a glow" style="background:radial-gradient(circle, #ffd400 0%, rgba(255,212,0,0) 58%)"></div>
+    </div>
+    <div class="panel" style="left:700px;border:2px solid #2d2a37" data-fx="up" data-at="0.45"><svg id="ridges" width="520" height="690" viewBox="0 0 520 690" aria-hidden="true"></svg></div>
+    <div class="panel" style="left:1250px;border:2px solid #2d2a37" data-fx="up" data-at="0.6"><canvas id="net" width="520" height="690"></canvas></div>
+    <div class="plab" style="left:150px" data-fx="fade" data-at="0.8">GRADIENT · CSS</div>
+    <div class="plab" style="left:700px" data-fx="fade" data-at="0.9">RIDGELINES · SVG</div>
+    <div class="plab" style="left:1250px" data-fx="fade" data-at="1.0">NETWORK · CANVAS</div>
+  </section>
+
+  <!-- 07 many videos from one template -->
+  <section class="scene ink" data-start="33.6">
+    <div class="edge"></div>
+    <div class="a uc" style="color:var(--sun)" data-fx="fade" data-at="0.1">07 · MANY VIDEOS FROM ONE TEMPLATE</div>
+    <div class="a fxl" style="color:var(--paper)" data-fx="fade" data-at="0.2"><span>one template</span><span>rows of data</span><span>a video per row</span></div>
+    <div class="a code" data-fx="type" data-at="0.3" data-dur="0.6" data-sfx="type">rows.map(card) // 6 rows, 6 cards</div>
+    <div id="cards"></div>
+  </section>
+
+  <!-- 08 the library -->
+  <section class="scene ink" data-start="38.4">
+    <div class="edge"></div>
+    <div class="a wide" style="left:300px;top:62px;font-size:66px;color:var(--paper)" data-fx="left" data-at="0.1">54 effects to start from</div>
+    <div class="tile" style="left:300px;top:170px;width:300px" data-fx="pop" data-at="0.30" data-sfx="pop"><div class="stage" data-demo="gpuparticles" data-t0="0.3"></div><div class="lab">200k GPU particles</div></div>
+    <div class="tile" style="left:640px;top:170px;width:300px" data-fx="pop" data-at="0.40" data-sfx="pop"><div class="stage" data-demo="clay" data-t0="0.4"></div><div class="lab">ray-marched clay</div></div>
+    <div class="tile" style="left:980px;top:170px;width:300px" data-fx="pop" data-at="0.50" data-sfx="pop"><div class="stage" data-demo="reaction" data-t0="0.5"></div><div class="lab">reaction–diffusion</div></div>
+    <div class="tile" style="left:1320px;top:170px;width:300px" data-fx="pop" data-at="0.60" data-sfx="pop"><div class="stage" data-demo="rigid" data-t0="0.6"></div><div class="lab">rigid bodies</div></div>
+    <div class="tile" style="left:300px;top:600px;width:300px" data-fx="pop" data-at="0.70" data-sfx="pop"><div class="stage" data-demo="dithercards" data-t0="0.7"></div><div class="lab">pixel character</div></div>
+    <div class="tile" style="left:640px;top:600px;width:300px" data-fx="pop" data-at="0.80" data-sfx="pop"><div class="stage" data-demo="glitch" data-t0="0.8"></div><div class="lab">RGB glitch</div></div>
+    <div class="tile" style="left:980px;top:600px;width:300px" data-fx="pop" data-at="0.90" data-sfx="pop"><div class="stage" data-demo="morph" data-t0="0.9"></div><div class="lab">shape morph</div></div>
+    <div class="tile" style="left:1320px;top:600px;width:300px" data-fx="pop" data-at="1.00" data-sfx="pop"><div class="stage" data-demo="cardflip" data-t0="1.0"></div><div class="lab">card flip</div></div>
+  </section>
+
+  <!-- 09 render to MP4 -->
+  <section class="scene paper" data-start="43.2">
+    <div class="edge"></div>
+    <div class="a wide" style="left:120px;top:100px;font-size:96px" data-fx="left" data-at="0.1">Render to MP4.</div>
+    <div class="box" style="left:120px;top:300px" data-fx="pop" data-at="0.4" data-sfx="tap"><b>Chromium<br>on the GPU</b><span>ANGLE Metal</span></div>
+    <div class="arrow" style="left:512px;top:382px;width:50px" data-fx="grow" data-at="0.6"></div>
+    <div class="box" style="left:572px;top:300px" data-fx="pop" data-at="0.7" data-sfx="tap"><b>Every frame<br>rendered twice</b><span>and compared</span></div>
+    <div class="arrow" style="left:964px;top:382px;width:50px" data-fx="grow" data-at="0.9"></div>
+    <div class="box" style="left:1024px;top:300px" data-fx="pop" data-at="1.0" data-sfx="tap"><b>4 browsers<br>in parallel</b><span>round-robin frames</span></div>
+    <div class="arrow" style="left:1416px;top:382px;width:50px" data-fx="grow" data-at="1.2"></div>
+    <div class="box" style="left:1476px;top:300px;width:324px" data-fx="pop" data-at="1.3" data-sfx="tap"><b>MP4</b><span>−14 LUFS · BT.709</span></div>
+    <div class="a mono" style="left:124px;top:600px;font-size:34px;color:#8f8a9c;text-decoration:line-through" data-fx="fade" data-at="1.8">default headless Chromium: 399.6 s</div>
+    <div class="a wide" style="left:120px;top:660px;font-size:150px" data-fx="pop" data-at="2.2" data-sfx="impact">52.9 s</div>
+    <div class="sticker" style="left:760px;top:700px;background:var(--pink);transform:rotate(-4deg)" data-fx="slam" data-at="2.7" data-base="rotate(-4deg)" data-sfx="stamp">7.5× faster</div>
+    <div class="a mono" style="left:124px;top:870px;font-size:24px;color:#5c5868" data-fx="fade" data-at="3.0">56-second 3D video · 1693 frames · every frame rendered twice and compared · Apple M4</div>
+  </section>
+
+  <!-- 10 call to action -->
+  <section class="scene pinkbg" data-start="48">
     <div class="edge"></div>
     <div class="a wide" style="left:150px;top:210px;font-size:200px" data-fx="slam" data-at="0.15" data-sfx="impact">Fork it.</div>
     <div class="a mono" style="left:158px;top:470px;font-size:46px;font-weight:700" data-fx="type" data-at="0.7" data-dur="1.1" data-sfx="type">github.com/howardc38/motion-fx-lab</div>
@@ -147,7 +268,7 @@
     <div class="sticker" style="left:880px;top:640px;background:var(--sun);transform:rotate(4deg)" data-fx="pop" data-at="2.4" data-base="rotate(4deg)" data-sfx="pop">★ Star it</div>
   </section>
 
-  <div id="hud"><span style="left:48px;top:36px">MOTION FX LAB</span><span id="hudScene" style="right:48px;top:36px">01 / 07</span><span style="left:48px;bottom:34px">FRAME = RENDER(T)</span><span id="hudTc" style="right:48px;bottom:34px">00:00:00</span></div>
+  <div id="hud"><span style="left:48px;top:36px">MOTION FX LAB</span><span id="hudScene" style="right:48px;top:36px">01 / 11</span><span style="left:48px;bottom:34px">FRAME = RENDER(T)</span><span id="hudTc" style="right:48px;bottom:34px">00:00:00</span></div>
 </div>
 </div>
 
@@ -161,24 +282,88 @@
 <script>
 (() => {
   // Music sections for music.py, in seconds (one bar = 2.4 s).
-  window.__music = [[0, "intro"], [4.8, "build"], [9.6, "drop"], [21.6, "lift"], [28.8, "final"], [32.4, "tail"]];
-  // Clips for the README's GIF, in seconds: the hook, the effects grid, the characters, the call to action.
-  window.__gif = [[0.4, 4.4], [10.3, 15.3], [17.4, 21.4], [30.2, 34.2]];
+  window.__music = [[0, "intro"], [2.4, "build"], [4.8, "drop"], [24, "lift"], [28.8, "break"], [33.6, "final"], [50.4, "tail"]];
+  // Clips for the README's GIF, in seconds: the hook, then four use cases.
+  window.__gif = [[0.4, 3.8], [5.3, 8.9], [14.8, 18.4], [19.8, 23.4], [24.4, 28.0]];
 
-  // Library tiles hosted in the scenes. Each runs on the video's clock from its own start.
+  const TAU = Math.PI * 2, eo = (p) => 1 - Math.pow(1 - p, 3), clamp = (v) => Math.max(0, Math.min(1, v));
+  const eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  let seed = 20260929;
+  const rnd = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+
+  // 01 logo
+  const lgRing = document.getElementById("lgRing"), lgFill = document.getElementById("lgFill"), lgWord = document.getElementById("lgWord"), lgShine = document.getElementById("lgShine");
+  const LC = TAU * 130;
+  lgRing.setAttribute("stroke-dasharray", `${LC} ${LC}`);
+
+  // 02 titles: three blobs, each on a closed path over 4.8 s
+  const tBlobs = [...document.querySelectorAll("#scTitles .glow")].map((el, i) => ({ el, cx: 520 + i * 520, cy: 520, rx: 300, ry: 200, ph: i * 2.1 }));
+
+  // 03 captions, timed to a script by hand; audio bars from sines
+  const words = ["The", "first", "three", "seconds", "decide", "whether", "anyone", "stays."];
+  const cap = document.getElementById("cap");
+  cap.innerHTML = words.map((w) => `<span>${w}</span>`).join(" ");
+  const capWords = [...cap.children];
+  const wave = document.getElementById("wave");
+  wave.innerHTML = "<i></i>".repeat(28);
+  const bars = [...wave.children];
+
+  // 04 camera move and callout
+  const win = document.getElementById("win"), callout = document.getElementById("callout"), CL = callout.getTotalLength();
+  callout.setAttribute("stroke-dasharray", `${CL} ${CL}`);
+
+  // 05 data
+  const quarters = [["Q1", 24310], ["Q2", 29870], ["Q3", 36540], ["Q4", 37730]];
+  const drinks = [["Brown sugar", 38, "#ff90e8"], ["Jasmine green", 27, "#ffd400"], ["Oolong milk", 21, "#3b5bff"], ["Other", 14, "#8f8a9c"]];
+  const qmax = Math.max(...quarters.map((q) => q[1]));
+  document.getElementById("qrows").innerHTML = quarters.map(([q, v], i) =>
+    `<div class="qrow" style="top:${500 + i * 92}px"><span class="q">${q}</span><div class="bar" style="width:${Math.round((v / qmax) * 560)}px" data-fx="grow" data-at="${0.6 + i * 0.15}" data-dur="0.55"></div>` +
+    `<span class="v" data-fx="count" data-to="${v}" data-at="${0.6 + i * 0.15}" data-dur="0.7">0</span></div>`).join("");
+  const DC = TAU * 80;
+  let acc = 0;
+  const segs = drinks.map(([, pct]) => { const s = { start: (acc * DC) / 100, len: (pct * DC) / 100 }; acc += pct; return s; });
+  const donut = document.getElementById("donut");
+  donut.innerHTML = drinks.map(([, , col]) => `<circle cx="100" cy="100" r="80" stroke="${col}" stroke-dasharray="0 ${DC}"/>`).join("");
+  const arcs = [...donut.children];
+  segs.forEach((s, i) => arcs[i].setAttribute("stroke-dashoffset", String(-s.start)));
+  document.getElementById("legs").innerHTML = drinks.map(([name, pct, col], i) =>
+    `<div class="leg" style="top:${330 + i * 80}px" data-fx="left" data-at="${1.4 + i * 0.12}"><i style="background:${col}"></i>${name}</div>`).join("");
+
+  // 06 b-roll: three loops, each closed over P = 2.4 s so the panel repeats with no seam
+  const P = 2.4;
+  const gBlobs = [...document.querySelectorAll("#pnGrad .glow")].map((el, i) => ({ el, cx: 130 + i * 130, cy: 345, rx: 150, ry: 200, m: [1, 1, 2][i], ph: i * 2 }));
+  const LINES = 20, PTS = 70, ridges = document.getElementById("ridges");
+  const waves = Array.from({ length: LINES }, () => Array.from({ length: 3 }, (_, k) => ({ f: (0.012 + rnd() * 0.01) * (k + 1), p: rnd() * TAU, m: 1 + (k % 2), a: 1 / (k + 1) })));
+  ridges.innerHTML = Array.from({ length: LINES }, () => `<path fill="#0e0d12" stroke="#f4f3ee" stroke-width="2"/>`).join("");
+  const rpaths = [...ridges.children];
+  const net = document.getElementById("net").getContext("2d");
+  const nodes = Array.from({ length: 46 }, () => ({ x: rnd() * 520, y: rnd() * 690, ax: 20 + rnd() * 50, ay: 20 + rnd() * 40, mx: 1 + Math.floor(rnd() * 2), my: 1 + Math.floor(rnd() * 2), px: rnd() * TAU, py: rnd() * TAU }));
+
+  // 07 one template, rows of data
+  const rows = [
+    { name: "Brown Sugar", price: 32, tag: "Best seller", color: "#c8773a" }, { name: "Jasmine Green", price: 26, tag: "Less sugar", color: "#5fbf6a" },
+    { name: "Oolong Milk", price: 30, tag: "Classic", color: "#3b5bff" }, { name: "Lychee Oolong", price: 34, tag: "New", color: "#ff90e8" },
+    { name: "Taro Latte", price: 33, tag: "Creamy", color: "#9b7bd4" }, { name: "Mango Green", price: 31, tag: "Summer", color: "#ffd400" },
+  ];
+  const light = (hex) => { const n = parseInt(hex.slice(1), 16); return 0.2126 * (n >> 16) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255) > 150; };
+  const card = (row, i, n, at, out) => `
+    <div class="a card" style="left:${150 + i * 560}px" data-fx="up" data-at="${at + i * 0.12}"${out ? ` data-out="${out}"` : ""} data-sfx="pop">
+      <div class="top" style="background:${row.color};color:${light(row.color) ? "#0e0d12" : "#fff"}">
+        <div class="name">${row.name.replace(" ", "<br>")}</div><div class="tag">${row.tag}</div><div class="rn">row ${n}</div></div>
+      <div class="price"><small>HK$</small><span data-fx="count" data-to="${row.price}" data-at="${at + 0.2 + i * 0.12}" data-dur="0.7">0</span></div>
+    </div>`;
+  document.getElementById("cards").innerHTML = rows.slice(0, 3).map((r, i) => card(r, i, i + 1, 0.5, 2.3)).join("") + rows.slice(3).map((r, i) => card(r, i, i + 4, 2.6, null)).join("");
+
+  // Library tiles hosted in a scene. Each runs on the video's clock from its own start.
   const hosted = [...document.querySelectorAll("[data-demo]")].map((el) => {
     const d = window.FX.DEMOS.find((x) => x.id === el.dataset.demo);
     if (!d) throw new Error(`unknown demo ${el.dataset.demo}`);
     const built = d.build(el);
     const scene = el.closest(".scene");
-    return { d, frame: typeof built === "function" ? built : built.frame, ready: built && built.ready, scene,
-      s0: +scene.dataset.start, t0: +(el.dataset.t0 || 0), scrub: el.dataset.scrub != null };
+    return { d, frame: typeof built === "function" ? built : built.frame, ready: built && built.ready, scene, s0: +scene.dataset.start, t0: +(el.dataset.t0 || 0) };
   });
   window.__ready = Promise.all([document.fonts.ready, ...hosted.map((h) => h.ready).filter(Boolean)]);
 
-  // Scene 02 scrubs its tile: forward, a quick rewind, forward again.
-  const scrubTau = (x) => x < 0.6 ? 0 : x < 2.4 ? (x - 0.6) * 1.6 : x < 2.9 ? 2.88 - ((x - 2.4) / 0.5) * 2.08 : 0.8 + (x - 2.9) * 1.6;
-  const head = document.getElementById("head"), tRead = document.getElementById("tRead");
   const hudScene = document.getElementById("hudScene"), hudTc = document.getElementById("hudTc");
   const starts = [...document.querySelectorAll(".scene")].map((s) => +s.dataset.start);
 
@@ -186,14 +371,61 @@
   window.__renderHooks.push((t) => {
     for (const h of hosted) {
       if (h.scene.style.visibility === "hidden") continue;
-      const local = h.scrub ? scrubTau(t - h.s0) : Math.max(0, t - h.s0 - h.t0);
+      const local = Math.max(0, t - h.s0 - h.t0);
       h.frame(local % h.d.period, local);
-      if (h.scrub) { head.style.left = `${Math.min(100, (local / 4) * 100)}%`; tRead.textContent = `t = ${local.toFixed(2)} s`; }
+    }
+    // 01 logo: the ring draws, fills, then the wordmark is unmasked from the left
+    let l = t - 4.8;
+    lgRing.setAttribute("stroke-dashoffset", String((1 - eio(clamp((l - 0.3) / 0.8))) * LC));
+    lgFill.setAttribute("opacity", String(clamp((l - 1.0) / 0.25)));
+    lgWord.style.clipPath = `inset(-30px ${(100 - 100 * eio(clamp((l - 1.5) / 0.7))).toFixed(2)}% -30px 0)`;
+    lgShine.style.backgroundPosition = `${(100 - 100 * eio(clamp((l - 2.4) / 0.9))).toFixed(2)}% 0`;
+    // 02 titles
+    l = t - 9.6;
+    for (const b of tBlobs) { const u = (l / 4.8) * TAU; b.el.style.left = `${b.cx + b.rx * Math.cos(u + b.ph)}px`; b.el.style.top = `${b.cy + b.ry * Math.sin(u + b.ph)}px`; }
+    // 03 captions and audio bars
+    l = t - 14.4;
+    capWords.forEach((w, i) => { const at = 0.9 + i * 0.3; w.classList.toggle("on", l >= at + 0.3); w.classList.toggle("now", l >= at && l < at + 0.3); });
+    bars.forEach((b, i) => { const v = Math.abs(Math.sin(0.9 * i + 7.1 * l) * Math.sin(0.37 * i + 3.3 * l)); b.style.height = `${(14 + 110 * v * clamp(l / 0.4)).toFixed(1)}px`; });
+    // 04 the window turns to face the camera; the callout draws after the tap
+    l = t - 19.2;
+    const turn = eio(clamp((l - 0.2) / 1.0));
+    win.style.transform = `rotateY(${(-26 * (1 - turn)).toFixed(2)}deg) rotateX(${(8 * (1 - turn)).toFixed(2)}deg) scale(${(0.92 + 0.08 * turn).toFixed(4)})`;
+    callout.setAttribute("stroke-dashoffset", String((1 - eio(clamp((l - 2.3) / 0.5))) * CL));
+    // 05 donut
+    l = t - 24;
+    const f = eo(clamp((l - 0.5) / 1.3)) * DC;
+    segs.forEach((s, i) => arcs[i].setAttribute("stroke-dasharray", `${Math.max(0, Math.min(s.len, f - s.start)).toFixed(2)} ${DC}`));
+    // 06 b-roll loops
+    l = t - 28.8;
+    if (l >= -0.6 && l < 5.4) {
+      const u = ((l % P + P) % P) / P * TAU;
+      for (const b of gBlobs) { b.el.style.left = `${b.cx + b.rx * Math.cos(b.m * u + b.ph)}px`; b.el.style.top = `${b.cy + b.ry * Math.sin(b.m * u + b.ph)}px`; }
+      for (let i = 0; i < LINES; i++) {
+        const base = 170 + i * 24;
+        let d = "";
+        for (let j = 0; j <= PTS; j++) {
+          const x = -10 + (j / PTS) * 540, env = Math.exp(-Math.pow((x - 260) / 150, 2));
+          let n = 0;
+          for (const w of waves[i]) n += w.a * Math.sin(w.f * x + w.p + w.m * u);
+          d += `${j ? "L" : "M"}${x.toFixed(1)} ${(base - env * (30 + 60 * Math.max(0, n))).toFixed(1)}`;
+        }
+        rpaths[i].setAttribute("d", `${d}L540 700L-10 700Z`);
+      }
+      net.fillStyle = "#0e0d12"; net.fillRect(0, 0, 520, 690);
+      const pos = nodes.map((n) => [n.x + n.ax * Math.sin(n.mx * u + n.px), n.y + n.ay * Math.sin(n.my * u + n.py)]);
+      net.lineWidth = 1.5;
+      for (let i = 0; i < pos.length; i++) for (let j = i + 1; j < pos.length; j++) {
+        const dd = Math.hypot(pos[i][0] - pos[j][0], pos[i][1] - pos[j][1]);
+        if (dd < 130) { net.strokeStyle = `rgba(${i % 3 ? "59,91,255" : "255,144,232"},${(1 - dd / 130).toFixed(3)})`; net.beginPath(); net.moveTo(pos[i][0], pos[i][1]); net.lineTo(pos[j][0], pos[j][1]); net.stroke(); }
+      }
+      net.fillStyle = "#f4f3ee";
+      for (const [x, y] of pos) { net.beginPath(); net.arc(x, y, 3, 0, TAU); net.fill(); }
     }
     const i = starts.filter((s) => t >= s).length;
     hudScene.textContent = `${String(i).padStart(2, "0")} / ${String(starts.length).padStart(2, "0")}`;
-    const f = Math.round(t * 30);   // a 30 fps timecode; t = frame / 30 is not exact in floating point
-    hudTc.textContent = `${String(Math.floor(f / 1800)).padStart(2, "0")}:${String(Math.floor(f / 30) % 60).padStart(2, "0")}:${String(f % 30).padStart(2, "0")}`;
+    const fr = Math.round(t * 30);   // a 30 fps timecode; t = frame / 30 is not exact in floating point
+    hudTc.textContent = `${String(Math.floor(fr / 1800)).padStart(2, "0")}:${String(Math.floor(fr / 30) % 60).padStart(2, "0")}:${String(fr % 30).padStart(2, "0")}`;
   });
 })();
 </script>

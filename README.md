@@ -2,9 +2,9 @@
 
 **Motion graphics as plain web pages, rendered to MP4 you can trust.** 54 ready-made effects in HTML, CSS, SVG, Canvas, three.js, GLSL and Matter.js, and a recorder that turns any timeline page into an MP4. On our 3D-heavy test video it was 7.5× faster than a default headless browser, while rendering every frame twice and comparing the two before it gives you a file.
 
-[![Highlights from the intro video (no sound). Click for the full 35-second video with sound.](media/intro.gif)](media/intro.mp4)
+[![Highlights from the intro video (no sound). Click for the full 53-second video with sound.](media/intro.gif)](media/intro.mp4)
 
-▶ **[Full intro video, with sound](media/intro.mp4)** (35 s, rendered by this repo) · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · **Licence: [0BSD](LICENSE)**, no conditions · No build step · No AI-generated images or sound
+▶ **[Full intro video, with sound](media/intro.mp4)** (53 s, rendered by this repo) · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · **Licence: [0BSD](LICENSE)**, no conditions · No build step · No AI-generated images or sound
 
 GitHub does not play video files from a repository inline, so the loop above is a GIF. The gallery plays the real video.
 
@@ -23,7 +23,7 @@ Describe the video you want to an AI coding assistant, or write it yourself. It 
 </tr>
 </table>
 
-The intro video at the top is the fifth example: a product intro. Every example is one HTML file with its data or text at the top. Change it and run `bash video/build.sh examples/infographic.html` for a new MP4. The shops and studio in the examples are fictional, and their numbers are sample data.
+The intro video at the top walks through seven uses in 53 seconds: logo animation, titles and lower thirds, social clips and podcasts, product and UI demos, infographics, B-roll, and many videos from one template. Every example is one HTML file with its data or text at the top. Change it and run `bash video/build.sh examples/infographic.html` for a new MP4. The shops and studio in the examples are fictional, and their numbers are sample data.
 
 ## Sound familiar?
 
@@ -60,22 +60,22 @@ bash video/build.sh video/intro.html    # writes media/intro.mp4, intro_hq.mp4, 
 bash video/build.sh examples/reel.html  # any example, or a page of your own
 ```
 
-Rendering needs macOS on Apple silicon for the GPU path, plus Node, Python 3 (standard library only) and ffmpeg with libx264. Tested with Node 26.8.1, Python 3.12.10, ffmpeg 8.1.1 and Playwright 1.59.1. Without a Metal GPU, render on SwiftShader with `RECORD_ARGS="--cpu --workers 2" bash video/build.sh video/intro.html`: on the same M4 the intro took 46.2 s plus 47.7 s to verify, against 10.8 s plus 10.5 s on the GPU with 4 browsers.
+Rendering needs macOS on Apple silicon for the GPU path, plus Node, Python 3 (standard library only) and ffmpeg with libx264. Tested with Node 26.8.1, Python 3.12.10, ffmpeg 8.1.1 and Playwright 1.59.1. Without a Metal GPU, render on SwiftShader with `RECORD_ARGS="--cpu --workers 2" bash video/build.sh video/intro.html`: on the same M4 the intro took 52.8 s plus 50.4 s to verify, against 17.4 s plus 17.4 s on the GPU with 4 browsers.
 
 The build overwrites the files in `media/`, which are the ones this repo ships.
 
 ## Proof
 
-Measured on an Apple M4 laptop on 2026-09-28; the two `media/intro.mp4` rows on 2026-09-29, after the intro gained the new effects.
+Measured on an Apple M4 laptop on 2026-09-28; the two `media/intro.mp4` rows on 2026-09-29, after the intro was rebuilt around seven uses.
 
 | | |
 |---|---|
 | 56-second, 1,693-frame promo with heavy 3D, default headless Chromium (one browser, SwiftShader, `page.screenshot`) | 399.6 s |
 | The same video, this recorder, 4 browsers, every frame rendered twice and compared | **52.9 s** (again: 51.5 s), of which 17.6 s is the first render and 16.8 s the second |
 | Before full verification was added, with an 8-frame spot check instead, 1 / 4 / 6 / 8 browsers | 71.0 / 26.4 / 28.5 / 31.9 s |
-| `media/intro.mp4`, 1,045 frames: render, then the verifying second render | 10.3 s + 10.3 s, all 1,045 frames matching on the first attempt |
+| `media/intro.mp4`, 1,585 frames: render, then the verifying second render | 17.4 s + 17.4 s, all 1,585 frames matching on the first attempt |
 | Pixels identical between the fast CDP capture and `page.screenshot` | 8 of 8 test frames |
-| Intro audio and colour | −14.1 LUFS integrated, −1.9 dBTP true peak, AAC 126 kbps; BT.709, tagged |
+| Intro audio and colour | −14.1 LUFS integrated, −1.7 dBTP true peak, AAC 126 kbps; BT.709, tagged |
 
 The 56-second promo is one of ours and is not in this repo. Beyond 4 browsers there is no gain, because a single ffmpeg process decodes every screenshot and writes the master.
 
@@ -180,9 +180,9 @@ Remotion and HyperFrames checked on 2026-09-28 against their licence files and d
 
 ## Known issue
 
-Parallel renders used to disagree now and then; about half of the intro renders were rejected. The cause was SVG text. Chromium lays SVG text out for its on-screen size and did not always lay it out again when an ancestor's CSS transform changed, so a label laid out before a `pop` (which starts at scale 0.6) kept that size in one browser and not in another. The one earlier case we measured, a label at 95 units instead of 158, is 0.60 of its size. Rendering 10.0 s and then 11.4 s of the intro in one browser reproduced it every time. `video/engine.js` now sets `text-rendering: geometricPrecision` on SVG text in the stage; that reproduction then matches a fresh render, and the next intro render verified on its first attempt.
+Parallel renders used to disagree now and then; about half of the intro renders were rejected. The cause was SVG text. Chromium lays SVG text out for its on-screen size and did not always lay it out again when an ancestor's CSS transform changed, so a label laid out before a `pop` (which starts at scale 0.6) kept that size in one browser and not in another. The one earlier case we measured, a label at 95 units instead of 158, is 0.60 of its size. Rendering 10.0 s and then 11.4 s of the intro as it was in commit 83b2727, in one browser, reproduced it every time. `video/engine.js` now sets `text-rendering: geometricPrecision` on SVG text in the stage; that reproduction then matches a fresh render, and the next intro render verified on its first attempt.
 
-One smaller difference remains. In 2 of the 3 intro renders after the fix, one frame (326) differed along a one-pixel column at the edge of a tile that was scaling in: 354 pixels, at most 14 levels apart, just over the 0.01 % limit. Rendering that frame in a single browser after four different histories did not reproduce it. The recorder rejects such a render and `build.sh` renders again, up to 5 times. If you know the cause, please open an issue.
+One smaller difference remains. In 2 of the 3 renders of that intro after the fix, one frame (326) differed along a one-pixel column at the edge of a tile that was scaling in: 354 pixels, at most 14 levels apart, just over the 0.01 % limit. Rendering that frame in a single browser after four different histories did not reproduce it. The recorder rejects such a render and `build.sh` renders again, up to 5 times. If you know the cause, please open an issue.
 
 ## Limits
 
