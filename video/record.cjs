@@ -182,9 +182,9 @@ async function video(file, out, fps, n, gpu, verify) {
   let note = "not verified (--no-verify)";
   if (verify) {
     // Render everything again with every frame on a different browser, and compare all frames.
-    // Parallel browsers have disagreed: one kept SVG labels at a stale size after a scale animation
-    // (fixed in engine.js), and a tile's edge now and then differs while it scales in (see README).
-    // Sampling missed the first; a full second pass cannot.
+    // Parallel browsers have disagreed: one kept SVG labels at a stale size after a scale animation, and
+    // a tile's edge differed while it scaled in (both fixed in engine.js; see README). Sampling missed the
+    // first; a full second pass cannot.
     const again = out.replace(/(\.\w+)?$/, ".verify$1");
     try {
       const sec2 = await renderPass(ws, again, fps, dur, count, 1, `${name} verify`);
@@ -250,7 +250,7 @@ async function video(file, out, fps, n, gpu, verify) {
       fs.writeFileSync(path.join(dir, `t${t.toFixed(2).padStart(6, "0")}.png`), await shot(w, t));
     }
   } else if (mode === "cues") {
-    const cues = await w.page.evaluate(() => ({ dur: window.__DUR, cues: window.__cues(), music: window.__music || null, gif: window.__gif || null }));
+    const cues = await w.page.evaluate(() => ({ dur: window.__DUR, cues: window.__cues(), music: window.__music || null, gif: window.__gif || null, poster: window.__poster ?? null }));
     fs.writeFileSync(rest[0], JSON.stringify(cues, null, 1));
     console.error(`${cues.cues.length} cues`);
   } else if (mode === "measure") {

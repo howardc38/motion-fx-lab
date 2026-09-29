@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Render a timeline page to media/<name>.mp4 (web, at most 15 MB), media/<name>_hq.mp4,
 # media/<name>.jpg and, when the page declares window.__gif, media/<name>.gif.
-#   bash video/build.sh intro.html          (or video/intro.html; POSTER_AT=12 sets the poster, in seconds)
+#   bash video/build.sh intro.html          (or video/intro.html; the poster is at window.__poster seconds,
+#                                            POSTER_AT=12 overrides it, and a third of the way in is the default)
 #   RECORD_ARGS="--cpu --workers 2" bash video/build.sh intro.html   (no Metal GPU: render on SwiftShader)
 set -euo pipefail
 ARG=${1:-intro.html}
@@ -21,8 +22,9 @@ ffmpeg -y -loglevel error -i "$WORK/music.wav" -i "$WORK/sfx.wav" \
   -ar 48000 -c:a pcm_f32le "$WORK/mix.wav"
 
 # The recorder renders every frame twice on different browsers and exits with 3 if any frame
-# differs. Now and then one frame differs along a tile's edge while it scales in (see README), so a
-# mismatch is rendered again; any other failure stops here. Mismatching frames stay in video/mismatch/.
+# differs. The two causes found so far are fixed in engine.js (see README); a mismatch is still rendered
+# again, so a cause not yet met cannot ship a wrong frame. Any other failure stops here. Mismatching
+# frames stay in video/mismatch/.
 for attempt in 1 2 3 4 5; do
   status=0
   node record.cjs video "$PAGE" "$WORK/master.mkv" ${RECORD_ARGS:-} || status=$?
@@ -32,5 +34,6 @@ for attempt in 1 2 3 4 5; do
   echo "render attempt $attempt did not verify; rendering again" >&2
 done
 
-python3 deliver.py "$WORK/master.mkv" "$WORK/mix.wav" ../media "$NAME" ${POSTER_AT:-}
+POSTER=${POSTER_AT:-$(python3 -c 'import json, sys; p = json.load(open(sys.argv[1])).get("poster"); print("" if p is None else p)' "$WORK/cues.json")}
+python3 deliver.py "$WORK/master.mkv" "$WORK/mix.wav" ../media "$NAME" ${POSTER:-}
 python3 gif.py "$WORK/cues.json" "../media/$NAME.mp4" "../media/$NAME.gif"

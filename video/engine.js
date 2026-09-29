@@ -24,6 +24,8 @@
   const DEFAULT_DUR = { up: 0.5, down: 0.5, fade: 0.4, pop: 0.42, left: 0.5, right: 0.5, zoom: 0.5, type: 1, count: 1.4, mark: 0.45, grow: 0.35, move: 0.6, ring: 0.5, chars: 0.34, slam: 0.38, whip: 0.45, blurin: 0.6, sweep: 0.9, orb: 1.2, flash: 0.35, scan: 0.8, shake: 0.5 };
   const FX = new Set(["up", "down", "left", "right", "fade", "zoom", "pop", "grow", "mark", "type", "count", "move", "ring",
     "chars", "slam", "drift", "spin", "bgpan", "shake", "pulse", "float", "flash", "blink", "pathtext", "whip", "sweep", "orb", "blurin", "scan"]);
+  // The effects that scale the element they animate.
+  const SCALES = new Set(["pop", "zoom", "slam", "ring", "orb", "blurin", "drift", "pulse", "grow"]);
   let filterId = 0;
   const scenes = [...stage.querySelectorAll(".scene")].map((el) => ({ el, start: +el.dataset.start, edge: el.querySelector(".edge") }));
 
@@ -46,6 +48,12 @@
       if (it.fx === "type") it.text = Array.from(el.textContent.trim());
       if (it.fx === "count") it.to = +d.to;
       if (it.fx === "move") Object.assign(it, { x0: +d.x0, y0: +d.y0, x1: +d.x1, y1: +d.y1 });
+      // Scaling an element that holds a canvas, a video or a hosted tile gave one browser different pixels
+      // from another: a tile's edge while it scaled in (intro frames 1258 and 1264, five renders in five),
+      // and, with will-change: transform, the SVG text inside a tile at rest (frames 1297 to 1365 on
+      // SwiftShader). Chromium draws such content on a layer of its own, at a scale that depended on what
+      // that browser had drawn before. So these elements are never scaled: they slide and fade instead.
+      it.noScale = SCALES.has(it.fx) && !!el.querySelector("canvas, video, [data-demo]");
       if (it.fx === "whip") {
         let defs = document.getElementById("__fxdefs");
         if (!defs) {
@@ -186,6 +194,7 @@
           break;
         }
       }
+      if (it.noScale && tf) tf = `translateY(${((1 - e) * 40).toFixed(2)}px)`;
       if (it.out != null) op *= 1 - eo(clamp((local - it.out) / 0.3));
       el.style.opacity = op;
       if (tf || it.base) el.style.transform = `${tf} ${it.base}`.trim();
