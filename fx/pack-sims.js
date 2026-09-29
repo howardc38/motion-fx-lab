@@ -15,7 +15,7 @@
   const RD_F = 0.0545, RD_K = 0.062;   // "coral" feed and kill rates, with Du = 1, Dv = 0.5, dt = 1
   const VERT = "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }";
 
-  demo({ id: "reaction", gl: true, name: "Reaction–diffusion growing from text", status: "add", stacks: ["three", "glsl"],
+  demo({ id: "reaction", gl: true, name: "Reaction–diffusion growing from text", kind: "sim", stacks: ["three", "glsl", "canvas"],
     chips: ["Gray–Scott on the GPU", "ping-pong half-float targets", `fixed ${RD_SPS} steps/s`], grade: "B",
     purpose: "A word grows into coral: two chemicals react and diffuse on a 240×300 grid seeded by the letters. Organic texture from maths, no footage.",
     seen: SEEN, period: RD_PERIOD, hero: 6,
@@ -121,8 +121,8 @@
   const FLOOR_L = 540, FLOOR_T = 24, HINGE = { x: -8, y: 500 }, TILT = 0.6, TILT_AT = 5.0;
   const tiltAt = (t) => TILT * (inOut(lin(TILT_AT, TILT_AT + 1.2, t)) - inOut(lin(7.1, 7.7, t)));
 
-  demo({ id: "rigid", name: "Rigid bodies with Matter.js", status: "add", stacks: ["physics", "canvas"],
-    chips: ["Matter.js (new library)", "fixed 240 Hz steps", "Canvas 2D"], grade: "C",
+  demo({ id: "rigid", name: "Rigid bodies with Matter.js", kind: "sim", stacks: ["physics", "canvas"],
+    chips: ["Matter.js 0.20.0", "fixed 240 Hz steps", "Canvas 2D"], grade: "C",
     purpose: "Letters and shapes fall, collide and pile up with real weight, then the floor tips and everything slides away. Physics you never keyframe by hand.",
     seen: SEEN, period: RB_PERIOD, hero: 4.6,
     build(s) {

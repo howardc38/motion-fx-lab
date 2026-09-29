@@ -1,19 +1,19 @@
 # Motion FX Lab
 
-**Motion graphics as plain web pages, rendered to MP4 you can trust.** 54 ready-made effects in HTML, CSS, SVG, Canvas, three.js, GLSL and Matter.js, and a recorder that renders any timeline page 7.5× faster than a default headless browser while rendering every frame twice and comparing the two before it gives you a file.
+**Motion graphics as plain web pages, rendered to MP4 you can trust.** 54 ready-made effects in HTML, CSS, SVG, Canvas, three.js, GLSL and Matter.js, and a recorder that turns any timeline page into an MP4. On our 3D-heavy test video it was 7.5× faster than a default headless browser, while rendering every frame twice and comparing the two before it gives you a file.
 
 [![Highlights from the intro video (no sound). Click for the full 35-second video with sound.](media/intro.gif)](media/intro.mp4)
 
-▶ **[Full intro video, with sound](media/intro.mp4)** (35 s, rendered by this repo) · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · **Licence: [0BSD](LICENSE)**, no conditions · No build step · No generative AI
+▶ **[Full intro video, with sound](media/intro.mp4)** (35 s, rendered by this repo) · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · **Licence: [0BSD](LICENSE)**, no conditions · No build step · No AI-generated images or sound
 
 GitHub does not play video files from a repository inline, so the loop above is a GIF. The gallery plays the real video.
 
 ## Sound familiar?
 
 - **Changing one word means another export.** Your motion graphics live in a desktop app. You cannot diff them, review them in a pull request or render ten variants from a script.
-- **Code-to-video frameworks want React, and a licence.** Remotion is built on React, and companies of more than three people need a paid licence. Several other tools have stopped getting updates.
+- **Code-to-video frameworks want React, and a licence.** Remotion is built on React, and companies of more than three people need a paid licence.
 - **Headless Chrome renders your 3D on a CPU.** By default Playwright's headless Chromium runs WebGL on SwiftShader, a software GPU. On our test scene that was 99.8 ms a frame instead of 4.0 ms on the real GPU.
-- **Browser capture fails silently.** A lost WebGL context screenshots as a blank frame, with no error. Parallel browsers now and then draw web-font text wrongly for part of a run. A spot check of 8 frames missed that; we only caught it by comparing whole renders.
+- **Browser capture fails silently.** A lost WebGL context screenshots as a blank frame, with no error. Parallel browsers can disagree too: after a scale animation, one of ours kept laying out SVG labels at 0.6 of their size. A spot check of 8 frames missed that; we only caught it by comparing whole renders.
 - **Colours shift in the browser.** Converting screenshots to video with ffmpeg's defaults uses the BT.601 matrix and writes no colour tags, and browsers read untagged HD video as BT.709. Our pink `#ff90e8` played back as `#ff9fe8`.
 - **The upload comes out quiet, or gets rejected.** Our first mix measured −21 LUFS, far quieter than the −14 LUFS convention, and used AAC at 160 kbps, over Meta's 128 kbps limit for Reels. ffmpeg's `loudnorm` silently switched to dynamic compression when a linear gain would clip.
 - **Chinese, Japanese and Korean text break common effects.** Bundled 3D fonts have no CJK glyphs, and halftone or glitch effects wipe out dense strokes.
@@ -28,7 +28,7 @@ GitHub does not play video files from a repository inline, so the loop above is 
 | Silent wrong frames | The whole video is rendered twice, each frame on a different browser, and every frame is compared. The recorder also stops on a CPU fallback, a lost WebGL context, a page error or a font that did not load. |
 | Colour shifts | Screenshots are converted with the BT.709 matrix and every file is tagged BT.709; the checks refuse an untagged file. |
 | Quiet or rejected uploads | Audio is limited, then brought to −14 LUFS by a linear gain, and its loudness and true peak are measured on the final file. Video and audio are checked against Meta's Reels limits. |
-| CJK text | Particle text is drawn on a canvas and sampled, so it works in any script. Two tiles show which effects not to put on dense Chinese text. |
+| CJK text | Particle text is drawn on a canvas and sampled, so it works in any script. Two tiles marked “Don't” show which effects not to put on dense Chinese text. |
 | Licence worries | Code under 0BSD: use it for anything, no attribution needed. Music and sound effects are synthesised in code, so there is no sample to license. |
 
 ## Quick start
@@ -55,7 +55,7 @@ Measured on an Apple M4 laptop on 2026-09-28; the two `media/intro.mp4` rows on 
 | 56-second, 1,693-frame promo with heavy 3D, default headless Chromium (one browser, SwiftShader, `page.screenshot`) | 399.6 s |
 | The same video, this recorder, 4 browsers, every frame rendered twice and compared | **52.9 s** (again: 51.5 s), of which 17.6 s is the first render and 16.8 s the second |
 | Before full verification was added, with an 8-frame spot check instead, 1 / 4 / 6 / 8 browsers | 71.0 / 26.4 / 28.5 / 31.9 s |
-| `media/intro.mp4`, 1,045 frames: render, then the verifying second render | 10.8 s + 10.5 s, all 1,045 frames matching (one earlier attempt rejected; see Known issue) |
+| `media/intro.mp4`, 1,045 frames: render, then the verifying second render | 10.3 s + 10.3 s, all 1,045 frames matching on the first attempt |
 | Pixels identical between the fast CDP capture and `page.screenshot` | 8 of 8 test frames |
 | Intro audio and colour | −14.1 LUFS integrated, −1.9 dBTP true peak, AAC 126 kbps; BT.709, tagged |
 
@@ -66,7 +66,7 @@ The 56-second promo is one of ours and is not in this repo. Beyond 4 browsers th
 An effect never keeps state between frames that `t` does not decide. It reads `t` and sets what it draws:
 
 ```js
-demo({ id: "count", period: 3.2, hero: 2.4, /* name, chips, purpose… */
+demo({ id: "count", kind: "type", period: 3.2, hero: 2.4, /* name, stacks, chips, purpose… */
   build(stage) {
     stage.innerHTML = `<div class="cnt-n">HK$<span>0</span></div>`;
     const n = stage.querySelector("span");
@@ -101,7 +101,7 @@ Then run `bash video/build.sh video/yours.html`.
 
 | Path | What it is |
 |---|---|
-| `index.html` | The gallery: every effect running live, with filters, the stack table and render measurements |
+| `index.html` | The gallery: every effect running live, filtered by kind or by how it is drawn, with the stack table and render measurements |
 | `fx/demos.js`, `fx/demos.css` | The core effects, each `build(stage)` returning `frame(t, abs)`, their styles, and the helpers the packs share (`window.FX`) |
 | `fx/pack-dither.js`, `fx/pack-2d.js`, `fx/pack-shaders.js`, `fx/pack-sims.js` | Effect packs: the dithered character, 2D motion and generative patterns, GLSL shaders, and the two simulations. Each registers its tiles with `FX.demo` |
 | `fx/font-helvetiker-subset.js` | 14 glyphs of Helvetiker Bold for the extruded 3D text |
@@ -115,18 +115,18 @@ Then run `bash video/build.sh video/yours.html`.
 
 ## The effects
 
-54 effects: 48 in the gallery, plus two redesigns of a code-drawn mascot and four scenes with a dithered pixel character. Each tile says how it is drawn and gives a grade: **A** needs nothing beyond this stack, **A+** loads one more three.js add-on file, **B** is a custom shader, **C** needs a new library (only the rigid bodies, which use Matter.js).
+54 effects: 46 in the gallery, most striking first, and 8 in its character section. Each card gives its kind, how it is drawn and what it needs beyond the page: the base stack only (32 effects), one more three.js r128 add-on file (7), a custom shader (12), or one more library (only the rigid bodies, which use Matter.js).
 
-- **Type and layout:** whip-in letters with motion blur, character pops, a 3-second headline hook, word-synced captions, typewriter, highlighter, counting numbers, sticker labels, variable-font kinetic type.
-- **UI and diagrams:** light sweep, frosted glass, a camera move over a UI card, blueprint callouts on a dot grid, a self-drawing flow chart, a self-drawing data chart, a 3D card-flip grid, a 24-hour countdown ring, scan-and-check chips.
-- **Motion principles:** squash and stretch drawn next to its timing graph, a polar shape morph on a spring, beat sync.
-- **Generative 2D:** Bauhaus tile rhythm, noise ridgelines, a code-rain backdrop, a flowing gradient, film grain.
-- **3D and shaders (three.js r128):** lit 3D type with soft shadows, rays with bloom, fbm smoke, particles that assemble into words, a noise dissolve patched into a lit material, chrome with a painted environment map, a line tunnel, liquid-glass refraction, ray-marched clay with smooth blending, an endless grid by domain repetition, one object in five styles (Bayer dither, halftone, ASCII, pixel sort, risograph) and 200,000 particles moved on the GPU.
-- **Simulations:** reaction–diffusion (Gray–Scott) growing out of a word, and rigid bodies falling and stacking, stepped at a fixed 240 Hz.
-- **Characters:** a halftone mascot built from primitives, a 3D toon version with outlines, a flat SVG version with a per-part rig, and a pixel version drawn in flat colour and light and dithered to three inks, which stands, fans out cards, peeks over a logo in a coin rain and narrates from a badge.
-- **What not to do:** halftone and RGB-split glitch on dense Chinese text, to show how the strokes disappear.
+- **3D and shaders (12, three.js r128):** 200,000 particles moved on the GPU, ray-marched clay with smooth blending, liquid-glass refraction, an endless grid by domain repetition, chrome with a painted environment map, one object in five styles (Bayer dither, halftone, ASCII, pixel sort, risograph), particles that assemble into words, lit 3D type with soft shadows, rays with bloom and dust, a noise dissolve patched into a lit material, fbm smoke, a line tunnel.
+- **Simulations (2):** reaction–diffusion (Gray–Scott) growing out of a word, and rigid bodies falling and stacking, stepped at a fixed 240 Hz.
+- **Characters (8):** an agent character dithered to three inks, peeking over a logo in a coin rain, fanning out cards, narrating from a badge and standing; the same agent toon-shaded with outlines and drawn as flat SVG with a per-part rig; and a halftoned figure built from spheres and cylinders, bouncing and standing.
+- **Motion (4):** a 0.5 s wipe, beat sync, squash and stretch next to its timing graph, a polar shape morph on a spring.
+- **Backgrounds (7):** film grain, glow orbs, a low-contrast flowing gradient, a warm grade with a soft glow, Bauhaus tile rhythm, noise ridgelines, a code-rain backdrop.
+- **UI and charts (9):** light sweep, frosted glass, scan and check, a camera move over a UI card, blueprint callouts on a dot grid, a self-drawing flow chart, a self-drawing data chart, a 3D card-flip grid, a 24-hour countdown ring.
+- **Type (10):** whip-in letters with motion blur, character pops, highlighter, counting numbers, typewriter, a red flash with a shake and a stamp, a 3-second headline hook, word-synced captions, sticker labels, variable-font kinetic type.
+- **Don't (2):** halftone and RGB-split glitch on dense Chinese text, to show how the strokes disappear.
 
-The first 37 tiles were built for short promo videos about an Instagram DM assistant for insurance agents in Hong Kong, which is why the sample text talks about DMs, drafts and savings plans. Swap in your own words.
+The first 36 effects were built for short promo videos about an Instagram DM assistant for insurance agents in Hong Kong, which is why the sample text talks about DMs, drafts and savings plans. Swap in your own words.
 
 ## Effects we learnt from other people's videos
 
@@ -162,7 +162,9 @@ Remotion and HyperFrames checked on 2026-09-28 against their licence files and d
 
 ## Known issue
 
-With several browsers rendering in parallel, one of them now and then draws web-font text wrongly for a stretch of a run. In one case an SVG label was laid out at 95 units instead of 158 and not painted at all, while `document.fonts` reported its face as loaded. About half of the intro renders on our machine were rejected this way. It happened again after the shape-morph tile joined the intro: the first render was rejected with 97 frames differing, and in frame 323, which we inspected, one browser had drawn that tile's SVG labels smaller and out of place while every path matched. The second attempt verified, and its frame 323 has the labels where they belong. The cause is not found. Ruled out so far: waiting for fonts before each capture, loading every used face by name, CPU rasterisation of page content, re-laying out SVG text before recording, and loading the exact font weight. The two-render comparison means such a render is never delivered, and `build.sh` renders again, up to 5 times. If you know the cause, please open an issue.
+Parallel renders used to disagree now and then; about half of the intro renders were rejected. The cause was SVG text. Chromium lays SVG text out for its on-screen size and did not always lay it out again when an ancestor's CSS transform changed, so a label laid out before a `pop` (which starts at scale 0.6) kept that size in one browser and not in another. The one earlier case we measured, a label at 95 units instead of 158, is 0.60 of its size. Rendering 10.0 s and then 11.4 s of the intro in one browser reproduced it every time. `video/engine.js` now sets `text-rendering: geometricPrecision` on SVG text in the stage; that reproduction then matches a fresh render, and the next intro render verified on its first attempt.
+
+One smaller difference remains. In 2 of the 3 intro renders after the fix, one frame (326) differed along a one-pixel column at the edge of a tile that was scaling in: 354 pixels, at most 14 levels apart, just over the 0.01 % limit. Rendering that frame in a single browser after four different histories did not reproduce it. The recorder rejects such a render and `build.sh` renders again, up to 5 times. If you know the cause, please open an issue.
 
 ## Limits
 
@@ -175,7 +177,7 @@ With several browsers rendering in parallel, one of them now and then draws web-
 
 ## Help wanted
 
-- **The parallel web-font flake above.** With a root cause, the verifying second render could shrink to a spot check, halving render time.
+- **The one-pixel edge difference above**, which still makes the recorder render again now and then.
 - **A GPU path on Linux**, so renders can run on a server.
 - **Tests and CI** for the recorder's checks.
 - **More effects**, as long as each one stays a pure function of `t`.

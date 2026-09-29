@@ -91,7 +91,7 @@
     A.brows.forEach((b, i) => { b.position.y = 0.55 - 0.16 * k; b.rotation.z = Math.PI * 0.1 + (i ? -0.25 : 0.25) * k; });
   };
 
-  demo({ id: "dithercharacter", gl: true, host: "mascotRow2", name: "Dithered pixel character", status: "add", stacks: ["three", "glsl"],
+  demo({ id: "dithercharacter", gl: true, host: "mascotRow2", name: "Dithered pixel character", kind: "character", stacks: ["three", "glsl", "canvas"],
     chips: ["two-pass render: colour + light", "4×4 Bayer dither", "nearest-neighbour pixels"], grade: "B", seen: SEEN,
     purpose: "The same agent in three-colour pixels: a flat colour for each part, black dots for shadow and white dots for light. It turns, narrows its eyes and whispers.",
     period: 5, hero: 2.8,
@@ -119,7 +119,7 @@
       };
     } });
 
-  demo({ id: "dithercards", gl: true, host: "mascotRow2", name: "Holds up a fan of cards", status: "add", stacks: ["three", "glsl", "css"],
+  demo({ id: "dithercards", gl: true, host: "mascotRow2", name: "Holds up a fan of cards", kind: "character", stacks: ["three", "glsl", "css", "canvas"],
     chips: ["dithered 3D character", "crisp CSS cards in front", "staggered fan"], grade: "B", seen: SEEN,
     purpose: "Pixel character, sharp interface: the agent raises a fan of step cards, so the product's steps arrive in the character's hands.",
     period: 5, hero: 2.4,
@@ -151,7 +151,7 @@
       };
     } });
 
-  demo({ id: "ditherpeek", gl: true, host: "mascotRow2", name: "Peeks over the logo in a coin rain", status: "add", stacks: ["three", "glsl", "css"],
+  demo({ id: "ditherpeek", gl: true, host: "mascotRow2", name: "Peeks over the logo in a coin rain", kind: "character", stacks: ["three", "glsl", "css", "canvas"],
     chips: ["dithered 3D", "tumbling coins, seeded", "logo mask in CSS"], grade: "B", seen: SEEN,
     purpose: "An ending: the agent rises from behind the wordmark and looks around while dithered coins tumble past.",
     period: 6, hero: 3.2,
@@ -189,7 +189,7 @@
       };
     } });
 
-  demo({ id: "ditheravatar", gl: true, host: "mascotRow2", name: "Narrator avatar badge", status: "add", stacks: ["three", "glsl", "css"],
+  demo({ id: "ditheravatar", gl: true, host: "mascotRow2", name: "Narrator avatar badge", kind: "character", stacks: ["three", "glsl", "css", "canvas"],
     chips: ["dithered 3D in a CSS circle", "reacts on each slide"], grade: "B", seen: SEEN,
     purpose: "The character stays in the corner of every slide and reacts to each one, so a whole video has one voice.",
     period: 6, hero: 2.3,

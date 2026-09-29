@@ -79,7 +79,7 @@
   }
 
   // ---------- 1. Timing: a bouncing ball and its height curve ----------
-  demo({ id: "timing", name: "Timing: squash and stretch with its graph", status: "add", stacks: ["svg"], chips: ["SVG graph + playhead", "closed-form bounce", "squash and stretch"], grade: "A",
+  demo({ id: "timing", name: "Timing: squash and stretch with its graph", kind: "motion", stacks: ["svg"], chips: ["SVG graph + playhead", "closed-form bounce", "squash and stretch"], grade: "A",
     purpose: "Shows why timing matters: the bounce and its height curve play side by side, and the playhead marks the frame you see.",
     seen: SEEN, period: 4.8, hero: 1.28,
     build(s) {
@@ -165,7 +165,7 @@
     } });
 
   // ---------- 2. Variable-font kinetic type ----------
-  demo({ id: "vartype", name: "Variable-font kinetic type", status: "add", stacks: ["css"], chips: ["font-stretch 62–125%", "font-weight 400–900", "-webkit-text-stroke"], grade: "A",
+  demo({ id: "vartype", name: "Variable-font kinetic type", kind: "type", stacks: ["css"], chips: ["font-stretch 62–125%", "font-weight 400–900", "-webkit-text-stroke"], grade: "A",
     purpose: "Moves one word by changing its width and weight, so the type carries the motion without any extra graphics.",
     seen: SEEN, period: 4, hero: 0.7,
     build(s) {
@@ -191,7 +191,7 @@
     } });
 
   // ---------- 3. Polar shape morph with a spring ----------
-  demo({ id: "morph", name: "Polar shape morph with a spring", status: "add", stacks: ["svg"], chips: ["polar resampling, N = 180", "closed-form spring", "SVG path"], grade: "A",
+  demo({ id: "morph", name: "Polar shape morph with a spring", kind: "motion", stacks: ["svg"], chips: ["polar resampling, N = 180", "closed-form spring", "SVG path"], grade: "A",
     purpose: "Turns one shape into the next without tangled edges, because every shape is sampled at the same angles; the spring adds the overshoot.",
     seen: SEEN, period: 6, hero: 2.05,
     build(s) {
@@ -256,7 +256,7 @@
     } });
 
   // ---------- 4. Bauhaus tile rhythm ----------
-  demo({ id: "rhythm", name: "Bauhaus tile rhythm", status: "add", stacks: ["canvas"], chips: ["Canvas 2D", "diagonal stagger", "seeded motifs"], grade: "A",
+  demo({ id: "rhythm", name: "Bauhaus tile rhythm", kind: "backdrop", stacks: ["canvas"], chips: ["Canvas 2D", "diagonal stagger", "seeded motifs"], grade: "A",
     purpose: "A pattern that turns in waves from corner to corner; a lively backdrop that still leaves room for one word.",
     seen: SEEN, period: 6, hero: 0.72,
     build(s) {
@@ -308,7 +308,7 @@
     } });
 
   // ---------- 5. Noise ridgelines ----------
-  demo({ id: "ridgelines", name: "Noise ridgelines", status: "add", stacks: ["canvas"], chips: ["Canvas 2D", "seeded Perlin noise", "painter's order"], grade: "A",
+  demo({ id: "ridgelines", name: "Noise ridgelines", kind: "backdrop", stacks: ["canvas"], chips: ["Canvas 2D", "seeded Perlin noise", "painter's order"], grade: "A",
     purpose: "Stacked lines of noise read as terrain or a sound wave; a calm, endless backdrop for a single word.",
     seen: SEEN, period: 8, hero: 1.6,
     build(s) {
@@ -348,8 +348,8 @@
     } });
 
   // ---------- 6. Code-rain backdrop ----------
-  demo({ id: "coderain", name: "Code-rain backdrop", status: "add", stacks: ["canvas", "css"], chips: ["Canvas 2D text", "looping scroll", "typed headline"], grade: "A",
-    purpose: "Says the piece is made with code, behind a headline it never competes with.",
+  demo({ id: "coderain", name: "Code-rain backdrop", kind: "backdrop", stacks: ["canvas", "css"], chips: ["Canvas 2D text", "looping scroll", "typed headline"], grade: "A",
+    purpose: "Lines of code scroll behind a headline that types itself.",
     seen: SEEN, period: 6, hero: 2.4,
     build(s) {
       s.style.background = INK;
@@ -398,7 +398,7 @@
     } });
 
   // ---------- 7. 3D card flip grid ----------
-  demo({ id: "cardflip", name: "3D card flip grid", status: "add", stacks: ["css"], chips: ["CSS 3D transform", "backface-visibility", "diagonal stagger"], grade: "A",
+  demo({ id: "cardflip", name: "3D card flip grid", kind: "ui", stacks: ["css"], chips: ["CSS 3D transform", "backface-visibility", "diagonal stagger"], grade: "A",
     purpose: "Reveals nine items in turn without changing the layout: each card shows its other side, then flips back.",
     seen: SEEN, period: 5, hero: 1.05,
     build(s) {
@@ -417,7 +417,7 @@
     } });
 
   // ---------- 8. Self-drawing data chart ----------
-  demo({ id: "datachart", name: "Self-drawing data chart", status: "add", stacks: ["svg"], chips: ["SVG stroke-dashoffset", "gradient area", "stroke-dasharray ring"], grade: "A",
+  demo({ id: "datachart", name: "Self-drawing data chart", kind: "ui", stacks: ["svg"], chips: ["SVG stroke-dashoffset", "gradient area", "stroke-dasharray ring"], grade: "A",
     purpose: "Builds a line, its bars and a goal ring in order, so the eye reads the numbers in the order they matter.",
     seen: SEEN, period: 6, hero: 3.6,
     build(s) {

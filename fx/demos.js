@@ -21,8 +21,8 @@
   const demo = (o) => DEMOS.push(o);
 
   // ================= 2D effects =================
-  demo({ id: "whip", name: "Whip-in letters + motion blur", status: "used", stacks: ["svg", "css"], chips: ["SVG feGaussianBlur", "engine.js whip"], grade: "A",
-    purpose: "Speed in the first second; big Swiss type grabs the eye.", period: 3.2, hero: 1.7,
+  demo({ id: "whip", name: "Whip-in letters + motion blur", kind: "type", stacks: ["svg", "css"], chips: ["SVG feGaussianBlur", "engine.js whip"], grade: "A",
+    purpose: "Big letters whip in from the side, blurred along the direction they move.", period: 3.2, hero: 1.7,
     build(s) {
       s.style.background = "#f4f3ee";
       s.innerHTML = `<svg class="defs" aria-hidden="true"><defs>${[0, 1, 2, 3, 4].map((i) => `<filter id="fxw${i}" x="-60%" y="-20%" width="220%" height="140%"><feGaussianBlur stdDeviation="0 0"/></filter>`).join("")}</defs></svg>
@@ -42,7 +42,7 @@
       };
     } });
 
-  demo({ id: "chars", name: "Character pop", status: "used", stacks: ["css"], chips: ["CSS transform", "engine.js chars"], grade: "A",
+  demo({ id: "chars", name: "Character pop", kind: "type", stacks: ["css"], chips: ["CSS transform", "engine.js chars"], grade: "A",
     purpose: "One character at a time, so the eye reads along; the key word changes colour.", period: 4, hero: 2.7,
     build(s) {
       s.style.background = "#0f0d14";
@@ -56,8 +56,8 @@
       });
     } });
 
-  demo({ id: "mark", name: "Highlighter", status: "used", stacks: ["css"], chips: ["CSS scaleX", "engine.js mark"], grade: "A",
-    purpose: "Points at the line in your own material that backs a number.", period: 3.6, hero: 2.5,
+  demo({ id: "mark", name: "Highlighter", kind: "type", stacks: ["css"], chips: ["CSS scaleX", "engine.js mark"], grade: "A",
+    purpose: "Draws the eye to one line, as a marker pen would; in the sample, the line that backs a number.", period: 3.6, hero: 2.5,
     build(s) {
       s.style.background = "#e9e6f2";
       s.innerHTML = `<div class="doc"><div class="doc-h">PLAYBOOK · SAVINGS PLAN A</div><div>Term: <span class="mk"><i></i>5 or 10 years</span></div><div>Yearly: <span class="mk"><i></i>HK$12,000</span></div><div><span class="ph"></span><span class="ph s"></span></div></div>`;
@@ -65,8 +65,8 @@
       return (t) => bars.forEach((b, i) => { const a = 0.5 + i * 0.8; b.style.transform = `scaleX(${outCubic(lin(a, a + 0.45, t)) * (1 - lin(3.2, 3.5, t))})`; });
     } });
 
-  demo({ id: "count", name: "Counting number", status: "used", stacks: ["css"], chips: ["JS counter", "tabular-nums"], grade: "A",
-    purpose: "A concrete number beats an adjective, as long as it has a source.", period: 3.2, hero: 2.4,
+  demo({ id: "count", name: "Counting number", kind: "type", stacks: ["css"], chips: ["JS counter", "tabular-nums"], grade: "A",
+    purpose: "A number counts up to its value; tabular digits keep its width steady.", period: 3.2, hero: 2.4,
     build(s) {
       s.style.background = "#101018";
       s.innerHTML = `<div class="cnt"><div class="cnt-l">Yearly premium</div><div class="cnt-n">HK$<span>0</span></div><div class="cnt-s">Source: Playbook · Savings Plan A</div></div>`;
@@ -74,7 +74,7 @@
       return (t) => { n.textContent = Math.round(12000 * outCubic(lin(0.3, 1.6, t))).toLocaleString("en-US"); src.style.opacity = lin(1.6, 1.9, t); box.style.opacity = 1 - lin(2.9, 3.15, t); };
     } });
 
-  demo({ id: "type", name: "Typewriter", status: "used", stacks: ["css"], chips: ["JS per character", "CSS caret"], grade: "A",
+  demo({ id: "type", name: "Typewriter", kind: "type", stacks: ["css"], chips: ["JS per character", "CSS caret"], grade: "A",
     purpose: "Shows a reply being drafted; reads instantly as a chat.", period: 5, hero: 3.6,
     build(s) {
       s.style.background = "#fff";
@@ -90,8 +90,8 @@
       };
     } });
 
-  demo({ id: "stamp", name: "Red flash + shake + stamp", status: "used", stacks: ["css"], chips: ["CSS transform", "engine.js slam / shake / flash"], grade: "A",
-    purpose: "Shows at a glance what happens when an auto-reply makes up a number.", period: 3.6, hero: 2.2,
+  demo({ id: "stamp", name: "Red flash + shake + stamp", kind: "type", stacks: ["css"], chips: ["CSS transform", "engine.js slam / shake / flash"], grade: "A",
+    purpose: "An alarm moment: a red flash, a shake, then a stamp. In the sample, it marks an auto-reply that made up a number.", period: 3.6, hero: 2.2,
     build(s) {
       s.style.background = "#0f0d14";
       s.innerHTML = `<div class="wrap"><div class="bub auto">Auto-reply<b>Guaranteed 6% return!</b></div><div class="stampx">MADE UP!</div></div><div class="flashx"></div>`;
@@ -108,8 +108,8 @@
       };
     } });
 
-  demo({ id: "scan", name: "Scan and check", status: "used", stacks: ["css"], chips: ["CSS gradient", "engine.js scan"], grade: "A",
-    purpose: "Every number is checked against your material; anything unmatched waits for your own check.", period: 4.4, hero: 2.7,
+  demo({ id: "scan", name: "Scan and check", kind: "ui", stacks: ["css"], chips: ["CSS gradient", "engine.js scan"], grade: "A",
+    purpose: "A scan line passes over a list and ticks each item off; in the sample, numbers checked against a source.", period: 4.4, hero: 2.7,
     build(s) {
       s.style.background = "#16131d";
       s.innerHTML = `<div class="wrap"><div class="doc dark"><div class="doc-h">DRAFT</div><div>Terms: <u>5 yrs</u> or <u>10 yrs</u>,</div><div>about <u class="bad">4.5%</u> a year.</div></div><div class="scanbar"></div><div class="chipsx"><span class="ok">✓ 5 yrs</span><span class="ok">✓ 10 yrs</span><span class="no">✗ 4.5%</span></div><div class="warnx">⚠️ Needs your check</div></div>`;
@@ -121,8 +121,8 @@
       };
     } });
 
-  demo({ id: "sweep", name: "Light sweep", status: "used", stacks: ["css"], chips: ["CSS linear-gradient"], grade: "A",
-    purpose: "Makes a card feel physical and leads the eye to the key line.", period: 3, hero: 0.95,
+  demo({ id: "sweep", name: "Light sweep", kind: "ui", stacks: ["css"], chips: ["CSS linear-gradient"], grade: "A",
+    purpose: "A band of light sweeps across a card.", period: 3, hero: 0.95,
     build(s) {
       s.style.background = "radial-gradient(120% 80% at 30% 20%, #3b1d4a, #0c0a12)";
       s.innerHTML = `<div class="gcard"><div class="gc-h"><b>so</b>social_ops bot</div><div class="gc-q">💬 Concern: the plan's return — “HK$20k a year, what do I get back?”</div><i class="shine"></i></div>`;
@@ -130,8 +130,8 @@
       return (t) => { sh.style.transform = `translateX(${-120 + lin(0.5, 1.4, t) * 280}%) skewX(-20deg)`; };
     } });
 
-  demo({ id: "glass", name: "Frosted glass card", status: "used", stacks: ["css"], chips: ["CSS backdrop-filter"], grade: "A",
-    purpose: "Separates text from a busy background; calm and modern.", period: 6, hero: 1.4,
+  demo({ id: "glass", name: "Frosted glass card", kind: "ui", stacks: ["css"], chips: ["CSS backdrop-filter"], grade: "A",
+    purpose: "A frosted card blurs the busy background behind it, so the text on it stays clear.", period: 6, hero: 1.4,
     build(s) {
       s.style.background = "#1b1530";
       s.innerHTML = `<i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i><div class="frost"><div class="fr-t">Draft waiting for you</div><div class="fr-k"><span>✏️ Edit</span><span>👤 I'll reply</span></div></div>`;
@@ -144,8 +144,8 @@
       };
     } });
 
-  demo({ id: "orbs", name: "Glow orbs", status: "used", stacks: ["css"], chips: ["CSS radial-gradient", "mix-blend-mode: screen"], grade: "A",
-    purpose: "A breather between scenes; soft, never competes.", period: 8, hero: 2,
+  demo({ id: "orbs", name: "Glow orbs", kind: "backdrop", stacks: ["css"], chips: ["CSS radial-gradient", "mix-blend-mode: screen"], grade: "A",
+    purpose: "Soft glowing orbs drift and blend into each other.", period: 8, hero: 2,
     build(s) {
       s.style.background = "#07060b";
       s.innerHTML = [0, 1, 2, 3, 4].map((i) => `<i class="orb o${i}"></i>`).join("") + `<div class="orb-t">Every reply,</div>`;
@@ -153,15 +153,15 @@
       return (t) => { const a = (t / 8) * Math.PI * 2; os.forEach((o, i) => { o.style.transform = `translate(${Math.cos(a * (i % 2 ? 1 : -1) + i * 1.3) * 22}cqw, ${Math.sin(a * (i % 3 ? 1 : 2) + i) * 26}cqw) scale(${0.8 + 0.3 * Math.sin(a + i)})`; }); };
     } });
 
-  demo({ id: "wipe", name: "0.5 s wipe", status: "used", stacks: ["css"], chips: ["CSS clip-path", "engine.js"], grade: "A",
-    purpose: "Fast scene changes that never jump; the pace keeps moving.", period: 4, hero: 1.62,
+  demo({ id: "wipe", name: "0.5 s wipe", kind: "motion", stacks: ["css"], chips: ["CSS clip-path", "engine.js"], grade: "A",
+    purpose: "Scenes change with a half-second clip-path wipe.", period: 4, hero: 1.62,
     build(s) {
       s.innerHTML = `<div class="sc scA"><b>DM FLOOD</b><span>12 unread</span></div><div class="sc scB"><b>DRAFTED</b><span>you sign, then it sends</span></div>`;
       const B = q(s, ".scB");
       return (t) => { const k1 = inOut(lin(1.4, 1.9, t)), k2 = inOut(lin(3.4, 3.9, t)); B.style.clipPath = t < 3.4 ? `inset(0 ${100 - k1 * 100}% 0 0)` : `inset(0 0 0 ${k2 * 100}%)`; };
     } });
 
-  demo({ id: "grain", name: "Film grain", status: "used", stacks: ["canvas"], chips: ["Canvas 2D", "new grain every 3 frames"], grade: "A",
+  demo({ id: "grain", name: "Film grain", kind: "backdrop", stacks: ["canvas"], chips: ["Canvas 2D", "new grain every 3 frames"], grade: "A",
     purpose: "Film texture that eats bitrate: at the same 2 Mbps, SSIM is 0.865 without grain and 0.742 with it.", period: 2, hero: 0.5,
     build(s) {
       s.style.background = "#000";
@@ -220,8 +220,8 @@
   }
   const rng = (seed) => () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 
-  demo({ id: "lit3d", gl: true, name: "Lit 3D type + shadow", status: "used", stacks: ["three"], chips: ["Three.js TextGeometry", "SpotLight soft shadow", "UnrealBloomPass"], grade: "A+",
-    purpose: "Puts the made-up “6%” on the table like an object; more impact.", period: 6, hero: 1.4,
+  demo({ id: "lit3d", gl: true, name: "Lit 3D type + shadow", kind: "shader", stacks: ["three"], chips: ["Three.js TextGeometry", "SpotLight soft shadow", "UnrealBloomPass"], grade: "A+",
+    purpose: "Extruded 3D type on a floor, lit by a spotlight that casts a soft shadow.", period: 6, hero: 1.4,
     build(s) {
       const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(40, GW / GH, 0.1, 100);
       cam.position.set(0, 2.4, 9); cam.lookAt(0, 1.1, 0);
@@ -239,8 +239,8 @@
       };
     } });
 
-  demo({ id: "rays", gl: true, name: "Rays + bloom + dust", status: "used", stacks: ["three", "canvas"], chips: ["Three.js additive planes", "UnrealBloomPass", "Canvas ray texture"], grade: "A+",
-    purpose: "The entrance moment for a product.", period: 10, hero: 2,
+  demo({ id: "rays", gl: true, name: "Rays + bloom + dust", kind: "shader", stacks: ["three", "canvas"], chips: ["Three.js additive planes", "UnrealBloomPass", "Canvas ray texture"], grade: "A+",
+    purpose: "Light rays fan out behind the scene, with bloom and floating dust.", period: 10, hero: 2,
     build(s) {
       const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(50, GW / GH, 0.1, 100), R = rng(9028);
       cam.position.set(0, 0, 10);
@@ -264,8 +264,8 @@
       };
     } });
 
-  demo({ id: "smoke", gl: true, name: "Smoke (custom shader)", status: "used", stacks: ["three", "glsl"], chips: ["GLSL fbm noise", "ShaderMaterial"], grade: "B",
-    purpose: "Atmosphere for a reveal, computed from maths every frame; no footage.", period: 20, hero: 6,
+  demo({ id: "smoke", gl: true, name: "Smoke", kind: "shader", stacks: ["three", "glsl"], chips: ["GLSL fbm noise", "ShaderMaterial"], grade: "B",
+    purpose: "Smoke that drifts and curls, computed from noise on every frame; no footage.", period: 20, hero: 6,
     build(s) {
       const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
       const u = { uT: { value: 0 } };
@@ -285,7 +285,7 @@
       return (t, abs) => { u.uT.value = abs; comp.render(1 / 60); blit(); };
     } });
 
-  demo({ id: "particles", gl: true, name: "Particles into type", status: "used", stacks: ["three", "canvas"], chips: ["Three.js Points", "Canvas-sampled text", "UnrealBloomPass"], grade: "A+",
+  demo({ id: "particles", gl: true, name: "Particles into type", kind: "shader", stacks: ["three", "canvas"], chips: ["Three.js Points", "Canvas-sampled text", "UnrealBloomPass"], grade: "A+",
     purpose: "Scattered points assemble into words. Text in any script is drawn on a canvas and sampled, so it works where 3D fonts have no glyphs.", period: 5.5, hero: 3,
     build(s) {
       const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(45, GW / GH, 0.1, 100), R = rng(515);
@@ -327,8 +327,8 @@
     float noise3(vec3 x){ vec3 i=floor(x); vec3 f=fract(x); f=f*f*(3.0-2.0*f);
       return mix(mix(mix(hash31(i),hash31(i+vec3(1,0,0)),f.x), mix(hash31(i+vec3(0,1,0)),hash31(i+vec3(1,1,0)),f.x),f.y),
                  mix(mix(hash31(i+vec3(0,0,1)),hash31(i+vec3(1,0,1)),f.x), mix(hash31(i+vec3(0,1,1)),hash31(i+vec3(1,1,1)),f.x),f.y), f.z); }`;
-  demo({ id: "dissolve", gl: true, name: "“4.5%” noise dissolve", status: "used", stacks: ["three", "glsl"], chips: ["onBeforeCompile shader patch", "3D noise", "UnrealBloomPass"], grade: "B",
-    purpose: "The unsourced number melts away: that line will not be sent.", period: 5, hero: 2.2,
+  demo({ id: "dissolve", gl: true, name: "Noise dissolve", kind: "shader", stacks: ["three", "glsl"], chips: ["onBeforeCompile shader patch", "3D noise", "UnrealBloomPass"], grade: "B",
+    purpose: "Text or a number melts away in noise; in the sample, a figure with no source that will not be sent.", period: 5, hero: 2.2,
     build(s) {
       const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(40, GW / GH, 0.1, 100);
       cam.position.set(0, 0.6, 8); cam.lookAt(0, 0, 0);
@@ -350,8 +350,8 @@
       };
     } });
 
-  demo({ id: "chrome", gl: true, name: "Chrome logo", status: "used", stacks: ["three", "canvas"], chips: ["PBR metal", "PMREM environment", "Canvas-painted studio"], grade: "A+",
-    purpose: "An ending with weight; the name sticks.", period: 8, hero: 2.6,
+  demo({ id: "chrome", gl: true, name: "Chrome logo", kind: "shader", stacks: ["three", "canvas"], chips: ["PBR metal", "PMREM environment", "Canvas-painted studio"], grade: "A+",
+    purpose: "A logo in polished chrome, reflecting a studio painted on a canvas.", period: 8, hero: 2.6,
     build(s) {
       const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(40, GW / GH, 0.1, 100);
       cam.position.set(0, 0, 7);
@@ -414,8 +414,8 @@
     return { m, draw() { R3.setClearColor(0xffffff, 1); comp.render(1 / 60); blit(); } };
   }
 
-  const halftoneDemo = { id: "halftone", gl: true, name: "Halftone mascot", status: "used", stacks: ["three"], chips: ["Three.js primitives", "HalftonePass", "mix-blend-mode: multiply"], grade: "A+",
-    purpose: "An original character built from spheres and cylinders, then halftoned; no AI. The arm has two joints, so it can wave.", period: 5, hero: 2.3,
+  const halftoneDemo = { id: "halftone", gl: true, host: "mascotRow", name: "Halftone mascot", kind: "character", stacks: ["three"], chips: ["Three.js primitives", "HalftonePass", "mix-blend-mode: multiply"], grade: "A+",
+    purpose: "An original character built from spheres and cylinders, then halftoned; no AI-generated art. The arm has two joints, so it can wave.", period: 5, hero: 2.3,
     build(s) {
       s.style.background = "#ff90e8";
       const { m, draw } = mascotScene(s);
@@ -432,9 +432,6 @@
     } };
   demo(halftoneDemo);
 
-  // ---- mascot comparison row: the current one, then two ways to make it look finished ----
-  demo({ ...halftoneDemo, id: "mascotNow", host: "mascotRow", name: "Today: halftone blocks", chips: ["Three.js primitives", "HalftonePass"],
-    purpose: "Spheres and cylinders stacked as they are, no outline, even proportions: it reads as building blocks." });
 
   // The agent from option A as a reusable model. paint(colour, map) makes the material of each lit
   // surface and accent(colour, opacity) of each flat detail; outline(mesh, geometry), if given,
@@ -493,8 +490,8 @@
     return { root, body, torso, neck, head, eyes, brows, mouth, armL, armR };
   }
 
-  demo({ id: "toon", gl: true, host: "mascotRow", name: "Option A: 3D toon shading + outline", status: "add", stacks: ["three"], chips: ["MeshToonMaterial", "outline (inverted hull)", "Canvas-painted suit"], grade: "A",
-    purpose: "Same Three.js: smooth shapes, three-step toon shading, black outline, big head and small body, suit and tie, eye highlights.", period: 5, hero: 1.3,
+  demo({ id: "toon", gl: true, host: "mascotRow", name: "3D toon shading + outline", kind: "character", stacks: ["three", "canvas"], chips: ["MeshToonMaterial", "outline (inverted hull)", "Canvas-painted suit"], grade: "A",
+    purpose: "Smooth shapes, three-step toon shading, a black outline, a big head on a small body, a suit and tie, and eye highlights.", period: 5, hero: 1.3,
     build(s) {
       s.style.background = "#ffd400";
       const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(30, GW / GH, 0.1, 100);
@@ -525,8 +522,8 @@
       };
     } });
 
-  demo({ id: "flat", host: "mascotRow", name: "Option B: 2D flat illustration", status: "add", stacks: ["svg"], chips: ["SVG curves", "per-part rig", "flat shadows"], grade: "A",
-    purpose: "Drawn curve by curve with an outline and flat shadows, like an app mascot; it matches the flat card and chat tiles.", period: 5, hero: 1.3,
+  demo({ id: "flat", host: "mascotRow", name: "2D flat illustration with a rig", kind: "character", stacks: ["svg"], chips: ["SVG curves", "per-part rig", "flat shadows"], grade: "A",
+    purpose: "Drawn curve by curve with an outline and flat shadows, like an app mascot; each part is rigged on its own, so it can wave and blink.", period: 5, hero: 1.3,
     build(s) {
       s.style.background = "#ff90e8";
       const O = "#1a1720", SK = "#f6c9a6", SKS = "#e6a883", HR = "#2a2230", SU = "#26335c", SUS = "#1b2546";
@@ -582,8 +579,8 @@
       };
     } });
 
-  demo({ id: "tunnel", gl: true, name: "Line tunnel", status: "used", stacks: ["three"], chips: ["Three.js LineSegments", "Fog", "Points"], grade: "A",
-    purpose: "Rushing forward, into the system.", period: 10, hero: 1,
+  demo({ id: "tunnel", gl: true, name: "Line tunnel", kind: "shader", stacks: ["three"], chips: ["Three.js LineSegments", "Fog", "Points"], grade: "A",
+    purpose: "The camera flies down a tunnel of lines, through fog and points of light.", period: 10, hero: 1,
     build(s) {
       const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(64, GW / GH, 0.1, 200), R = rng(77);
       scene.fog = new THREE.Fog(0x06050a, 10, 90);
@@ -611,8 +608,8 @@
     } });
 
   // ================= can add =================
-  demo({ id: "hook", name: "3-second headline hook", status: "add", stacks: ["css"], chips: ["CSS mask reveal", "transform"], grade: "A",
-    purpose: "Says who it is for in the first second instead of opening on a logo. TikTok's ad guidance: make the point within 3 seconds.", period: 4, hero: 2.3,
+  demo({ id: "hook", name: "3-second headline hook", kind: "type", stacks: ["css"], chips: ["CSS mask reveal", "transform"], grade: "A",
+    purpose: "A headline revealed by a mask within the first second, with no logo before it.", period: 4, hero: 2.3,
     build(s) {
       s.style.background = "#ffd400";
       const L = ["12 DMs", "unread.", "Clients ask", "about returns."];
@@ -621,8 +618,8 @@
       return (t) => { sp.forEach((e, i) => { e.style.transform = `translateY(${(1 - outCubic(lin(0.1 + i * 0.18, 0.5 + i * 0.18, t))) * 110}%)`; }); sub.style.opacity = lin(1.1, 1.4, t); w.style.opacity = 1 - lin(3.5, 3.8, t); };
     } });
 
-  demo({ id: "karaoke", name: "Word-synced captions", status: "add", stacks: ["css"], chips: ["CSS", "hand-made timing"], grade: "A",
-    purpose: "Readable with the sound off: each word lights up as it is spoken. The timing comes from the script, by hand; no AI.", period: 4.6, hero: 1.4,
+  demo({ id: "karaoke", name: "Word-synced captions", kind: "type", stacks: ["css"], chips: ["CSS", "hand-made timing"], grade: "A",
+    purpose: "Readable with the sound off: each word lights up as it is spoken. The timing comes from the script, set by hand rather than by speech recognition.", period: 4.6, hero: 1.4,
     build(s) {
       s.style.background = "linear-gradient(160deg, #2b2f3a, #0e1015)";
       const W = [["The", 0.2], ["client", 0.42], ["asks:", 0.75], ["5", 1.1], ["or", 1.3], ["10", 1.5], ["years?", 1.75], ["One", 2.3], ["tap.", 2.6]];
@@ -634,8 +631,8 @@
       });
     } });
 
-  demo({ id: "blueprint", name: "Blueprint callouts + dot grid", status: "add", stacks: ["svg"], chips: ["SVG stroke-dashoffset", "CSS dot grid"], grade: "A",
-    purpose: "Breaks the card down item by item, like a manual.", period: 5.2, hero: 3.6,
+  demo({ id: "blueprint", name: "Blueprint callouts + dot grid", kind: "ui", stacks: ["svg"], chips: ["SVG stroke-dashoffset", "CSS dot grid"], grade: "A",
+    purpose: "Callouts point at a card item by item, on a dot grid, like a manual.", period: 5.2, hero: 3.6,
     build(s) {
       s.style.background = "#0d2744 radial-gradient(rgba(255,255,255,.2) 1px, transparent 1.3px) 0 0 / 5cqw 5cqw";
       const labels = [["Stage → next stage", 132, 96], ["Client's exact words", 182, 176], ["⚠️ Numbers checked", 222, 256], ["✅ ✏️ 👤 🚫 4 buttons", 322, 344]];
@@ -664,8 +661,8 @@
       };
     } });
 
-  demo({ id: "drawflow", name: "Self-drawing flow chart", status: "add", stacks: ["svg"], chips: ["SVG stroke-dashoffset"], grade: "A",
-    purpose: "Four steps at a glance; ideal for explaining a service you cannot see.", period: 5.4, hero: 4.2,
+  demo({ id: "drawflow", name: "Self-drawing flow chart", kind: "ui", stacks: ["svg"], chips: ["SVG stroke-dashoffset"], grade: "A",
+    purpose: "A four-step flow chart draws its own lines, one step after another.", period: 5.4, hero: 4.2,
     build(s) {
       s.style.background = "#fbfaf7";
       const N = [[110, 92, "💬", "Client DMs"], [290, 196, "✍️", "Drafted"], [110, 300, "✅", "You approve"], [290, 404, "📤", "Sent"]];
@@ -688,8 +685,8 @@
       };
     } });
 
-  demo({ id: "sticker", name: "Sticker labels", status: "add", stacks: ["css"], chips: ["CSS transform", "box-shadow"], grade: "A",
-    purpose: "A friendly call to action that does not feel like a hard sell.", period: 3.4, hero: 2.3,
+  demo({ id: "sticker", name: "Sticker labels", kind: "type", stacks: ["css"], chips: ["CSS transform", "box-shadow"], grade: "A",
+    purpose: "Rounded labels pop on with a white border and a drop shadow, like stickers.", period: 3.4, hero: 2.3,
     build(s) {
       s.style.background = "#ff90e8";
       s.innerHTML = `<div class="stk s1">Spots limited</div><div class="stk s2">Free set-up help</div><div class="stk s3">WhatsApp us</div>`;
@@ -701,7 +698,7 @@
       });
     } });
 
-  demo({ id: "beat", name: "Beat sync", status: "add", stacks: ["css"], chips: ["music.py beat grid", "engine.js"], grade: "A",
+  demo({ id: "beat", name: "Beat sync", kind: "motion", stacks: ["css"], chips: ["music.py beat grid", "engine.js"], grade: "A",
     purpose: "Pops land on the beat. The music is synthesised here, so every beat time is already known; no audio analysis.", period: 2.4, hero: 1.85,
     build(s) {
       s.style.background = "#1a1325";
@@ -714,7 +711,7 @@
       };
     } });
 
-  demo({ id: "gradient", name: "Low-contrast flowing gradient", status: "add", stacks: ["css"], chips: ["CSS radial-gradient"], grade: "A",
+  demo({ id: "gradient", name: "Low-contrast flowing gradient", kind: "backdrop", stacks: ["css"], chips: ["CSS radial-gradient"], grade: "A",
     purpose: "Movement that never fights the text; long copy stays readable on top.", period: 12, hero: 3,
     build(s) {
       s.style.background = "#f3e9f1";
@@ -723,8 +720,8 @@
       return (t) => { const a = (t / 12) * Math.PI * 2; ls.forEach((l, i) => { l.style.transform = `translate(${Math.cos(a + i * 2.1) * 12}%, ${Math.sin(a * (i % 2 ? 1 : -1) + i) * 10}%)`; }); };
     } });
 
-  demo({ id: "lut", name: "Warm grade + soft glow", status: "add", stacks: ["css"], chips: ["preview: CSS filter", "final: r128 LUT pass"], grade: "A+",
-    purpose: "Warmth and texture. The glow stays in the background, never on text.", period: 6, hero: 1.5,
+  demo({ id: "lut", name: "Warm grade + soft glow", kind: "backdrop", stacks: ["css"], chips: ["preview: CSS filter", "final: r128 LUT pass"], grade: "A+",
+    purpose: "A warm colour grade with a soft glow on the background; the text stays sharp.", period: 6, hero: 1.5,
     build(s) {
       const scene = () => `<div class="lut-sc"><div class="lut-sun"></div><div class="lut-win"></div><div class="lut-phone"><span>5 or 10 yrs?</span></div></div>`;
       s.innerHTML = `<div class="wrap">${scene()}</div><div class="wrap lut-r"><div class="wrap lut-warm">${scene()}</div><div class="lut-glow"></div></div><div class="lut-div"></div><span class="lut-lab" style="left:3cqw">Before</span><span class="lut-lab" style="right:3cqw">Warm</span>`;
@@ -732,8 +729,8 @@
       return (t) => { const x = 50 + 24 * Math.sin((t / 6) * Math.PI * 2); r.style.clipPath = `inset(0 0 0 ${x}%)`; dv.style.left = `${x}%`; };
     } });
 
-  demo({ id: "uifly", name: "Camera move over real UI", status: "add", stacks: ["css"], chips: ["CSS 3D transform", "perspective"], grade: "A",
-    purpose: "Shows a real product screen; more credible than an abstract graphic.", period: 6, hero: 2.3,
+  demo({ id: "uifly", name: "Camera move over real UI", kind: "ui", stacks: ["css"], chips: ["CSS 3D transform", "perspective"], grade: "A",
+    purpose: "The camera glides over a real interface card in 3D perspective.", period: 6, hero: 2.3,
     build(s) {
       s.style.background = "radial-gradient(90% 70% at 50% 40%, #2a2233, #0b0a0f)";
       s.style.perspective = "120cqw";
@@ -747,8 +744,8 @@
       };
     } });
 
-  demo({ id: "ring", name: "24-hour countdown ring", status: "add", stacks: ["svg"], chips: ["SVG stroke-dasharray", "tabular-nums"], grade: "A",
-    purpose: "Meta allows a reply to a DM only within 24 hours; a ring shows at a glance how long is left.", period: 5, hero: 2.6,
+  demo({ id: "ring", name: "24-hour countdown ring", kind: "ui", stacks: ["svg"], chips: ["SVG stroke-dasharray", "tabular-nums"], grade: "A",
+    purpose: "A deadline at a glance: the ring empties as time runs out. In the sample, Meta's 24-hour window for replying to a DM.", period: 5, hero: 2.6,
     build(s) {
       s.style.background = "#101018";
       s.innerHTML = `<svg class="svgfill" viewBox="0 0 400 500"><circle cx="200" cy="220" r="120" fill="none" stroke="#2a2733" stroke-width="18"/><circle class="arc" cx="200" cy="220" r="120" fill="none" stroke="#ff90e8" stroke-width="18" stroke-linecap="round" pathLength="1" stroke-dasharray="1" transform="rotate(-90 200 220)"/><text class="hms" x="200" y="232" text-anchor="middle" fill="#fff" font-size="40" font-weight="900" font-family="JetBrains Mono, monospace">23:54</text><text x="200" y="266" text-anchor="middle" fill="#9a96a6" font-size="15" font-family='${ZH}'>left to reply</text><text x="200" y="420" text-anchor="middle" fill="#fff" font-size="20" font-weight="900" font-family='${ZH}'>Client DM'd at 23:02</text></svg>`;
@@ -762,8 +759,8 @@
       };
     } });
 
-  demo({ id: "bounce", gl: true, name: "Mascot breathing and bounce", status: "add", stacks: ["three"], chips: ["Three.js", "HalftonePass", "squash and stretch"], grade: "A+",
-    purpose: "The same halftone mascot, with motion: friendlier and easier to remember. Mascots are the one trend with effect data, and that data is second-hand.", period: 4, hero: 0.55,
+  demo({ id: "bounce", gl: true, host: "mascotRow", name: "Mascot breathing and bounce", kind: "character", stacks: ["three"], chips: ["Three.js", "HalftonePass", "squash and stretch"], grade: "A+",
+    purpose: "The same halftone mascot, breathing and hopping with squash and stretch: a character that feels alive between lines.", period: 4, hero: 0.55,
     build(s) {
       s.style.background = "#ffd400";
       const { m, draw } = mascotScene(s);
@@ -785,8 +782,8 @@
       };
     } });
 
-  demo({ id: "liquid", gl: true, name: "Liquid glass refraction", status: "add", stacks: ["three", "glsl"], chips: ["custom GLSL refraction", "dispersion"], grade: "B",
-    purpose: "A premium moment for an end logo. r128 has no real refraction, so this is a custom shader; logo only, never behind text.", period: 8, hero: 2,
+  demo({ id: "liquid", gl: true, name: "Liquid glass refraction", kind: "shader", stacks: ["three", "glsl", "canvas"], chips: ["custom GLSL refraction", "dispersion"], grade: "B",
+    purpose: "Glass that bends and splits what is behind it. three.js r128 has no real refraction, so a custom shader fakes it.", period: 8, hero: 2,
     build(s) {
       const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
       const bgc = document.createElement("canvas"); bgc.width = GW; bgc.height = GH; const g = bgc.getContext("2d");
@@ -824,8 +821,8 @@
     } });
 
   // ================= avoid =================
-  demo({ id: "ditherzh", name: "Halftone or dither on CJK text", status: "avoid", stacks: ["canvas"], chips: ["Canvas 2D"], grade: "—",
-    purpose: "Dense Chinese strokes vanish as soon as the dots grow. Keep halftone for characters and backgrounds.", period: 4, hero: 3.2,
+  demo({ id: "ditherzh", name: "Halftone or dither on CJK text", kind: "dont", stacks: ["canvas"], chips: ["Canvas 2D"], grade: "—",
+    purpose: "Dense Chinese strokes vanish as soon as the dots grow.", period: 4, hero: 3.2,
     build(s) {
       s.style.background = "#fff";
       const c = document.createElement("canvas"); c.width = 360; c.height = 450; c.className = "fill"; s.appendChild(c);
@@ -849,8 +846,8 @@
       };
     } });
 
-  demo({ id: "glitchzh", name: "RGB-split glitch on CJK text", status: "avoid", stacks: ["css"], chips: ["CSS clip-path", "mix-blend-mode"], grade: "—",
-    purpose: "Reads as broken and unreliable, the wrong signal for insurance, and the characters become hard to read.", period: 2.4, hero: 0.83,
+  demo({ id: "glitchzh", name: "RGB-split glitch on CJK text", kind: "dont", stacks: ["css"], chips: ["CSS clip-path", "mix-blend-mode"], grade: "—",
+    purpose: "Reads as broken and unreliable, and split colour edges make dense characters hard to read.", period: 2.4, hero: 0.83,
     build(s) {
       s.style.background = "#0b0a0f";
       s.innerHTML = `<div class="gz"><span class="g1">條款及細則</span><span class="g2">條款及細則</span><span class="g0">條款及細則</span></div>`;

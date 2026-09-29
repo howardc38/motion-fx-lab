@@ -12,6 +12,13 @@
 (() => {
   const stage = document.getElementById("stage");
   const W = +stage.dataset.w, H = +stage.dataset.h, DUR = +stage.dataset.dur;
+  // Chromium lays SVG text out for its on-screen size and did not always lay it out again when an
+  // ancestor's transform changed: a label drawn before a pop (which starts at scale 0.6) kept that
+  // size in one browser and not in another. Reproduced by rendering 10.0 s, then 11.4 s, of
+  // intro.html in one browser; with geometricPrecision the two agree with a fresh render.
+  const svgText = document.createElement("style");
+  svgText.textContent = "#stage svg text { text-rendering: geometricPrecision; }";
+  document.head.appendChild(svgText);
   const WIPE = 0.5;
   const DEFAULT_DUR = { up: 0.5, down: 0.5, fade: 0.4, pop: 0.42, left: 0.5, right: 0.5, zoom: 0.5, type: 1, count: 1.4, mark: 0.45, grow: 0.35, move: 0.6, ring: 0.5, chars: 0.34, slam: 0.38, whip: 0.45, blurin: 0.6, sweep: 0.9, orb: 1.2, flash: 0.35, scan: 0.8, shake: 0.5 };
   const FX = new Set(["up", "down", "left", "right", "fade", "zoom", "pop", "grow", "mark", "type", "count", "move", "ring",

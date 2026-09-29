@@ -21,7 +21,7 @@
 <style>
   :root {
     --bg: #eceef3; --surface: #ffffff; --ink: #17141d; --muted: #5c5868; --line: #d6d6df; --accent: #b8217a;
-    --used-bg: #ffd9f4; --used-fg: #8a1260; --add-bg: #fff0b3; --add-fg: #6e5200; --avoid-bg: #ffdcdc; --avoid-fg: #a1111f;
+    --dont-bg: #ffdcdc; --dont-fg: #a1111f;
     --lat: "Archivo", "Helvetica Neue", Arial, sans-serif;
     --body: "Archivo", "Helvetica Neue", Arial, sans-serif;
     --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
@@ -29,13 +29,13 @@
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --bg: #0c0b10; --surface: #16141d; --ink: #f2f0f6; --muted: #a9a4b6; --line: #2d2a37; --accent: #ff90e8;
-      --used-bg: #3a1733; --used-fg: #ffb3ee; --add-bg: #3a3010; --add-fg: #ffd95a; --avoid-bg: #3d1216; --avoid-fg: #ff8a8f;
+      --dont-bg: #3d1216; --dont-fg: #ff8a8f;
       color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
     --bg: #0c0b10; --surface: #16141d; --ink: #f2f0f6; --muted: #a9a4b6; --line: #2d2a37; --accent: #ff90e8;
-    --used-bg: #3a1733; --used-fg: #ffb3ee; --add-bg: #3a3010; --add-fg: #ffd95a; --avoid-bg: #3d1216; --avoid-fg: #ff8a8f;
+    --dont-bg: #3d1216; --dont-fg: #ff8a8f;
     color-scheme: dark;
   }
   body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); padding-inline: 16px; padding-block: 28px 64px; }
@@ -62,12 +62,12 @@
   .mrow { grid-template-columns: repeat(auto-fit, minmax(236px, 1fr)); }
   .subhead { font: 900 19px/1.3 var(--lat); margin-top: 8px; }
   .tile { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .tile[hidden] { display: none; }
   .tile figcaption { display: flex; flex-direction: column; gap: 6px; }
   .pills { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
   .pill { font: 700 12px var(--body); padding: 2px 9px; border-radius: 999px; }
-  .pill.used { background: var(--used-bg); color: var(--used-fg); }
-  .pill.add { background: var(--add-bg); color: var(--add-fg); }
-  .pill.avoid { background: var(--avoid-bg); color: var(--avoid-fg); }
+  .pill.kind { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+  .pill.dont { background: var(--dont-bg); color: var(--dont-fg); }
   .grade { font: 700 11px var(--mono); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; }
   .tile h3 { font: 900 17px/1.3 var(--body); }
   .tile p { font-size: 14px; line-height: 1.55; color: var(--muted); }
@@ -107,55 +107,49 @@
   <header>
     <span class="eyebrow">Open source · 0BSD</span>
     <h1>Motion FX Lab</h1>
-    <p class="lede">Every tile below is drawn live in your browser by the same code we use to render videos to MP4, frame by frame. Pink cards are effects we have shipped in our own promo videos (not part of this repo); yellow ones are worth adding; red ones should not go on dense CJK text. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch in our own code. Each card says how it is drawn, how hard it is and what it is for. The filter covers the 6 ways a tile is drawn; a finished video with sound uses 16 stacks, listed in the table further down.</p>
+    <p class="lede">Every tile below is drawn live in your browser by the same code that renders our videos to MP4, frame by frame. Each card says what it does, how it is drawn and what it needs; filter them by kind or by the way they are drawn. The two cards marked “Don't” show what goes wrong when halftone or glitch meets dense Chinese text. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch. The sample text comes from our own videos for an Instagram DM assistant; swap in your own words. A finished video with sound uses 16 stacks, listed in the table further down.</p>
     <div class="legend" id="legend"></div>
     <video class="intro" controls playsinline preload="metadata" poster="media/intro.jpg" src="media/intro.mp4" aria-label="Intro video, 35 seconds, with sound"></video>
   </header>
 
-  <section id="mascot">
-    <span class="eyebrow">Mascot</span>
-    <h2>How good can a code-drawn character get?</h2>
-    <p class="note">The first one looks like building blocks: spheres and cylinders stacked as they are, with no outline and even proportions. The other two redraw the same character with no AI and no new dependency, and every pose is still a function of t.</p>
-    <div class="mrow" id="mascotRow"></div>
-    <h3 class="subhead">Option C: dithered pixels, and a character that works the whole video</h3>
-    <p class="note">Effects seen in a TixFox promo by Berlin (@ox8erlin on Threads), redone on our own character: a two-pass render in flat colours and light, turned into three-colour pixels by a 4×4 ordered dither.</p>
-    <div class="mrow" id="mascotRow2"></div>
-    <div class="cols">
-      <div class="box"><h3>What code can reach</h3><ul>
-        <li>A clean app-mascot or vinyl-toy look, as in options A and B.</li>
-        <li>A pixel-art look that carries a whole video, holding cards or narrating, as in option C.</li>
-        <li>Expressions, waves and hops are all driven by t, so they render frame-exact; a new outfit or expression is a few lines.</li>
-        <li>A's weak spot is the hair, which still reads a little like a cap.</li>
-      </ul></div>
-      <div class="box"><h3>One level up needs a person (still no AI)</h3><ul>
-        <li>An illustrator designs the character and hands over layered SVG; the parts are rigged the way option B is.</li>
-        <li>A 3D artist models it in Blender and hands over a GLB; three.js r128 ships GLTFLoader, so it loads and lights directly.</li>
-        <li>Out of reach for code: an illustrator's line and personality, subtle expressions, real hair and cloth motion.</li>
-      </ul></div>
-      <div class="box"><h3>Our pick: option B</h3><ul>
-        <li>Same flat style as the card, chat and sticker tiles in this gallery.</li>
-        <li>No 3D shading, so text on top stays readable.</li>
-        <li>The same SVG works as a post image, a chat sticker or a site avatar.</li>
-        <li>Option A suits the 3D scenes, next to the 3D “6%” or the chrome logo.</li>
-      </ul></div>
-    </div>
-  </section>
-
   <section aria-label="Effects">
     <div class="toolbar">
-      <div class="group" id="fStatus"><span>Status</span></div>
+      <div class="group" id="fKind"><span>Kind</span></div>
       <div class="group" id="fStack"><span>Drawn with</span></div>
       <span class="shown" id="shown"></span>
       <button id="play" type="button" aria-pressed="false">⏸ Pause</button>
     </div>
     <div class="gallery" id="gallery"></div>
-    <p class="note">One more idea, a 1–3 second seamless loop teaser, is an editing format rather than an effect, so it has no tile. The grading tile previews the look with a CSS filter; a real grade would use the LUT pass that ships with three.js r128, and the glow stays off the text. The 3D and shader tiles draw in turn on one shared WebGL canvas; those marked “In use” are scaled-down versions of the code in our videos. Reaction–diffusion draws the same pixels every time on one GPU, but not the same pattern on every GPU.</p>
+    <p class="note">The grading tile previews the look with a CSS filter; a real grade would use the LUT pass that ships with three.js r128, and the glow stays off the text. The 3D and shader tiles draw in turn on one shared WebGL canvas. Reaction–diffusion draws the same pixels every time on one GPU, but not the same pattern on every GPU.</p>
+  </section>
+
+  <section id="mascot">
+    <span class="eyebrow">Characters</span>
+    <h2>Characters drawn in code</h2>
+    <p class="note">Four ways to draw a character in code: one agent character dithered to three inks, toon-shaded with an outline and drawn as flat SVG with a rig, plus a halftoned figure built from spheres and cylinders. No AI-generated art and no extra dependency; every pose, blink and hop is a function of t, so it renders frame-exact.</p>
+    <h3 class="subhead">Dithered pixels, and a character that works a whole video</h3>
+    <p class="note">Seen in a TixFox promo by Berlin (@ox8erlin on Threads) and rebuilt on our own character: a two-pass render in flat colours and light, turned into three-colour pixels by a 4×4 ordered dither.</p>
+    <div class="mrow" id="mascotRow2"></div>
+    <h3 class="subhead">Toon, flat and halftone</h3>
+    <div class="mrow" id="mascotRow"></div>
+    <div class="cols">
+      <div class="box"><h3>What code does well</h3><ul>
+        <li>A clean app-mascot or vinyl-toy look.</li>
+        <li>Expressions, waves and hops driven by t; a new outfit or expression is a few lines.</li>
+        <li>One model in several styles: the toon and the dithered character are both drawn from <code>agentModel()</code>.</li>
+      </ul></div>
+      <div class="box"><h3>Beyond code, still no AI art</h3><ul>
+        <li>An illustrator's layered SVG can be rigged part by part, the way the flat character is.</li>
+        <li>A 3D artist's Blender model, exported as GLB, loads with GLTFLoader, which ships with three.js r128.</li>
+        <li>Out of reach for code alone: an illustrator's line and personality, subtle expressions, real hair and cloth.</li>
+      </ul></div>
+    </div>
   </section>
 
   <section>
     <span class="eyebrow">Stack</span>
     <h2>The 16 stacks, and what each one does</h2>
-    <p class="note">16 stacks: 5 for the picture, 6 for 3D, 1 for physics, 2 for sound and 2 for rendering. The 6 drawing methods in the filter above are the part that draws effects; the other 10 handle fonts, the timeline, 3D details, sound and output. Of the effects marked “can add”, only the rigid bodies need a new library, Matter.js.</p>
+    <p class="note">16 stacks: 5 for the picture, 6 for 3D, 1 for physics, 2 for sound and 2 for rendering. The 6 drawing methods in the filter above are the part that draws effects; the other 10 handle fonts, the timeline, 3D details, sound and output. Matter.js is used by one tile, the rigid bodies.</p>
     <div class="scroll">
       <table>
         <thead><tr><th>Stack</th><th>What it is</th><th>Why</th><th>What it does here</th></tr></thead>
@@ -167,15 +161,15 @@
   <section id="pipeline">
     <span class="eyebrow">Rendering</span>
     <h2>From HTML to MP4, measured</h2>
-    <p class="note">Measured on a 56-second, 1,693-frame promo of ours with heavy 3D (the promo itself is not in this repo). Timed from launching the browsers to a finished lossless master. The old pipeline took 399.6 s. The recorder now renders the whole video twice and compares every frame, in 52.9 s: 7.5× faster, with nothing left unchecked. Before that, with only an 8-frame spot check, it took 26.4 s. Encoding both deliverables with every check takes another 33.6 s. All measured on 2026-09-28 on an Apple M4 laptop.</p>
+    <p class="note">Measured on a 56-second, 1,693-frame promo of ours with heavy 3D (the promo itself is not in this repo). Timed from launching the browsers to a finished lossless master. Our first pipeline, default headless Chromium with one browser and <code>page.screenshot</code>, took 399.6 s. The recorder now renders the whole video twice and compares every frame, in 52.9 s: 7.5× faster. Before that, with only an 8-frame spot check, it took 26.4 s. Encoding both deliverables with every check takes another 33.6 s. All measured on 2026-09-28 on an Apple M4 laptop.</p>
     <div class="box bars" id="bars"></div>
     <p class="note">Past 4 browsers there is no gain: the bottleneck moves to the single ffmpeg process that decodes the PNGs and writes the master.</p>
     <div class="scroll"><table>
-      <thead><tr><th>Step</th><th>Before</th><th>Now</th><th>How it is proven</th></tr></thead>
+      <thead><tr><th>Step</th><th>First pipeline</th><th>This recorder</th><th>How it is proven</th></tr></thead>
       <tbody>
         <tr><td class="name">3D rendering</td><td>SwiftShader (GPU emulated on the CPU)</td><td>ANGLE Metal (the Apple M4 GPU)</td><td>The browser's WebGL renderer string is read at start; SwiftShader stops the run</td></tr>
         <tr><td class="name">Screenshots</td><td>page.screenshot</td><td>CDP captureScreenshot with optimizeForSpeed</td><td>At 8 fast-moving moments the decoded pixels matched the old method 8/8, with no stale frame</td></tr>
-        <tr><td class="name">Parallelism</td><td>1 browser</td><td>4 independent browsers, frames dealt round-robin</td><td>The whole video is rendered a second time with every frame on another browser, and all frames are compared; GPU noise stays at a few dozen pixels, 14 levels at most</td></tr>
+        <tr><td class="name">Parallelism</td><td>1 browser</td><td>4 independent browsers, frames dealt round-robin</td><td>The whole video is rendered a second time with every frame on another browser, and all frames are compared; GPU edge noise stays within 14 levels, and a frame that differs by more, or in more pixels than the tolerance allows, stops the run</td></tr>
         <tr><td class="name">Master</td><td>x264 CRF 17 (lossy)</td><td>x264 lossless</td><td>Deliverables are compressed once; the master must hold every frame</td></tr>
         <tr><td class="name">Look</td><td colspan="2">Mean SSIM 0.989 between old and new; the 71 frames under 0.95 are dense particle and dust frames that look identical side by side</td><td>ffmpeg ssim, frame by frame</td></tr>
         <tr><td class="name">Sound</td><td class="num">−21.2 LUFS · −2.1 dBTP · AAC 160 kbps</td><td class="num">−14.1 LUFS · −1.6 dBTP · AAC 127 kbps</td><td>Limit, then two-pass loudnorm that must report “linear”; the file is measured with ebur128. 160 kbps was over Meta's 128 kbps ceiling</td></tr>
@@ -183,15 +177,14 @@
         <tr><td class="name">Web preview</td><td class="num">13.8 MB</td><td class="num">13.9 MB · two-pass 1870 kbps</td><td>Over 15 MB, it retries once at a lower rate, then stops</td></tr>
       </tbody></table></div>
     <div class="cols">
-      <div class="box"><h3>The new checks stopped 4 runs on day one; no broken video shipped</h3><ul>
+      <div class="box"><h3>What the checks caught on their first day: 4 runs stopped, no broken video shipped</h3><ul>
         <li>A writer-loop bug: too few frames, stop.</li>
-        <li>Re-rendered frames differed: GPU edge noise on rotated text. The rule moved from byte-identical to a pixel tolerance; a wrong frame differs by 100,000+ pixels and still stops the run. Later, a spot check of 8 frames missed a browser that drew a label wrongly, so every frame is now rendered twice.</li>
+        <li>Re-rendered frames differed: GPU edge noise on rotated text. The rule moved from byte-identical to a pixel tolerance; a wrong frame differs by 100,000+ pixels and still stops the run. Later, a spot check of 8 frames missed a browser that drew a label wrongly, so every frame is now rendered twice. The label had kept a stale size after a scale animation; <code>engine.js</code> now prevents that.</li>
         <li>A decoder deadlock: the frame comparison, the frame counts and every delivery step now have a time limit, so a hang there fails loudly.</li>
         <li>A bad argument: refused before starting.</li>
       </ul></div>
-      <div class="box"><h3>Not done, and why</h3><ul>
+      <div class="box"><h3>Left out, and why</h3><ul>
         <li><b>HEVC</b>: the high-quality file has no size pressure and H.264 is enough; the web preview must play in every browser.</li>
-        <li><b>Less grain</b>: the measured promo has no film grain, so it did not apply.</li>
         <li>The GPU speed-up is verified on macOS only; without a Metal GPU, render with <code>--cpu</code>.</li>
       </ul></div>
     </div>
@@ -203,13 +196,13 @@
     <div class="cols">
       <div class="box"><h3>Later</h3><ul>
         <li><b>three.js r128 → r186</b>: no effect here needs it; the upgrade takes about six steps and every colour, light and custom shader must be re-tuned.</li>
-        <li><b>GSAP</b>: add it for arbitrary shape morphs (a shield into an umbrella); free for commercial use under Webflow's own licence.</li>
-        <li><b>HyperFrames</b>: the same approach as ours, but six months old at v0.8 with an experimental API.</li>
+        <li><b>GSAP</b>: its MorphSVG plugin morphs any two paths, which the polar morph tile cannot: that tile needs shapes that every ray from the centre crosses once. Free for commercial use under Webflow's own licence.</li>
+        <li><b>HyperFrames</b>: the same approach as ours, but at v0.8 with its frame API marked experimental.</li>
       </ul></div>
       <div class="box"><h3>No</h3><ul>
-        <li><b>Remotion</b>: a rewrite in React, and paid licences for companies over three people.</li>
+        <li><b>Remotion</b>: videos are written as React components, and companies of more than three people need a paid licence.</li>
         <li><b>lygia</b>: commercial use needs a Patron licence.</li>
-        <li><b>Generative AI</b>: no AI actors, footage or depth maps. A mascot redesign goes to a human illustrator; music stays synthesised in code.</li>
+        <li><b>Generative AI</b>: no AI actors, footage, depth maps or music. Characters are drawn in code or by an illustrator, and music is synthesised in code.</li>
       </ul></div>
     </div>
   </section>
@@ -227,20 +220,32 @@
 <script>
 (() => {
   const { DEMOS, R3 } = window.FX;
-  const STATUS = { used: "In use", add: "Can add", avoid: "Avoid" };
+  const KINDS = { shader: "3D and shaders", sim: "Simulations", character: "Characters", motion: "Motion", backdrop: "Backgrounds", ui: "UI and charts", type: "Type", dont: "Don't" };
+  // Tiles are shown most striking first. One missing from this list follows the listed ones in the
+  // order it was registered; the “Don't” tiles always come last.
+  const ORDER = ["gpuparticles", "clay", "liquid", "reaction", "domainrep", "chrome", "styles", "rigid", "particles", "lit3d", "rays", "dissolve", "smoke", "tunnel",
+    "vartype", "morph", "cardflip", "ridgelines", "rhythm", "coderain", "timing", "datachart", "whip", "uifly", "drawflow", "blueprint", "glass", "sweep",
+    "hook", "chars", "karaoke", "stamp", "count", "type", "mark", "scan", "sticker", "ring", "beat", "wipe", "orbs", "gradient", "lut", "grain",
+    "ditherpeek", "dithercards", "ditheravatar", "dithercharacter", "toon", "flat", "bounce", "halftone"];
+  // What a tile needs beyond the page itself; "—" marks the two “Don't” tiles.
+  const NEEDS = { "A": ["Base stack only", "Needs nothing beyond HTML, CSS, SVG, Canvas and three.js r128"],
+    "A+": ["Plus a three.js add-on", "Loads one more file from three.js r128's examples, such as a bloom or halftone pass"],
+    "B": ["Custom shader", "Needs a GLSL shader written for it"], "C": ["Plus a library", "Needs one more library"] };
+  const rank = (d) => (d.kind === "dont" ? ORDER.length + 1 : ORDER.includes(d.id) ? ORDER.indexOf(d.id) : ORDER.length);
   const STACKS = { css: "HTML/CSS", svg: "SVG", canvas: "Canvas 2D", three: "Three.js", glsl: "Custom GLSL", physics: "Matter.js" };
   const gallery = document.getElementById("gallery");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  for (const d of DEMOS) {
+  for (const d of [...DEMOS].sort((a, b) => rank(a) - rank(b))) {
     const fig = document.createElement("figure"); fig.className = "tile";
     const stage = document.createElement("div"); stage.className = "stage";
-    const where = STATUS[d.status];
-    fig.innerHTML = `<figcaption><div class="pills"><span class="pill ${d.status}">${where}</span>${d.grade !== "—" ? `<span class="grade" title="Difficulty">${d.grade}</span>` : ""}</div><h3>${d.name}</h3><p>${d.purpose}</p>${d.seen ? `<p class="seen">Seen in: ${d.seen}</p>` : ""}<div class="chips">${d.chips.map((c) => `<code>${c}</code>`).join("")}</div></figcaption>`;
+    fig.innerHTML = `<figcaption><div class="pills"><span class="pill ${d.kind === "dont" ? "dont" : "kind"}">${KINDS[d.kind] || "?"}</span>${NEEDS[d.grade] ? `<span class="grade" title="${NEEDS[d.grade][1]}">${NEEDS[d.grade][0]}</span>` : ""}</div><h3>${d.name}</h3><p>${d.purpose}</p>${d.seen ? `<p class="seen">Seen in: ${d.seen}</p>` : ""}<div class="chips">${d.chips.map((c) => `<code>${c}</code>`).join("")}</div></figcaption>`;
     fig.prepend(stage);
     (d.host ? document.getElementById(d.host) : gallery).appendChild(fig);
     d.fig = fig;
     try {
+      if (!KINDS[d.kind]) throw new Error(`unknown kind “${d.kind}”`);
+      if (d.grade !== "—" && !NEEDS[d.grade]) throw new Error(`unknown grade “${d.grade}”`);
       if (d.gl && !R3) { stage.innerHTML = `<div class="nogl">3D tiles need WebGL and three.js from its CDN; one of them did not load here.</div>`; continue; }
       const built = d.build(stage);
       d.frame = typeof built === "function" ? built : built.frame;
@@ -251,12 +256,11 @@
     }
   }
 
-  const G = DEMOS.filter((d) => !d.host);
-  const count = (k) => G.filter((d) => d.status === k).length;
+  const G = DEMOS.filter((d) => !d.host).sort((a, b) => rank(a) - rank(b));
   document.getElementById("legend").innerHTML =
-    `<span><b>${G.length}</b> effects</span><span class="pill used">In use ${count("used")}</span><span class="pill add">Can add ${count("add")}</span><span class="pill avoid">Avoid ${count("avoid")}</span>` +
-    `<span>Grade: A = today's stack; A+ = one more r128 add-on file; B = a custom shader; C = a new library</span>`;
-  const state = { status: "all", stack: "all" };
+    `<span><b>${DEMOS.length}</b> effects: ${G.length} in the gallery and ${DEMOS.length - G.length} in Characters further down</span>` +
+    `<span>Needs: base stack only · plus a three.js add-on · custom shader · plus a library</span>`;
+  const state = { kind: "all", stack: "all" };
   const mk = (host, key, opts) => {
     for (const [v, label] of opts) {
       const b = document.createElement("button"); b.type = "button"; b.textContent = label; b.setAttribute("aria-pressed", String(state[key] === v));
@@ -264,11 +268,11 @@
       host.appendChild(b);
     }
   };
-  mk(document.getElementById("fStatus"), "status", [["all", "All"], ["used", "In use"], ["add", "Can add"], ["avoid", "Avoid"]]);
+  mk(document.getElementById("fKind"), "kind", [["all", "All"], ...Object.entries(KINDS).filter(([k]) => G.some((d) => d.kind === k))]);
   mk(document.getElementById("fStack"), "stack", [["all", "All"], ...Object.entries(STACKS)]);
   function apply() {
     let n = 0;
-    for (const d of G) { const ok = (state.status === "all" || d.status === state.status) && (state.stack === "all" || d.stacks.includes(state.stack)); d.fig.hidden = !ok; n += ok; }
+    for (const d of G) { const ok = (state.kind === "all" || d.kind === state.kind) && (state.stack === "all" || d.stacks.includes(state.stack)); d.fig.hidden = !ok; n += ok; }
     document.getElementById("shown").textContent = `${n} shown`;
   }
   apply();
@@ -299,23 +303,23 @@
   requestAnimationFrame(tick);
 
   // render-time bars, to scale
-  const bars = [["Before: 1 browser, CPU-emulated GPU", 399.6, "old", false], ["Now: 4 browsers, every frame rendered twice (default)", 52.9, "", true],
+  const bars = [["First pipeline: 1 browser, CPU-emulated GPU", 399.6, "old", false], ["This recorder: 4 browsers, every frame rendered twice (default)", 52.9, "", true],
     ["Spot check only: 1 browser", 71.0, "", false], ["Spot check only: 4 browsers", 26.4, "", false], ["Spot check only: 6 browsers", 28.5, "", false], ["Spot check only: 8 browsers", 31.9, "", false]];
   document.getElementById("bars").innerHTML = bars.map(([l, v, c, best]) => `<div class="bar${best ? " best" : ""}"><span>${l}</span><div style="padding-right:90px"><i class="${c}" style="width:${(v / 399.6 * 100).toFixed(1)}%"><b>${v.toFixed(1)} s</b></i></div></div>`).join("");
 
   // stack table
   const rows = [
     ["Picture"],
-    ["HTML + CSS", "Web layout", "Type and UI mock-ups", "Telegram card, chat, character pops, highlighter, stamp, frosted glass (backdrop-filter), halftone multiply (mix-blend-mode)"],
-    ["SVG", "Vector shapes and filters", "Lines and filters", "Text on a path, horizontal motion blur on letters (feGaussianBlur), callouts and flow charts"],
-    ["Canvas 2D", "Pixels drawn in code", "Textures and text sampling", "Film grain, ray textures, particle text sampling, the studio map the chrome reflects"],
-    ["Google Fonts", "Web fonts", "Chinese, wide Latin, monospace", "Noto Sans TC, Archivo, JetBrains Mono"],
+    ["HTML + CSS", "Web layout", "Type and UI mock-ups", "Telegram card, chat, character pops, highlighter, stamp, frosted glass (backdrop-filter), halftone multiply (mix-blend-mode), variable-font type, 3D card flips"],
+    ["SVG", "Vector shapes and filters", "Lines and filters", "Horizontal motion blur on letters (feGaussianBlur), callouts, flow and data charts, the timing graph, the polar morph, the flat character"],
+    ["Canvas 2D", "Pixels drawn in code", "Textures and text sampling", "Film grain, Bauhaus rhythm, ridgelines, code rain, the rigid bodies; text sampled for particles and reaction–diffusion; the ASCII glyph atlas; textures: the studio map the chrome reflects, the scene behind the liquid glass, the characters' suit"],
+    ["Google Fonts", "Web fonts", "Chinese, wide Latin, a serif, monospace", "Noto Sans TC, Archivo, Instrument Serif, JetBrains Mono"],
     ["engine.js (ours)", "Timeline engine", "Every frame depends on t alone, so frames can be captured one by one", "30-odd animations (pop, whip, slam, type, scan…), scene wipes, the sound-cue list"],
     ["3D"],
-    ["three.js r128 core", "3D engine for the browser", "Camera, lights, particles, 3D objects", "Line tunnel, particles, 3D type, dust, particle text, mascots"],
+    ["three.js r128 core", "3D engine for the browser", "Camera, lights, particles, 3D objects", "Line tunnel, particles, 3D type, dust, particle text, characters, 200,000 GPU particles"],
     ["three.js post-processing", "Effects after the render (EffectComposer)", "Bloom and halftone", "UnrealBloomPass bloom; HalftonePass comic dots"],
     ["TextGeometry + Helvetiker", "3D text and its font", "Extruded Latin and digits", "“6%”, “4.5%”, “social_ops”; the font has no CJK, so Chinese stays flat"],
-    ["Custom GLSL", "Small GPU programs that colour each pixel", "What stock materials cannot do", "Smoke (fbm noise), noise dissolve (onBeforeCompile)"],
+    ["Custom GLSL", "Small GPU programs that colour each pixel", "What stock materials cannot do", "Smoke (fbm noise), noise dissolve (onBeforeCompile), liquid glass, ray-marched clay, domain repetition, five post styles, GPU particles, reaction–diffusion, the dithered character"],
     ["PBR + PMREM", "Physically based materials", "Chrome needs something to reflect", "The chrome social_ops logo"],
     ["Shadows (SpotLight, soft)", "Lights that cast shadows", "Depth", "The 3D “6%” casting on the floor"],
     ["Physics"],
@@ -328,8 +332,8 @@
     ["ffmpeg", "Audio and video tool", "Encode and mix", "x264, amix, alimiter, AAC"],
   ];
   const newRows = [
-    ["ANGLE Metal (M4 GPU)", "WebGL on the real GPU", "Fast 3D", "The old runs emulated the GPU on the CPU (SwiftShader)"],
-    ["CDP fast capture", "Chrome's own screenshot call with optimizeForSpeed", "Lossless and quicker", "Pixel-identical to the old method (8 of 8 frames)"],
+    ["ANGLE Metal (M4 GPU)", "WebGL on the real GPU", "Fast 3D", "Default headless Chromium emulates the GPU on the CPU (SwiftShader)"],
+    ["CDP fast capture", "Chrome's own screenshot call with optimizeForSpeed", "Lossless and quicker", "Pixel-identical to page.screenshot (8 of 8 frames)"],
     ["Parallel browsers", "Several Chromium processes share the frames", "Several times faster", "Tabs in one browser barely help"],
     ["Loudness", "alimiter + two-pass loudnorm + ebur128", "Every video equally loud", "−14 LUFS target, true peak ≤ −1 dBTP"],
     ["Fail-closed checks", "A check at every step", "No silently broken video", "GPU, lost WebGL context, page errors, fonts, re-render match, frame count, size, loudness"],

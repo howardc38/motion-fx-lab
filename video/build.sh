@@ -21,7 +21,7 @@ ffmpeg -y -loglevel error -i "$WORK/music.wav" -i "$WORK/sfx.wav" \
   -ar 48000 -c:a pcm_f32le "$WORK/mix.wav"
 
 # The recorder renders every frame twice on different browsers and exits with 3 if any frame
-# differs. Now and then one browser draws web-font text wrongly for a stretch (see README), so a
+# differs. Now and then one frame differs along a tile's edge while it scales in (see README), so a
 # mismatch is rendered again; any other failure stops here. Mismatching frames stay in video/mismatch/.
 for attempt in 1 2 3 4 5; do
   status=0

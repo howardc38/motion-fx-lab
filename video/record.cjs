@@ -182,8 +182,9 @@ async function video(file, out, fps, n, gpu, verify) {
   let note = "not verified (--no-verify)";
   if (verify) {
     // Render everything again with every frame on a different browser, and compare all frames.
-    // Now and then one of several parallel browsers draws web-font text wrongly for a stretch
-    // of a run (cause not found; see README). Sampling missed it; a full second pass cannot.
+    // Parallel browsers have disagreed: one kept SVG labels at a stale size after a scale animation
+    // (fixed in engine.js), and a tile's edge now and then differs while it scales in (see README).
+    // Sampling missed the first; a full second pass cannot.
     const again = out.replace(/(\.\w+)?$/, ".verify$1");
     try {
       const sec2 = await renderPass(ws, again, fps, dur, count, 1, `${name} verify`);
