@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Motion FX Lab example: product demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  :root { --ink: #0e0d12; --paper: #f4f3ee; --pink: #ff90e8; --sun: #ffd400; --muted: #8f8a9c;
+    --lat: "Archivo", "Helvetica Neue", Arial, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+  html, body { height: 100%; }
+  body { margin: 0; background: #111110; display: grid; place-items: center; }
+  #frame { position: relative; overflow: hidden; background: var(--paper); }
+  #stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; font-family: var(--lat); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  body.record { display: block; }
+  body.record #frame { position: fixed; left: 0; top: 0; }
+  body.record #stage { transform: none !important; }
+  .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; background: var(--paper);
+    background-image: radial-gradient(rgba(14,13,18,.12) 1.6px, transparent 2px); background-size: 40px 40px; }
+  .a { position: absolute; }
+  .wide { font-weight: 900; font-stretch: 125%; letter-spacing: -.02em; line-height: .95; }
+  .chip { font: 700 20px var(--mono); letter-spacing: .12em; padding: 9px 16px; border: 2px solid currentColor; border-radius: 999px; }
+  .win { left: 760px; top: 250px; width: 1000px; height: 640px; border-radius: 22px; background: #fff; box-shadow: 0 40px 90px rgba(14,13,18,.22); overflow: hidden; transform-origin: 88% 20%; }
+  .win .bar { height: 56px; background: #ebe9e2; display: flex; align-items: center; gap: 10px; padding: 0 22px; }
+  .win .bar i { width: 14px; height: 14px; border-radius: 50%; background: #c9c6bd; }
+  .win .bar b { margin-left: 16px; font: 700 18px var(--mono); color: #5c5868; }
+  .row { position: absolute; left: 40px; right: 40px; height: 120px; border-radius: 20px; background: #f6f5f0; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; }
+  .row b { font: 900 38px var(--lat); }
+  .row em { font: 700 22px var(--mono); font-style: normal; color: #5c5868; margin-left: 18px; }
+  .row em .n2 { display: none; }
+  .row em.on .n1 { display: none; }
+  .row em.on .n2 { display: inline; color: #1e9e5a; }
+  .btn { font: 800 28px var(--lat); padding: 16px 28px; border-radius: 999px; background: var(--ink); color: #fff; white-space: nowrap; }
+  .btn .bOn { display: none; }
+  .btn.on { background: #1e9e5a; }
+  .btn.on .bOff { display: none; }
+  .btn.on .bOn { display: inline; }
+  .ring { width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; border: 8px solid var(--pink); }
+  .sticker { position: absolute; padding: 20px 34px; border-radius: 20px; border: 6px solid #fff; box-shadow: 0 8px 0 rgba(0,0,0,.14), 0 16px 34px rgba(0,0,0,.18); font: 900 44px var(--lat); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="frame">
+<div id="stage" data-w="1920" data-h="1080" data-dur="7.2">
+
+  <!-- one scene: the window turns to the camera, a tap books a class, the camera moves in -->
+  <section class="scene" data-start="0">
+    <div class="a chip" style="left:150px;top:120px;color:#c2267f" data-fx="fade" data-at="0.1" data-out="3.1">DEMO · FICTIONAL STUDIO</div>
+    <div class="a wide" style="left:150px;top:330px;font-size:84px;width:560px" data-fx="up" data-at="0.2" data-out="3.1">Book a class</div>
+    <div class="a wide" style="left:150px;top:510px;font-size:84px;width:560px;color:#c2267f" data-fx="up" data-at="0.4" data-out="3.1">in one tap.</div>
+    <div class="a" style="left:0;top:0;width:1920px;height:1080px;perspective:1800px">
+      <div class="a win" id="win">
+        <div class="bar"><i></i><i></i><i></i><b>sample-studio.app / tonight</b></div>
+        <div class="row" style="top:96px"><div><b>Vinyasa</b><em data-on="2.05"><span class="n1">7:00 pm · 3 spots</span><span class="n2">7:00 pm · 2 spots left</span></em></div><div class="btn" data-on="2.05"><span class="bOff">Book</span><span class="bOn">Booked ✓</span></div></div>
+        <div class="row" style="top:236px"><div><b>Yin</b><em>8:15 pm · full</em></div><div class="btn" style="background:#e3e1da;color:#5c5868">Waitlist</div></div>
+        <div class="row" style="top:376px"><div><b>Pilates</b><em>9:00 pm · 5 spots</em></div><div class="btn">Book</div></div>
+        <div class="row" style="top:516px"><div><b>Barre</b><em>9:45 pm · 8 spots</em></div><div class="btn">Book</div></div>
+      </div>
+    </div>
+    <div class="a ring" style="left:1611px;top:437px" data-fx="ring" data-at="1.95" data-sfx="tap"></div>
+    <svg class="a" style="width:44px;height:54px" data-fx="move" data-x0="1500" data-y0="930" data-x1="1600" data-y1="425" data-at="1.2" data-dur="0.7" data-out="3.0" viewBox="0 0 44 54" aria-hidden="true"><path d="M4 3 L4 44 L15 34 L23 51 L31 47 L23 31 L38 31 Z" fill="#0e0d12" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>
+    <svg class="a" style="left:0;top:0" width="1920" height="1080" aria-hidden="true"><path id="callout" d="M1300 960 L1470 960 L1560 470" fill="none" stroke="#c2267f" stroke-width="5" stroke-linecap="round"/></svg>
+    <div class="a" style="left:1010px;top:935px;font:800 36px var(--lat);color:#c2267f" data-fx="fade" data-at="2.6" data-out="3.0">One tap to book</div>
+    <div class="sticker" style="left:1270px;top:900px;background:var(--pink);transform:rotate(-4deg)" data-fx="slam" data-at="5.0" data-base="rotate(-4deg)" data-sfx="stamp">Sample Studio app</div>
+  </section>
+
+</div>
+</div>
+<script>
+(() => {
+  window.__poster = 5.8;   // the poster frame, in seconds
+  window.__music = [[0, "build"], [2.4, "drop"], [6.0, "tail"]];
+  const win = document.getElementById("win"), callout = document.getElementById("callout"), CL = callout.getTotalLength();
+  callout.setAttribute("stroke-dasharray", `${CL} ${CL}`);
+  const clamp = (v) => Math.max(0, Math.min(1, v)), eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  window.__renderHooks = window.__renderHooks || [];
+  window.__renderHooks.push((t) => {
+    // The turn is a 3D transform; once it ends the window only scales, as a plain 2D transform.
+    const turn = eio(clamp((t - 0.2) / 1.0)), zoom = eio(clamp((t - 3.3) / 1.2));
+    win.style.transform = turn < 1
+      ? `rotateY(${(-26 * (1 - turn)).toFixed(2)}deg) rotateX(${(8 * (1 - turn)).toFixed(2)}deg) scale(${(0.92 + 0.08 * turn).toFixed(4)})`
+      : `scale(${(1 + 0.22 * zoom).toFixed(4)})`;
+    callout.setAttribute("stroke-dashoffset", String((1 - eio(clamp((t - 2.3) / 0.5))) * CL));
+    callout.style.opacity = String(1 - clamp((t - 3.0) / 0.3));
+  });
+  window.__ready = document.fonts.ready;
+})();
+</script>
+<script src="../video/engine.js"></script>
+</body>
+</html>
