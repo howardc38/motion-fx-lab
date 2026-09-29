@@ -436,6 +436,63 @@
   demo({ ...halftoneDemo, id: "mascotNow", host: "mascotRow", name: "Today: halftone blocks", chips: ["Three.js primitives", "HalftonePass"],
     purpose: "Spheres and cylinders stacked as they are, no outline, even proportions: it reads as building blocks." });
 
+  // The agent from option A as a reusable model. paint(colour, map) makes the material of each lit
+  // surface and accent(colour, opacity) of each flat detail; outline(mesh, geometry), if given,
+  // decorates a mesh. So toon, dither and any other style draw the same character.
+  function agentModel(scene, paint, accent, outline) {
+    const part = (geo, mat, parent, lined = true) => { const m = new THREE.Mesh(geo, mat); parent.add(m); if (lined && outline) outline(m, geo); return m; };
+    const SKIN = 0xf6c9a6, HAIR = 0x2a2230, SUIT = 0x26335c;
+
+    // suit, shirt and tie painted on the jacket; the front of the lathe sits at u = 0.5
+    const c = document.createElement("canvas"); c.width = 1024; c.height = 512; const g = c.getContext("2d");
+    const Y = (v) => (1 - v) * 512;
+    g.fillStyle = "#26335c"; g.fillRect(0, 0, 1024, 512);
+    g.fillStyle = "#ffffff"; g.beginPath(); g.moveTo(452, Y(0.98)); g.lineTo(572, Y(0.98)); g.lineTo(512, Y(0.66)); g.closePath(); g.fill();
+    g.fillStyle = "#ff4f9a"; g.beginPath(); g.moveTo(503, Y(0.95)); g.lineTo(521, Y(0.95)); g.lineTo(527, Y(0.76)); g.lineTo(512, Y(0.71)); g.lineTo(497, Y(0.76)); g.closePath(); g.fill();
+    g.strokeStyle = "#141c36"; g.lineWidth = 9; g.beginPath(); g.moveTo(446, Y(0.99)); g.lineTo(512, Y(0.64)); g.lineTo(578, Y(0.99)); g.stroke();
+    g.fillStyle = "#141c36"; [0.55, 0.45].forEach((v) => { g.beginPath(); g.arc(512, Y(v), 8, 0, Math.PI * 2); g.fill(); });
+    const suitTex = new THREE.CanvasTexture(c);
+
+    const root = new THREE.Group(); root.position.y = -6.0; scene.add(root);
+    const body = new THREE.Group(); body.position.y = 4.4; root.add(body);
+    const prof = [];
+    for (let i = 0; i <= 28; i++) { const u = i / 28; prof.push(new THREE.Vector2(Math.max(0.001, 2.2 * Math.sqrt(Math.max(0, 1 - Math.pow(u, 4)))), -4.4 + u * 5.02)); }
+    const torso = part(new THREE.LatheGeometry(prof, 72, Math.PI, Math.PI * 2), paint(0xffffff, suitTex), body);
+    torso.scale.z = 0.72;
+    const neck = part(new THREE.CylinderGeometry(0.5, 0.55, 0.9, 32), paint(SKIN), body, false); neck.position.y = 0.8;
+
+    const head = new THREE.Group(); head.position.y = 2.55; body.add(head);
+    part(new THREE.SphereGeometry(1.75, 64, 48), paint(SKIN), head).scale.set(1, 1.02, 0.95);
+    const hairMat = paint(HAIR); hairMat.side = THREE.DoubleSide;
+    const cap = part(new THREE.SphereGeometry(1.86, 64, 32, 0, Math.PI * 2, 0, 1.5), hairMat, head); cap.rotation.x = -0.18; cap.scale.set(1.02, 1, 1.02);
+    [-1, 1].forEach((sx) => { const sb = part(new THREE.SphereGeometry(0.5, 24, 16), paint(HAIR), head); sb.scale.set(0.45, 1.0, 0.8); sb.position.set(sx * 1.62, 0.5, 0.25); });
+    const fringe = part(new THREE.SphereGeometry(0.9, 32, 24), paint(HAIR), head); fringe.scale.set(1.7, 0.5, 0.75); fringe.position.set(0.35, 1.22, 1.12); fringe.rotation.set(0.3, 0, -0.25);
+    [-1, 1].forEach((sx) => { part(new THREE.SphereGeometry(0.36, 24, 16), paint(SKIN), head).position.set(sx * 1.7, -0.05, 0); });
+    const eyes = [-1, 1].map((sx) => {
+      const e = new THREE.Mesh(new THREE.SphereGeometry(0.2, 24, 16), accent(0x1a1720)); e.position.set(sx * 0.6, 0.1, 1.58); e.scale.set(1, 1.35, 0.5); head.add(e);
+      const hl = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 8), accent(0xffffff)); hl.position.set(0.07, 0.08, 0.2); e.add(hl);
+      return e;
+    });
+    const brows = [-1, 1].map((sx) => { const b = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.055, 8, 24, Math.PI * 0.8), accent(0x2a2230)); b.position.set(sx * 0.6, 0.55, 1.5); b.rotation.z = Math.PI * 0.1; head.add(b); return b; });
+    part(new THREE.SphereGeometry(0.17, 16, 12), paint(SKIN), head, false).position.set(0, -0.18, 1.68);
+    const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.065, 8, 24, Math.PI), accent(0x7a1f3a)); mouth.rotation.z = Math.PI; mouth.position.set(0, -0.55, 1.56); head.add(mouth);
+    [-1, 1].forEach((sx) => { const b = new THREE.Mesh(new THREE.SphereGeometry(0.28, 16, 12), accent(0xff8fb1, 0.55)); b.scale.set(1, 0.5, 0.25); b.position.set(sx * 1.02, -0.35, 1.32); head.add(b); });
+
+    const capsule = [], r = 0.45, L = 1.9;
+    for (let i = 0; i <= 8; i++) { const a = -Math.PI / 2 + (i / 8) * (Math.PI / 2); capsule.push(new THREE.Vector2(Math.max(0.001, r * Math.cos(a)), -L + r * Math.sin(a))); }
+    for (let i = 1; i <= 8; i++) { const a = (i / 8) * (Math.PI / 2); capsule.push(new THREE.Vector2(Math.max(0.001, r * Math.cos(a)), r * Math.sin(a))); }
+    const arm = (sx) => {
+      const sh = new THREE.Group(); sh.position.set(sx * 1.55, 0.05, 0.1); body.add(sh);
+      part(new THREE.LatheGeometry(capsule, 32), paint(SUIT), sh);
+      const cuff = part(new THREE.CylinderGeometry(0.47, 0.47, 0.2, 24), paint(0xffffff), sh, false); cuff.position.y = -L - 0.05;
+      part(new THREE.SphereGeometry(0.5, 32, 24), paint(SKIN), sh).position.y = -L - 0.45;
+      return sh;
+    };
+    const armL = arm(-1), armR = arm(1);
+    armR.rotation.z = 0.45;
+    return { root, body, torso, neck, head, eyes, brows, mouth, armL, armR };
+  }
+
   demo({ id: "toon", gl: true, host: "mascotRow", name: "Option A: 3D toon shading + outline", status: "add", stacks: ["three"], chips: ["MeshToonMaterial", "outline (inverted hull)", "Canvas-painted suit"], grade: "A",
     purpose: "Same Three.js: smooth shapes, three-step toon shading, black outline, big head and small body, suit and tie, eye highlights.", period: 5, hero: 1.3,
     build(s) {
@@ -450,56 +507,7 @@
       const basic = (c, o) => new THREE.MeshBasicMaterial(o ? { color: c, transparent: true, opacity: o } : { color: c });
       const line = new THREE.MeshBasicMaterial({ color: 0x1a1720, side: THREE.BackSide });
       line.onBeforeCompile = (sh) => { sh.vertexShader = sh.vertexShader.replace("#include <begin_vertex>", "vec3 transformed = position + normal * 0.045;"); };
-      const part = (geo, mat, parent, outline = true) => { const m = new THREE.Mesh(geo, mat); parent.add(m); if (outline) m.add(new THREE.Mesh(geo, line)); return m; };
-      const SKIN = 0xf6c9a6, HAIR = 0x2a2230, SUIT = 0x26335c;
-
-      // suit, shirt and tie painted on the jacket; the front of the lathe sits at u = 0.5
-      const c = document.createElement("canvas"); c.width = 1024; c.height = 512; const g = c.getContext("2d");
-      const Y = (v) => (1 - v) * 512;
-      g.fillStyle = "#26335c"; g.fillRect(0, 0, 1024, 512);
-      g.fillStyle = "#ffffff"; g.beginPath(); g.moveTo(452, Y(0.98)); g.lineTo(572, Y(0.98)); g.lineTo(512, Y(0.66)); g.closePath(); g.fill();
-      g.fillStyle = "#ff4f9a"; g.beginPath(); g.moveTo(503, Y(0.95)); g.lineTo(521, Y(0.95)); g.lineTo(527, Y(0.76)); g.lineTo(512, Y(0.71)); g.lineTo(497, Y(0.76)); g.closePath(); g.fill();
-      g.strokeStyle = "#141c36"; g.lineWidth = 9; g.beginPath(); g.moveTo(446, Y(0.99)); g.lineTo(512, Y(0.64)); g.lineTo(578, Y(0.99)); g.stroke();
-      g.fillStyle = "#141c36"; [0.55, 0.45].forEach((v) => { g.beginPath(); g.arc(512, Y(v), 8, 0, Math.PI * 2); g.fill(); });
-      const suitTex = new THREE.CanvasTexture(c);
-
-      const root = new THREE.Group(); root.position.y = -6.0; scene.add(root);
-      const body = new THREE.Group(); body.position.y = 4.4; root.add(body);
-      const prof = [];
-      for (let i = 0; i <= 28; i++) { const u = i / 28; prof.push(new THREE.Vector2(Math.max(0.001, 2.2 * Math.sqrt(Math.max(0, 1 - Math.pow(u, 4)))), -4.4 + u * 5.02)); }
-      const torso = part(new THREE.LatheGeometry(prof, 72, Math.PI, Math.PI * 2), toon(0xffffff, suitTex), body);
-      torso.scale.z = 0.72;
-      const neck = part(new THREE.CylinderGeometry(0.5, 0.55, 0.9, 32), toon(SKIN), body, false); neck.position.y = 0.8;
-
-      const head = new THREE.Group(); head.position.y = 2.55; body.add(head);
-      part(new THREE.SphereGeometry(1.75, 64, 48), toon(SKIN), head).scale.set(1, 1.02, 0.95);
-      const hairMat = toon(HAIR); hairMat.side = THREE.DoubleSide;
-      const cap = part(new THREE.SphereGeometry(1.86, 64, 32, 0, Math.PI * 2, 0, 1.5), hairMat, head); cap.rotation.x = -0.18; cap.scale.set(1.02, 1, 1.02);
-      [-1, 1].forEach((sx) => { const sb = part(new THREE.SphereGeometry(0.5, 24, 16), toon(HAIR), head); sb.scale.set(0.45, 1.0, 0.8); sb.position.set(sx * 1.62, 0.5, 0.25); });
-      const fringe = part(new THREE.SphereGeometry(0.9, 32, 24), toon(HAIR), head); fringe.scale.set(1.7, 0.5, 0.75); fringe.position.set(0.35, 1.22, 1.12); fringe.rotation.set(0.3, 0, -0.25);
-      [-1, 1].forEach((sx) => { part(new THREE.SphereGeometry(0.36, 24, 16), toon(SKIN), head).position.set(sx * 1.7, -0.05, 0); });
-      const eyes = [-1, 1].map((sx) => {
-        const e = new THREE.Mesh(new THREE.SphereGeometry(0.2, 24, 16), basic(0x1a1720)); e.position.set(sx * 0.6, 0.1, 1.58); e.scale.set(1, 1.35, 0.5); head.add(e);
-        const hl = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 8), basic(0xffffff)); hl.position.set(0.07, 0.08, 0.2); e.add(hl);
-        return e;
-      });
-      const brows = [-1, 1].map((sx) => { const b = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.055, 8, 24, Math.PI * 0.8), basic(0x2a2230)); b.position.set(sx * 0.6, 0.55, 1.5); b.rotation.z = Math.PI * 0.1; head.add(b); return b; });
-      part(new THREE.SphereGeometry(0.17, 16, 12), toon(SKIN), head, false).position.set(0, -0.18, 1.68);
-      const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.065, 8, 24, Math.PI), basic(0x7a1f3a)); mouth.rotation.z = Math.PI; mouth.position.set(0, -0.55, 1.56); head.add(mouth);
-      [-1, 1].forEach((sx) => { const b = new THREE.Mesh(new THREE.SphereGeometry(0.28, 16, 12), basic(0xff8fb1, 0.55)); b.scale.set(1, 0.5, 0.25); b.position.set(sx * 1.02, -0.35, 1.32); head.add(b); });
-
-      const capsule = [], r = 0.45, L = 1.9;
-      for (let i = 0; i <= 8; i++) { const a = -Math.PI / 2 + (i / 8) * (Math.PI / 2); capsule.push(new THREE.Vector2(Math.max(0.001, r * Math.cos(a)), -L + r * Math.sin(a))); }
-      for (let i = 1; i <= 8; i++) { const a = (i / 8) * (Math.PI / 2); capsule.push(new THREE.Vector2(Math.max(0.001, r * Math.cos(a)), r * Math.sin(a))); }
-      const arm = (sx) => {
-        const sh = new THREE.Group(); sh.position.set(sx * 1.55, 0.05, 0.1); body.add(sh);
-        part(new THREE.LatheGeometry(capsule, 32), toon(SUIT), sh);
-        const cuff = part(new THREE.CylinderGeometry(0.47, 0.47, 0.2, 24), toon(0xffffff), sh, false); cuff.position.y = -L - 0.05;
-        part(new THREE.SphereGeometry(0.5, 32, 24), toon(SKIN), sh).position.y = -L - 0.45;
-        return sh;
-      };
-      const armL = arm(-1), armR = arm(1);
-      armR.rotation.z = 0.45;
+      const { root, torso, head, eyes, brows, mouth, armL } = agentModel(scene, toon, basic, (m, geo) => m.add(new THREE.Mesh(geo, line)));
 
       return (t) => {
         const hopP = t < 0.6 ? Math.sin((Math.PI * t) / 0.6) : 0, land = Math.exp(-Math.pow((t - 0.62) / 0.07, 2));
@@ -857,5 +865,7 @@
       };
     } });
 
-  window.FX = { DEMOS, R3, GW, GH, helpers: { clamp, lin, smooth, outCubic, inCubic, inOut, back, hash } };
+  // Extension files (fx/pack-*.js) register more effects with FX.demo and reuse these building blocks.
+  window.FX = { DEMOS, demo, R3, GW, GH, FONT, ZH, LAT, NOISE, q, qa, glTile, composer, text3d, studioLights, rng, mascot, mascotScene, agentModel,
+    helpers: { clamp, lin, smooth, outCubic, inCubic, inOut, back, hash } };
 })();

@@ -33,7 +33,8 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
 | What | From | Licence |
 |---|---|---|
 | three.js r128 and its `examples/js` post-processing files | cdnjs, jsDelivr | MIT |
-| Archivo, JetBrains Mono, Noto Sans TC | Google Fonts | SIL Open Font License 1.1 |
+| Matter.js 0.20.0 (the rigid-body tile) | cdnjs | MIT |
+| Archivo, Instrument Serif, JetBrains Mono, Noto Sans TC | Google Fonts | SIL Open Font License 1.1 |
 | Playwright (development dependency) | npm | Apache-2.0 |
 
 ## Drawn by the operating system

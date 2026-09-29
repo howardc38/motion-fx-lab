@@ -5,7 +5,7 @@
 <title>Motion FX Lab: intro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
@@ -66,7 +66,7 @@
     <div class="a dots" style="inset:0" data-fx="bgpan" data-vx="-14" data-vy="0"></div>
     <div class="a wide" style="left:150px;top:250px;font-size:170px;color:var(--paper)" data-fx="whip" data-at="0.25" data-dx="900" data-sfx="whoosh">Motion graphics</div>
     <div class="a wide pk" style="left:150px;top:450px;font-size:170px" data-fx="chars" data-at="0.9" data-stagger="0.035" data-sfx="pop" data-sfx-repeat="4" data-sfx-every="0.12">in plain HTML.</div>
-    <div class="a mono" style="left:156px;top:700px;font-size:30px;color:var(--muted);letter-spacing:.04em" data-fx="up" data-at="2.2">36 effects · one clock · frame-exact MP4</div>
+    <div class="a mono" style="left:156px;top:700px;font-size:30px;color:var(--muted);letter-spacing:.04em" data-fx="up" data-at="2.2">54 effects · one clock · frame-exact MP4</div>
   </section>
 
   <!-- 02 render(t) -->
@@ -84,17 +84,17 @@
   <!-- 03 the library -->
   <section class="scene ink" data-start="9.6">
     <div class="edge"></div>
-    <div class="a wide" style="left:154px;top:58px;font-size:66px;color:var(--paper)" data-fx="left" data-at="0.1">36 effects, live in the browser</div>
+    <div class="a wide" style="left:154px;top:58px;font-size:66px;color:var(--paper)" data-fx="left" data-at="0.1">54 effects, live in the browser</div>
     <div class="tile" style="left:154px;top:170px;width:300px" data-fx="pop" data-at="0.30" data-sfx="pop"><div class="stage" data-demo="lit3d" data-t0="0.3"></div><div class="lab">lit 3D type</div></div>
-    <div class="tile" style="left:482px;top:170px;width:300px" data-fx="pop" data-at="0.40" data-sfx="pop"><div class="stage" data-demo="particles" data-t0="0.4"></div><div class="lab">particles</div></div>
-    <div class="tile" style="left:810px;top:170px;width:300px" data-fx="pop" data-at="0.50" data-sfx="pop"><div class="stage" data-demo="dissolve" data-t0="0.5"></div><div class="lab">noise dissolve</div></div>
-    <div class="tile" style="left:1138px;top:170px;width:300px" data-fx="pop" data-at="0.60" data-sfx="pop"><div class="stage" data-demo="chrome" data-t0="0.6"></div><div class="lab">chrome</div></div>
-    <div class="tile" style="left:1466px;top:170px;width:300px" data-fx="pop" data-at="0.70" data-sfx="pop"><div class="stage" data-demo="liquid" data-t0="0.7"></div><div class="lab">liquid glass</div></div>
-    <div class="tile" style="left:154px;top:600px;width:300px" data-fx="pop" data-at="0.80" data-sfx="pop"><div class="stage" data-demo="blueprint" data-t0="0.8"></div><div class="lab">blueprint</div></div>
-    <div class="tile" style="left:482px;top:600px;width:300px" data-fx="pop" data-at="0.90" data-sfx="pop"><div class="stage" data-demo="stamp" data-t0="0.9"></div><div class="lab">stamp</div></div>
-    <div class="tile" style="left:810px;top:600px;width:300px" data-fx="pop" data-at="1.00" data-sfx="pop"><div class="stage" data-demo="drawflow" data-t0="1.0"></div><div class="lab">flow chart</div></div>
-    <div class="tile" style="left:1138px;top:600px;width:300px" data-fx="pop" data-at="1.10" data-sfx="pop"><div class="stage" data-demo="uifly" data-t0="1.1"></div><div class="lab">real UI</div></div>
-    <div class="tile" style="left:1466px;top:600px;width:300px" data-fx="pop" data-at="1.20" data-sfx="pop"><div class="stage" data-demo="tunnel" data-t0="1.2"></div><div class="lab">tunnel</div></div>
+    <div class="tile" style="left:482px;top:170px;width:300px" data-fx="pop" data-at="0.40" data-sfx="pop"><div class="stage" data-demo="clay" data-t0="0.4"></div><div class="lab">ray-marched clay</div></div>
+    <div class="tile" style="left:810px;top:170px;width:300px" data-fx="pop" data-at="0.50" data-sfx="pop"><div class="stage" data-demo="gpuparticles" data-t0="0.5"></div><div class="lab">200k GPU particles</div></div>
+    <div class="tile" style="left:1138px;top:170px;width:300px" data-fx="pop" data-at="0.60" data-sfx="pop"><div class="stage" data-demo="styles" data-t0="0.6"></div><div class="lab">5 shader styles</div></div>
+    <div class="tile" style="left:1466px;top:170px;width:300px" data-fx="pop" data-at="0.70" data-sfx="pop"><div class="stage" data-demo="chrome" data-t0="0.7"></div><div class="lab">chrome</div></div>
+    <div class="tile" style="left:154px;top:600px;width:300px" data-fx="pop" data-at="0.80" data-sfx="pop"><div class="stage" data-demo="reaction" data-t0="0.8"></div><div class="lab">reaction–diffusion</div></div>
+    <div class="tile" style="left:482px;top:600px;width:300px" data-fx="pop" data-at="0.90" data-sfx="pop"><div class="stage" data-demo="rigid" data-t0="0.9"></div><div class="lab">rigid bodies</div></div>
+    <div class="tile" style="left:810px;top:600px;width:300px" data-fx="pop" data-at="1.00" data-sfx="pop"><div class="stage" data-demo="morph" data-t0="1.0"></div><div class="lab">shape morph</div></div>
+    <div class="tile" style="left:1138px;top:600px;width:300px" data-fx="pop" data-at="1.10" data-sfx="pop"><div class="stage" data-demo="ridgelines" data-t0="1.1"></div><div class="lab">ridgelines</div></div>
+    <div class="tile" style="left:1466px;top:600px;width:300px" data-fx="pop" data-at="1.20" data-sfx="pop"><div class="stage" data-demo="uifly" data-t0="1.2"></div><div class="lab">real UI</div></div>
   </section>
 
   <!-- 04 characters -->
@@ -104,8 +104,9 @@
     <div class="a wide" style="left:150px;top:300px;font-size:96px;color:var(--paper)" data-fx="up" data-at="0.3">drawn</div>
     <div class="a wide pk" style="left:150px;top:400px;font-size:96px" data-fx="up" data-at="0.4">in code.</div>
     <div class="a mono" style="left:156px;top:580px;font-size:30px;line-height:1.6;color:var(--paper)" data-fx="fade" data-at="0.9">No AI. Every pose,<br>blink and wave is<br>a function of t.</div>
-    <div class="tile" style="left:1030px;top:150px;width:380px" data-fx="pop" data-at="0.5" data-sfx="pop"><div class="stage" data-demo="toon" data-t0="0.5"></div><div class="lab">3D toon + outline</div></div>
-    <div class="tile" style="left:1450px;top:150px;width:380px" data-fx="pop" data-at="0.7" data-sfx="pop"><div class="stage" data-demo="flat" data-t0="0.7"></div><div class="lab">2D flat SVG</div></div>
+    <div class="tile" style="left:924px;top:265px;width:280px" data-fx="pop" data-at="0.5" data-sfx="pop"><div class="stage" data-demo="toon" data-t0="0.5"></div><div class="lab">3D toon + outline</div></div>
+    <div class="tile" style="left:1232px;top:265px;width:280px" data-fx="pop" data-at="0.7" data-sfx="pop"><div class="stage" data-demo="flat" data-t0="0.7"></div><div class="lab">2D flat SVG</div></div>
+    <div class="tile" style="left:1540px;top:265px;width:280px" data-fx="pop" data-at="0.9" data-sfx="pop"><div class="stage" data-demo="dithercards" data-t0="0.9"></div><div class="lab">dithered pixels</div></div>
   </section>
 
   <!-- 05 render to MP4 -->
@@ -152,6 +153,11 @@
 
 <script src="../fx/font-helvetiker-subset.js"></script>
 <script src="../fx/demos.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
+<script src="../fx/pack-dither.js"></script>
+<script src="../fx/pack-2d.js"></script>
+<script src="../fx/pack-shaders.js"></script>
+<script src="../fx/pack-sims.js"></script>
 <script>
 (() => {
   // Music sections for music.py, in seconds (one bar = 2.4 s).

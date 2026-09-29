@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Motion FX Lab</title>
-<meta name="description" content="36 motion-graphics effects drawn live in the browser with HTML, CSS, SVG, Canvas and Three.js, and rendered frame-exact to MP4.">
+<meta name="description" content="54 motion-graphics effects drawn live in the browser with HTML, CSS, SVG, Canvas, Three.js, GLSL and Matter.js, and rendered frame-exact to MP4.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,700..900&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
@@ -60,6 +60,7 @@
   .shown { font: 500 13px var(--mono); color: var(--muted); }
   .gallery, .mrow { display: grid; grid-template-columns: repeat(auto-fill, minmax(236px, 1fr)); gap: 22px 18px; }
   .mrow { grid-template-columns: repeat(auto-fit, minmax(236px, 1fr)); }
+  .subhead { font: 900 19px/1.3 var(--lat); margin-top: 8px; }
   .tile { margin: 0; display: flex; flex-direction: column; gap: 10px; }
   .tile figcaption { display: flex; flex-direction: column; gap: 6px; }
   .pills { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
@@ -70,6 +71,7 @@
   .grade { font: 700 11px var(--mono); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; }
   .tile h3 { font: 900 17px/1.3 var(--body); }
   .tile p { font-size: 14px; line-height: 1.55; color: var(--muted); }
+  .tile p.seen { font: 500 12px var(--mono); letter-spacing: .02em; }
   .chips { display: flex; flex-wrap: wrap; gap: 4px; }
   .chips code { font: 500 11.5px var(--mono); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; }
   .note { font-size: 14px; color: var(--muted); max-width: 72ch; }
@@ -105,7 +107,7 @@
   <header>
     <span class="eyebrow">Open source · 0BSD</span>
     <h1>Motion FX Lab</h1>
-    <p class="lede">Every tile below is drawn live in your browser by the same code we use to render videos to MP4, frame by frame. Pink cards are effects we have shipped in our own promo videos (not part of this repo); yellow ones are worth adding; red ones should not go on dense CJK text. Each card says how it is drawn, how hard it is and what it is for. The filter covers the 5 ways a tile is drawn; a finished video with sound uses 15 stacks, listed in the table further down.</p>
+    <p class="lede">Every tile below is drawn live in your browser by the same code we use to render videos to MP4, frame by frame. Pink cards are effects we have shipped in our own promo videos (not part of this repo); yellow ones are worth adding; red ones should not go on dense CJK text. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch in our own code. Each card says how it is drawn, how hard it is and what it is for. The filter covers the 6 ways a tile is drawn; a finished video with sound uses 16 stacks, listed in the table further down.</p>
     <div class="legend" id="legend"></div>
     <video class="intro" controls playsinline preload="metadata" poster="media/intro.jpg" src="media/intro.mp4" aria-label="Intro video, 35 seconds, with sound"></video>
   </header>
@@ -115,9 +117,13 @@
     <h2>How good can a code-drawn character get?</h2>
     <p class="note">The first one looks like building blocks: spheres and cylinders stacked as they are, with no outline and even proportions. The other two redraw the same character with no AI and no new dependency, and every pose is still a function of t.</p>
     <div class="mrow" id="mascotRow"></div>
+    <h3 class="subhead">Option C: dithered pixels, and a character that works the whole video</h3>
+    <p class="note">Effects seen in a TixFox promo by Berlin (@ox8erlin on Threads), redone on our own character: a two-pass render in flat colours and light, turned into three-colour pixels by a 4×4 ordered dither.</p>
+    <div class="mrow" id="mascotRow2"></div>
     <div class="cols">
       <div class="box"><h3>What code can reach</h3><ul>
         <li>A clean app-mascot or vinyl-toy look, as in options A and B.</li>
+        <li>A pixel-art look that carries a whole video, holding cards or narrating, as in option C.</li>
         <li>Expressions, waves and hops are all driven by t, so they render frame-exact; a new outfit or expression is a few lines.</li>
         <li>A's weak spot is the hair, which still reads a little like a cap.</li>
       </ul></div>
@@ -143,13 +149,13 @@
       <button id="play" type="button" aria-pressed="false">⏸ Pause</button>
     </div>
     <div class="gallery" id="gallery"></div>
-    <p class="note">One more idea, a 1–3 second seamless loop teaser, is an editing format rather than an effect, so it has no tile. The grading tile previews the look with a CSS filter; a real grade would use the LUT pass that ships with three.js r128, and the glow stays off the text. The 3D and shader tiles are scaled-down versions of the code in our videos, drawn in turn on one shared WebGL canvas.</p>
+    <p class="note">One more idea, a 1–3 second seamless loop teaser, is an editing format rather than an effect, so it has no tile. The grading tile previews the look with a CSS filter; a real grade would use the LUT pass that ships with three.js r128, and the glow stays off the text. The 3D and shader tiles draw in turn on one shared WebGL canvas; those marked “In use” are scaled-down versions of the code in our videos. Reaction–diffusion draws the same pixels every time on one GPU, but not the same pattern on every GPU.</p>
   </section>
 
   <section>
     <span class="eyebrow">Stack</span>
-    <h2>The 15 stacks, and what each one does</h2>
-    <p class="note">15 stacks: 5 for the picture, 6 for 3D, 2 for sound and 2 for rendering. The 5 drawing methods in the filter above are the part that draws effects; the other 10 handle fonts, the timeline, 3D details, sound and output. None of the 12 “can add” effects needs a new stack.</p>
+    <h2>The 16 stacks, and what each one does</h2>
+    <p class="note">16 stacks: 5 for the picture, 6 for 3D, 1 for physics, 2 for sound and 2 for rendering. The 6 drawing methods in the filter above are the part that draws effects; the other 10 handle fonts, the timeline, 3D details, sound and output. Of the effects marked “can add”, only the rigid bodies need a new library, Matter.js.</p>
     <div class="scroll">
       <table>
         <thead><tr><th>Stack</th><th>What it is</th><th>Why</th><th>What it does here</th></tr></thead>
@@ -208,16 +214,21 @@
     </div>
   </section>
 
-  <footer>Source: <a href="https://github.com/howardc38/motion-fx-lab">github.com/howardc38/motion-fx-lab</a>. Code: 0BSD. The Helvetiker glyph subset keeps its MgOpen licence; see <a href="https://github.com/howardc38/motion-fx-lab/blob/main/THIRD_PARTY.md">THIRD_PARTY.md</a>. three.js and the fonts load from public CDNs.</footer>
+  <footer>Source: <a href="https://github.com/howardc38/motion-fx-lab">github.com/howardc38/motion-fx-lab</a>. Code: 0BSD. The Helvetiker glyph subset keeps its MgOpen licence; see <a href="https://github.com/howardc38/motion-fx-lab/blob/main/THIRD_PARTY.md">THIRD_PARTY.md</a>. three.js, Matter.js and the fonts load from public CDNs.</footer>
 </main>
 
 <script src="fx/font-helvetiker-subset.js"></script>
 <script src="fx/demos.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
+<script src="fx/pack-dither.js"></script>
+<script src="fx/pack-2d.js"></script>
+<script src="fx/pack-shaders.js"></script>
+<script src="fx/pack-sims.js"></script>
 <script>
 (() => {
   const { DEMOS, R3 } = window.FX;
   const STATUS = { used: "In use", add: "Can add", avoid: "Avoid" };
-  const STACKS = { css: "HTML/CSS", svg: "SVG", canvas: "Canvas 2D", three: "Three.js", glsl: "Custom GLSL" };
+  const STACKS = { css: "HTML/CSS", svg: "SVG", canvas: "Canvas 2D", three: "Three.js", glsl: "Custom GLSL", physics: "Matter.js" };
   const gallery = document.getElementById("gallery");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -225,7 +236,7 @@
     const fig = document.createElement("figure"); fig.className = "tile";
     const stage = document.createElement("div"); stage.className = "stage";
     const where = STATUS[d.status];
-    fig.innerHTML = `<figcaption><div class="pills"><span class="pill ${d.status}">${where}</span>${d.grade !== "—" ? `<span class="grade" title="Difficulty">${d.grade}</span>` : ""}</div><h3>${d.name}</h3><p>${d.purpose}</p><div class="chips">${d.chips.map((c) => `<code>${c}</code>`).join("")}</div></figcaption>`;
+    fig.innerHTML = `<figcaption><div class="pills"><span class="pill ${d.status}">${where}</span>${d.grade !== "—" ? `<span class="grade" title="Difficulty">${d.grade}</span>` : ""}</div><h3>${d.name}</h3><p>${d.purpose}</p>${d.seen ? `<p class="seen">Seen in: ${d.seen}</p>` : ""}<div class="chips">${d.chips.map((c) => `<code>${c}</code>`).join("")}</div></figcaption>`;
     fig.prepend(stage);
     (d.host ? document.getElementById(d.host) : gallery).appendChild(fig);
     d.fig = fig;
@@ -233,6 +244,7 @@
       if (d.gl && !R3) { stage.innerHTML = `<div class="nogl">3D tiles need WebGL and three.js from its CDN; one of them did not load here.</div>`; continue; }
       const built = d.build(stage);
       d.frame = typeof built === "function" ? built : built.frame;
+      d.ready = typeof built === "function" ? null : built.ready || null;
     } catch (e) {
       stage.innerHTML = `<div class="oops">This tile failed to load: ${String(e.message || e).slice(0, 80)}</div>`;
       d.frame = null;
@@ -243,7 +255,7 @@
   const count = (k) => G.filter((d) => d.status === k).length;
   document.getElementById("legend").innerHTML =
     `<span><b>${G.length}</b> effects</span><span class="pill used">In use ${count("used")}</span><span class="pill add">Can add ${count("add")}</span><span class="pill avoid">Avoid ${count("avoid")}</span>` +
-    `<span>Grade: A = today's stack; A+ = one more r128 add-on file; B = a custom shader</span>`;
+    `<span>Grade: A = today's stack; A+ = one more r128 add-on file; B = a custom shader; C = a new library</span>`;
   const state = { status: "all", stack: "all" };
   const mk = (host, key, opts) => {
     for (const [v, label] of opts) {
@@ -306,6 +318,8 @@
     ["Custom GLSL", "Small GPU programs that colour each pixel", "What stock materials cannot do", "Smoke (fbm noise), noise dissolve (onBeforeCompile)"],
     ["PBR + PMREM", "Physically based materials", "Chrome needs something to reflect", "The chrome social_ops logo"],
     ["Shadows (SpotLight, soft)", "Lights that cast shadows", "Depth", "The 3D “6%” casting on the floor"],
+    ["Physics"],
+    ["Matter.js 0.20.0", "2D rigid-body physics", "Things that fall, collide and stack", "The rigid-body tile, stepped at a fixed 240 Hz so every frame can be recomputed"],
     ["Sound"],
     ["Python synth (sfx.py)", "Sound effects from maths", "Every move has a sound", "17 sounds: pop, whoosh, stamp, typing…"],
     ["Python synth (music.py)", "Music from maths", "A music bed", "100 BPM, Am–F–C–G, sections declared by the video page"],
