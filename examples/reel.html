@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Motion FX Lab example: vertical reel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  :root { --ink: #0e0d12; --paper: #f4f3ee; --pink: #ff90e8; --sun: #ffd400; --blue: #3b5bff; --muted: #8f8a9c;
+    --lat: "Archivo", "Helvetica Neue", Arial, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+  html, body { height: 100%; }
+  body { margin: 0; background: #111110; display: grid; place-items: center; }
+  #frame { position: relative; overflow: hidden; background: var(--ink); }
+  #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; font-family: var(--lat); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  body.record { display: block; }
+  body.record #frame { position: fixed; left: 0; top: 0; }
+  body.record #stage { transform: none !important; }
+  .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; }
+  .edge { position: absolute; top: 0; bottom: 0; width: 26px; margin-left: -1px; background: var(--sun); opacity: 0; }
+  .a { position: absolute; }
+  .ink { background: var(--ink); color: var(--paper); }
+  .paper { background: var(--paper); }
+  .sun { background: var(--sun); }
+  .pinkbg { background: var(--pink); }
+  .dots { background-image: radial-gradient(rgba(255,255,255,.12) 1.6px, transparent 2px); background-size: 40px 40px; }
+  .wide { font-weight: 900; font-stretch: 125%; letter-spacing: -.02em; line-height: .95; }
+  .mono { font-family: var(--mono); }
+  .chip { font: 700 22px var(--mono); letter-spacing: .12em; padding: 10px 18px; border: 2px solid currentColor; border-radius: 999px; }
+  .phone { left: 150px; top: 430px; width: 780px; height: 1110px; border-radius: 70px; background: #fff; border: 14px solid var(--ink); box-shadow: 0 30px 80px rgba(14,13,18,.25); overflow: hidden; }
+  .phone .bar { height: 150px; display: flex; align-items: end; justify-content: space-between; padding: 0 50px 26px; border-bottom: 2px solid #eee; }
+  .phone .bar b { font: 900 44px var(--lat); }
+  .phone .bar span { font: 700 24px var(--mono); color: #5c5868; }
+  .cls { position: absolute; left: 40px; right: 40px; height: 190px; border-radius: 30px; background: #f6f5f0; display: flex; align-items: center; justify-content: space-between; padding: 0 36px; }
+  .cls b { display: block; font: 900 46px var(--lat); }
+  .cls span { font: 700 26px var(--mono); color: #5c5868; }
+  .btn { font: 800 34px var(--lat); padding: 22px 34px; border-radius: 999px; background: var(--ink); color: #fff; white-space: nowrap; }
+  .btn.alt { background: #e3e1da; color: #5c5868; }
+  .cls .btn span { font: inherit; color: inherit; }
+  .btn .b2 { display: none; }
+  .btn.on { background: #1e9e5a; }
+  .btn.on .b1 { display: none; }
+  .btn.on .b2 { display: inline; }
+  .ring { width: 170px; height: 170px; margin: -85px 0 0 -85px; border-radius: 50%; border: 8px solid var(--pink); }
+  .sticker { position: absolute; padding: 22px 38px; border-radius: 24px; border: 7px solid #fff; box-shadow: 0 10px 0 rgba(0,0,0,.14), 0 18px 40px rgba(0,0,0,.2); font: 900 56px var(--lat); white-space: nowrap; }
+  .check { position: absolute; left: 110px; font: 800 64px/1.1 var(--lat); display: flex; gap: 34px; align-items: center; }
+  .check i { font-style: normal; flex: none; width: 92px; height: 92px; border-radius: 50%; background: var(--ink); color: var(--pink); display: grid; place-items: center; font-size: 50px; }
+</style>
+</head>
+<body>
+<div id="frame">
+<div id="stage" data-w="1080" data-h="1920" data-dur="12">
+
+  <!-- 01 hook -->
+  <section class="scene ink dots" data-start="0">
+    <div class="a chip" style="left:110px;top:170px;color:var(--sun)" data-fx="fade" data-at="0.1">DEMO · FICTIONAL STUDIO</div>
+    <div class="a wide" style="left:100px;top:600px;font-size:160px;white-space:nowrap" data-fx="chars" data-at="0.2" data-stagger="0.04" data-sfx="pop" data-sfx-repeat="3" data-sfx-every="0.12">Still</div>
+    <div class="a wide" style="left:100px;top:780px;font-size:160px;white-space:nowrap" data-fx="chars" data-at="0.5" data-stagger="0.04">booking</div>
+    <div class="a wide" style="left:100px;top:960px;font-size:160px;white-space:nowrap;color:var(--pink)" data-fx="slam" data-at="1.0" data-sfx="impact">by DM?</div>
+  </section>
+
+  <!-- 02 the product, tapped -->
+  <section class="scene paper" data-start="2.4">
+    <div class="edge"></div>
+    <div class="a wide" style="left:110px;top:170px;font-size:110px;white-space:nowrap" data-fx="left" data-at="0.1">Book in</div>
+    <div class="a wide" style="left:110px;top:280px;font-size:110px;white-space:nowrap;color:#c2267f" data-fx="left" data-at="0.2">one tap.</div>
+    <div class="a phone" data-fx="up" data-at="0.3" data-dur="0.6">
+      <div class="bar"><b>Sample Studio</b><span>TONIGHT</span></div>
+      <div class="cls" style="top:200px" data-fx="left" data-at="0.6"><div><b>Vinyasa</b><span>7:00 pm · 3 spots left</span></div><div class="btn" data-on="1.75"><span class="b1">Book</span><span class="b2">Booked ✓</span></div></div>
+      <div class="cls" style="top:420px" data-fx="left" data-at="0.75"><div><b>Yin</b><span>8:15 pm · full</span></div><div class="btn alt">Waitlist</div></div>
+      <div class="cls" style="top:640px" data-fx="left" data-at="0.9"><div><b>Pilates</b><span>9:00 pm · 5 spots left</span></div><div class="btn">Book</div></div>
+      <div class="cls" style="top:860px" data-fx="left" data-at="1.05"><div><b>Barre</b><span>9:45 pm · 8 spots left</span></div><div class="btn">Book</div></div>
+    </div>
+    <div class="a ring" style="left:820px;top:733px" data-fx="ring" data-at="1.6" data-sfx="tap"></div>
+    <div class="sticker" style="left:520px;top:1620px;background:var(--pink);transform:rotate(-4deg)" data-fx="slam" data-at="2.0" data-base="rotate(-4deg)" data-sfx="ding">Booked ✓</div>
+  </section>
+
+  <!-- 03 why -->
+  <section class="scene pinkbg" data-start="6">
+    <div class="edge"></div>
+    <div class="a wide" style="left:110px;top:260px;font-size:120px" data-fx="up" data-at="0.1">No more</div>
+    <div class="a wide" style="left:110px;top:380px;font-size:120px" data-fx="up" data-at="0.2">back-and-forth.</div>
+    <div class="check" style="top:760px" data-fx="pop" data-at="0.6" data-sfx="tick"><i>✓</i>Book in one tap</div>
+    <div class="check" style="top:950px" data-fx="pop" data-at="0.95" data-sfx="tick"><i>✓</i>The waitlist<br>fills itself</div>
+    <div class="check" style="top:1210px" data-fx="pop" data-at="1.3" data-sfx="tick"><i>✓</i>Reminders go<br>out for you</div>
+  </section>
+
+  <!-- 04 call to action -->
+  <section class="scene sun" data-start="9.6">
+    <div class="edge"></div>
+    <div class="a wide" style="left:0;right:0;top:640px;text-align:center;font-size:150px" data-fx="slam" data-at="0.15" data-sfx="impact">Sample<br>Studio</div>
+    <div class="sticker" style="left:300px;top:1090px;background:#fff;transform:rotate(3deg)" data-fx="pop" data-at="0.7" data-base="rotate(3deg)" data-sfx="pop">Link in bio ↗</div>
+    <div class="a mono" style="left:0;right:0;top:1780px;text-align:center;font-size:26px;color:#5c4b00" data-fx="fade" data-at="1.0">Every frame of this video is code · Motion FX Lab</div>
+  </section>
+
+</div>
+</div>
+<script>
+  window.__music = [[0, "build"], [2.4, "drop"], [7.2, "final"], [9.6, "tail"]];
+  window.__ready = document.fonts.ready;
+</script>
+<script src="../video/engine.js"></script>
+</body>
+</html>

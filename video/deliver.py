@@ -20,12 +20,13 @@ import tempfile
 from fractions import Fraction
 
 TARGET_I = -14.0      # LUFS; Meta publishes no target, this is the -14 convention
-TARGET_TP = -1.5      # dBTP handed to loudnorm; the final file must measure <= MAX_TP
+TARGET_TP = -1.5      # first dBTP target handed to loudnorm; the final file must measure <= MAX_TP
 MAX_TP = -1.0
 I_TOLERANCE = 1.0     # LU either side of TARGET_I, measured on the final file
 LIMIT_DBFS = -2.0     # limiter ceiling before loudnorm
 HQ_MAX_BPS = 25_000_000
 AUDIO_BPS = 128_000
+AAC_OUT = ["-c:a", "aac", "-b:a", str(AUDIO_BPS), "-ar", "48000"]
 CAP = 15_000_000      # web file ceiling in bytes
 
 
@@ -54,16 +55,16 @@ def loudnorm_json(err):
     return json.loads(err[err.rindex("{"):err.rindex("}") + 1])
 
 
-def master_audio(mix, work):
+def master_audio(mix, work, tp_target):
     i0, tp0 = loudness(mix)
     # Raising a quiet mix to TARGET_I puts its peaks above 0 dBTP, and loudnorm then drops to dynamic
     # compression without failing. So: overshoot the gain by 1 dB into a limiter that runs at 4x the
     # sample rate (so it sees the peaks between samples), measure, and lower its ceiling until a
-    # plain linear gain can reach TARGET_I with the true peak under TARGET_TP.
+    # plain linear gain can reach TARGET_I with the true peak under tp_target.
     gain = TARGET_I - i0 + 1.0
     staged = os.path.join(work, "staged.wav")
     # LRA only matters to loudnorm's dynamic mode; linear mode needs the measured LRA under it.
-    base = f"loudnorm=I={TARGET_I}:TP={TARGET_TP}:LRA=20"
+    base = f"loudnorm=I={TARGET_I}:TP={tp_target}:LRA=20"
     ceiling = LIMIT_DBFS
     for attempt in range(4):
         run("ffmpeg", "-y", "-loglevel", "error", "-i", mix, "-af",
@@ -72,11 +73,11 @@ def master_audio(mix, work):
         first = loudnorm_json(run("ffmpeg", "-hide_banner", "-nostats", "-i", staged, "-af",
                                   base + ":print_format=json", "-f", "null", "-", capture=True))
         peak_after = float(first["input_tp"]) + (TARGET_I - float(first["input_i"]))
-        if peak_after <= TARGET_TP - 0.1:
+        if peak_after <= tp_target - 0.1:
             break
-        ceiling -= peak_after - TARGET_TP + 0.3
+        ceiling -= peak_after - tp_target + 0.3
     else:
-        raise SystemExit(f"could not bring the true peak under {TARGET_TP} dBTP; last ceiling {ceiling:.1f} dBFS, {first}")
+        raise SystemExit(f"could not bring the true peak under {tp_target} dBTP; last ceiling {ceiling:.1f} dBFS, {first}")
     second_args = (f"{base}:measured_I={first['input_i']}:measured_TP={first['input_tp']}"
                    f":measured_LRA={first['input_lra']}:measured_thresh={first['input_thresh']}"
                    f":offset={first['target_offset']}:linear=true:print_format=json")
@@ -163,8 +164,30 @@ def check(path, master, cap=None, max_bps=None):
 # ffmpeg 8.1 drops -color_primaries/-color_trc for libx264, so x264 writes the colour description itself.
 COMMON_OUT = ["-pix_fmt", "yuv420p", "-profile:v", "high",
               "-x264-params", "open-gop=0:colorprim=bt709:transfer=bt709:colormatrix=bt709", "-color_range", "tv",
-              "-c:a", "aac", "-b:a", str(AUDIO_BPS), "-ar", "48000", "-shortest",
+              *AAC_OUT, "-shortest",
               "-use_editlist", "0", "-movflags", "+faststart"]
+
+
+def aac_true_peak(audio, work):
+    """The true peak of the audio once encoded as the delivered AAC, which can sit above its PCM."""
+    trial = os.path.join(work, "trial.m4a")
+    run("ffmpeg", "-y", "-loglevel", "error", "-i", audio, *AAC_OUT, trial)
+    return loudness(trial)[1]
+
+
+def master_for_aac(mix, work):
+    # AAC encoding raised the true peak by 0.2 to 0.7 dB on our videos, depending on the sound (a
+    # music-only loop measured -0.9 dBTP from a -1.6 dBTP master). So the encoded audio is measured,
+    # and the target lowered by the overshoot until it measures under MAX_TP.
+    tp_target = TARGET_TP
+    for _ in range(3):
+        audio = master_audio(mix, work, tp_target)
+        tp = aac_true_peak(audio, work)
+        if tp <= MAX_TP - 0.1:
+            return audio
+        print(f"audio: AAC true peak {tp:.1f} dBTP from a {tp_target:.1f} dBTP master; mastering again lower")
+        tp_target -= tp - (MAX_TP - 0.3)
+    raise SystemExit(f"the AAC true peak stays above {MAX_TP} dBTP: {tp:.1f} dBTP from a {tp_target:.1f} dBTP target")
 
 
 def encode_hq(master, audio, out):
@@ -197,7 +220,7 @@ def main():
     try:
         dur = float(probe(master)["format"]["duration"])
         poster_at = sys.argv[5] if len(sys.argv) > 5 else f"{dur / 3:.2f}"
-        audio = master_audio(mix, work)
+        audio = master_for_aac(mix, work)
         hq = os.path.join(work, f"{name}_hq.mp4")
         preview = os.path.join(work, f"{name}.mp4")
         poster = os.path.join(work, f"{name}.jpg")

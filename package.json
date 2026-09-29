@@ -2,7 +2,7 @@
   "name": "motion-fx-lab",
   "version": "1.0.0",
   "private": true,
-  "description": "Motion-graphics effects drawn in the browser and rendered frame-exact to MP4.",
+  "description": "Motion graphics as web pages, rendered frame-exact to MP4: infographics, social clips, intros and B-roll.",
   "keywords": [
     "motion-graphics",
     "html-to-video",

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Motion FX Lab example: B-roll loops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  :root { --ink: #0e0d12; --paper: #f4f3ee; --pink: #ff90e8; --sun: #ffd400; --blue: #3b5bff; --muted: #8f8a9c;
+    --lat: "Archivo", "Helvetica Neue", Arial, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+  html, body { height: 100%; }
+  body { margin: 0; background: #111110; display: grid; place-items: center; }
+  #frame { position: relative; overflow: hidden; background: var(--ink); }
+  #stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; font-family: var(--lat); color: var(--paper); -webkit-font-smoothing: antialiased; }
+  body.record { display: block; }
+  body.record #frame { position: fixed; left: 0; top: 0; }
+  body.record #stage { transform: none !important; }
+  .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; background: var(--ink); }
+  .a { position: absolute; }
+  .tag { left: 60px; top: 50px; font: 700 22px var(--mono); letter-spacing: .12em; color: rgba(244,243,238,.75); background: rgba(14,13,18,.55); padding: 10px 16px; border-radius: 10px; }
+  .blob { width: 1300px; height: 1300px; margin: -650px 0 0 -650px; border-radius: 50%; mix-blend-mode: screen; filter: blur(70px); }
+  .lower { left: 60px; bottom: 90px; display: flex; flex-direction: column; gap: 10px; }
+  .lower b { font: 900 64px var(--lat); font-stretch: 112%; background: var(--paper); color: var(--ink); padding: 8px 22px; align-self: flex-start; }
+  .lower span { font: 700 26px var(--mono); background: var(--pink); color: var(--ink); padding: 8px 16px; align-self: flex-start; }
+</style>
+</head>
+<body>
+<div id="frame">
+<div id="stage" data-w="1920" data-h="1080" data-dur="12">
+
+  <!-- each scene is one loop: frame(4 s) is frame(0), so the clip repeats with no seam -->
+  <section class="scene" data-start="0" data-trans="cut" id="loopA">
+    <div class="a blob" style="background:radial-gradient(circle, #ff90e8 0%, rgba(255,144,232,0) 62%)"></div>
+    <div class="a blob" style="background:radial-gradient(circle, #3b5bff 0%, rgba(59,91,255,0) 62%)"></div>
+    <div class="a blob" style="background:radial-gradient(circle, #ffd400 0%, rgba(255,212,0,0) 58%)"></div>
+    <div class="a blob" style="background:radial-gradient(circle, #19c3b0 0%, rgba(25,195,176,0) 60%)"></div>
+    <div class="a tag">LOOP 1 / 3 · FLOWING GRADIENT · 4 S, SEAMLESS</div>
+  </section>
+
+  <section class="scene" data-start="4" data-trans="cut">
+    <svg class="a" id="ridges" style="inset:0" width="1920" height="1080" viewBox="0 0 1920 1080" aria-hidden="true"></svg>
+    <div class="a tag">LOOP 2 / 3 · NOISE RIDGELINES · 4 S, SEAMLESS</div>
+  </section>
+
+  <section class="scene" data-start="8" data-trans="cut">
+    <canvas class="a" id="net" width="1920" height="1080" style="inset:0"></canvas>
+    <div class="a tag">LOOP 3 / 3 · NETWORK · 4 S, SEAMLESS</div>
+    <div class="a lower" data-fx="left" data-at="0.4"><b>Your title here</b><span>A background loop under a lower third</span></div>
+  </section>
+
+</div>
+</div>
+<script>
+(() => {
+  window.__music = [[0, "intro"], [2.4, "build"], [4.8, "drop"], [9.6, "tail"]];
+  const P = 4, TAU = Math.PI * 2;
+  // A seeded generator, so every render draws the same loops.
+  let seed = 20260929;
+  const rnd = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+
+  // Loop 1: four glowing blobs, each on a closed path that it completes a whole number of times in P.
+  const blobs = [...document.querySelectorAll("#loopA .blob")].map((el, i) => ({ el, cx: 480 + i * 330, cy: 540, rx: 380 - i * 40, ry: 230 + i * 20, m: [1, 1, 2, 1][i], ph: i * 1.7 }));
+
+  // Loop 2: 34 lines of noise made from sines whose time frequencies are whole multiples of 1/P.
+  const LINES = 34, PTS = 150, svg = document.getElementById("ridges");
+  const waves = Array.from({ length: LINES }, () => Array.from({ length: 4 }, (_, k) => ({ f: (0.004 + rnd() * 0.004) * (k + 1), p: rnd() * TAU, m: 1 + (k % 2), a: 1 / (k + 1) })));
+  svg.innerHTML = Array.from({ length: LINES }, () => `<path fill="#0e0d12" stroke="#f4f3ee" stroke-width="2.2"/>`).join("");
+  const paths = [...svg.children];
+
+  // Loop 3: 130 points, each on a Lissajous path closed over P, joined when close.
+  const net = document.getElementById("net").getContext("2d");
+  const nodes = Array.from({ length: 130 }, () => ({ x: rnd() * 1920, y: rnd() * 1080, ax: 40 + rnd() * 120, ay: 40 + rnd() * 90, mx: 1 + Math.floor(rnd() * 2), my: 1 + Math.floor(rnd() * 2), px: rnd() * TAU, py: rnd() * TAU }));
+
+  window.__renderHooks = window.__renderHooks || [];
+  window.__renderHooks.push((t) => {
+    if (t < 4) {
+      const u = (t / P) * TAU;
+      for (const b of blobs) { b.el.style.left = `${b.cx + b.rx * Math.cos(b.m * u + b.ph)}px`; b.el.style.top = `${b.cy + b.ry * Math.sin(b.m * u + b.ph)}px`; }
+    } else if (t < 8) {
+      const u = ((t - 4) / P) * TAU;
+      for (let i = 0; i < LINES; i++) {
+        const base = 250 + i * 22;
+        let d = "";
+        for (let j = 0; j <= PTS; j++) {
+          const x = -10 + (j / PTS) * 1940, env = Math.exp(-Math.pow((x - 960) / 420, 2));
+          let n = 0;
+          for (const w of waves[i]) n += w.a * Math.sin(w.f * x + w.p + w.m * u);
+          const y = base - env * (70 + 90 * Math.max(0, n));
+          d += `${j ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`;
+        }
+        // The closing edges run outside the frame, so their stroke never shows.
+        paths[i].setAttribute("d", `${d}L1930 1090L-10 1090Z`);
+      }
+    } else {
+      const u = ((t - 8) / P) * TAU;
+      net.fillStyle = "#0e0d12"; net.fillRect(0, 0, 1920, 1080);
+      const pos = nodes.map((n) => [n.x + n.ax * Math.sin(n.mx * u + n.px), n.y + n.ay * Math.sin(n.my * u + n.py)]);
+      net.lineWidth = 1.6;
+      for (let i = 0; i < pos.length; i++) for (let j = i + 1; j < pos.length; j++) {
+        const dx = pos[i][0] - pos[j][0], dy = pos[i][1] - pos[j][1], dd = Math.hypot(dx, dy);
+        if (dd < 190) { net.strokeStyle = `rgba(${i % 3 ? "59,91,255" : "255,144,232"},${(1 - dd / 190).toFixed(3)})`; net.beginPath(); net.moveTo(pos[i][0], pos[i][1]); net.lineTo(pos[j][0], pos[j][1]); net.stroke(); }
+      }
+      net.fillStyle = "#f4f3ee";
+      for (const [x, y] of pos) { net.beginPath(); net.arc(x, y, 3.2, 0, TAU); net.fill(); }
+    }
+  });
+  window.__ready = document.fonts.ready;
+})();
+</script>
+<script src="../video/engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Motion FX Lab example: infographic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  :root { --ink: #0e0d12; --paper: #f4f3ee; --pink: #ff90e8; --sun: #ffd400; --blue: #3b5bff; --muted: #8f8a9c;
+    --lat: "Archivo", "Helvetica Neue", Arial, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+  html, body { height: 100%; }
+  body { margin: 0; background: #111110; display: grid; place-items: center; }
+  #frame { position: relative; overflow: hidden; background: var(--ink); }
+  #stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; font-family: var(--lat); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  body.record { display: block; }
+  body.record #frame { position: fixed; left: 0; top: 0; }
+  body.record #stage { transform: none !important; }
+  .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; }
+  .edge { position: absolute; top: 0; bottom: 0; width: 26px; margin-left: -1px; background: var(--pink); opacity: 0; }
+  .a { position: absolute; }
+  .ink { background: var(--ink); color: var(--paper); }
+  .paper { background: var(--paper); }
+  .sun { background: var(--sun); }
+  .dots { background-image: radial-gradient(rgba(255,255,255,.12) 1.6px, transparent 2px); background-size: 40px 40px; }
+  .wide { font-weight: 900; font-stretch: 125%; letter-spacing: -.02em; line-height: .95; }
+  .mono { font-family: var(--mono); }
+  .chip { font: 700 20px var(--mono); letter-spacing: .12em; padding: 10px 18px; border: 2px solid currentColor; border-radius: 999px; }
+  .num { font-variant-numeric: tabular-nums; }
+  .row { position: absolute; left: 1060px; height: 96px; display: flex; align-items: center; gap: 22px; }
+  .row .q { width: 60px; font: 700 26px var(--mono); color: #5c5868; }
+  .row .bar { height: 64px; border-radius: 10px; background: var(--ink); transform-origin: left center; }
+  .row .v { font: 800 34px var(--lat); }
+  .legend { position: absolute; left: 1100px; display: flex; align-items: center; gap: 22px; font: 800 44px var(--lat); color: var(--paper); }
+  .legend i { width: 30px; height: 30px; border-radius: 8px; }
+  .legend span { font: 700 30px var(--mono); color: var(--muted); }
+  .sticker { position: absolute; padding: 18px 30px; border-radius: 18px; border: 6px solid #fff; box-shadow: 0 8px 0 rgba(0,0,0,.14), 0 16px 34px rgba(0,0,0,.18); font: 900 40px var(--lat); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="frame">
+<div id="stage" data-w="1920" data-h="1080" data-dur="14.4">
+
+  <!-- 01 title -->
+  <section class="scene ink" data-start="0">
+    <div class="a dots" style="inset:0" data-fx="bgpan" data-vx="-12" data-vy="0"></div>
+    <div class="a chip" style="left:156px;top:150px;color:var(--sun)" data-fx="fade" data-at="0.2">SAMPLE DATA · FICTIONAL SHOP</div>
+    <div class="a wide" style="left:150px;top:340px;font-size:156px;white-space:nowrap" data-fx="whip" data-at="0.3" data-dx="900" data-sfx="whoosh">Sample Tea Co.</div>
+    <div class="a wide" style="left:150px;top:540px;font-size:140px;white-space:nowrap;color:var(--pink)" data-fx="chars" data-at="0.9" data-stagger="0.03" data-sfx="pop" data-sfx-repeat="4" data-sfx-every="0.12">2025 in numbers</div>
+  </section>
+
+  <!-- 02 cups sold, by quarter -->
+  <section class="scene paper" data-start="3.6">
+    <div class="edge"></div>
+    <div class="a mono" style="left:150px;top:220px;font-size:34px;font-weight:700;color:#5c5868" data-fx="up" data-at="0.2">CUPS SOLD</div>
+    <div class="a wide num" style="left:146px;top:290px;font-size:150px" data-fx="count" data-to="128450" data-at="0.3" data-dur="1.6" data-sfx="riser">0</div>
+    <div class="a" style="left:150px;top:500px;font-size:40px;font-weight:700;width:560px;line-height:1.3" data-fx="fade" data-at="1.4">Every quarter beat the one before.</div>
+    <div id="bars"></div>
+  </section>
+
+  <!-- 03 top drinks -->
+  <section class="scene ink dots" data-start="7.2">
+    <div class="edge"></div>
+    <div class="a mono" style="left:150px;top:120px;font-size:34px;font-weight:700;color:var(--muted)" data-fx="up" data-at="0.2">TOP DRINKS, SHARE OF CUPS</div>
+    <svg class="a" style="left:150px;top:220px" width="720" height="720" viewBox="0 0 200 200" aria-hidden="true">
+      <g id="donut" transform="rotate(-90 100 100)" fill="none" stroke-width="34"></g>
+    </svg>
+    <div class="a wide num" style="left:150px;top:500px;width:720px;text-align:center;font-size:120px;color:var(--paper)" data-fx="pop" data-at="1.0" data-sfx="impact"><span data-fx="count" data-to="38" data-at="1.0" data-dur="1.0">0</span>%</div>
+    <div id="legend"></div>
+  </section>
+
+  <!-- 04 busiest hour -->
+  <section class="scene sun" data-start="10.8">
+    <div class="edge"></div>
+    <div class="a mono" style="left:150px;top:110px;font-size:34px;font-weight:700;color:#5c4b00" data-fx="up" data-at="0.2">CUPS PER HOUR, AVERAGE DAY</div>
+    <svg class="a" id="line" style="left:150px;top:200px" width="1620" height="640" viewBox="0 0 1620 640" aria-hidden="true"></svg>
+    <div class="sticker" id="peak" style="background:var(--pink)" data-fx="pop" data-at="1.5" data-sfx="stamp">Busiest: 3 pm</div>
+    <div class="a mono" style="left:150px;top:960px;font-size:24px;color:#5c4b00" data-fx="fade" data-at="2.0">Every frame of this video is code · Motion FX Lab</div>
+  </section>
+
+</div>
+</div>
+
+<script>
+(() => {
+  // The data. Change it and render again; every chart below is drawn from these numbers.
+  const quarters = [["Q1", 24310], ["Q2", 29870], ["Q3", 36540], ["Q4", 37730]];
+  const drinks = [["Brown sugar", 38, "#ff90e8"], ["Jasmine green", 27, "#ffd400"], ["Oolong milk", 21, "#3b5bff"], ["Other", 14, "#8f8a9c"]];
+  const hours = [[10, 180], [11, 260], [12, 420], [13, 610], [14, 700], [15, 880], [16, 760], [17, 640], [18, 540], [19, 470], [20, 350], [21, 260], [22, 180]];
+
+  window.__music = [[0, "intro"], [2.4, "build"], [4.8, "drop"], [9.6, "final"], [12, "tail"]];
+
+  const max = Math.max(...quarters.map((q) => q[1]));
+  document.getElementById("bars").innerHTML = quarters.map(([q, v], i) =>
+    `<div class="row" style="top:${250 + i * 130}px"><span class="q">${q}</span>` +
+    `<div class="bar" style="width:${Math.round((v / max) * 560)}px" data-fx="grow" data-at="${0.5 + i * 0.18}" data-dur="0.6" data-sfx="tap"></div>` +
+    `<span class="v num" data-fx="count" data-to="${v}" data-at="${0.5 + i * 0.18}" data-dur="0.8">0</span></div>`).join("");
+
+  const C = 2 * Math.PI * 80;
+  let acc = 0;
+  const segs = drinks.map(([name, pct, col]) => { const s = { start: acc * C / 100, len: pct * C / 100 }; acc += pct; return s; });
+  const donut = document.getElementById("donut");
+  donut.innerHTML = drinks.map(([, , col]) => `<circle cx="100" cy="100" r="80" stroke="${col}" stroke-dasharray="0 ${C}"/>`).join("");
+  const arcs = [...donut.children];
+  segs.forEach((s, i) => arcs[i].setAttribute("stroke-dashoffset", String(-s.start)));
+  document.getElementById("legend").innerHTML = drinks.map(([name, pct, col], i) =>
+    `<div class="legend" style="top:${300 + i * 130}px" data-fx="left" data-at="${1.2 + i * 0.15}" data-sfx="tick"><i style="background:${col}"></i>${name}<span>${pct}%</span></div>`).join("");
+
+  const W = 1620, H = 640, x = (h) => 60 + ((h - 10) / 12) * (W - 120), top = Math.max(...hours.map((p) => p[1]));
+  const y = (v) => H - 60 - (v / top) * (H - 160);
+  const pts = hours.map(([h, v]) => `${x(h).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  const svg = document.getElementById("line");
+  svg.innerHTML = `<g stroke="rgba(14,13,18,.18)" stroke-width="2">${hours.map(([h]) => `<line x1="${x(h)}" y1="${H - 50}" x2="${x(h)}" y2="${H - 40}"/>`).join("")}</g>` +
+    hours.filter(([h]) => h % 2 === 0).map(([h]) => `<text x="${x(h)}" y="${H - 8}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="22" fill="#5c4b00">${h > 12 ? h - 12 + " pm" : h === 12 ? "12 pm" : h + " am"}</text>`).join("") +
+    `<polygon id="area" points="${x(10)},${H - 60} ${pts} ${x(22)},${H - 60}" fill="rgba(14,13,18,.10)" opacity="0"/>` +
+    `<polyline id="pl" points="${pts}" fill="none" stroke="#0e0d12" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>` +
+    `<circle id="dot" cx="${x(15)}" cy="${y(880)}" r="16" fill="#ff90e8" stroke="#0e0d12" stroke-width="6" opacity="0"/>`;
+  const pl = svg.querySelector("#pl"), area = svg.querySelector("#area"), dot = svg.querySelector("#dot"), L = pl.getTotalLength();
+  pl.setAttribute("stroke-dasharray", `${L} ${L}`);
+  const peak = document.getElementById("peak");
+  peak.style.left = `${150 + x(15) + 40}px`; peak.style.top = `${200 + y(880) - 40}px`;
+
+  const eo = (p) => 1 - Math.pow(1 - p, 3), clamp = (v) => Math.max(0, Math.min(1, v));
+  window.__renderHooks = window.__renderHooks || [];
+  window.__renderHooks.push((t) => {
+    const d = t - 7.2, f = eo(clamp((d - 0.4) / 1.4)) * C;
+    segs.forEach((s, i) => arcs[i].setAttribute("stroke-dasharray", `${Math.max(0, Math.min(s.len, f - s.start)).toFixed(2)} ${C}`));
+    const l = t - 10.8, p = eo(clamp((l - 0.3) / 1.3));
+    pl.setAttribute("stroke-dashoffset", String((1 - p) * L));
+    area.setAttribute("opacity", String(clamp((l - 1.2) / 0.5)));
+    dot.setAttribute("opacity", String(clamp((l - 1.4) / 0.2)));
+  });
+  window.__ready = document.fonts.ready;
+})();
+</script>
+<script src="../video/engine.js"></script>
+</body>
+</html>

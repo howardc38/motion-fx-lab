@@ -55,6 +55,11 @@
   button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   #play { margin-left: auto; font-family: var(--mono); }
   .shown { font: 500 13px var(--mono); color: var(--muted); }
+  .uses { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 26px 22px; }
+  .uses figure { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .uses video { width: 100%; aspect-ratio: 16 / 9; object-fit: contain; border-radius: 10px; background: #000; display: block; }
+  .uses figcaption { font-size: 14px; line-height: 1.55; color: var(--muted); }
+  .uses figcaption b { display: block; color: var(--ink); font: 900 17px/1.3 var(--body); margin-bottom: 2px; }
   .gallery, .mrow { display: grid; grid-template-columns: repeat(auto-fill, minmax(236px, 1fr)); gap: 22px 18px; }
   .mrow { grid-template-columns: repeat(auto-fit, minmax(236px, 1fr)); }
   .subhead { font: 900 19px/1.3 var(--lat); margin-top: 8px; }
@@ -103,10 +108,22 @@
   <header>
     <span class="eyebrow">Open source · 0BSD</span>
     <h1>Motion FX Lab</h1>
-    <p class="lede">Every tile below is drawn live in your browser by the same code that renders our videos to MP4, frame by frame. Each card says what it does, how it is drawn and what it needs; filter them by kind or by the way they are drawn. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch. The sample text comes from our own videos for an Instagram DM assistant; swap in your own words. A finished video with sound uses 16 stacks, listed in the table further down.</p>
+    <p class="lede">Describe a video to an AI coding assistant, or write it yourself: it becomes a web page, and this repo renders the page to MP4, frame by frame. Nothing in the picture or the sound is AI-generated, so every frame is exact, editable like code and the same on every render. Every tile below is drawn live in your browser by the same code. Each card says what it does, how it is drawn and what it needs; filter them by kind or by the way they are drawn. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch. The sample text comes from our own videos for an Instagram DM assistant; swap in your own words. A finished video with sound uses 16 stacks, listed in the table further down.</p>
     <div class="legend" id="legend"></div>
     <video class="intro" controls playsinline preload="metadata" poster="media/intro.jpg" src="media/intro.mp4" aria-label="Intro video, 35 seconds, with sound"></video>
   </header>
+
+  <section id="uses">
+    <span class="eyebrow">What it is for</span>
+    <h2>Videos you can make with it</h2>
+    <p class="note">Each of these is one HTML file in <code>examples/</code>, with its data or text at the top. Change it and run <code>bash video/build.sh examples/infographic.html</code> for a new MP4. The intro above is a fifth: a product intro. The shops and studio are fictional, and their numbers are sample data.</p>
+    <div class="uses">
+      <figure><video controls playsinline preload="none" poster="media/infographic.jpg" src="media/infographic.mp4" aria-label="Infographic example, 14 seconds"></video><figcaption><b>Infographic and data videos</b>Counters, bar, donut and line charts drawn from the numbers at the top of the file.</figcaption></figure>
+      <figure><video controls playsinline preload="none" poster="media/variants.jpg" src="media/variants.mp4" aria-label="Template example, 10 seconds"></video><figcaption><b>Many videos from one template</b>Six product cards from one <code>card(row)</code> function and six rows of data.</figcaption></figure>
+      <figure><video controls playsinline preload="none" poster="media/broll.jpg" src="media/broll.mp4" aria-label="B-roll example, 12 seconds"></video><figcaption><b>B-roll and background loops</b>Three 4-second loops that repeat with no seam, one under a lower third.</figcaption></figure>
+      <figure><video controls playsinline preload="none" poster="media/reel.jpg" src="media/reel.mp4" aria-label="Vertical reel example, 12 seconds"></video><figcaption><b>Social clips in any shape</b>A 9:16 Reel with a hook, a tapped phone screen and a call to action; 4:5 and 16:9 work the same way.</figcaption></figure>
+    </div>
+  </section>
 
   <section aria-label="Effects">
     <div class="toolbar">
