@@ -5,3 +5,5 @@ video/stills/
 video/mismatch/
 *.mkv
 .DS_Store
+test-results/
+playwright-report/

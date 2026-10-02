@@ -1,6 +1,6 @@
 # Motion FX Lab
 
-**Motion graphics as plain web pages, rendered to MP4 you can trust.** 54 ready-made effects in HTML, CSS, SVG, Canvas, three.js, GLSL and Matter.js, and a recorder that turns any timeline page into an MP4. On our 3D-heavy test video it was 7.5× faster than a default headless browser, while rendering every frame twice and comparing the two before it gives you a file.
+**Motion graphics as plain web pages, rendered to MP4 you can trust.** 60 timeline effects in HTML, CSS, SVG, Canvas, three.js, GLSL, Matter.js and Flubber, plus three interactive PixiJS / Rapier / WebGPU experiments, and a recorder that turns any timeline page into an MP4. On our 3D-heavy test video it was 7.5× faster than a default headless browser, while rendering every frame twice and comparing the two before it gives you a file.
 
 [![Highlights from the intro video (no sound). Click for the full 41-second video with sound.](media/intro.gif)](media/intro.mp4)
 
@@ -23,7 +23,7 @@ Describe the video to an AI coding assistant, or write it yourself. It becomes a
 </tr>
 </table>
 
-Plus characters drawn in code and 54 effects: the intro video above shows them all in 41 seconds. Each example is one HTML file with its text or numbers at the top; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
+Plus characters drawn in code and 60 timeline effects. The 41-second intro shows the original 54; the six optical studies and three stack experiments have separate players below. Each example is one HTML file with its text or numbers at the top; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
 
 ## Sound familiar?
 
@@ -39,8 +39,8 @@ Plus characters drawn in code and 54 effects: the intro video above shows them a
 
 | Pain | What this repo does |
 |---|---|
-| Hand-built, un-diffable animation | Every effect is a small function of time in a plain web page. Open `index.html`; no framework, no bundler. |
-| Starting from a blank page | 54 effects you can copy: kinetic type, UI mock-ups, charts, generative patterns, ray-marched and GPU-particle shaders, two simulations, chrome, and toon, flat and dithered characters. |
+| Hand-built, un-diffable animation | Every timeline effect is a small function of time in a plain web page. Open `index.html`; no framework, no bundler. |
+| Starting from a blank page | 60 timeline effects you can copy: kinetic type, UI mock-ups, charts, generative patterns, ray-marched and GPU-particle shaders, two simulations, chrome, and toon, flat and dithered characters. |
 | Slow 3D in headless Chrome | GPU rendering through ANGLE Metal, lossless CDP screenshots and 4 browsers in parallel: **399.6 s → 52.9 s** for a 56-second, 3D-heavy video, including the second render that verifies it. |
 | Silent wrong frames | The whole video is rendered twice, each frame on a different browser, and every frame is compared. The recorder also stops on a CPU fallback, a lost WebGL context, a page error or a font that did not load. |
 | Colour shifts | Screenshots are converted with the BT.709 matrix and every file is tagged BT.709; the checks refuse an untagged file. |
@@ -81,7 +81,7 @@ The 56-second promo is one of ours and is not in this repo. Beyond 4 browsers th
 
 ## How it works
 
-An effect never keeps state between frames that `t` does not decide. It reads `t` and sets what it draws:
+A timeline effect never keeps state between frames that `t` does not decide. It reads `t` and sets what it draws:
 
 ```js
 demo({ id: "count", kind: "type", period: 3.2, hero: 2.4, /* name, stacks, chips, purpose… */
@@ -92,7 +92,7 @@ demo({ id: "count", kind: "type", period: 3.2, hero: 2.4, /* name, stacks, chips
   } });
 ```
 
-No `requestAnimationFrame` state, no clock, no unseeded randomness at draw time. The two simulations follow the same rule: frame `t` shows the state after exactly `round(t × steps per second)` fixed steps from a fixed start, a cache only saves re-running steps already taken, and asking for an earlier `t` starts again from step 0. That is what lets you scrub to any moment, render a frame again and get the same pixels, and split a video across browsers. Every 3D tile draws on one shared WebGL renderer and copies the result into its own canvas, so the gallery uses a single WebGL context.
+No `requestAnimationFrame` state, no clock, no unseeded randomness at draw time. The two simulations follow the same rule: frame `t` shows the state after exactly `round(t × steps per second)` fixed steps from a fixed start, a cache only saves re-running steps already taken, and asking for an earlier `t` starts again from step 0. That is what lets you scrub to any moment, render a frame again and get the same pixels, and split a video across browsers. The original 3D tiles share one WebGL renderer; the three optical shaders share a second WebGL context. Each copies its result into its own canvas. The interactive stack lab runs on a separate page.
 
 ```
 page.html ─ record.cjs cues ─► cues.json ─► sfx.py + music.py ─► mix.wav ──────────┐
@@ -134,17 +134,55 @@ Then run `bash video/build.sh video/yours.html`.
 
 ## The effects
 
-54 effects: 46 in the gallery, most striking first, and 8 in its character section. Each card gives its kind, how it is drawn and what it needs beyond the page: the base stack only (34 effects), one more three.js r128 add-on file (7), a custom shader (12), or one more library (only the rigid bodies, which use Matter.js).
+60 timeline effects: 52 in the gallery and 8 in its character section, plus 3 interactive stack experiments. Each card gives its kind, how it is drawn and what it needs beyond the page: the base stack only (36 effects), one more three.js r128 add-on file (7), a custom shader (15), or one more library (2: Matter.js rigid bodies and Flubber path morphing).
 
-- **3D and shaders (12, three.js r128):** 200,000 particles moved on the GPU, ray-marched clay with smooth blending, liquid-glass refraction, an endless grid by domain repetition, chrome with a painted environment map, one object in five styles (Bayer dither, halftone, ASCII, pixel sort, risograph), particles that assemble into words, lit 3D type with soft shadows, rays with bloom and dust, a noise dissolve patched into a lit material, fbm smoke, a line tunnel.
+- **3D and shaders (15, three.js r128 / WebGL):** 200,000 particles moved on the GPU, ray-marched clay with smooth blending, liquid-glass refraction, an endless grid by domain repetition, chrome with a painted environment map, one object in five styles (Bayer dither, halftone, ASCII, pixel sort, risograph), particles that assemble into words, lit 3D type with soft shadows, rays with bloom and dust, a noise dissolve patched into a lit material, fbm smoke, a line tunnel, moiré interference, procedural caustic light, holographic foil.
 - **Simulations (2):** reaction–diffusion (Gray–Scott) growing out of a word, and rigid bodies falling and stacking, stepped at a fixed 240 Hz.
 - **Characters (8):** an agent character dithered to three inks, peeking over a logo in a coin rain, fanning out cards, narrating from a badge and standing; the same agent toon-shaded with outlines and drawn as flat SVG with a per-part rig; and a halftoned figure built from spheres and cylinders, bouncing and standing.
-- **Motion (4):** a 0.5 s wipe, beat sync, squash and stretch next to its timing graph, a polar shape morph on a spring.
+- **Motion (6):** a 0.5 s wipe, beat sync, squash and stretch next to its timing graph, a polar shape morph on a spring, a folding paper ribbon, a Flubber morph between concave outer contours.
 - **Backgrounds (7):** film grain, glow orbs, a low-contrast flowing gradient, a warm grade with a soft glow, Bauhaus tile rhythm, noise ridgelines, a code-rain backdrop.
 - **UI and charts (9):** light sweep, frosted glass, scan and check, a camera move over a UI card, blueprint callouts on a dot grid, a self-drawing flow chart, a self-drawing data chart, a 3D card-flip grid, a 24-hour countdown ring.
-- **Type (12):** whip-in letters with motion blur, an RGB-split glitch, halftone dots on a word, character pops, highlighter, counting numbers, typewriter, a red flash with a shake and a stamp, a 3-second headline hook, word-synced captions, sticker labels, variable-font kinetic type.
+- **Type (13):** whip-in letters with motion blur, an RGB-split glitch, halftone dots on a word, character pops, highlighter, counting numbers, typewriter, a red flash with a shake and a stamp, a 3-second headline hook, word-synced captions, sticker labels, variable-font kinetic type, slit-scan typography.
 
 The first 36 effects were built for short promo videos about an Instagram DM assistant for insurance agents in Hong Kong, which is why the sample text talks about DMs, drafts and savings plans. Swap in your own words.
+
+## Nine new studies
+
+**[Six optical effects](examples/optical.html)** · **[PixiJS, Rapier and WebGPU stack lab](examples/stack-lab/)** · **[24-second stack recording](examples/stack-lab/preview.mp4)**
+
+The optical pack adds moiré interference, slit-scan type, a folding paper ribbon,
+caustic light, holographic foil and arbitrary-path morphing. `fx/optical-effects.js`
+contains the shared renderer; `fx/pack-optical.js` registers the six gallery tiles.
+Load Flubber 0.4.2, then those two files after `fx/demos.js` to use the tile IDs
+`optical-moire`, `optical-slit`, `optical-ribbon`, `optical-caustic`, `optical-foil`
+and `optical-morph`. Their `frame(t)` supports repeatable backward seeks.
+`examples/optical.html` also exposes the recorder contract and plays all six
+over 18 seconds:
+
+```sh
+bash video/build.sh examples/optical.html
+```
+
+The caustic and foil shaders are visual approximations, the ribbon is projected
+geometry rather than cloth physics, and Flubber interpolates outer contours
+without holes. The shader studies share one additional WebGL context.
+
+The separate stack lab uses PixiJS 8.22.0 for a three-filter poster, Rapier 0.21.0
+for 48 colliding dominoes, and three.js r180 / TSL for 65,536 GPU-computed particles.
+It does not migrate the main gallery away from r128. These interactive simulations
+are **not integrated with the frame-exact recorder**; their preview is a browser
+recording. See [the stack lab notes](examples/stack-lab/README.md).
+
+Serve the repository with `python3 -m http.server 8000`, then open
+`http://localhost:8000/examples/stack-lab/`. Dependencies load from pinned public
+CDNs. WebGPU needs a supported browser on HTTPS or localhost; the page reports
+unavailability rather than substituting WebGL.
+
+Run `npm run test:effects` for the browser regressions. On a machine with WebGPU,
+use `REQUIRE_WEBGPU=1 npm run test:effects` to require real compute-buffer readback;
+otherwise that one hardware-dependent test may be skipped. Tests cover optical
+seeks, gallery registration, filter comparison, physical collision propagation,
+physics resets, GPU updates, unavailable-backend handling and mobile layout.
 
 ## Effects we learnt from other people's videos
 

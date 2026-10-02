@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Optical studies — Motion FX Lab</title>
+    <link rel="icon" href="data:," />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #0a0f14;
+        color: #f0f5f1;
+        font:
+          15px/1.5 system-ui,
+          sans-serif;
+      }
+      main {
+        max-width: 1152px;
+        margin: 30px auto;
+        padding: 0 16px;
+      }
+      a {
+        color: #b476ff;
+      }
+      header {
+        display: flex;
+        gap: 20px;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: 22px;
+        font-weight: 600;
+        margin: 0;
+      }
+      nav,
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin: 16px 0;
+      }
+      button {
+        background: #18232b;
+        color: inherit;
+        border: 1px solid #3a4b58;
+        padding: 9px 15px;
+        border-radius: 6px;
+        font: inherit;
+        cursor: pointer;
+      }
+      button[aria-pressed="true"] {
+        background: #b476ff;
+        color: #0a0f14;
+      }
+      button:focus-visible,
+      input:focus-visible {
+        outline: 2px solid #b476ff;
+        outline-offset: 3px;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16/9;
+      }
+      label {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      input {
+        accent-color: #b476ff;
+        max-width: 100%;
+      }
+      .note {
+        color: #aebdc6;
+        font-size: 13px;
+      }
+      #error {
+        color: #ffb39e;
+      }
+      body.recording main {
+        margin: 0;
+        padding: 0;
+        max-width: none;
+      }
+      body.recording header,
+      body.recording nav,
+      body.recording .controls,
+      body.recording .note {
+        display: none;
+      }
+      body.recording canvas {
+        width: 1280px;
+        height: 720px;
+      }
+      output {
+        font-variant-numeric: tabular-nums;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/flubber@0.4.2/build/flubber.min.js"></script>
+    <script src="../fx/optical-effects.js"></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Six optical studies</h1>
+        <a href="../index.html">Back to gallery</a>
+      </header>
+      <nav aria-label="Choose effect"></nav>
+      <canvas
+        width="1280"
+        height="720"
+        role="img"
+        aria-label="Optical animation"
+      ></canvas>
+      <div class="controls">
+        <button id="play">Pause</button
+        ><label
+          >Time
+          <input
+            id="time"
+            type="range"
+            min="0"
+            max="8"
+            step="0.01"
+            value="0"
+          /><output id="clock">0.00 s</output></label
+        ><label
+          >Strength
+          <input
+            id="strength"
+            type="range"
+            min="0.25"
+            max="1.5"
+            step="0.05"
+            value="1"
+        /></label>
+      </div>
+      <p id="note" class="note" aria-live="polite"></p>
+      <p id="error" role="alert"></p>
+      <p class="note">
+        Canvas / GLSL / Flubber 0.4.2. Pause and scrub freely. The recorder
+        plays all six effects over 18 seconds.
+      </p>
+    </main>
+    <script>
+      (() => {
+        const modes = ["moire", "slit", "ribbon", "caustic", "foil", "morph"],
+          names = [
+            "Moiré",
+            "Slit-scan type",
+            "Paper ribbon",
+            "Caustic light",
+            "Holographic foil",
+            "Path morph",
+          ];
+        const notes = [
+          "Two interfering wave fields.",
+          "Horizontal slices sample different phases of moving type.",
+          "Projected geometry; not cloth physics.",
+          "Procedural approximation; not ray tracing.",
+          "Art-directed spectral highlights; not physical thin-film optics.",
+          "Flubber interpolates outer contours; holes are not supported.",
+        ];
+        const canvas = document.querySelector("canvas"),
+          time = document.getElementById("time"),
+          strength = document.getElementById("strength"),
+          play = document.getElementById("play");
+        let selected = 0,
+          t = 0,
+          playing = !matchMedia("(prefers-reduced-motion: reduce)").matches,
+          recording = false,
+          last = 0;
+        const frames = modes.map((m) => FXOptical.create(canvas, m));
+        function draw() {
+          try {
+            frames[selected](t, Number(strength.value));
+            time.value = t;
+            document.getElementById("clock").textContent = t.toFixed(2) + " s";
+            document.getElementById("error").textContent = "";
+          } catch (e) {
+            playing = false;
+            play.textContent = "Play";
+            document.getElementById("error").textContent = e.message;
+            if (recording) throw e;
+          }
+        }
+        function choose(i) {
+          selected = i;
+          document
+            .querySelectorAll("nav button")
+            .forEach((b, j) => b.setAttribute("aria-pressed", String(i === j)));
+          document.getElementById("note").textContent = notes[i];
+          canvas.setAttribute("aria-label", names[i]);
+          draw();
+        }
+        modes.forEach((_, i) => {
+          const b = document.createElement("button");
+          b.textContent = names[i];
+          b.addEventListener("click", () => choose(i));
+          document.querySelector("nav").appendChild(b);
+        });
+        play.textContent = playing ? "Pause" : "Play";
+        play.addEventListener("click", () => {
+          playing = !playing;
+          play.textContent = playing ? "Pause" : "Play";
+        });
+        time.addEventListener("input", () => {
+          playing = false;
+          play.textContent = "Play";
+          t = Number(time.value);
+          draw();
+        });
+        strength.addEventListener("input", draw);
+        window.__SIZE = { w: 1280, h: 720 };
+        window.__DUR = 18;
+        window.__ready = Promise.resolve();
+        window.__poster = 14;
+        window.__record = () => {
+          recording = true;
+          playing = false;
+          document.body.classList.add("recording");
+        };
+        window.__render = (seconds) => {
+          selected = Math.min(5, Math.max(0, Math.floor(seconds / 3)));
+          t = Math.max(0, seconds - selected * 3);
+          strength.value = 1;
+          draw();
+        };
+        window.__cues = () => [];
+        window.opticalDemo = {
+          modes,
+          frames,
+          canvas,
+          choose,
+          pause: () => {
+            playing = false;
+            play.textContent = "Play";
+          },
+        };
+        choose(0);
+        function tick(now) {
+          if (last && playing && !recording) {
+            t = (t + Math.min((now - last) / 1000, 0.1)) % 8;
+            draw();
+          }
+          last = now;
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      })();
+    </script>
+  </body>
+</html>

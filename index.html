@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Motion FX Lab</title>
-<meta name="description" content="54 motion-graphics effects drawn live in the browser with HTML, CSS, SVG, Canvas, Three.js, GLSL and Matter.js, and rendered frame-exact to MP4.">
+<meta name="description" content="60 timeline effects plus three interactive stack experiments in PixiJS, Rapier and WebGPU/TSL.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
@@ -108,7 +108,7 @@
   <header>
     <span class="eyebrow">Open source · 0BSD</span>
     <h1>Motion FX Lab</h1>
-    <p class="lede">Describe a video to an AI coding assistant, or write it yourself: it becomes a web page, and this repo renders the page to MP4, frame by frame. Nothing in the picture or the sound is AI-generated, so every frame is exact, editable like code and the same on every render. Every tile below is drawn live in your browser by the same code. Each card says what it does, how it is drawn and what it needs; filter them by kind or by the way they are drawn. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch. The sample text comes from our own videos for an Instagram DM assistant; swap in your own words. A finished video with sound uses 16 stacks, listed in the table further down.</p>
+    <p class="lede">Describe a video to an AI coding assistant, or write it yourself: it becomes a web page, and this repo renders the page to MP4, frame by frame. Nothing in the picture or the sound is AI-generated, so every frame is exact, editable like code and the same on every render. Every tile below is drawn live in your browser by the same code. Each card says what it does, how it is drawn and what it needs; filter them by kind or by the way they are drawn. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch. The sample text comes from our own videos for an Instagram DM assistant; swap in your own words. The original video pipeline uses 16 stacks; Flubber and three new stack experiments are listed below.</p>
     <div class="legend" id="legend"></div>
     <video class="intro" controls playsinline preload="metadata" poster="media/intro.jpg" src="media/intro.mp4" aria-label="Intro video, 41 seconds, with sound"></video>
   </header>
@@ -133,7 +133,19 @@
       <button id="play" type="button" aria-pressed="false">⏸ Pause</button>
     </div>
     <div class="gallery" id="gallery"></div>
-    <p class="note">The grading tile previews the look with a CSS filter; a real grade would use the LUT pass that ships with three.js r128, and the glow stays off the text. The 3D and shader tiles draw in turn on one shared WebGL canvas. Reaction–diffusion draws the same pixels every time on one GPU, but not the same pattern on every GPU.</p>
+    <p class="note">The grading tile previews the look with a CSS filter; a real grade would use the LUT pass that ships with three.js r128, and the glow stays off the text. The original 3D and shader tiles share one WebGL canvas; the three optical shaders share a second context. Reaction–diffusion draws the same pixels every time on one GPU, but not the same pattern on every GPU.</p>
+  </section>
+
+  <section id="new-studies">
+    <span class="eyebrow">Nine new studies</span>
+    <h2>Optical effects and new stacks</h2>
+    <p class="note">The six optical effects above use the timeline's frame(t) contract. <a href="examples/optical.html">Open the optical study player</a> to compare them and scrub time. The three stack experiments below are live, interactive simulations; they are not wired into the frame-exact video recorder.</p>
+    <div class="cols">
+      <div class="box"><h3><a href="examples/stack-lab/#pixi">PixiJS · Liquid poster ↗</a></h3><p>Displacement, blur and colour filters. Compare the filtered poster with its original.</p></div>
+      <div class="box"><h3><a href="examples/stack-lab/#rapier">Rapier · Chain reaction ↗</a></h3><p>48 three-dimensional dominoes, actual collisions and a fixed 120 Hz physics step. Drag to orbit.</p></div>
+      <div class="box"><h3><a href="examples/stack-lab/#gpu">WebGPU / TSL · Orbital matter ↗</a></h3><p>65,536 particles updated in GPU storage buffers. Requires WebGPU on HTTPS or localhost; no WebGL substitute.</p></div>
+    </div>
+    <video class="intro" controls playsinline preload="metadata" poster="examples/stack-lab/poster.jpg" src="examples/stack-lab/preview.mp4" aria-label="24-second recording of PixiJS, Rapier and WebGPU demos"></video>
   </section>
 
   <section id="mascot">
@@ -161,8 +173,8 @@
 
   <section>
     <span class="eyebrow">Stack</span>
-    <h2>The 16 stacks, and what each one does</h2>
-    <p class="note">16 stacks: 5 for the picture, 6 for 3D, 1 for physics, 2 for sound and 2 for rendering. The 6 drawing methods in the filter above are the part that draws effects; the other 10 handle fonts, the timeline, 3D details, sound and output. Matter.js is used by one tile, the rigid bodies.</p>
+    <h2>The original pipeline and new stacks</h2>
+    <p class="note">16 stacks: 5 for the picture, 6 for 3D, 1 for physics, 2 for sound and 2 for rendering. The gallery also uses Flubber for arbitrary outer-contour morphs. PixiJS, Rapier and modern three.js/TSL live in the separate stack lab, keeping the r128 pipeline unchanged.</p>
     <div class="scroll">
       <table>
         <thead><tr><th>Stack</th><th>What it is</th><th>Why</th><th>What it does here</th></tr></thead>
@@ -208,8 +220,8 @@
     <h2>Stacks we looked at and left out</h2>
     <div class="cols">
       <div class="box"><h3>Later</h3><ul>
-        <li><b>three.js r128 → r186</b>: no effect here needs it; the upgrade takes about six steps and every colour, light and custom shader must be re-tuned.</li>
-        <li><b>GSAP</b>: its MorphSVG plugin morphs any two paths, which the polar morph tile cannot: that tile needs shapes that every ray from the centre crosses once. Free for commercial use under Webflow's own licence.</li>
+        <li><b>three.js r128 → r186</b>: the main gallery stays on r128. The isolated stack lab pins r180 for WebGPU/TSL without migrating existing shaders.</li>
+        <li><b>GSAP</b>: not needed for these studies: Flubber handles the new concave outer-contour morph; the original polar morph remains available.</li>
         <li><b>HyperFrames</b>: the same approach as ours, but at v0.8 with its frame API marked experimental.</li>
       </ul></div>
       <div class="box"><h3>No</h3><ul>
@@ -220,7 +232,7 @@
     </div>
   </section>
 
-  <footer>Source: <a href="https://github.com/howardc38/motion-fx-lab">github.com/howardc38/motion-fx-lab</a>. Code: 0BSD. The Helvetiker glyph subset keeps its MgOpen licence; see <a href="https://github.com/howardc38/motion-fx-lab/blob/main/THIRD_PARTY.md">THIRD_PARTY.md</a>. three.js, Matter.js and the fonts load from public CDNs.</footer>
+  <footer>Source: <a href="https://github.com/howardc38/motion-fx-lab">github.com/howardc38/motion-fx-lab</a>. Code: 0BSD. The Helvetiker glyph subset keeps its MgOpen licence; see <a href="https://github.com/howardc38/motion-fx-lab/blob/main/THIRD_PARTY.md">THIRD_PARTY.md</a>. Pinned versions of three.js, Matter.js, Flubber, PixiJS and Rapier load from public CDNs, alongside the fonts.</footer>
 </main>
 
 <script src="fx/font-helvetiker-subset.js"></script>
@@ -230,13 +242,16 @@
 <script src="fx/pack-2d.js"></script>
 <script src="fx/pack-shaders.js"></script>
 <script src="fx/pack-sims.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flubber@0.4.2/build/flubber.min.js"></script>
+<script src="fx/optical-effects.js"></script>
+<script src="fx/pack-optical.js"></script>
 <script>
 (() => {
   const { DEMOS, R3 } = window.FX;
   const KINDS = { shader: "3D and shaders", sim: "Simulations", character: "Characters", motion: "Motion", backdrop: "Backgrounds", ui: "UI and charts", type: "Type" };
   // Tiles are shown most striking first. One missing from this list follows the listed ones, in the
   // order it was registered.
-  const ORDER = ["gpuparticles", "clay", "liquid", "reaction", "domainrep", "chrome", "styles", "rigid", "particles", "lit3d", "rays", "dissolve", "smoke", "tunnel",
+  const ORDER = ["optical-moire", "optical-slit", "optical-ribbon", "optical-caustic", "optical-foil", "optical-morph", "gpuparticles", "clay", "liquid", "reaction", "domainrep", "chrome", "styles", "rigid", "particles", "lit3d", "rays", "dissolve", "smoke", "tunnel",
     "vartype", "glitch", "morph", "cardflip", "ridgelines", "rhythm", "coderain", "timing", "datachart", "whip", "uifly", "drawflow", "blueprint", "glass", "sweep",
     "hook", "chars", "karaoke", "stamp", "count", "type", "mark", "scan", "sticker", "ring", "beat", "wipe", "orbs", "gradient", "lut", "grain", "halftonetype",
     "ditherpeek", "dithercards", "ditheravatar", "dithercharacter", "toon", "flat", "bounce", "halftone"];
@@ -245,13 +260,14 @@
     "A+": ["Plus a three.js add-on", "Loads one more file from three.js r128's examples, such as a bloom or halftone pass"],
     "B": ["Custom shader", "Needs a GLSL shader written for it"], "C": ["Plus a library", "Needs one more library"] };
   const rank = (d) => (ORDER.includes(d.id) ? ORDER.indexOf(d.id) : ORDER.length);
-  const STACKS = { css: "HTML/CSS", svg: "SVG", canvas: "Canvas 2D", three: "Three.js", glsl: "Custom GLSL", physics: "Matter.js" };
+  const STACKS = { css: "HTML/CSS", svg: "SVG", canvas: "Canvas 2D", three: "Three.js", glsl: "Custom GLSL", physics: "Matter.js", flubber: "Flubber" };
   const gallery = document.getElementById("gallery");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   for (const d of [...DEMOS].sort((a, b) => rank(a) - rank(b))) {
     const fig = document.createElement("figure"); fig.className = "tile";
     const stage = document.createElement("div"); stage.className = "stage";
+    if (d.aspect) stage.style.aspectRatio = d.aspect;
     fig.innerHTML = `<figcaption><div class="pills"><span class="pill kind">${KINDS[d.kind] || "?"}</span>${NEEDS[d.grade] ? `<span class="grade" title="${NEEDS[d.grade][1]}">${NEEDS[d.grade][0]}</span>` : ""}</div><h3>${d.name}</h3><p>${d.purpose}</p>${d.seen ? `<p class="seen">Seen in: ${d.seen}</p>` : ""}<div class="chips">${d.chips.map((c) => `<code>${c}</code>`).join("")}</div></figcaption>`;
     fig.prepend(stage);
     (d.host ? document.getElementById(d.host) : gallery).appendChild(fig);
@@ -271,7 +287,7 @@
 
   const G = DEMOS.filter((d) => !d.host).sort((a, b) => rank(a) - rank(b));
   document.getElementById("legend").innerHTML =
-    `<span><b>${DEMOS.length}</b> effects: ${G.length} in the gallery and ${DEMOS.length - G.length} in Characters further down</span>` +
+    `<span><b>${DEMOS.length}</b> timeline effects: ${G.length} in the gallery and ${DEMOS.length - G.length} characters, plus <a href="#new-studies">3 stack experiments</a></span>` +
     `<span>Needs: base stack only · plus a three.js add-on · custom shader · plus a library</span>`;
   const state = { kind: "all", stack: "all" };
   const mk = (host, key, opts) => {
@@ -337,6 +353,11 @@
     ["Shadows (SpotLight, soft)", "Lights that cast shadows", "Depth", "The 3D “6%” casting on the floor"],
     ["Physics"],
     ["Matter.js 0.20.0", "2D rigid-body physics", "Things that fall, collide and stack", "The rigid-body tile, stepped at a fixed 240 Hz so every frame can be recomputed"],
+    ["New studies"],
+    ["Flubber 0.4.2", "Outer-contour interpolation", "Morph concave paths", "Monogram → lightning → heart, sampled directly at t"],
+    ["PixiJS 8.22.0", "2D scene graph and filter pipeline", "Compose texture effects", "Liquid poster with displacement, blur and colour grading"],
+    ["Rapier 0.21.0", "3D WASM rigid-body physics", "Real collisions", "48 dominoes, fixed 120 Hz, rendered with three.js r180"],
+    ["three.js r180 / WebGPU / TSL", "GPU compute and node materials", "Keep particle state on the GPU", "65,536 particles; isolated from the gallery's r128 renderer"],
     ["Sound"],
     ["Python synth (sfx.py)", "Sound effects from maths", "Every move has a sound", "17 sounds: pop, whoosh, stamp, typing…"],
     ["Python synth (music.py)", "Music from maths", "A music bed", "100 BPM, Am–F–C–G, sections declared by the video page"],

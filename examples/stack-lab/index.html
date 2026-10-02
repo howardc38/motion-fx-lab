@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Motion FX — Three new stacks</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="style.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+          "three/webgpu": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.webgpu.js",
+          "three/tsl": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.tsl.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <a class="wordmark" href="../../index.html"
+          >MOTION FX <span>/ EXPERIMENTS</span></a
+        ><span class="isolation">Stack experiments · Live simulation</span>
+      </header>
+      <div class="intro">
+        <div>
+          <p class="eyebrow">THREE STACKS. THREE NEW DIRECTIONS.</p>
+          <h1>下一步，可以玩到幾盡？</h1>
+        </div>
+        <p class="summary">真正運行 library。<br />直接玩，再決定加邊個。</p>
+      </div>
+      <nav aria-label="選擇技術 demo">
+        <button data-demo="pixi" aria-pressed="true">
+          <span class="num">01</span
+          ><span><b>PixiJS</b><small>水波 × 濾鏡</small></span
+          ><span class="arrow">↗</span>
+        </button>
+        <button data-demo="rapier" aria-pressed="false">
+          <span class="num">02</span
+          ><span><b>Rapier</b><small>3D 連鎖碰撞</small></span
+          ><span class="arrow">↗</span>
+        </button>
+        <button data-demo="gpu" aria-pressed="false">
+          <span class="num">03</span
+          ><span><b>WebGPU / TSL</b><small>GPU 粒子吸引場</small></span
+          ><span class="arrow">↗</span>
+        </button>
+      </nav>
+      <section class="viewer" aria-label="動畫預覽">
+        <div id="stage"></div>
+        <div id="loading" role="status">載入 PixiJS…</div>
+        <div class="overlay">
+          <span id="art-title">LIQUID POSTER</span
+          ><span id="clock">00.00 s</span>
+        </div>
+      </section>
+      <div class="controlbar">
+        <div class="actions">
+          <button id="play" disabled>暫停</button
+          ><button id="reset" disabled>重播</button
+          ><button id="action" disabled>比較原圖</button>
+        </div>
+        <label id="parameter-label"
+          >扭曲程度 <output id="value">60%</output
+          ><input id="parameter" type="range" min="0" max="100" value="60"
+        /></label>
+      </div>
+      <div class="notes">
+        <div>
+          <h2 id="title">PixiJS · Liquid poster</h2>
+          <p id="description">
+            整張海報通過位移貼圖扭曲，再疊加模糊與色彩濾鏡。
+          </p>
+        </div>
+        <div class="runtime">
+          <span id="backend" role="status">INITIALIZING</span
+          ><span id="stats">—</span>
+        </div>
+      </div>
+      <p id="error" role="alert"></p>
+      <footer>
+        <span>Prototype / October 2026</span>
+        <div>
+          <a
+            href="https://pixijs.com/8.x/guides/components/filters"
+            target="_blank"
+            rel="noreferrer"
+            >PixiJS docs ↗</a
+          ><a
+            href="https://rapier.rs/docs/user_guides/javascript/rigid_bodies/"
+            target="_blank"
+            rel="noreferrer"
+            >Rapier docs ↗</a
+          ><a
+            href="https://threejs.org/manual/pages/webgpurenderer"
+            target="_blank"
+            rel="noreferrer"
+            >WebGPU docs ↗</a
+          >
+        </div>
+      </footer>
+    </main>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

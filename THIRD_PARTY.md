@@ -34,8 +34,18 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
 |---|---|---|
 | three.js r128 and its `examples/js` post-processing files | cdnjs, jsDelivr | MIT |
 | Matter.js 0.20.0 (the rigid-body tile) | cdnjs | MIT |
+| Flubber 0.4.2 (arbitrary outer-contour morph) | jsDelivr | MIT |
+| PixiJS 8.22.0 (stack lab filter pipeline) | jsDelivr | MIT |
+| Rapier 0.21.0, `@dimforge/rapier3d-compat` (stack lab physics) | jsDelivr | Apache-2.0 |
+| three.js r180 and `examples/jsm` helpers (isolated stack lab) | jsDelivr | MIT |
 | Archivo, Instrument Serif, JetBrains Mono, Noto Sans TC | Google Fonts | SIL Open Font License 1.1 |
 | Playwright (development dependency) | npm | Apache-2.0 |
+
+The stack lab's TSL particle implementation follows the three.js r180 attractor
+example's storage-buffer / compute / sprite pattern. Its MIT notice and upstream
+source are retained in [`examples/stack-lab/NOTICE`](examples/stack-lab/NOTICE).
+No new third-party library binaries are bundled; the preview footage was recorded
+from the procedural demos in this repository.
 
 ## Drawn by the operating system
 

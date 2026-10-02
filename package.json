@@ -19,7 +19,8 @@
   },
   "license": "0BSD",
   "scripts": {
-    "render": "bash video/build.sh intro.html"
+    "render": "bash video/build.sh intro.html",
+    "test:effects": "playwright test --config playwright.config.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.59.1"
