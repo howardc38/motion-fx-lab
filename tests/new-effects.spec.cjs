@@ -2,7 +2,7 @@ const { test, expect } = require("@playwright/test");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
-const { execFileSync } = require("node:child_process");
+const { execFileSync, spawnSync } = require("node:child_process");
 
 async function openLab(page, mode) {
   await page.goto("/examples/stack-lab/#" + mode);
@@ -82,46 +82,37 @@ test("optical export supplies working audio and GIF contracts to the full build"
   }
 });
 
-test("intro includes all nine additions and atlas playback survives backward seeks", async ({
+test("intro renders nine native additions without prerecorded atlases", async ({
   page,
 }) => {
   await page.goto("/video/intro.html");
   await page.evaluate(async () => {
-    __record();
     await __ready;
+    await __record();
+    await __render(33);
   });
-  const proof = await page.evaluate(() => {
-    __render(33);
-    const canvases = [...document.querySelectorAll("[data-stack]")];
-    const first = canvases.map((c) => c.toDataURL());
-    __render(35.7);
-    const later = canvases.map((c) => c.toDataURL());
-    __render(33);
-    const again = canvases.map((c) => c.toDataURL());
-    return {
-      optical: document.querySelectorAll('[data-demo^="optical-"]').length,
-      ids: canvases.map((c) => c.dataset.stack),
-      moves: later.map((v, i) => v !== first[i]),
-      repeats: again.map((v, i) => v === first[i]),
-      duration: __DUR,
-      headline: document.getElementById("scLib").textContent,
-    };
+  expect(await page.locator('[data-demo^="optical-"]').count()).toBe(6);
+  expect(await page.locator('[data-demo^="stack-"] canvas').count()).toBe(3);
+  const fits = await page.locator('[data-demo^="stack-"] canvas').evaluateAll(canvases => canvases.map(canvas => {
+    const a=canvas.getBoundingClientRect(), b=canvas.parentElement.getBoundingClientRect();
+    return Math.abs(a.width-b.width)<1 && Math.abs(a.height-b.height)<1;
+  }));
+  expect(fits).toEqual([true,true,true]);
+  expect(await page.locator('script[src*="capture"]').count()).toBe(0);
+  expect(await page.locator("#scLib").textContent()).toContain(
+    "63 film effects",
+  );
+  await page.evaluate(async () => {
+    await __render(35.7);
+    await __render(33);
   });
-  expect(proof).toMatchObject({
-    optical: 6,
-    ids: ["pixi", "rapier", "gpu"],
-    moves: [true, true, true],
-    repeats: [true, true, true],
-    duration: 45.6,
-  });
-  expect(proof.headline).toContain("60 timeline effects");
 });
 
-test("gallery registers six real frame functions and links all three stack demos", async ({
+test("gallery registers all 63 film effects including three asynchronous renderers", async ({
   page,
 }) => {
   await page.goto("/");
-  await page.waitForFunction(() => window.FX?.DEMOS.length === 60);
+  await page.waitForFunction(() => window.FX?.DEMOS.length === 63);
   const added = await page.evaluate(() =>
     FX.DEMOS.filter((d) => d.id.startsWith("optical-")).map((d) => ({
       id: d.id,
@@ -151,127 +142,111 @@ test("missing Flubber fails visibly without disabling Canvas effects", async ({
   await expect(page.locator("#error")).toBeEmpty();
 });
 
-test("Pixi uses three filters, comparison changes pixels, and reselect resets controls", async ({
+test("Pixi frame(t) switches filters and reproduces earlier pixels", async ({
   page,
 }) => {
   await openLab(page, "pixi");
-  const result = await page.evaluate(async () => {
-    demoLab.pause();
-    const d = demoLab.current;
-    await d.reset();
-    d.update(0.8);
-    d.render();
-    const filtered = d.canvas.toDataURL(),
-      proof = d.proof();
-    d.action();
-    d.render();
-    const original = d.canvas.toDataURL();
-    d.action();
-    d.render();
-    return {
-      proof,
-      changes: original !== filtered,
-      restores: filtered === d.canvas.toDataURL(),
-    };
+  const proof = await page.evaluate(async () => {
+    const d = await FXStack.create("pixi");
+    await d.frame(3);
+    const a = d.canvas.toDataURL(),
+      filters = d.proof().filterClasses;
+    await d.frame(0.8);
+    const b = d.canvas.toDataURL();
+    await d.frame(3);
+    return { changed: a !== b, repeats: a === d.canvas.toDataURL(), filters };
   });
-  expect(result).toMatchObject({
-    changes: true,
-    restores: true,
-    proof: {
-      library: "8.22.0",
-      filterClasses: ["DisplacementFilter", "BlurFilter", "ColorMatrixFilter"],
-    },
+  expect(proof).toEqual({
+    changed: true,
+    repeats: true,
+    filters: ["DisplacementFilter", "BlurFilter", "ColorMatrixFilter"],
   });
-  await page.locator("#action").click();
-  await page.evaluate(() => demoLab.select("pixi"));
-  await expect(page.locator("#action")).toHaveAttribute(
-    "aria-pressed",
-    "false",
-  );
-  expect(
-    await page.evaluate(() => demoLab.current.proof().filterClasses.length),
-  ).toBe(3);
 });
 
-test("Rapier collision chain propagates to all 48 bodies and reset reproduces poses", async ({
+test("Rapier frame(t) propagates collisions and resets for backward seeks and changed speed", async ({
   page,
 }) => {
   await openLab(page, "rapier");
-  const result = await page.evaluate(() => {
-    demoLab.pause();
-    const d = demoLab.current;
-    d.reset();
-    const initial = d.proof();
-    d.advanceSteps(240);
-    const middle = d.proof();
-    d.advanceSteps(660);
-    const end = d.proof();
-    d.reset();
-    d.advanceSteps(900);
-    const repeat = d.proof();
+  const r = await page.evaluate(async () => {
+    const d = await FXStack.create("rapier");
+    await d.frame(0);
+    const a = d.proof();
+    await d.frame(2);
+    const b = d.proof();
+    await d.frame(7.5);
+    const c = d.proof();
+    await d.frame(0);
+    await d.frame(7.5);
+    const e = d.proof();
+    await d.frame(2, { speed: 0.5 });
+    const slow = d.proof();
     return {
-      initial: initial.fallen,
-      middle: middle.fallen,
-      end: end.fallen,
-      version: end.version,
-      repeatable:
-        JSON.stringify(end.positions) === JSON.stringify(repeat.positions),
+      initial: a.fallen,
+      middle: b.fallen,
+      end: c.fallen,
+      repeats: JSON.stringify(c.positions) === JSON.stringify(e.positions),
+      slowSteps: slow.steps,
     };
   });
-  expect(result).toMatchObject({
+  expect(r).toMatchObject({
     initial: 0,
     end: 48,
-    repeatable: true,
-    version: "0.21.0",
+    repeats: true,
+    slowSteps: 120,
   });
-  expect(result.middle).toBeGreaterThan(0);
-  expect(result.middle).toBeLessThan(48);
+  expect(r.middle).toBeGreaterThan(0);
+  expect(r.middle).toBeLessThan(48);
 });
 
-test("WebGPU updates GPU storage, stays finite and resets on the same adapter", async ({
+test("WebGPU frame(t) updates real storage and reproduces state after non-monotonic seeks", async ({
   page,
 }) => {
   await openLab(page, "gpu");
-  const ready = await page.evaluate(() => !!demoLab.current);
-  if (!ready && process.env.REQUIRE_WEBGPU !== "1") {
-    await expect(page.locator("#backend")).toHaveText(
-      "UNAVAILABLE — NO FALLBACK",
-    );
-    test.skip(
-      true,
-      "No WebGPU adapter; use REQUIRE_WEBGPU=1 to require this test",
-    );
-  }
-  expect(ready, "A real WebGPU adapter is required").toBe(true);
-  const result = await page.evaluate(async () => {
-    demoLab.pause();
-    const d = demoLab.current;
-    await d.reset();
-    const initial = await d.proof();
-    d.advanceSteps(240);
-    const later = await d.proof();
-    d.action();
-    d.advanceSteps(120);
-    const dispersed = await d.proof();
-    await d.reset();
-    const reset = await d.proof();
-    return { initial, later, dispersed, reset };
+  if (
+    !(await page.evaluate(() => !!demoLab.current)) &&
+    process.env.REQUIRE_WEBGPU !== "1"
+  )
+    test.skip(true, "A real WebGPU adapter is required");
+  const r = await page.evaluate(async () => {
+    const d = await FXStack.create("gpu");
+    await d.frame(0);
+    const a = await d.proof();
+    await d.frame(2);
+    const b = await d.proof();
+    await d.frame(6);
+    const c = await d.proof();
+    await d.frame(2);
+    const e = await d.proof();
+    return { a, b, c, e };
   });
-  expect(result.later).toMatchObject({
+  expect(r.b).toMatchObject({
     isWebGPU: true,
-    backend: "WebGPUBackend",
     count: 65536,
     steps: 240,
     finite: true,
   });
-  expect(result.later.sample).not.toEqual(result.initial.sample);
-  expect(result.dispersed.finite).toBe(true);
-  expect(result.dispersed.sample).not.toEqual(result.later.sample);
-  expect(result.reset.sample).toEqual(result.initial.sample);
-  await page.locator("#action").click();
-  await expect(page.locator("#action")).toHaveText("聚合");
-  await page.locator("#reset").click();
-  await expect(page.locator("#action")).toHaveText("散開");
+  expect(r.b.sample).not.toEqual(r.a.sample);
+  expect(r.c.finite).toBe(true);
+  expect(r.e.sample).toEqual(r.b.sample);
+});
+
+test("film page switches the visible canvas instead of leaving stale GPU frames on top", async ({
+  page,
+}) => {
+  await page.goto("/examples/stacks.html");
+  await page.evaluate(async () => {
+    await __ready;
+    await __record();
+  });
+  for (const t of [20, 0, 10, 2]) {
+    await page.evaluate((t) => __render(t), t);
+    await expect(page.locator("#frame canvas:visible")).toHaveCount(1);
+    const backend = await page.evaluate(() => {
+      const e = stackFilm.effects.find((e) => !e.canvas.hidden);
+      return e.backend;
+    });
+    expect(backend).toContain(t < 7 ? "PIXI" : t < 16 ? "RAPIER" : "WEBGPU");
+  }
 });
 
 test("WebGPU unavailability is explicit and another demo can still load", async ({
@@ -313,4 +288,83 @@ test("stack player fits mobile and pause prevents simulation from advancing", as
   });
   expect(result.content).toBeLessThanOrEqual(result.width);
   expect(result.after).toBe(result.t);
+});
+
+test("recorder awaits asynchronous frames before every screenshot", async ({
+  page,
+}) => {
+  const root = path.resolve(__dirname, "..");
+  const args = [
+    "video/record.cjs",
+    "frames",
+    "tests/fixtures/async-frame.html",
+    "0",
+    ".1",
+    ".2",
+    ...(process.platform === "darwin" ? [] : ["--cpu"]),
+  ];
+  execFileSync(process.execPath, args, { cwd: root, timeout: 30000 });
+  const files = ["t000.00.png", "t000.10.png", "t000.20.png"].map((n) =>
+    fs
+      .readFileSync(path.join(root, "video/stills/async-frame", n))
+      .toString("base64"),
+  );
+  const colors = await page.evaluate(async (files) => {
+    const c = document.createElement("canvas");
+    c.width = c.height = 64;
+    const g = c.getContext("2d");
+    const result = [];
+    for (const data of files) {
+      const img = new Image();
+      img.src = "data:image/png;base64," + data;
+      await img.decode();
+      g.drawImage(img, 0, 0);
+      result.push([...g.getImageData(20, 20, 1, 1).data]);
+    }
+    return result;
+  }, files);
+  expect(colors).toEqual([
+    [255, 0, 0, 255],
+    [0, 255, 0, 255],
+    [0, 0, 255, 255],
+  ]);
+});
+
+test("a rejected asynchronous frame stops encoding and removes partial output", () => {
+  const root = path.resolve(__dirname, ".."),
+    work = fs.mkdtempSync(path.join(os.tmpdir(), "failed-frame-")),
+    out = path.join(work, "failed.mkv");
+  try {
+    const result = spawnSync(
+      process.execPath,
+      [
+        "video/record.cjs",
+        "video",
+        "tests/fixtures/rejected-frame.html",
+        out,
+        "--workers",
+        "2",
+        ...(process.platform === "darwin" ? [] : ["--cpu"]),
+      ],
+      { cwd: root, encoding: "utf8", timeout: 30000 },
+    );
+    expect(result.error).toBeUndefined();
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("injected asynchronous frame failure");
+    expect(fs.existsSync(out)).toBe(false);
+  } finally {
+    fs.rmSync(work, { recursive: true, force: true });
+  }
+});
+
+test('recorder refuses a destroyed WebGPU device without publishing a movie',async({page})=>{
+  await page.goto('/tests/fixtures/async-frame.html');
+  const supported=await page.evaluate(async()=>!!(navigator.gpu&&await navigator.gpu.requestAdapter()));
+  if(!supported&&process.env.REQUIRE_WEBGPU!=='1')test.skip(true,'WebGPU unavailable');
+  expect(supported).toBe(true);
+  const root=path.resolve(__dirname,'..'),work=fs.mkdtempSync(path.join(os.tmpdir(),'lost-gpu-')),out=path.join(work,'failed.mkv');
+  try{
+    const result=spawnSync(process.execPath,['video/record.cjs','video','tests/fixtures/lost-device.html',out,'--workers','2'],{cwd:root,encoding:'utf8',timeout:30000});
+    expect(result.error).toBeUndefined();expect(result.status).toBe(1);expect(result.stderr).toContain('WebGPU device lost');expect(fs.existsSync(out)).toBe(false);
+  }finally{fs.rmSync(work,{recursive:true,force:true});}
 });

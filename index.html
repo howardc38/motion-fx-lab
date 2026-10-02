@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Motion FX Lab</title>
-<meta name="description" content="60 timeline effects plus three interactive stack experiments in PixiJS, Rapier and WebGPU/TSL.">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/webgpu":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.webgpu.js","three/tsl":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.tsl.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
+<meta name="description" content="63 film effects with deterministic timelines, physics, WebGPU compute and verified MP4 export.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
@@ -108,7 +109,7 @@
   <header>
     <span class="eyebrow">Open source · 0BSD</span>
     <h1>Motion FX Lab</h1>
-    <p class="lede">Describe a video to an AI coding assistant, or write it yourself: it becomes a web page, and this repo renders the page to MP4, frame by frame. Nothing in the picture or the sound is AI-generated, so every frame is exact, editable like code and the same on every render. Every tile below is drawn live in your browser by the same code. Each card says what it does, how it is drawn and what it needs; filter them by kind or by the way they are drawn. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch. The sample text comes from our own videos for an Instagram DM assistant; swap in your own words. The original video pipeline uses 16 stacks; Flubber and three new stack experiments are listed below.</p>
+    <p class="lede">Describe a video to an AI coding assistant, or write it yourself: it becomes a web page, and this repo renders the page to MP4, frame by frame. Nothing in the picture or the sound is AI-generated, so every frame is exact, editable like code and the same on every render. Every tile below is drawn live in your browser by the same code. Each card says what it does, how it is drawn and what it needs; filter them by kind or by the way they are drawn. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch. The sample text comes from our own videos for an Instagram DM assistant; swap in your own words. The original video pipeline uses 16 stacks; Flubber, PixiJS, Rapier and WebGPU/TSL extend the film-effect library.</p>
     <div class="legend" id="legend"></div>
     <video class="intro" controls playsinline preload="metadata" poster="media/intro.jpg" src="media/intro.mp4" aria-label="Intro video, 46 seconds, with sound"></video>
   </header>
@@ -116,7 +117,7 @@
   <section id="uses">
     <span class="eyebrow">What it is for</span>
     <h2>Videos you can make with it</h2>
-    <p class="note">Each of these is one HTML file in <code>examples/</code>, with its data or text at the top. Change it and run <code>bash video/build.sh examples/infographic.html</code> for a new MP4. The 46-second intro above shows all four uses, characters, the six new optical effects and recorded clips of the three stack experiments. The shops and studio are fictional, and their numbers are sample data.</p>
+    <p class="note">Each of these is one HTML file in <code>examples/</code>, with its data or text at the top. Change it and run <code>bash video/build.sh examples/infographic.html</code> for a new MP4. The 46-second intro above shows all four uses, characters, the six new optical effects and three additional film effects rendered directly from time. The shops and studio are fictional, and their numbers are sample data.</p>
     <div class="uses">
       <figure><video controls playsinline preload="none" poster="media/reel.jpg" src="media/reel.mp4" aria-label="Social clip example, 12 seconds"></video><figcaption><b>Social clips</b>9:16, 4:5 or 16:9.</figcaption></figure>
       <figure><video controls playsinline preload="none" poster="media/product.jpg" src="media/product.mp4" aria-label="Product demo example, 7 seconds"></video><figcaption><b>Product demos</b>Your screen, a cursor, a tap.</figcaption></figure>
@@ -139,14 +140,14 @@
   <section id="new-studies">
     <span class="eyebrow">Nine new studies</span>
     <h2>Optical effects and new stacks</h2>
-    <p class="note">The six optical effects above use the timeline's frame(t) contract. <a href="examples/optical.html">Open the optical study player</a> to compare them and scrub time. The three stack experiments below are live, interactive simulations; they are not wired into the frame-exact video recorder.</p>
+    <p class="note">The six optical effects above use the timeline's frame(t) contract. <a href="examples/optical.html">Open the optical study player</a> to compare them and scrub time. PixiJS, Rapier and WebGPU/TSL use the same awaited frame(t) contract. <a href="examples/stacks.html">Watch or scrub their 24-second film</a>; export it with <code>npm run render:stacks</code>.</p>
     <div class="cols">
-      <div class="box"><h3><a href="examples/stack-lab/#pixi">PixiJS · Liquid poster ↗</a></h3><p>Displacement, blur and colour filters. Compare the filtered poster with its original.</p></div>
-      <div class="box"><h3><a href="examples/stack-lab/#rapier">Rapier · Chain reaction ↗</a></h3><p>48 three-dimensional dominoes, actual collisions and a fixed 120 Hz physics step. Drag to orbit.</p></div>
+      <div class="box"><h3><a href="examples/stack-lab/#pixi">PixiJS · Liquid poster ↗</a></h3><p>Displacement, blur and colour filters. Script the transition from the original poster to its filtered image.</p></div>
+      <div class="box"><h3><a href="examples/stack-lab/#rapier">Rapier · Chain reaction ↗</a></h3><p>48 three-dimensional dominoes, actual collisions and a fixed 120 Hz physics step. A scripted camera follows the chain.</p></div>
       <div class="box"><h3><a href="examples/stack-lab/#gpu">WebGPU / TSL · Orbital matter ↗</a></h3><p>65,536 particles updated in GPU storage buffers. Requires WebGPU on HTTPS or localhost; no WebGL substitute.</p></div>
     </div>
     <video class="intro" controls playsinline preload="metadata" poster="media/optical.jpg" src="media/optical.mp4" aria-label="18-second optical film with synthesised sound"></video>
-    <video class="intro" controls playsinline preload="metadata" poster="examples/stack-lab/poster.jpg" src="examples/stack-lab/preview.mp4" aria-label="24-second recording of PixiJS, Rapier and WebGPU demos"></video>
+    <video class="intro" controls playsinline preload="metadata" poster="media/stacks.jpg" src="media/stacks.mp4" aria-label="24-second verified film of PixiJS, Rapier and WebGPU effects"></video>
   </section>
 
   <section id="mascot">
@@ -175,7 +176,7 @@
   <section>
     <span class="eyebrow">Stack</span>
     <h2>The original pipeline and new stacks</h2>
-    <p class="note">16 stacks: 5 for the picture, 6 for 3D, 1 for physics, 2 for sound and 2 for rendering. The gallery also uses Flubber for arbitrary outer-contour morphs. PixiJS, Rapier and modern three.js/TSL live in the separate stack lab, keeping the r128 pipeline unchanged.</p>
+    <p class="note">16 stacks: 5 for the picture, 6 for 3D, 1 for physics, 2 for sound and 2 for rendering. The gallery also uses Flubber for arbitrary outer-contour morphs. PixiJS, Rapier and modern three.js/TSL are reusable timeline modules; r180 imports coexist with the original r128 effects.</p>
     <div class="scroll">
       <table>
         <thead><tr><th>Stack</th><th>What it is</th><th>Why</th><th>What it does here</th></tr></thead>
@@ -221,7 +222,7 @@
     <h2>Stacks we looked at and left out</h2>
     <div class="cols">
       <div class="box"><h3>Later</h3><ul>
-        <li><b>three.js r128 → r186</b>: the main gallery stays on r128. The isolated stack lab pins r180 for WebGPU/TSL without migrating existing shaders.</li>
+        <li><b>three.js r128 → r186</b>: the original effects keep r128; the three new film modules pin r180 without migrating existing shaders.</li>
         <li><b>GSAP</b>: not needed for these studies: Flubber handles the new concave outer-contour morph; the original polar morph remains available.</li>
         <li><b>HyperFrames</b>: the same approach as ours, but at v0.8 with its frame API marked experimental.</li>
       </ul></div>
@@ -246,13 +247,15 @@
 <script src="https://cdn.jsdelivr.net/npm/flubber@0.4.2/build/flubber.min.js"></script>
 <script src="fx/optical-effects.js"></script>
 <script src="fx/pack-optical.js"></script>
+<script src="fx/stack-effects.js"></script>
+<script src="fx/pack-stacks.js"></script>
 <script>
 (() => {
   const { DEMOS, R3 } = window.FX;
   const KINDS = { shader: "3D and shaders", sim: "Simulations", character: "Characters", motion: "Motion", backdrop: "Backgrounds", ui: "UI and charts", type: "Type" };
   // Tiles are shown most striking first. One missing from this list follows the listed ones, in the
   // order it was registered.
-  const ORDER = ["optical-moire", "optical-slit", "optical-ribbon", "optical-caustic", "optical-foil", "optical-morph", "gpuparticles", "clay", "liquid", "reaction", "domainrep", "chrome", "styles", "rigid", "particles", "lit3d", "rays", "dissolve", "smoke", "tunnel",
+  const ORDER = ["stack-pixi", "stack-rapier", "stack-gpu", "optical-moire", "optical-slit", "optical-ribbon", "optical-caustic", "optical-foil", "optical-morph", "gpuparticles", "clay", "liquid", "reaction", "domainrep", "chrome", "styles", "rigid", "particles", "lit3d", "rays", "dissolve", "smoke", "tunnel",
     "vartype", "glitch", "morph", "cardflip", "ridgelines", "rhythm", "coderain", "timing", "datachart", "whip", "uifly", "drawflow", "blueprint", "glass", "sweep",
     "hook", "chars", "karaoke", "stamp", "count", "type", "mark", "scan", "sticker", "ring", "beat", "wipe", "orbs", "gradient", "lut", "grain", "halftonetype",
     "ditherpeek", "dithercards", "ditheravatar", "dithercharacter", "toon", "flat", "bounce", "halftone"];
@@ -261,7 +264,7 @@
     "A+": ["Plus a three.js add-on", "Loads one more file from three.js r128's examples, such as a bloom or halftone pass"],
     "B": ["Custom shader", "Needs a GLSL shader written for it"], "C": ["Plus a library", "Needs one more library"] };
   const rank = (d) => (ORDER.includes(d.id) ? ORDER.indexOf(d.id) : ORDER.length);
-  const STACKS = { css: "HTML/CSS", svg: "SVG", canvas: "Canvas 2D", three: "Three.js", glsl: "Custom GLSL", physics: "Matter.js", flubber: "Flubber" };
+  const STACKS = { css: "HTML/CSS", svg: "SVG", canvas: "Canvas 2D", three: "Three.js", glsl: "Custom GLSL", physics: "Matter.js", flubber: "Flubber", pixi: "PixiJS", rapier: "Rapier", webgpu: "WebGPU / TSL" };
   const gallery = document.getElementById("gallery");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -280,6 +283,7 @@
       const built = d.build(stage);
       d.frame = typeof built === "function" ? built : built.frame;
       d.ready = typeof built === "function" ? null : built.ready || null;
+      if (d.ready) d.ready.catch(() => {}); // draw() reports async initialization errors in the tile
     } catch (e) {
       stage.innerHTML = `<div class="oops">This tile failed to load: ${String(e.message || e).slice(0, 80)}</div>`;
       d.frame = null;
@@ -288,7 +292,7 @@
 
   const G = DEMOS.filter((d) => !d.host).sort((a, b) => rank(a) - rank(b));
   document.getElementById("legend").innerHTML =
-    `<span><b>${DEMOS.length}</b> timeline effects: ${G.length} in the gallery and ${DEMOS.length - G.length} characters, plus <a href="#new-studies">3 stack experiments</a></span>` +
+    `<span><b>${DEMOS.length}</b> timeline effects: ${G.length} in the gallery and ${DEMOS.length - G.length} characters</span>` +
     `<span>Needs: base stack only · plus a three.js add-on · custom shader · plus a library</span>`;
   const state = { kind: "all", stack: "all" };
   const mk = (host, key, opts) => {
@@ -315,12 +319,15 @@
   const label = () => { playBtn.textContent = playing ? "⏸ Pause" : "▶ Play"; playBtn.setAttribute("aria-pressed", String(!playing)); };
   playBtn.addEventListener("click", () => { playing = !playing; label(); DEMOS.forEach((d) => { d.dirty = true; }); });
   label();
-  const draw = (d, abs) => {
-    if (!d.frame) return;
-    const t = playing || clock > 0 ? abs % d.period : d.hero;
-    try { d.frame(t, abs); } catch (e) { d.frame = null; d.fig.querySelector(".stage").innerHTML = `<div class="oops">This tile stopped: ${String(e.message || e).slice(0, 80)}</div>`; }
+  const draw = async (d, abs, hero = false) => {
+    if (!d.frame || d.drawing) return;
+    d.drawing = true;
+    const t = hero || (!playing && clock === 0) ? d.hero : abs % d.period;
+    try { if (d.ready) await d.ready; await d.frame(t, abs); }
+    catch (e) { d.frame = null; const error = document.createElement("div"); error.className = "oops"; error.textContent = "This effect is unavailable: " + (e.message || e); d.fig.querySelector(".stage").replaceChildren(error); }
+    finally { d.drawing = false; }
   };
-  DEMOS.forEach((d) => { if (d.frame) { try { d.frame(d.hero, d.hero); } catch (e) { d.frame = null; } } });
+  DEMOS.forEach(d => draw(d, d.hero, true));
   function tick(now) {
     const dt = Math.min(0.1, (now - last) / 1000); last = now;
     if (playing) clock += dt;

@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <title>Motion FX Lab: intro</title>
+<link rel="icon" href="data:,">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/webgpu":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.webgpu.js","three/tsl":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.tsl.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
@@ -190,7 +192,7 @@
   <!-- 06 six additions to the repeatable timeline library -->
   <section class="scene ink" data-start="26.4" id="scLib">
     <div class="edge"></div>
-    <div class="a wide" style="left:135px;top:100px;font-size:82px" data-fx="left" data-at="0.1">60 timeline effects.</div>
+    <div class="a wide" style="left:135px;top:100px;font-size:82px" data-fx="left" data-at="0.1">63 film effects.</div>
     <div class="a mono" style="left:140px;top:205px;font-size:26px;color:var(--pink)" data-fx="fade" data-at="0.15">Six new optical studies. Scrub to any frame.</div>
     <div class="tile" style="left:135px;top:290px;width:520px" data-fx="pop" data-at="0.25" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-moire" data-t0="0.25"></div><div class="lab">Moiré interference</div></div>
     <div class="tile" style="left:690px;top:290px;width:520px" data-fx="pop" data-at="0.34" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-slit" data-t0="0.34"></div><div class="lab">Slit-scan typography</div></div>
@@ -200,15 +202,15 @@
     <div class="tile" style="left:1245px;top:628px;width:520px" data-fx="pop" data-at="0.70" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-morph" data-t0="0.70"></div><div class="lab">Arbitrary-path morph</div></div>
   </section>
 
-  <!-- 07 recorded browser experiments: sampled from checked-in image atlases -->
+  <!-- 07 native timeline effects, computed for every requested frame -->
   <section class="scene ink dots" data-start="31.2" id="scStacks">
     <div class="edge"></div>
-    <div class="a wide" style="left:135px;top:130px;font-size:90px" data-fx="left" data-at="0.1">+ 3 live experiments.</div>
+    <div class="a wide" style="left:135px;top:130px;font-size:90px" data-fx="left" data-at="0.1">More ways to make motion.</div>
     <div class="a mono" style="left:140px;top:250px;font-size:26px;color:var(--pink)" data-fx="fade" data-at="0.2">New stacks. Real filters, collisions and GPU compute.</div>
-    <div class="tile" style="left:135px;top:390px;width:520px" data-fx="up" data-at="0.30" data-sfx="pop"><canvas data-stack="pixi" width="480" height="270" style="display:block;width:100%;border-radius:14px" role="img" aria-label="Recorded PixiJS demo"></canvas><div style="font:900 44px var(--lat);margin-top:24px">PixiJS</div><div class="lab">Displacement + blur + colour</div></div>
-    <div class="tile" style="left:690px;top:390px;width:520px" data-fx="up" data-at="0.42" data-sfx="pop"><canvas data-stack="rapier" width="480" height="270" style="display:block;width:100%;border-radius:14px" role="img" aria-label="Recorded Rapier demo"></canvas><div style="font:900 44px var(--lat);margin-top:24px">Rapier</div><div class="lab">48 colliding dominoes</div></div>
-    <div class="tile" style="left:1245px;top:390px;width:520px" data-fx="up" data-at="0.54" data-sfx="pop"><canvas data-stack="gpu" width="480" height="270" style="display:block;width:100%;border-radius:14px" role="img" aria-label="Recorded WebGPU / TSL demo"></canvas><div style="font:900 44px var(--lat);margin-top:24px">WebGPU / TSL</div><div class="lab">65,536 GPU-updated particles</div></div>
-    <div class="a mono" style="left:140px;top:850px;font-size:23px;color:var(--muted)" data-fx="fade" data-at="1.1">Browser recordings shown here · open the lab to interact</div>
+    <div class="tile" style="left:135px;top:390px;width:520px" data-fx="up" data-at="0.30" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="stack-pixi" data-rate="1.45833333"></div><div style="font:900 44px var(--lat);margin-top:24px">PixiJS</div><div class="lab">Displacement + blur + colour</div></div>
+    <div class="tile" style="left:690px;top:390px;width:520px" data-fx="up" data-at="0.42" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="stack-rapier" data-rate="1.87500000"></div><div style="font:900 44px var(--lat);margin-top:24px">Rapier</div><div class="lab">48 colliding dominoes</div></div>
+    <div class="tile" style="left:1245px;top:390px;width:520px" data-fx="up" data-at="0.54" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="stack-gpu" data-rate="1.66666667"></div><div style="font:900 44px var(--lat);margin-top:24px">WebGPU / TSL</div><div class="lab">65,536 GPU-updated particles</div></div>
+    <div class="a mono" style="left:140px;top:850px;font-size:23px;color:var(--muted)" data-fx="fade" data-at="1.1">Rendered from time · fixed physics steps · GPU compute</div>
   </section>
 
   <!-- 08 timeline frames checked -->
@@ -231,7 +233,7 @@
   <!-- 09 call to action -->
   <section class="scene pinkbg" data-start="40.8" id="scCta">
     <div class="edge"></div>
-    <div class="a mono" style="left:156px;top:130px;font-size:28px;font-weight:700" data-fx="fade" data-at="0.1">60 timeline effects + 3 live experiments · code you can edit</div>
+    <div class="a mono" style="left:156px;top:130px;font-size:28px;font-weight:700" data-fx="fade" data-at="0.1">63 film effects · scripted motion · frame-by-frame export</div>
     <div class="a wide" style="left:150px;top:210px;font-size:200px" data-fx="slam" data-at="0.15" data-sfx="impact">Fork it.</div>
     <div class="a mono" style="left:158px;top:470px;font-size:46px;font-weight:700" data-fx="type" data-at="0.7" data-dur="1.1" data-sfx="type">github.com/howardc38/motion-fx-lab</div>
     <div class="sticker" style="left:150px;top:620px;background:#fff;transform:rotate(-3deg)" data-fx="pop" data-at="2.0" data-base="rotate(-3deg)" data-sfx="ding">0BSD · use it for anything</div>
@@ -252,9 +254,11 @@
 <script src="https://cdn.jsdelivr.net/npm/flubber@0.4.2/build/flubber.min.js"></script>
 <script src="../fx/optical-effects.js"></script>
 <script src="../fx/pack-optical.js"></script>
-<script src="../examples/stack-lab/capture.js"></script>
+<script src="../fx/stack-effects.js"></script>
+<script src="../fx/pack-stacks.js"></script>
 <script>
 (() => {
+  window.__REQUIRES_WEBGPU = true;
   // Music sections for music.py, in seconds (one bar = 2.4 s).
   window.__music = [[0, "build"], [2.4, "drop"], [16.8, "break"], [21.6, "final"], [31.2, "lift"], [36, "final"], [43.2, "tail"]];
   // Clips for the README's GIF, in seconds: four uses, the characters and the effect wall, short enough to load fast.
@@ -314,36 +318,19 @@
     if (!d) throw new Error(`unknown demo ${el.dataset.demo}`);
     const built = d.build(el);
     const scene = el.closest(".scene");
-    return { d, frame: typeof built === "function" ? built : built.frame, ready: built && built.ready, scene, s0: +scene.dataset.start, t0: +(el.dataset.t0 || 0) };
+    return { d, frame: typeof built === "function" ? built : built.frame, ready: built && built.ready, scene, s0: +scene.dataset.start, t0: +(el.dataset.t0 || 0), rate: +(el.dataset.rate || 1) };
   });
-  if (!window.FX_STACK_CAPTURE) throw new Error("Missing stack capture; run npm run record:stacks");
-  const stackClips = FX_STACK_CAPTURE.segments.map((clip) => {
-    const canvas = document.querySelector(`[data-stack="${clip.id}"]`), ctx = canvas.getContext("2d"), image = new Image();
-    const atlas = clip.atlas;
-    image.src = `../examples/stack-lab/${atlas.file}`;
-    const ready = image.decode().then(() => {
-      if (image.naturalWidth !== atlas.width * atlas.columns || image.naturalHeight !== atlas.height * Math.ceil(atlas.frames / atlas.columns)) throw new Error(`Invalid stack atlas: ${clip.id}`);
-    });
-    return { canvas, ctx, image, atlas, ready };
-  });
-  window.__ready = Promise.all([document.fonts.ready, ...hosted.map((h) => h.ready).filter(Boolean), ...stackClips.map(c => c.ready)]);
+  window.__ready = Promise.all([document.fonts.ready, ...hosted.map((h) => h.ready).filter(Boolean)]);
 
   const hudScene = document.getElementById("hudScene"), hudTc = document.getElementById("hudTc");
   const starts = [...document.querySelectorAll(".scene")].map((s) => +s.dataset.start);
 
   window.__renderHooks = window.__renderHooks || [];
-  window.__renderHooks.push((t) => {
+  window.__renderHooks.push(async (t) => {
     for (const h of hosted) {
       if (h.scene.style.visibility === "hidden") continue;
       const local = Math.max(0, t - h.s0 - h.t0);
-      h.frame(local % h.d.period, local);
-    }
-    if (document.getElementById("scStacks").style.visibility !== "hidden") {
-      const progress = clamp((t - START.scStacks) / 4.8);
-      for (const {canvas, ctx, image, atlas} of stackClips) if (image.complete && image.naturalWidth) {
-        const frame = Math.min(atlas.frames - 1, Math.floor(progress * atlas.frames));
-        ctx.drawImage(image, frame % atlas.columns * atlas.width, Math.floor(frame / atlas.columns) * atlas.height, atlas.width, atlas.height, 0, 0, canvas.width, canvas.height);
-      }
+      await h.frame((local * h.rate) % h.d.period, local * h.rate);
     }
     // 03 captions and audio bars
     l = t - START.scSocial;

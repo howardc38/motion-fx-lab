@@ -128,19 +128,15 @@ export async function create() {
   scene.add(ring);
   let t = 0,
     step = 0,
-    accum = 0,
-    expanded = false,
     dispatches = 0;
   async function reset() {
     await renderer.computeAsync(initCompute);
     t = 0;
     step = 0;
-    accum = 0;
     phase.value = 0;
     spread.value = 0;
     center.value.set(0, 0, 0);
     ring.position.set(0, 0, 0);
-    expanded = false;
     dispatches = 1;
   }
   await reset();
@@ -151,52 +147,40 @@ export async function create() {
     t = step / 120;
     dispatches++;
   }
-  renderer.domElement.addEventListener("pointermove", (e) => {
-    const r = renderer.domElement.getBoundingClientRect();
-    center.value.set(
-      ((e.clientX - r.left) / r.width) * 4 - 2,
-      0,
-      ((e.clientY - r.top) / r.height) * 3 - 1.5,
-    );
-  });
-  renderer.domElement.addEventListener("pointerleave", () =>
-    center.value.set(0, 0, 0),
-  );
   return {
     canvas: renderer.domElement,
+    async frame(seconds, options = {}) {
+      if (!Number.isFinite(seconds)) throw new Error("Invalid frame time");
+      const strength = Math.max(0.25, Math.min(3.25, options.spin ?? 1.75));
+      if (spin.value !== strength) await reset();
+      spin.value = strength;
+      const target = Math.round(Math.max(0, seconds) * 120);
+      if (target < step) await reset();
+      while (step < target) {
+        const at = step / 120;
+        center.value.set(
+          Math.sin(at * 0.55) * 0.45,
+          0,
+          Math.sin(at * 0.38) * 0.3,
+        );
+        spread.value = at >= 4.5 ? 1 : 0;
+        fixed();
+      }
+      // The marker and camera also depend only on requested time, not pointer input.
+      ring.position.copy(center.value);
+      await renderer.renderAsync(scene, camera);
+      await renderer.backend.device.queue.onSubmittedWorkDone();
+    },
+
     backend: "THREE r180 · WEBGPU COMPUTE / TSL",
     get time() {
       return t;
-    },
-    resize() {},
-    update(dt) {
-      accum += dt;
-      while (accum >= 1 / 120) {
-        fixed();
-        accum -= 1 / 120;
-      }
-      ring.position.copy(center.value);
-    },
-    render() {
-      renderer.render(scene, camera);
-    },
-    reset,
-    action() {
-      expanded = !expanded;
-      spread.value = expanded ? 1 : 0;
-      return expanded;
-    },
-    parameter(v) {
-      spin.value = 0.25 + v * 3;
     },
     stats: () =>
       count.toLocaleString("en-US") +
       " PARTICLES · " +
       dispatches +
       " DISPATCHES",
-    advanceSteps(n) {
-      for (let i = 0; i < n; i++) fixed();
-    },
     async proof() {
       const buf = await renderer.getArrayBufferAsync(positions.value);
       const a = new Float32Array(buf);

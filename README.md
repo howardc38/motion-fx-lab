@@ -1,6 +1,6 @@
 # Motion FX Lab
 
-**Motion graphics as plain web pages, rendered to MP4 you can trust.** 60 timeline effects in HTML, CSS, SVG, Canvas, three.js, GLSL, Matter.js and Flubber, plus three interactive PixiJS / Rapier / WebGPU experiments, and a recorder that turns any timeline page into an MP4. On our 3D-heavy test video it was 7.5× faster than a default headless browser, while rendering every frame twice and comparing the two before it gives you a file.
+**Motion graphics as plain web pages, rendered to MP4 you can trust.** 63 film effects in HTML, CSS, SVG, Canvas, three.js, GLSL, Matter.js, Flubber, PixiJS, Rapier and WebGPU/TSL, and a recorder that turns any timeline page into an MP4. On our 3D-heavy test video it was 7.5× faster than a default headless browser, while rendering every frame twice and comparing the two before it gives you a file.
 
 [![Highlights from the intro video (no sound). Click for the full 46-second video with sound.](media/intro.gif)](media/intro.mp4)
 
@@ -23,7 +23,7 @@ Describe the video to an AI coding assistant, or write it yourself. It becomes a
 </tr>
 </table>
 
-Plus characters drawn in code and 60 timeline effects. The 46-second intro shows four uses, characters, all six new optical studies, and recorded clips of the three stack experiments. Their separate players are linked below. Each example is one HTML file with its text or numbers at the top; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
+Plus characters drawn in code and 63 timeline effects. The 46-second intro shows four uses, characters, all six new optical studies, and three additional PixiJS / Rapier / WebGPU effects rendered directly from time. Their separate players are linked below. Each example is one HTML file with its text or numbers at the top; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
 
 ## Sound familiar?
 
@@ -39,8 +39,8 @@ Plus characters drawn in code and 60 timeline effects. The 46-second intro shows
 
 | Pain | What this repo does |
 |---|---|
-| Hand-built, un-diffable animation | Every timeline effect is a small function of time in a plain web page. Open `index.html`; no framework, no bundler. |
-| Starting from a blank page | 60 timeline effects you can copy: kinetic type, UI mock-ups, charts, generative patterns, ray-marched and GPU-particle shaders, two simulations, chrome, and toon, flat and dithered characters. |
+| Hand-built, un-diffable animation | Every timeline effect is a small function of time in a plain web page. Serve the gallery over localhost; no framework or bundler. |
+| Starting from a blank page | 63 timeline effects you can copy: kinetic type, UI mock-ups, charts, generative patterns, ray-marched and GPU-particle shaders, physics simulations, chrome, and toon, flat and dithered characters. |
 | Slow 3D in headless Chrome | GPU rendering through ANGLE Metal, lossless CDP screenshots and 4 browsers in parallel: **399.6 s → 52.9 s** for a 56-second, 3D-heavy video, including the second render that verifies it. |
 | Silent wrong frames | The whole video is rendered twice, each frame on a different browser, and every frame is compared. The recorder also stops on a CPU fallback, a lost WebGL context, a page error or a font that did not load. |
 | Colour shifts | Screenshots are converted with the BT.709 matrix and every file is tagged BT.709; the checks refuse an untagged file. |
@@ -53,14 +53,14 @@ Plus characters drawn in code and 60 timeline effects. The 46-second intro shows
 ```sh
 git clone https://github.com/howardc38/motion-fx-lab.git
 cd motion-fx-lab
-open index.html                         # the gallery; any modern browser works, online
 npm install
 npx playwright install chromium
 bash video/build.sh video/intro.html    # writes media/intro.mp4, intro_hq.mp4, intro.jpg and intro.gif
 bash video/build.sh examples/reel.html  # any example, or a page of your own
+python3 -m http.server 8000              # optional gallery preview: http://localhost:8000/
 ```
 
-Rendering needs macOS on Apple silicon for the GPU path, plus Node, Python 3 (standard library only) and ffmpeg with libx264. Tested with Node 26.8.1, Python 3.12.10, ffmpeg 8.1.1 and Playwright 1.59.1. Without a Metal GPU, render on SwiftShader with `RECORD_ARGS="--cpu --workers 2" bash video/build.sh video/intro.html`: on the same M4 the intro took 45.3 s plus 45.7 s to verify, against 12.6 s plus 12.1 s on the GPU with 4 browsers.
+Rendering needs macOS on Apple silicon for the GPU path, plus Node, Python 3 (standard library only) and ffmpeg with libx264. Tested with Node 26.8.1, Python 3.12.10, ffmpeg 8.1.1 and Playwright 1.59.1. Without a Metal GPU, render on SwiftShader with `RECORD_ARGS="--cpu --workers 2" bash video/build.sh examples/reel.html`. Films containing WebGPU effects, including the current intro and `examples/stacks.html`, require a real WebGPU adapter and refuse `--cpu`.
 
 The build overwrites the files in `media/`, which are the ones this repo ships.
 
@@ -77,12 +77,11 @@ Measured on an Apple M4 laptop on 2026-09-28; the two previous-intro rows on 202
 | Pixels identical between the fast CDP capture and `page.screenshot` | 8 of 8 test frames |
 | Previous intro audio and colour (2026-09-29) | −14.1 LUFS integrated, −1.4 dBTP true peak, AAC 126 kbps; BT.709, tagged |
 
-The refreshed showcase was fully rebuilt from a clean source snapshot on
-2026-10-02. All **1,369 intro frames** and **541 optical frames** passed the second
-render comparison. Final intro audio measures −14.1 LUFS / −1.9 dBTP; optical
-audio measures −14.0 LUFS / −1.6 dBTP. Both delivered MP4s passed the BT.709,
-frame-count, codec, bitrate and container checks. All **10 regression tests**
-passed with real WebGPU required.
+The PixiJS / Rapier / WebGPU film is verified by rendering every frame twice
+on independent browsers, including arbitrary backward seeks. The recorder
+awaits asynchronous GPU completion, checks WebGL context loss and WebGPU device
+errors, and compares every frame before delivery. Pixel equivalence across
+different GPU models is not claimed.
 
 The 56-second promo is one of ours and is not in this repo. Beyond 4 browsers there is no gain, because a single ffmpeg process decodes every screenshot and writes the master.
 
@@ -99,7 +98,7 @@ demo({ id: "count", kind: "type", period: 3.2, hero: 2.4, /* name, stacks, chips
   } });
 ```
 
-No `requestAnimationFrame` state, no clock, no unseeded randomness at draw time. The two simulations follow the same rule: frame `t` shows the state after exactly `round(t × steps per second)` fixed steps from a fixed start, a cache only saves re-running steps already taken, and asking for an earlier `t` starts again from step 0. That is what lets you scrub to any moment, render a frame again and get the same pixels, and split a video across browsers. The original 3D tiles share one WebGL renderer; the three optical shaders share a second WebGL context. Each copies its result into its own canvas. The interactive stack lab runs on a separate page.
+No `requestAnimationFrame` state, no clock, no unseeded randomness at draw time. Stateful simulations follow the same rule: frame `t` shows the state after exactly `round(t × steps per second)` fixed steps from a fixed start, a cache only saves re-running steps already taken, and asking for an earlier `t` starts again from step 0. That is what lets you scrub to any moment, render a frame again and get the same pixels, and split a video across browsers. The original 3D tiles share one WebGL renderer; the three optical shaders share a second WebGL context. Each copies its result into its own canvas. PixiJS and Rapier own renderer contexts; WebGPU/TSL uses a compute-capable device. All effects obey the same awaited timeline contract.
 
 ```
 page.html ─ record.cjs cues ─► cues.json ─► sfx.py + music.py ─► mix.wav ──────────┐
@@ -118,6 +117,7 @@ Copy `video/intro.html` and change it. The engine needs:
 - `data-sfx` for a sound cue, using a name from `LEVEL` in `video/sfx.py`.
 - `window.__music = [[seconds, section], …]`, with sections `intro`, `build`, `drop`, `lift`, `break`, `final` and `tail`. Put the drop on a 2.4 s bar line.
 - Optionally `window.__gif = [[start, end], …]` for the GIF preview, and `window.__poster = seconds` for the poster frame (a third of the way in by default).
+- `frame(t)` and `window.__renderHooks` may return promises. Await them before reading pixels; the recorder and timeline engine do so.
 - Gallery tiles run inside a scene with `<div class="stage" data-demo="<id>" data-t0="…">`. See the script at the bottom of `video/intro.html`.
 
 Then run `bash video/build.sh video/yours.html`.
@@ -137,16 +137,17 @@ Then run `bash video/build.sh video/yours.html`.
 | `video/deliver.py` | Loudness mastering and the final MP4 files, each checked before it is delivered |
 | `video/gif.py` | The GIF preview, cut from the clips the page declares |
 | `video/intro.html` | The source of the intro video |
-| `examples/` | Four original use-case films, plus the six-effect optical player/film and the isolated three-stack lab |
-| `video/record-stacks.cjs` | Rebuilds the stack preview, poster, capture manifest and the intro's image atlases |
+| `examples/` | Four original use-case films, plus the six-effect optical player/film and the three-effect film and its parameter preview page |
+| `fx/stack-effects.js`, `fx/pack-stacks.js`, `fx/stacks/` | Reusable PixiJS, Rapier and WebGPU timeline effects and gallery adapters |
+| `video/serve.cjs` | Loopback server used by the recorder for local ES modules |
 | `video/build.sh` | The whole pipeline in one command |
 
 ## The effects
 
-60 timeline effects: 52 in the gallery and 8 in its character section, plus 3 interactive stack experiments. Each card gives its kind, how it is drawn and what it needs beyond the page: the base stack only (36 effects), one more three.js r128 add-on file (7), a custom shader (15), or one more library (2: Matter.js rigid bodies and Flubber path morphing).
+63 timeline effects: 55 in the gallery and 8 in its character section. Each card gives its kind, how it is drawn and what it needs beyond the page: the base stack only (36 effects), one more three.js r128 add-on file (7), a custom shader (15), or additional libraries (5: Matter.js, Flubber, PixiJS, Rapier and WebGPU/TSL effects).
 
-- **3D and shaders (15, three.js r128 / WebGL):** 200,000 particles moved on the GPU, ray-marched clay with smooth blending, liquid-glass refraction, an endless grid by domain repetition, chrome with a painted environment map, one object in five styles (Bayer dither, halftone, ASCII, pixel sort, risograph), particles that assemble into words, lit 3D type with soft shadows, rays with bloom and dust, a noise dissolve patched into a lit material, fbm smoke, a line tunnel, moiré interference, procedural caustic light, holographic foil.
-- **Simulations (2):** reaction–diffusion (Gray–Scott) growing out of a word, and rigid bodies falling and stacking, stepped at a fixed 240 Hz.
+- **3D and shaders (17, WebGL / WebGPU):** 200,000 particles moved on the GPU, ray-marched clay with smooth blending, liquid-glass refraction, an endless grid by domain repetition, chrome with a painted environment map, one object in five styles (Bayer dither, halftone, ASCII, pixel sort, risograph), particles that assemble into words, lit 3D type with soft shadows, rays with bloom and dust, a noise dissolve patched into a lit material, fbm smoke, a line tunnel, moiré interference, procedural caustic light, holographic foil, PixiJS liquid poster, WebGPU orbital particles.
+- **Simulations (3):** reaction–diffusion (Gray–Scott) growing out of a word, rigid bodies falling and stacking at 240 Hz, and a Rapier 3D domino chain at 120 Hz.
 - **Characters (8):** an agent character dithered to three inks, peeking over a logo in a coin rain, fanning out cards, narrating from a badge and standing; the same agent toon-shaded with outlines and drawn as flat SVG with a per-part rig; and a halftoned figure built from spheres and cylinders, bouncing and standing.
 - **Motion (6):** a 0.5 s wipe, beat sync, squash and stretch next to its timing graph, a polar shape morph on a spring, a folding paper ribbon, a Flubber morph between concave outer contours.
 - **Backgrounds (7):** film grain, glow orbs, a low-contrast flowing gradient, a warm grade with a soft glow, Bauhaus tile rhythm, noise ridgelines, a code-rain backdrop.
@@ -155,57 +156,51 @@ Then run `bash video/build.sh video/yours.html`.
 
 The first 36 effects were built for short promo videos about an Instagram DM assistant for insurance agents in Hong Kong, which is why the sample text talks about DMs, drafts and savings plans. Swap in your own words.
 
-## Nine new studies
+## Nine new film effects
 
-**[18-second optical film](media/optical.mp4)** · **[Optical GIF](media/optical.gif)** · **[Six optical effects, interactive](examples/optical.html)** · **[PixiJS, Rapier and WebGPU stack lab](examples/stack-lab/)** · **[24-second stack recording](examples/stack-lab/preview.mp4)**
+**[Optical film](media/optical.mp4)** · **[Optical player](examples/optical.html)** · **[PixiJS / Rapier / WebGPU film](media/stacks.mp4)** · **[Three-effect timeline](examples/stacks.html)** · **[Effect settings](examples/stack-lab/)**
 
-The optical pack adds moiré interference, slit-scan type, a folding paper ribbon,
-caustic light, holographic foil and arbitrary-path morphing. `fx/optical-effects.js`
-contains the shared renderer; `fx/pack-optical.js` registers the six gallery tiles.
-Load Flubber 0.4.2, then those two files after `fx/demos.js` to use the tile IDs
+The six optical effects are moiré interference, slit-scan type, a folding paper
+ribbon, caustic light, holographic foil and arbitrary-path morphing. Load Flubber
+0.4.2, `fx/optical-effects.js` and `fx/pack-optical.js` after `fx/demos.js` to use
 `optical-moire`, `optical-slit`, `optical-ribbon`, `optical-caustic`, `optical-foil`
-and `optical-morph`. Their `frame(t)` supports repeatable backward seeks.
-`examples/optical.html` also exposes the recorder contract and plays all six
-over 18 seconds, with a synthesised score and transition cues:
+and `optical-morph`. Caustic light and foil are visual approximations; the ribbon
+is projected geometry rather than cloth physics. Flubber handles outer contours,
+without holes.
+
+The three additional effects use PixiJS 8.22.0 for a filtered poster, Rapier
+0.21.0 for 48 colliding dominoes, and three.js r180 / TSL for 65,536 GPU-computed
+particles. All three implement **`await frame(t)`** and participate in the same
+verified video pipeline as other effects. Physics and particle state advances
+in fixed 120 Hz steps; seeking backward or changing simulation parameters resets
+and replays the initial state. Camera motion, attraction and dispersion are
+scripted from time. No pointer input, wall-clock recording, or prerecorded frame
+atlas is used for film export.
+
+Use the pinned import map from `examples/stacks.html`, then load
+`fx/stack-effects.js` and `fx/pack-stacks.js` for gallery IDs `stack-pixi`,
+`stack-rapier`, and `stack-gpu`. The r180 modules coexist with the original r128
+effects. See [the frame API and settings](examples/stack-lab/README.md).
 
 ```sh
 bash video/build.sh examples/optical.html
-```
-
-The caustic and foil shaders are visual approximations, the ribbon is projected
-geometry rather than cloth physics, and Flubber interpolates outer contours
-without holes. The shader studies share one additional WebGL context.
-
-The separate stack lab uses PixiJS 8.22.0 for a three-filter poster, Rapier 0.21.0
-for 48 colliding dominoes, and three.js r180 / TSL for 65,536 GPU-computed particles.
-It does not migrate the main gallery away from r128. These interactive simulations
-are **not integrated with the frame-exact recorder**; their preview is a browser
-recording. See [the stack lab notes](examples/stack-lab/README.md).
-
-Serve the repository with `python3 -m http.server 8000`, then open
-`http://localhost:8000/examples/stack-lab/`. Dependencies load from pinned public
-CDNs. WebGPU needs a supported browser on HTTPS or localhost; the page reports
-unavailability rather than substituting WebGL.
-
-Rebuild all showcase assets from a clean checkout (after the Quick start installs):
-
-```sh
+npm run render:stacks
 npm run build:showcase
 ```
 
-This captures the three real backends, then fully builds the optical film and
-intro, including audio, frame comparison, final-delivery checks, posters and GIFs.
-The capture step requires a real WebGPU adapter and ffmpeg/ffprobe. Its standalone
-command is `npm run record:stacks`; the exact settings and segment timings are in
-[the capture instructions](examples/stack-lab/README.md#rebuild-the-recording).
-The intro samples the resulting image atlases by time; it does not pretend that
-interactive stack demos implement the timeline recorder API.
+The last command renders the three-effect film, optical film and intro, each
+with audio, every-frame comparison, delivery checks, posters and GIFs. The
+recorder automatically serves repository pages over loopback HTTP for ES modules.
+Pinned CDN dependencies require internet access. The WebGPU film and intro need
+a real supported adapter; missing or lost devices fail the render without a
+WebGL substitute. The parameter preview page is an authoring aid; viewers receive
+an ordinary MP4.
 
-Run `npm run test:effects` for the browser regressions. On a machine with WebGPU,
-use `REQUIRE_WEBGPU=1 npm run test:effects` to require real compute-buffer readback;
-otherwise that one hardware-dependent test may be skipped. Python 3 is also used to synthesise the optical score in its audio-contract regression. Tests cover optical
-seeks, gallery registration, filter comparison, physical collision propagation,
-physics resets, GPU updates, unavailable-backend handling, mobile layout, optical audio synthesis and backward seeks through the intro's recorded clips.
+Run `REQUIRE_WEBGPU=1 npm run test:effects` on a supported GPU to require actual
+compute-buffer checks. Tests cover optical seeks and audio, all three new frame
+APIs, backward simulation seeks, gallery registration, native intro rendering,
+asynchronous screenshot ordering and rejection cleanup. Python 3, ffmpeg and
+Chromium are needed. There is no CI yet.
 
 ## Effects we learnt from other people's videos
 
@@ -251,10 +246,10 @@ The second was a one-pixel column at the edge of a tile while it scaled in: fram
 
 - The GPU path is verified on macOS only. In our benchmarks, one of 8 parallel SwiftShader browsers lost its WebGL context and returned blank frames without an error, which is why the recorder checks every context on every frame.
 - Emoji and a few symbols (✓, ★) are drawn with the operating system's fonts. On macOS these are Apple Color Emoji, Lucida Grande and PingFang, so a render on Linux or Windows looks slightly different.
-- The main gallery uses three.js r128; the isolated stack lab pins r180. The gallery retains r128, which still ships the single-file UMD build and `examples/js` (removed in r161 and r148). Upgrading means re-tuning every colour, light and shader.
+- The main gallery uses three.js r128; the three additional film modules pin r180. The gallery retains r128, which still ships the single-file UMD build and `examples/js` (removed in r161 and r148). Upgrading means re-tuning every colour, light and shader.
 - The 3D font has no CJK glyphs, so Chinese text stays flat.
 - The reaction–diffusion tile gives the same pixels every time on one GPU, but we saw a different pattern on SwiftShader than on Metal. It runs 900 steps a second on half-float textures, so small rounding differences between the two backends are the likely cause. The recorder never mixes the two in one run.
-- Automated browser regressions cover the new effects, audio contract and intro playback. There is no CI yet; complete video builds are verified locally, and broader automated coverage of recorder failure paths is still needed.
+- Automated browser regressions cover the new effects, audio contract, asynchronous recorder and intro playback. There is no CI yet; complete video builds are verified locally, and broader automated coverage of recorder failure paths is still needed.
 
 ## Help wanted
 

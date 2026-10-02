@@ -1,17 +1,22 @@
 import * as PIXI from "https://cdn.jsdelivr.net/npm/pixi.js@8.22.0/dist/pixi.mjs";
 export async function create() {
-  const app = new PIXI.Application();
-  await app.init({
+  // Explicit renderer avoids Pixi's disposable capability-test context.
+  // Every context created here remains covered by the recorder's loss checks.
+  const renderer = new PIXI.WebGLRenderer();
+  await renderer.init({
     width: 1280,
     height: 720,
     resolution: 1,
     antialias: true,
-    autoStart: false,
-    preference: "webgl",
     background: "#152621",
     preserveDrawingBuffer: true,
   });
-  app.stop();
+  const stage = new PIXI.Container();
+  const app = {
+    canvas: renderer.canvas,
+    stage,
+    render: () => renderer.render({ container: stage }),
+  };
   const art = document.createElement("canvas");
   art.width = 1440;
   art.height = 880;
@@ -55,7 +60,7 @@ export async function create() {
   g.fillText("A SMALL CHANGE. A DIFFERENT WORLD.", 166, 665);
   g.font = "500 17px monospace";
   g.fillText("MOTION LAB / MATERIAL STUDY 001", 166, 180);
-  g.fillText("PIXIJS 8.22 / LIVE FILTER CHAIN", 166, 737);
+  g.fillText("PIXIJS 8.22 / FILM FILTER CHAIN", 166, 737);
   const sprite = new PIXI.Sprite(PIXI.Texture.from(art));
   sprite.position.set(-80, -80);
   app.stage.addChild(sprite);
@@ -103,32 +108,19 @@ export async function create() {
   updateMap();
   return {
     canvas: app.canvas,
+    async frame(seconds, options = {}) {
+      if (!Number.isFinite(seconds)) throw new Error("Invalid frame time");
+      t = Math.max(0, seconds);
+      amount = Math.max(0, Math.min(1, options.strength ?? 0.45));
+      original = t < 1.4;
+      sprite.filters = original ? [] : [displacement, blur, grade];
+      updateMap();
+      app.render();
+    },
+
     backend: "PIXI 8.22.0 · WEBGL",
     get time() {
       return t;
-    },
-    resize() {},
-    update(dt) {
-      t += dt;
-      updateMap();
-    },
-    render() {
-      app.render();
-    },
-    reset() {
-      t = 0;
-      original = false;
-      sprite.filters = [displacement, blur, grade];
-      updateMap();
-    },
-    action() {
-      original = !original;
-      sprite.filters = original ? [] : [displacement, blur, grade];
-      return original;
-    },
-    parameter(v) {
-      amount = v;
-      updateMap();
     },
     stats: () =>
       original ? "ORIGINAL · FILTERS BYPASSED" : "3 FILTERS · 1280 × 720",

@@ -192,7 +192,7 @@ def master_for_aac(mix, work):
 
 def encode_hq(master, audio, out):
     run("ffmpeg", "-y", "-loglevel", "error", "-i", master, "-i", audio, "-map", "0:v", "-map", "1:a",
-        "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-maxrate", "20M", "-bufsize", "40M",
+        "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-maxrate", "20M", "-bufsize", "4M",
         *COMMON_OUT, out)
 
 

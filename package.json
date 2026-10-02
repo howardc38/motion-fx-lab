@@ -21,8 +21,9 @@
   "scripts": {
     "render": "bash video/build.sh intro.html",
     "test:effects": "playwright test --config playwright.config.cjs",
-    "record:stacks": "node video/record-stacks.cjs",
-    "build:showcase": "npm run record:stacks && bash video/build.sh examples/optical.html && bash video/build.sh video/intro.html"
+    "record:stacks": "npm run render:stacks",
+    "build:showcase": "npm run render:stacks && bash video/build.sh examples/optical.html && bash video/build.sh video/intro.html",
+    "render:stacks": "bash video/build.sh examples/stacks.html"
   },
   "devDependencies": {
     "@playwright/test": "1.59.1"

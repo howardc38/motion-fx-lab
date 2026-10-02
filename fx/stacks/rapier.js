@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import RAPIER from "https://cdn.jsdelivr.net/npm/@dimforge/rapier3d-compat@0.21.0/dist/rapier.mjs";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 export async function create() {
   await RAPIER.init();
@@ -17,13 +16,6 @@ export async function create() {
     camera = new THREE.PerspectiveCamera(36, 1280 / 720, 0.1, 100);
   camera.position.set(13, 17, 19);
   camera.lookAt(0, 0, 0);
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 0.3, 0);
-  controls.enableDamping = false;
-  controls.enablePan = false;
-  controls.minDistance = 16;
-  controls.maxDistance = 40;
-  controls.maxPolarAngle = Math.PI * 0.47;
   scene.add(new THREE.HemisphereLight("#ffffff", "#657b51", 2.7));
   const sun = new THREE.DirectionalLight("#fffbe4", 3.6);
   sun.position.set(-5, 14, 5);
@@ -114,7 +106,6 @@ export async function create() {
     bodies = [],
     t = 0,
     step = 0,
-    accum = 0,
     speed = 1;
   function reset() {
     if (world) world.free();
@@ -149,7 +140,6 @@ export async function create() {
     });
     t = 0;
     step = 0;
-    accum = 0;
     sync();
   }
   function sync() {
@@ -180,37 +170,30 @@ export async function create() {
   }
   return {
     canvas: renderer.domElement,
+    async frame(seconds, options = {}) {
+      if (!Number.isFinite(seconds)) throw new Error("Invalid frame time");
+      const desiredSpeed = Math.max(0.25, Math.min(2, options.speed ?? 1));
+      if (desiredSpeed !== speed) reset();
+      speed = desiredSpeed;
+      const target = Math.round(Math.max(0, seconds) * speed * 120);
+      if (target < step) reset();
+      while (step < target) fixed();
+      sync();
+      const a = Math.max(0, seconds) * 0.045;
+      camera.position.set(
+        13 * Math.cos(a) + 19 * Math.sin(a),
+        17,
+        19 * Math.cos(a) - 13 * Math.sin(a),
+      );
+      camera.lookAt(0, 0.3, 0);
+      renderer.render(scene, camera);
+    },
+
     backend: "RAPIER " + RAPIER.version() + " · WASM / THREE WEBGL",
     get time() {
       return t;
     },
-    resize() {},
-    update(dt) {
-      accum += dt * speed;
-      while (accum >= 1 / 120) {
-        fixed();
-        accum -= 1 / 120;
-      }
-      sync();
-      if (t > 17) reset();
-    },
-    render() {
-      controls.update();
-      renderer.render(scene, camera);
-    },
-    reset,
-    action() {
-      reset();
-      return false;
-    },
-    parameter(v) {
-      speed = 0.25 + v * 1.5;
-    },
     stats: () => fallen() + " / 48 FALLEN · FIXED STEP 120 Hz",
-    advanceSteps(n) {
-      for (let i = 0; i < n; i++) fixed();
-      sync();
-    },
     proof: () => ({
       version: RAPIER.version(),
       steps: step,

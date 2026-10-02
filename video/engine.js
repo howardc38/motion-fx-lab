@@ -104,7 +104,7 @@
   const eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
   const back = (x) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
 
-  function render(t) {
+  async function render(t) {
     const live = new Set();
     scenes.forEach((s, i) => {
       const next = scenes[i + 1];
@@ -199,7 +199,7 @@
       el.style.opacity = op;
       if (tf || it.base) el.style.transform = `${tf} ${it.base}`.trim();
     }
-    if (window.__renderHooks) for (const h of window.__renderHooks) h(t);
+    if (window.__renderHooks) for (const h of window.__renderHooks) await h(t);
   }
 
   // ---------- local preview (space pauses, click restarts) ----------
@@ -211,9 +211,9 @@
     frame.style.width = `${W * s}px`; frame.style.height = `${H * s}px`;
     stage.style.transform = `scale(${s})`;
   }
-  function loop(now) {
+  async function loop(now) {
     if (recording) return;
-    if (!paused) render(((now - t0) / 1000) % (DUR + 1));
+    if (!paused) await render(((now - t0) / 1000) % (DUR + 1));
     requestAnimationFrame(loop);
   }
   addEventListener("resize", fit);
@@ -235,6 +235,6 @@
   window.__record = () => {
     recording = true; document.body.classList.add("record");
     frame.style.width = `${W}px`; frame.style.height = `${H}px`;
-    render(0);
+    return render(0);
   };
 })();

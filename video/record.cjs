@@ -14,7 +14,15 @@ const { spawn, spawnSync, execFileSync } = require("child_process");
 const { pathToFileURL } = require("url");
 const { chromium } = require("@playwright/test");
 
-const url = (file) => pathToFileURL(path.resolve(file)).href;
+const { serve, ROOT } = require("./serve.cjs");
+let server;
+const browsers = new Set();
+const url = file => {
+  const absolute = path.resolve(file), relative = path.relative(ROOT, absolute);
+  return server && relative !== ".." && !relative.startsWith(".." + path.sep) && !path.isAbsolute(relative)
+    ? server.origin + "/" + relative.split(path.sep).map(encodeURIComponent).join("/")
+    : pathToFileURL(absolute).href;
+};
 const MINUTE = 60_000;
 
 // Record every WebGL context the page creates, so each frame can prove none was lost.
@@ -22,6 +30,26 @@ const MINUTE = 60_000;
 function watchContexts() {
   const orig = HTMLCanvasElement.prototype.getContext;
   window.__gl = [];
+  window.__gpuErrors = [];
+  window.__gpuAdapters = [];
+  if (navigator.gpu) {
+    const requestAdapter = navigator.gpu.requestAdapter.bind(navigator.gpu);
+    navigator.gpu.requestAdapter = async (...args) => {
+      const adapter = await requestAdapter(...args);
+      if (!adapter) return adapter;
+      const requestDevice = adapter.requestDevice.bind(adapter);
+      adapter.requestDevice = async (...deviceArgs) => {
+        if (adapter.isFallbackAdapter || adapter.info?.isFallbackAdapter) throw new Error("Software WebGPU adapter refused");
+        const device = await requestDevice(...deviceArgs);
+        const info = adapter.info || {};
+        window.__gpuAdapters.push([info.vendor, info.architecture, info.device, info.description].join("/"));
+        device.lost.then(info => window.__gpuErrors.push("WebGPU device lost: " + info.message));
+        device.addEventListener("uncapturederror", event => window.__gpuErrors.push(event.error.message));
+        return device;
+      };
+      return adapter;
+    };
+  }
   HTMLCanvasElement.prototype.getContext = function (type, ...rest) {
     const ctx = orig.call(this, type, ...rest);
     if (ctx && /webgl/.test(type) && !window.__gl.includes(ctx)) window.__gl.push(ctx);
@@ -31,6 +59,7 @@ function watchContexts() {
 
 async function open(file, gpu) {
   const browser = await chromium.launch({ args: gpu ? ["--use-angle=metal"] : [] });
+  browsers.add(browser);
   const probe = await browser.newPage();
   await probe.goto(url(file), { waitUntil: "load" });
   const size = await probe.evaluate(() => window.__SIZE);
@@ -52,11 +81,13 @@ async function open(file, gpu) {
   page.on("pageerror", (e) => errors.push("[pageerror] " + e.message));
   await page.addInitScript(watchContexts);
   await page.goto(url(file), { waitUntil: "load" });
-  await page.evaluate(() => window.__record());
-  // A page with a WebGL layer builds its textures after its fonts; wait for it.
+  // Wait for module/GPU initialization and fonts before recording or seeking.
   await page.evaluate(() => (window.__ready ? window.__ready.then(() => true) : true));
+  const requiresGPU = await page.evaluate(() => !!window.__REQUIRES_WEBGPU);
+  if (requiresGPU && !gpu) throw new Error("This film requires WebGPU; --cpu cannot render it");
+  await page.evaluate(() => window.__record());
   await page.evaluate(async () => {
-    for (let t = 0; t <= window.__DUR; t += 0.25) window.__render(t);
+    for (let t = 0; t <= window.__DUR; t += 0.25) await window.__render(t);
     await document.fonts.ready;
   });
   // Every face the page used has loaded; a face still loading or failed would render a fallback.
@@ -64,14 +95,18 @@ async function open(file, gpu) {
   if (unsettled.length) throw new Error(`${file}: fonts not settled: ${unsettled.join(", ")}`);
   if (errors.length) throw new Error(`${file}: page reported errors while loading: ${errors.join(" | ")}`);
   const cdp = await page.context().newCDPSession(page);
-  return { browser, page, cdp, size, renderer, errors };
+  const gpuState = await page.evaluate(() => ({ adapters: window.__gpuAdapters, errors: window.__gpuErrors }));
+  if (requiresGPU && !gpuState.adapters.length) throw new Error("Required WebGPU device was not initialized");
+  if (gpuState.errors.length) throw new Error(gpuState.errors.join(" | "));
+  return { browser, page, cdp, size, renderer: renderer + (gpuState.adapters.length ? " | WebGPU " + gpuState.adapters.join(",") : ""), errors };
 }
 
 // Page.captureScreenshot with optimizeForSpeed: still lossless PNG, about 2.4x faster than
 // page.screenshot(), which does not pass that option.
 async function shot(w, t) {
-  const lost = await w.page.evaluate((time) => {
-    window.__render(time);
+  const lost = await w.page.evaluate(async (time) => {
+    await window.__render(time);
+    if (window.__gpuErrors.length) throw new Error(window.__gpuErrors.join(" | "));
     return window.__gl.filter((g) => g.isContextLost()).length;
   }, t);
   if (lost) throw new Error(`${lost} WebGL context(s) lost at t=${t}`);
@@ -119,15 +154,23 @@ async function renderPass(ws, out, fps, dur, count, offset, label) {
   })();
 
   const started = Date.now();
+  try {
   await Promise.all([writer, ...ws.map(async (w, k) => {
     for (let i = (k - offset + n) % n; i < count; i += n) {
-      while (i - next >= ahead) await new Promise((r) => wake.push(r));
+      while (i - next >= ahead && !ffFailed) await new Promise((r) => wake.push(r));
       if (ffFailed) throw new Error(ffFailed);
       pending.set(i, await shot(w, Math.min(i / fps, dur)));
       if (arrived) { const r = arrived; arrived = null; r(); }
       if (i % (fps * 10) === 0) console.error(`${label} frame ${i}/${count - 1}  ${((Date.now() - started) / 1000).toFixed(0)}s`);
     }
   })]);
+  } catch (error) {
+    ffFailed = error.message;
+    if (arrived) { arrived(); arrived = null; }
+    wake.splice(0).forEach(r => r());
+    ff.stdin.destroy(); ff.kill("SIGTERM"); await ffClosed;
+    throw error;
+  }
   if (next !== count) throw new Error(`wrote ${next} of ${count} frames`);
   ff.stdin.end();
   await ffClosed;
@@ -234,6 +277,7 @@ async function video(file, out, fps, n, gpu, verify) {
   if (!["frames", "cues", "video", "measure"].includes(mode)) throw new Error(`usage: node record.cjs frames|cues|video|measure page.html ... (got ${mode})`);
   if (!file || !fs.existsSync(file)) throw new Error(`page not found: ${file} (paths are relative to ${process.cwd()})`);
   if ((mode === "video" || mode === "cues") && !rest[0]) throw new Error(`${mode} needs an output path`);
+  server = await serve();
   if (mode === "video") {
     const out = rest[0];
     try { await video(file, out, fps, workers, gpu, verify); }
@@ -255,8 +299,8 @@ async function video(file, out, fps, n, gpu, verify) {
     console.error(`${cues.cues.length} cues`);
   } else if (mode === "measure") {
     const t = +rest[0];
-    const out = await w.page.evaluate(({ t, sels }) => {
-      window.__render(t);
+    const out = await w.page.evaluate(async ({ t, sels }) => {
+      await window.__render(t);
       return sels.map((s) => {
         const el = document.querySelector(s);
         if (!el) return { s, missing: true };
@@ -269,4 +313,7 @@ async function video(file, out, fps, n, gpu, verify) {
     throw new Error(`unknown mode ${mode}`);
   }
   await w.browser.close();
-})().catch((e) => { console.error(e.message || e); process.exit(e.exitCode || 1); });
+})().catch(e => { console.error(e.message || e); process.exitCode = e.exitCode || 1; }).finally(async () => {
+  await Promise.allSettled([...browsers].map(browser => browser.close()));
+  if (server) await server.close();
+});

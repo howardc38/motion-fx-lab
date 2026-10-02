@@ -1,0 +1,7 @@
+<!doctype html><html><head><link rel="icon" href="data:,"></head><body><script>
+window.__SIZE={w:64,h:64};window.__DUR=.1;window.__REQUIRES_WEBGPU=true;
+let device;
+window.__ready=(async()=>{const adapter=await navigator.gpu.requestAdapter();device=await adapter.requestDevice();})();
+window.__record=()=>{};window.__cues=()=>[];
+window.__render=async t=>{if(t>0){device.destroy();await device.lost;}};
+</script></body></html>

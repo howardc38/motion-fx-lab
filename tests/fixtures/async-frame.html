@@ -1,0 +1,8 @@
+<!doctype html><html><head><link rel="icon" href="data:,"><style>html,body{margin:0;width:64px;height:64px}</style></head><body><script>
+window.__SIZE={w:64,h:64};window.__DUR=.2;
+let ready=false;
+window.__ready=new Promise(r=>setTimeout(()=>{ready=true;r();},80));
+window.__record=()=>{if(!ready)throw new Error('record before ready');};
+window.__render=async t=>{await new Promise(r=>setTimeout(r,35));document.body.style.background=t<.05?'rgb(255,0,0)':t<.15?'rgb(0,255,0)':'rgb(0,0,255)';};
+window.__cues=()=>[];
+</script></body></html>
