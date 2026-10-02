@@ -223,6 +223,22 @@
         window.__DUR = 18;
         window.__ready = Promise.resolve();
         window.__poster = 14;
+        // The full build synthesises and masters audio, not just video frames.
+        window.__music = [
+          [0, "intro"],
+          [2.4, "drop"],
+          [9.6, "lift"],
+          [14.4, "final"],
+          [16.8, "tail"],
+        ];
+        window.__gif = [
+          [0.5, 1.7],
+          [3.5, 4.7],
+          [6.5, 7.7],
+          [9.5, 10.7],
+          [12.5, 13.7],
+          [15.5, 16.7],
+        ];
         window.__record = () => {
           recording = true;
           playing = false;
@@ -234,7 +250,8 @@
           strength.value = 1;
           draw();
         };
-        window.__cues = () => [];
+        window.__cues = () =>
+          [3, 6, 9, 12, 15].map((t) => ({ t, name: "whoosh" }));
         window.opticalDemo = {
           modes,
           frames,

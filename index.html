@@ -110,13 +110,13 @@
     <h1>Motion FX Lab</h1>
     <p class="lede">Describe a video to an AI coding assistant, or write it yourself: it becomes a web page, and this repo renders the page to MP4, frame by frame. Nothing in the picture or the sound is AI-generated, so every frame is exact, editable like code and the same on every render. Every tile below is drawn live in your browser by the same code. Each card says what it does, how it is drawn and what it needs; filter them by kind or by the way they are drawn. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch. The sample text comes from our own videos for an Instagram DM assistant; swap in your own words. The original video pipeline uses 16 stacks; Flubber and three new stack experiments are listed below.</p>
     <div class="legend" id="legend"></div>
-    <video class="intro" controls playsinline preload="metadata" poster="media/intro.jpg" src="media/intro.mp4" aria-label="Intro video, 41 seconds, with sound"></video>
+    <video class="intro" controls playsinline preload="metadata" poster="media/intro.jpg" src="media/intro.mp4" aria-label="Intro video, 46 seconds, with sound"></video>
   </header>
 
   <section id="uses">
     <span class="eyebrow">What it is for</span>
     <h2>Videos you can make with it</h2>
-    <p class="note">Each of these is one HTML file in <code>examples/</code>, with its data or text at the top. Change it and run <code>bash video/build.sh examples/infographic.html</code> for a new MP4. The intro above shows all four in 41 seconds, then characters and the effects. The shops and studio are fictional, and their numbers are sample data.</p>
+    <p class="note">Each of these is one HTML file in <code>examples/</code>, with its data or text at the top. Change it and run <code>bash video/build.sh examples/infographic.html</code> for a new MP4. The 46-second intro above shows all four uses, characters, the six new optical effects and recorded clips of the three stack experiments. The shops and studio are fictional, and their numbers are sample data.</p>
     <div class="uses">
       <figure><video controls playsinline preload="none" poster="media/reel.jpg" src="media/reel.mp4" aria-label="Social clip example, 12 seconds"></video><figcaption><b>Social clips</b>9:16, 4:5 or 16:9.</figcaption></figure>
       <figure><video controls playsinline preload="none" poster="media/product.jpg" src="media/product.mp4" aria-label="Product demo example, 7 seconds"></video><figcaption><b>Product demos</b>Your screen, a cursor, a tap.</figcaption></figure>
@@ -145,6 +145,7 @@
       <div class="box"><h3><a href="examples/stack-lab/#rapier">Rapier · Chain reaction ↗</a></h3><p>48 three-dimensional dominoes, actual collisions and a fixed 120 Hz physics step. Drag to orbit.</p></div>
       <div class="box"><h3><a href="examples/stack-lab/#gpu">WebGPU / TSL · Orbital matter ↗</a></h3><p>65,536 particles updated in GPU storage buffers. Requires WebGPU on HTTPS or localhost; no WebGL substitute.</p></div>
     </div>
+    <video class="intro" controls playsinline preload="metadata" poster="media/optical.jpg" src="media/optical.mp4" aria-label="18-second optical film with synthesised sound"></video>
     <video class="intro" controls playsinline preload="metadata" poster="examples/stack-lab/poster.jpg" src="examples/stack-lab/preview.mp4" aria-label="24-second recording of PixiJS, Rapier and WebGPU demos"></video>
   </section>
 

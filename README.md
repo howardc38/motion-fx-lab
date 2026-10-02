@@ -2,9 +2,9 @@
 
 **Motion graphics as plain web pages, rendered to MP4 you can trust.** 60 timeline effects in HTML, CSS, SVG, Canvas, three.js, GLSL, Matter.js and Flubber, plus three interactive PixiJS / Rapier / WebGPU experiments, and a recorder that turns any timeline page into an MP4. On our 3D-heavy test video it was 7.5× faster than a default headless browser, while rendering every frame twice and comparing the two before it gives you a file.
 
-[![Highlights from the intro video (no sound). Click for the full 41-second video with sound.](media/intro.gif)](media/intro.mp4)
+[![Highlights from the intro video (no sound). Click for the full 46-second video with sound.](media/intro.gif)](media/intro.mp4)
 
-▶ **[Full intro video, with sound](media/intro.mp4)** (41 s, rendered by this repo) · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · **Licence: [0BSD](LICENSE)**, no conditions · No build step · No AI-generated images or sound
+▶ **[Full intro video, with sound](media/intro.mp4)** (46 s, rendered by this repo) · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · **Licence: [0BSD](LICENSE)**, no conditions · No build step · No AI-generated images or sound
 
 GitHub does not play video files from a repository inline, so the loop above is a GIF. The gallery plays the real video.
 
@@ -23,7 +23,7 @@ Describe the video to an AI coding assistant, or write it yourself. It becomes a
 </tr>
 </table>
 
-Plus characters drawn in code and 60 timeline effects. The 41-second intro shows the original 54; the six optical studies and three stack experiments have separate players below. Each example is one HTML file with its text or numbers at the top; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
+Plus characters drawn in code and 60 timeline effects. The 46-second intro shows four uses, characters, all six new optical studies, and recorded clips of the three stack experiments. Their separate players are linked below. Each example is one HTML file with its text or numbers at the top; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
 
 ## Sound familiar?
 
@@ -66,16 +66,23 @@ The build overwrites the files in `media/`, which are the ones this repo ships.
 
 ## Proof
 
-Measured on an Apple M4 laptop on 2026-09-28; the two `media/intro.mp4` rows on 2026-09-29, after the intro was rebuilt around four uses.
+Measured on an Apple M4 laptop on 2026-09-28; the two previous-intro rows on 2026-09-29, before the nine new studies were added. Those historical timings are not measurements of the current 46-second intro.
 
 | | |
 |---|---|
 | 56-second, 1,693-frame promo with heavy 3D, default headless Chromium (one browser, SwiftShader, `page.screenshot`) | 399.6 s |
 | The same video, this recorder, 4 browsers, every frame rendered twice and compared | **52.9 s** (again: 51.5 s), of which 17.6 s is the first render and 16.8 s the second |
 | Before full verification was added, with an 8-frame spot check instead, 1 / 4 / 6 / 8 browsers | 71.0 / 26.4 / 28.5 / 31.9 s |
-| `media/intro.mp4`, 1,225 frames: render, then the verifying second render | 12.6 s + 12.1 s, all 1,225 frames matching on the first attempt |
+| Previous 41-second intro (2026-09-29), 1,225 frames: render, then the verifying second render | 12.6 s + 12.1 s, all 1,225 frames matching on the first attempt |
 | Pixels identical between the fast CDP capture and `page.screenshot` | 8 of 8 test frames |
-| Intro audio and colour | −14.1 LUFS integrated, −1.4 dBTP true peak, AAC 126 kbps; BT.709, tagged |
+| Previous intro audio and colour (2026-09-29) | −14.1 LUFS integrated, −1.4 dBTP true peak, AAC 126 kbps; BT.709, tagged |
+
+The refreshed showcase was fully rebuilt from a clean source snapshot on
+2026-10-02. All **1,369 intro frames** and **541 optical frames** passed the second
+render comparison. Final intro audio measures −14.1 LUFS / −1.9 dBTP; optical
+audio measures −14.0 LUFS / −1.6 dBTP. Both delivered MP4s passed the BT.709,
+frame-count, codec, bitrate and container checks. All **10 regression tests**
+passed with real WebGPU required.
 
 The 56-second promo is one of ours and is not in this repo. Beyond 4 browsers there is no gain, because a single ffmpeg process decodes every screenshot and writes the master.
 
@@ -122,6 +129,7 @@ Then run `bash video/build.sh video/yours.html`.
 | `index.html` | The gallery: every effect running live, filtered by kind or by how it is drawn, with the stack table and render measurements |
 | `fx/demos.js`, `fx/demos.css` | The core effects, each `build(stage)` returning `frame(t, abs)`, their styles, and the helpers the packs share (`window.FX`) |
 | `fx/pack-dither.js`, `fx/pack-2d.js`, `fx/pack-shaders.js`, `fx/pack-sims.js` | Effect packs: the dithered character, 2D motion and generative patterns, GLSL shaders, and the two simulations. Each registers its tiles with `FX.demo` |
+| `fx/optical-effects.js`, `fx/pack-optical.js` | Shared optical renderer and six timeline effects: moiré, slit-scan type, ribbon, caustic light, foil and path morph |
 | `fx/font-helvetiker-subset.js` | 14 glyphs of Helvetiker Bold for the extruded 3D text |
 | `video/engine.js` | Timeline engine: scenes, 30-odd `data-fx` animations, wipes, the sound-cue list |
 | `video/record.cjs` | Renders a page to a verified, BT.709 lossless master on the GPU, in parallel |
@@ -129,7 +137,8 @@ Then run `bash video/build.sh video/yours.html`.
 | `video/deliver.py` | Loudness mastering and the final MP4 files, each checked before it is delivered |
 | `video/gif.py` | The GIF preview, cut from the clips the page declares |
 | `video/intro.html` | The source of the intro video |
-| `examples/` | Four example videos, one HTML file each: a social clip, a product demo, an infographic and B-roll loops |
+| `examples/` | Four original use-case films, plus the six-effect optical player/film and the isolated three-stack lab |
+| `video/record-stacks.cjs` | Rebuilds the stack preview, poster, capture manifest and the intro's image atlases |
 | `video/build.sh` | The whole pipeline in one command |
 
 ## The effects
@@ -148,7 +157,7 @@ The first 36 effects were built for short promo videos about an Instagram DM ass
 
 ## Nine new studies
 
-**[Six optical effects](examples/optical.html)** · **[PixiJS, Rapier and WebGPU stack lab](examples/stack-lab/)** · **[24-second stack recording](examples/stack-lab/preview.mp4)**
+**[18-second optical film](media/optical.mp4)** · **[Optical GIF](media/optical.gif)** · **[Six optical effects, interactive](examples/optical.html)** · **[PixiJS, Rapier and WebGPU stack lab](examples/stack-lab/)** · **[24-second stack recording](examples/stack-lab/preview.mp4)**
 
 The optical pack adds moiré interference, slit-scan type, a folding paper ribbon,
 caustic light, holographic foil and arbitrary-path morphing. `fx/optical-effects.js`
@@ -157,7 +166,7 @@ Load Flubber 0.4.2, then those two files after `fx/demos.js` to use the tile IDs
 `optical-moire`, `optical-slit`, `optical-ribbon`, `optical-caustic`, `optical-foil`
 and `optical-morph`. Their `frame(t)` supports repeatable backward seeks.
 `examples/optical.html` also exposes the recorder contract and plays all six
-over 18 seconds:
+over 18 seconds, with a synthesised score and transition cues:
 
 ```sh
 bash video/build.sh examples/optical.html
@@ -178,11 +187,25 @@ Serve the repository with `python3 -m http.server 8000`, then open
 CDNs. WebGPU needs a supported browser on HTTPS or localhost; the page reports
 unavailability rather than substituting WebGL.
 
+Rebuild all showcase assets from a clean checkout (after the Quick start installs):
+
+```sh
+npm run build:showcase
+```
+
+This captures the three real backends, then fully builds the optical film and
+intro, including audio, frame comparison, final-delivery checks, posters and GIFs.
+The capture step requires a real WebGPU adapter and ffmpeg/ffprobe. Its standalone
+command is `npm run record:stacks`; the exact settings and segment timings are in
+[the capture instructions](examples/stack-lab/README.md#rebuild-the-recording).
+The intro samples the resulting image atlases by time; it does not pretend that
+interactive stack demos implement the timeline recorder API.
+
 Run `npm run test:effects` for the browser regressions. On a machine with WebGPU,
 use `REQUIRE_WEBGPU=1 npm run test:effects` to require real compute-buffer readback;
-otherwise that one hardware-dependent test may be skipped. Tests cover optical
+otherwise that one hardware-dependent test may be skipped. Python 3 is also used to synthesise the optical score in its audio-contract regression. Tests cover optical
 seeks, gallery registration, filter comparison, physical collision propagation,
-physics resets, GPU updates, unavailable-backend handling and mobile layout.
+physics resets, GPU updates, unavailable-backend handling, mobile layout, optical audio synthesis and backward seeks through the intro's recorded clips.
 
 ## Effects we learnt from other people's videos
 
@@ -228,20 +251,20 @@ The second was a one-pixel column at the edge of a tile while it scaled in: fram
 
 - The GPU path is verified on macOS only. In our benchmarks, one of 8 parallel SwiftShader browsers lost its WebGL context and returned blank frames without an error, which is why the recorder checks every context on every frame.
 - Emoji and a few symbols (✓, ★) are drawn with the operating system's fonts. On macOS these are Apple Color Emoji, Lucida Grande and PingFang, so a render on Linux or Windows looks slightly different.
-- three.js is pinned at r128, which still ships the single-file UMD build and `examples/js` (removed in r161 and r148). Upgrading means re-tuning every colour, light and shader.
+- The main gallery uses three.js r128; the isolated stack lab pins r180. The gallery retains r128, which still ships the single-file UMD build and `examples/js` (removed in r161 and r148). Upgrading means re-tuning every colour, light and shader.
 - The 3D font has no CJK glyphs, so Chinese text stays flat.
 - The reaction–diffusion tile gives the same pixels every time on one GPU, but we saw a different pattern on SwiftShader than on Metal. It runs 900 steps a second on half-float textures, so small rounding differences between the two backends are the likely cause. The recorder never mixes the two in one run.
-- There are no automated tests or CI yet.
+- Automated browser regressions cover the new effects, audio contract and intro playback. There is no CI yet; complete video builds are verified locally, and broader automated coverage of recorder failure paths is still needed.
 
 ## Help wanted
 
 - **Any render difference we have not met**: the frames in `video/mismatch/` show where two browsers disagreed.
 - **A GPU path on Linux**, so renders can run on a server.
-- **Tests and CI** for the recorder's checks.
+- **Broader recorder tests and CI**, especially failure paths and non-macOS GPU coverage.
 - **More effects**, as long as each one stays a pure function of `t`.
 
 If this saves you an export marathon or a night chasing blank frames, **star the repo**. It tells us people want more of it.
 
 ## Licence
 
-[0BSD](LICENSE): use, copy, modify and distribute for any purpose, with or without attribution. The Helvetiker glyph subset keeps its own licence, and three.js, Matter.js and the fonts load from public CDNs under theirs; see [THIRD_PARTY.md](THIRD_PARTY.md).
+[0BSD](LICENSE): use, copy, modify and distribute for any purpose, with or without attribution. The Helvetiker glyph subset and the adapted TSL example retain their notices; three.js, Matter.js, Flubber, PixiJS, Rapier and the fonts load from public CDNs under their own licences; see [THIRD_PARTY.md](THIRD_PARTY.md).

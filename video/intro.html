@@ -95,7 +95,7 @@
 </head>
 <body>
 <div id="frame">
-<div id="stage" data-w="1920" data-h="1080" data-dur="40.8">
+<div id="stage" data-w="1920" data-h="1080" data-dur="45.6">
 
   <!-- 00 hook: two seconds, then straight into the uses -->
   <section class="scene ink" data-start="0" id="scHook">
@@ -187,28 +187,34 @@
     <div class="tile" style="left:1540px;top:300px;width:280px" data-fx="pop" data-at="0.9" data-sfx="pop"><div class="stage" data-demo="dithercards" data-t0="0.9"></div><div class="lab">dithered pixels</div></div>
   </section>
 
-  <!-- 06 the wildest effects -->
+  <!-- 06 six additions to the repeatable timeline library -->
   <section class="scene ink" data-start="26.4" id="scLib">
     <div class="edge"></div>
-    <div class="a wide" style="left:135px;top:62px;font-size:66px;color:var(--paper)" data-fx="left" data-at="0.1">54 effects to start from</div>
-    <div class="tile" style="left:135px;top:190px;width:250px" data-fx="pop" data-at="0.25" data-sfx="pop"><div class="stage" data-demo="gpuparticles" data-t0="0.25"></div><div class="lab">200k GPU particles</div></div>
-    <div class="tile" style="left:415px;top:190px;width:250px" data-fx="pop" data-at="0.32" data-sfx="pop"><div class="stage" data-demo="clay" data-t0="0.32"></div><div class="lab">ray-marched clay</div></div>
-    <div class="tile" style="left:695px;top:190px;width:250px" data-fx="pop" data-at="0.39" data-sfx="pop"><div class="stage" data-demo="liquid" data-t0="0.39"></div><div class="lab">liquid glass</div></div>
-    <div class="tile" style="left:975px;top:190px;width:250px" data-fx="pop" data-at="0.46" data-sfx="pop"><div class="stage" data-demo="reaction" data-t0="0.46"></div><div class="lab">reaction–diffusion</div></div>
-    <div class="tile" style="left:1255px;top:190px;width:250px" data-fx="pop" data-at="0.53" data-sfx="pop"><div class="stage" data-demo="domainrep" data-t0="0.53"></div><div class="lab">endless grid</div></div>
-    <div class="tile" style="left:1535px;top:190px;width:250px" data-fx="pop" data-at="0.60" data-sfx="pop"><div class="stage" data-demo="styles" data-t0="0.60"></div><div class="lab">5 shader styles</div></div>
-    <div class="tile" style="left:135px;top:570px;width:250px" data-fx="pop" data-at="0.67" data-sfx="pop"><div class="stage" data-demo="rigid" data-t0="0.67"></div><div class="lab">rigid bodies</div></div>
-    <div class="tile" style="left:415px;top:570px;width:250px" data-fx="pop" data-at="0.74" data-sfx="pop"><div class="stage" data-demo="chrome" data-t0="0.74"></div><div class="lab">chrome logo</div></div>
-    <div class="tile" style="left:695px;top:570px;width:250px" data-fx="pop" data-at="0.81" data-sfx="pop"><div class="stage" data-demo="particles" data-t0="0.81"></div><div class="lab">particles into words</div></div>
-    <div class="tile" style="left:975px;top:570px;width:250px" data-fx="pop" data-at="0.88" data-sfx="pop"><div class="stage" data-demo="glitch" data-t0="0.88"></div><div class="lab">RGB glitch</div></div>
-    <div class="tile" style="left:1255px;top:570px;width:250px" data-fx="pop" data-at="0.95" data-sfx="pop"><div class="stage" data-demo="vartype" data-t0="0.95"></div><div class="lab">variable type</div></div>
-    <div class="tile" style="left:1535px;top:570px;width:250px" data-fx="pop" data-at="1.02" data-sfx="pop"><div class="stage" data-demo="cardflip" data-t0="1.02"></div><div class="lab">card flip</div></div>
+    <div class="a wide" style="left:135px;top:100px;font-size:82px" data-fx="left" data-at="0.1">60 timeline effects.</div>
+    <div class="a mono" style="left:140px;top:205px;font-size:26px;color:var(--pink)" data-fx="fade" data-at="0.15">Six new optical studies. Scrub to any frame.</div>
+    <div class="tile" style="left:135px;top:290px;width:520px" data-fx="pop" data-at="0.25" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-moire" data-t0="0.25"></div><div class="lab">Moiré interference</div></div>
+    <div class="tile" style="left:690px;top:290px;width:520px" data-fx="pop" data-at="0.34" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-slit" data-t0="0.34"></div><div class="lab">Slit-scan typography</div></div>
+    <div class="tile" style="left:1245px;top:290px;width:520px" data-fx="pop" data-at="0.43" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-ribbon" data-t0="0.43"></div><div class="lab">Folding paper ribbon</div></div>
+    <div class="tile" style="left:135px;top:628px;width:520px" data-fx="pop" data-at="0.52" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-caustic" data-t0="0.52"></div><div class="lab">Caustic light</div></div>
+    <div class="tile" style="left:690px;top:628px;width:520px" data-fx="pop" data-at="0.61" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-foil" data-t0="0.61"></div><div class="lab">Holographic foil</div></div>
+    <div class="tile" style="left:1245px;top:628px;width:520px" data-fx="pop" data-at="0.70" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-morph" data-t0="0.70"></div><div class="lab">Arbitrary-path morph</div></div>
   </section>
 
-  <!-- 07 every frame checked -->
-  <section class="scene paper" data-start="31.2" id="scRender">
+  <!-- 07 recorded browser experiments: sampled from checked-in image atlases -->
+  <section class="scene ink dots" data-start="31.2" id="scStacks">
     <div class="edge"></div>
-    <div class="a wide" style="left:120px;top:100px;font-size:96px" data-fx="left" data-at="0.1">Every frame, checked.</div>
+    <div class="a wide" style="left:135px;top:130px;font-size:90px" data-fx="left" data-at="0.1">+ 3 live experiments.</div>
+    <div class="a mono" style="left:140px;top:250px;font-size:26px;color:var(--pink)" data-fx="fade" data-at="0.2">New stacks. Real filters, collisions and GPU compute.</div>
+    <div class="tile" style="left:135px;top:390px;width:520px" data-fx="up" data-at="0.30" data-sfx="pop"><canvas data-stack="pixi" width="480" height="270" style="display:block;width:100%;border-radius:14px" role="img" aria-label="Recorded PixiJS demo"></canvas><div style="font:900 44px var(--lat);margin-top:24px">PixiJS</div><div class="lab">Displacement + blur + colour</div></div>
+    <div class="tile" style="left:690px;top:390px;width:520px" data-fx="up" data-at="0.42" data-sfx="pop"><canvas data-stack="rapier" width="480" height="270" style="display:block;width:100%;border-radius:14px" role="img" aria-label="Recorded Rapier demo"></canvas><div style="font:900 44px var(--lat);margin-top:24px">Rapier</div><div class="lab">48 colliding dominoes</div></div>
+    <div class="tile" style="left:1245px;top:390px;width:520px" data-fx="up" data-at="0.54" data-sfx="pop"><canvas data-stack="gpu" width="480" height="270" style="display:block;width:100%;border-radius:14px" role="img" aria-label="Recorded WebGPU / TSL demo"></canvas><div style="font:900 44px var(--lat);margin-top:24px">WebGPU / TSL</div><div class="lab">65,536 GPU-updated particles</div></div>
+    <div class="a mono" style="left:140px;top:850px;font-size:23px;color:var(--muted)" data-fx="fade" data-at="1.1">Browser recordings shown here · open the lab to interact</div>
+  </section>
+
+  <!-- 08 timeline frames checked -->
+  <section class="scene paper" data-start="36" id="scRender">
+    <div class="edge"></div>
+    <div class="a wide" style="left:120px;top:100px;font-size:84px" data-fx="left" data-at="0.1">Timeline frames, checked.</div>
     <div class="box" style="left:120px;top:300px" data-fx="pop" data-at="0.4" data-sfx="tap"><b>Chromium<br>on the GPU</b><span>ANGLE Metal</span></div>
     <div class="arrow" style="left:512px;top:382px;width:50px" data-fx="grow" data-at="0.6"></div>
     <div class="box" style="left:572px;top:300px" data-fx="pop" data-at="0.7" data-sfx="tap"><b>Every frame<br>rendered twice</b><span>and compared</span></div>
@@ -222,17 +228,17 @@
     <div class="a mono" style="left:124px;top:870px;font-size:24px;color:#5c5868" data-fx="fade" data-at="3.0">56-second 3D video · 1693 frames · every frame rendered twice and compared · Apple M4</div>
   </section>
 
-  <!-- 08 call to action -->
-  <section class="scene pinkbg" data-start="36" id="scCta">
+  <!-- 09 call to action -->
+  <section class="scene pinkbg" data-start="40.8" id="scCta">
     <div class="edge"></div>
-    <div class="a mono" style="left:156px;top:130px;font-size:28px;font-weight:700" data-fx="fade" data-at="0.1">Social clips · product demos · infographics · B-roll · 54 effects · free</div>
+    <div class="a mono" style="left:156px;top:130px;font-size:28px;font-weight:700" data-fx="fade" data-at="0.1">60 timeline effects + 3 live experiments · code you can edit</div>
     <div class="a wide" style="left:150px;top:210px;font-size:200px" data-fx="slam" data-at="0.15" data-sfx="impact">Fork it.</div>
     <div class="a mono" style="left:158px;top:470px;font-size:46px;font-weight:700" data-fx="type" data-at="0.7" data-dur="1.1" data-sfx="type">github.com/howardc38/motion-fx-lab</div>
     <div class="sticker" style="left:150px;top:620px;background:#fff;transform:rotate(-3deg)" data-fx="pop" data-at="2.0" data-base="rotate(-3deg)" data-sfx="ding">0BSD · use it for anything</div>
     <div class="sticker" style="left:880px;top:640px;background:var(--sun);transform:rotate(4deg)" data-fx="pop" data-at="2.4" data-base="rotate(4deg)" data-sfx="pop">★ Star it</div>
   </section>
 
-  <div id="hud"><span style="left:48px;top:36px">MOTION FX LAB</span><span id="hudScene" style="right:48px;top:36px">01 / 09</span><span style="left:48px;bottom:34px">FRAME = RENDER(T)</span><span id="hudTc" style="right:48px;bottom:34px">00:00:00</span></div>
+  <div id="hud"><span style="left:48px;top:36px">MOTION FX LAB</span><span id="hudScene" style="right:48px;top:36px">01 / 10</span><span style="left:48px;bottom:34px">FRAME = RENDER(T)</span><span id="hudTc" style="right:48px;bottom:34px">00:00:00</span></div>
 </div>
 </div>
 
@@ -243,14 +249,18 @@
 <script src="../fx/pack-2d.js"></script>
 <script src="../fx/pack-shaders.js"></script>
 <script src="../fx/pack-sims.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flubber@0.4.2/build/flubber.min.js"></script>
+<script src="../fx/optical-effects.js"></script>
+<script src="../fx/pack-optical.js"></script>
+<script src="../examples/stack-lab/capture.js"></script>
 <script>
 (() => {
   // Music sections for music.py, in seconds (one bar = 2.4 s).
-  window.__music = [[0, "build"], [2.4, "drop"], [16.8, "break"], [21.6, "final"], [38.4, "tail"]];
+  window.__music = [[0, "build"], [2.4, "drop"], [16.8, "break"], [21.6, "final"], [31.2, "lift"], [36, "final"], [43.2, "tail"]];
   // Clips for the README's GIF, in seconds: four uses, the characters and the effect wall, short enough to load fast.
   // The poster frame, in seconds: the effect wall at rest.
   window.__poster = 29.6;
-  window.__gif = [[2.8, 5.6], [8.0, 10.8], [12.6, 15.4], [22.2, 24.8], [27.2, 29.8]];
+  window.__gif = [[2.8, 5.6], [8.0, 10.8], [12.6, 15.4], [22.2, 24.8], [27.2, 29.8], [32.0, 34.4]];
 
   const START = Object.fromEntries([...document.querySelectorAll(".scene")].map((el) => [el.id, +el.dataset.start]));
   const TAU = Math.PI * 2, eo = (p) => 1 - Math.pow(1 - p, 3), clamp = (v) => Math.max(0, Math.min(1, v));
@@ -306,7 +316,17 @@
     const scene = el.closest(".scene");
     return { d, frame: typeof built === "function" ? built : built.frame, ready: built && built.ready, scene, s0: +scene.dataset.start, t0: +(el.dataset.t0 || 0) };
   });
-  window.__ready = Promise.all([document.fonts.ready, ...hosted.map((h) => h.ready).filter(Boolean)]);
+  if (!window.FX_STACK_CAPTURE) throw new Error("Missing stack capture; run npm run record:stacks");
+  const stackClips = FX_STACK_CAPTURE.segments.map((clip) => {
+    const canvas = document.querySelector(`[data-stack="${clip.id}"]`), ctx = canvas.getContext("2d"), image = new Image();
+    const atlas = clip.atlas;
+    image.src = `../examples/stack-lab/${atlas.file}`;
+    const ready = image.decode().then(() => {
+      if (image.naturalWidth !== atlas.width * atlas.columns || image.naturalHeight !== atlas.height * Math.ceil(atlas.frames / atlas.columns)) throw new Error(`Invalid stack atlas: ${clip.id}`);
+    });
+    return { canvas, ctx, image, atlas, ready };
+  });
+  window.__ready = Promise.all([document.fonts.ready, ...hosted.map((h) => h.ready).filter(Boolean), ...stackClips.map(c => c.ready)]);
 
   const hudScene = document.getElementById("hudScene"), hudTc = document.getElementById("hudTc");
   const starts = [...document.querySelectorAll(".scene")].map((s) => +s.dataset.start);
@@ -317,6 +337,13 @@
       if (h.scene.style.visibility === "hidden") continue;
       const local = Math.max(0, t - h.s0 - h.t0);
       h.frame(local % h.d.period, local);
+    }
+    if (document.getElementById("scStacks").style.visibility !== "hidden") {
+      const progress = clamp((t - START.scStacks) / 4.8);
+      for (const {canvas, ctx, image, atlas} of stackClips) if (image.complete && image.naturalWidth) {
+        const frame = Math.min(atlas.frames - 1, Math.floor(progress * atlas.frames));
+        ctx.drawImage(image, frame % atlas.columns * atlas.width, Math.floor(frame / atlas.columns) * atlas.height, atlas.width, atlas.height, 0, 0, canvas.width, canvas.height);
+      }
     }
     // 03 captions and audio bars
     l = t - START.scSocial;

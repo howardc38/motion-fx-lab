@@ -1,4 +1,8 @@
 const { test, expect } = require("@playwright/test");
+const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
+const { execFileSync } = require("node:child_process");
 
 async function openLab(page, mode) {
   await page.goto("/examples/stack-lab/#" + mode);
@@ -41,6 +45,76 @@ test("all six optical effects move and survive backward seeks and shared-context
       repeatable: true,
       adjustable: true,
     });
+});
+
+test("optical export supplies working audio and GIF contracts to the full build", async ({
+  page,
+}) => {
+  await page.goto("/examples/optical.html");
+  const spec = await page.evaluate(() => ({
+    dur: __DUR,
+    cues: __cues(),
+    music: window.__music,
+    gif: window.__gif,
+    poster: __poster,
+  }));
+  const work = fs.mkdtempSync(path.join(os.tmpdir(), "optical-audio-test-"));
+  try {
+    const cues = path.join(work, "cues.json"),
+      audio = path.join(work, "music.wav");
+    fs.writeFileSync(cues, JSON.stringify(spec));
+    // This is the build's real consumer; a metadata-only assertion missed the
+    // missing music plan even though all video-frame tests passed.
+    execFileSync(
+      "python3",
+      [path.resolve(__dirname, "../video/music.py"), cues, audio],
+      { timeout: 60000 },
+    );
+    expect(fs.statSync(audio).size).toBeGreaterThan(48000 * 18);
+    expect(spec.gif).toHaveLength(6);
+    for (const [start, end] of spec.gif) {
+      expect(start).toBeGreaterThanOrEqual(0);
+      expect(end).toBeGreaterThan(start);
+      expect(end).toBeLessThanOrEqual(spec.dur);
+    }
+  } finally {
+    fs.rmSync(work, { recursive: true, force: true });
+  }
+});
+
+test("intro includes all nine additions and atlas playback survives backward seeks", async ({
+  page,
+}) => {
+  await page.goto("/video/intro.html");
+  await page.evaluate(async () => {
+    __record();
+    await __ready;
+  });
+  const proof = await page.evaluate(() => {
+    __render(33);
+    const canvases = [...document.querySelectorAll("[data-stack]")];
+    const first = canvases.map((c) => c.toDataURL());
+    __render(35.7);
+    const later = canvases.map((c) => c.toDataURL());
+    __render(33);
+    const again = canvases.map((c) => c.toDataURL());
+    return {
+      optical: document.querySelectorAll('[data-demo^="optical-"]').length,
+      ids: canvases.map((c) => c.dataset.stack),
+      moves: later.map((v, i) => v !== first[i]),
+      repeats: again.map((v, i) => v === first[i]),
+      duration: __DUR,
+      headline: document.getElementById("scLib").textContent,
+    };
+  });
+  expect(proof).toMatchObject({
+    optical: 6,
+    ids: ["pixi", "rapier", "gpu"],
+    moves: [true, true, true],
+    repeats: [true, true, true],
+    duration: 45.6,
+  });
+  expect(proof.headline).toContain("60 timeline effects");
 });
 
 test("gallery registers six real frame functions and links all three stack demos", async ({
