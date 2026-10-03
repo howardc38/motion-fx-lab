@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Motion FX Lab</title>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/webgpu":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.webgpu.js","three/tsl":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.tsl.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
-<meta name="description" content="77 film effects with deterministic timelines, physics, WebGPU compute and verified MP4 export.">
+<meta name="description" content="Motion-effect techniques, selectable variants and film showcases. Landscape previews and verified MP4 export.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
@@ -19,6 +19,7 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/HalftonePass.js"></script>
 <link rel="stylesheet" href="fx/demos.css">
+<link rel="stylesheet" href="fx/gallery-layout.css">
 <style>
   :root {
     --bg: #eceef3; --surface: #ffffff; --ink: #17141d; --muted: #5c5868; --line: #d6d6df; --accent: #b8217a;
@@ -61,11 +62,17 @@
   .uses video { width: 100%; aspect-ratio: 16 / 9; object-fit: contain; border-radius: 10px; background: #000; display: block; }
   .uses figcaption { font-size: 14px; line-height: 1.55; color: var(--muted); }
   .uses figcaption b { display: block; color: var(--ink); font: 900 17px/1.3 var(--body); margin-bottom: 2px; }
-  .gallery, .mrow { display: grid; grid-template-columns: repeat(auto-fill, minmax(236px, 1fr)); gap: 22px 18px; }
+  .gallery, .mrow { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 22px 18px; }
   .mrow { grid-template-columns: repeat(auto-fit, minmax(236px, 1fr)); }
   .subhead { font: 900 19px/1.3 var(--lat); margin-top: 8px; }
   .tile { margin: 0; display: flex; flex-direction: column; gap: 10px; }
   .tile[hidden] { display: none; }
+  .preview { width: 100%; aspect-ratio: 16 / 9; position: relative; }
+  .preview > .stage { width: 100%; aspect-ratio: 16 / 9; }
+  .preview > .stage[hidden] { display: none; }
+  .variant-picker { font: 500 13px var(--body); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .variant-picker select { max-width: 100%; min-width: 0; color: var(--ink); background: var(--surface); border: 1px solid var(--line); padding: 6px; border-radius: 6px; font: inherit; }
+  .loading { position: absolute; inset: 0; display: grid; place-items: center; color: #aaa; font: 12px var(--mono); }
   .tile figcaption { display: flex; flex-direction: column; gap: 6px; }
   .pills { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
   .pill { font: 700 12px var(--body); padding: 2px 9px; border-radius: 999px; }
@@ -109,7 +116,7 @@
   <header>
     <span class="eyebrow">Open source · 0BSD</span>
     <h1>Motion FX Lab</h1>
-    <p class="lede">Describe a video to an AI coding assistant, or write it yourself: it becomes a web page, and this repo renders the page to MP4, frame by frame. Nothing in the picture or the sound is AI-generated, so every frame is exact, editable like code and the same on every render. Every tile below is drawn live in your browser by the same code. Each card says what it does, how it is drawn and what it needs; filter them by kind or by the way they are drawn. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch. The sample text comes from our own videos for an Instagram DM assistant; swap in your own words. The original video pipeline uses 16 stacks; Flubber, PixiJS, Rapier and WebGPU/TSL extend the film-effect library.</p>
+    <p class="lede">Describe a video to an AI coding assistant, or write it yourself: it becomes a web page, and this repo renders the page to MP4, frame by frame. Nothing in the picture or the sound is AI-generated, so every frame is exact, editable like code and the same on every render. Every tile below is drawn live in your browser by the same code. Each main card demonstrates one technique family; its selector compares variants of that technique. All technique cards, including characters, share landscape framing and the same filters. Preset collections and combined films are listed separately and do not inflate the technique count. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch. The sample text comes from our own videos for an Instagram DM assistant; swap in your own words. The original video pipeline uses 16 stacks; Flubber, PixiJS, Rapier and WebGPU/TSL extend the film-effect library.</p>
     <div class="legend" id="legend"></div>
     <video class="intro" controls playsinline preload="metadata" poster="media/intro.jpg" src="media/intro.mp4" aria-label="Intro video, 55 seconds, with sound"></video>
   </header>
@@ -119,7 +126,7 @@
     <h2>Videos you can make with it</h2>
     <p class="note">Each of these is one HTML file in <code>examples/</code>, with its data or text at the top. Change it and run <code>bash video/build.sh examples/infographic.html</code> for a new MP4. The 55-second intro above shows all four uses, characters, the six new optical effects and three additional film effects rendered directly from time. The shops and studio are fictional, and their numbers are sample data.</p>
     <div class="uses">
-      <figure><video controls playsinline preload="none" poster="media/reel.jpg" src="media/reel.mp4" aria-label="Social clip example, 12 seconds"></video><figcaption><b>Social clips</b>9:16, 4:5 or 16:9.</figcaption></figure>
+      <figure><video controls playsinline preload="none" poster="media/reel.jpg" src="media/reel.mp4" aria-label="Social clip example, 12 seconds"></video><figcaption><b>Social clips</b>9:16 portrait example. Gallery effects use 16:9; films can also export 4:5 or 16:9.</figcaption></figure>
       <figure><video controls playsinline preload="none" poster="media/product.jpg" src="media/product.mp4" aria-label="Product demo example, 7 seconds"></video><figcaption><b>Product demos</b>Your screen, a cursor, a tap.</figcaption></figure>
       <figure><video controls playsinline preload="none" poster="media/infographic.jpg" src="media/infographic.mp4" aria-label="Infographic example, 14 seconds"></video><figcaption><b>Infographics</b>Charts drawn from your numbers.</figcaption></figure>
       <figure><video controls playsinline preload="none" poster="media/broll.jpg" src="media/broll.mp4" aria-label="B-roll example, 12 seconds"></video><figcaption><b>B-roll</b>Background loops with no seam.</figcaption></figure>
@@ -134,16 +141,16 @@
       <button id="play" type="button" aria-pressed="false">⏸ Pause</button>
     </div>
     <div class="gallery" id="gallery"></div>
-    <p class="note">The grading tile previews the look with a CSS filter; a real grade would use the LUT pass that ships with three.js r128, and the glow stays off the text. The original 3D and shader tiles share one WebGL canvas; the three optical shaders share a second context. Reaction–diffusion draws the same pixels every time on one GPU, but not the same pattern on every GPU.</p>
+    <p class="note">The colour-grade technique uses CSS filters and a separate glow; it is not a LUT implementation. The original 3D and shader tiles share one WebGL canvas; the three optical shaders share a second context. Reaction–diffusion draws the same pixels every time on one GPU, but not the same pattern on every GPU.</p>
   </section>
 
   <section id="studio-studies">
-    <span class="eyebrow">14 new film effects · 20 art directions</span>
+    <span class="eyebrow">Art direction and dot-animation films</span>
     <h2>Travel through styles. Turn motion into dots.</h2>
-    <p class="note">Original flying artwork, precise video-frame sampling, impact and echoes, 2.5D relief, and real skinned 3D point clouds. <a href="examples/studio.html">Open all 14 effect settings</a>. The twenty art directions are presets, not twenty extra effects.</p>
+    <p class="note">Original flying artwork, precise video-frame sampling, impact and echoes, 2.5D relief, and real skinned 3D point clouds. <a href="examples/studio.html">Open studio settings</a>. The twenty art directions are presets, not twenty extra effects.</p>
     <div class="uses">
       <figure><video controls playsinline preload="metadata" poster="media/style-journey.jpg" src="media/style-journey.mp4"></video><figcaption><b>One flight. Twenty worlds.</b>All twenty art directions, cross-frame transformations and a tracked gallery journey. <a href="examples/style-journey.html">Timeline player</a></figcaption></figure>
-      <figure><video controls playsinline preload="metadata" poster="media/dot-battle.jpg" src="media/dot-battle.mp4"></video><figcaption><b>Dot battle</b>An original skeletal animation becomes sampled footage, temporal echoes, 2.5D relief and true 3D freeze-orbit particles. <a href="examples/dot-battle.html">Timeline player</a></figcaption></figure>
+      <figure><video controls playsinline preload="metadata" poster="media/dot-battle.jpg" src="media/dot-battle.mp4"></video><figcaption><b>COUNTERFORM · Dot battle</b>A 19-second original illustrated fight: punches, blocks, sweeps and flying kicks, with contact holds and colored time echoes. Its held perspective shot is 2.5D; the separate gallery technique demonstrates true 3D orbit. <a href="examples/dot-battle.html">Timeline player</a></figcaption></figure>
     </div>
   </section>
 
@@ -160,27 +167,11 @@
     <video class="intro" controls playsinline preload="metadata" poster="media/stacks.jpg" src="media/stacks.mp4" aria-label="24-second verified film of PixiJS, Rapier and WebGPU effects"></video>
   </section>
 
-  <section id="mascot">
-    <span class="eyebrow">Characters</span>
-    <h2>Characters drawn in code</h2>
-    <p class="note">Four ways to draw a character in code: one agent character dithered to three inks, toon-shaded with an outline and drawn as flat SVG with a rig, plus a halftoned figure built from spheres and cylinders. No AI-generated art and no extra dependency; every pose, blink and hop is a function of t, so it renders frame-exact.</p>
-    <h3 class="subhead">Dithered pixels, and a character that works a whole video</h3>
-    <p class="note">Seen in a TixFox promo by Berlin (@ox8erlin on Threads) and rebuilt on our own character: a two-pass render in flat colours and light, turned into three-colour pixels by a 4×4 ordered dither.</p>
-    <div class="mrow" id="mascotRow2"></div>
-    <h3 class="subhead">Toon, flat and halftone</h3>
-    <div class="mrow" id="mascotRow"></div>
-    <div class="cols">
-      <div class="box"><h3>What code does well</h3><ul>
-        <li>A clean app-mascot or vinyl-toy look.</li>
-        <li>Expressions, waves and hops driven by t; a new outfit or expression is a few lines.</li>
-        <li>One model in several styles: the toon and the dithered character are both drawn from <code>agentModel()</code>.</li>
-      </ul></div>
-      <div class="box"><h3>Beyond code, still no AI art</h3><ul>
-        <li>An illustrator's layered SVG can be rigged part by part, the way the flat character is.</li>
-        <li>A 3D artist's Blender model, exported as GLB, loads with GLTFLoader, which ships with three.js r128.</li>
-        <li>Out of reach for code alone: an illustrator's line and personality, subtle expressions, real hair and cloth.</li>
-      </ul></div>
-    </div>
+  <section id="showcases">
+    <span class="eyebrow">Collections and combined examples</span>
+    <h2>See techniques together</h2>
+    <p class="note">These examples compare visual treatments or combine several techniques. They are not counted as extra effects. Character techniques and their composition variants are in the filtered gallery above.</p>
+    <div class="gallery" id="showcaseGallery"></div>
   </section>
 
   <section>
@@ -200,13 +191,13 @@
     <h2>From HTML to MP4, measured</h2>
     <p class="note">Measured on a 56-second, 1,693-frame promo of ours with heavy 3D (the promo itself is not in this repo). Timed from launching the browsers to a finished lossless master. Our first pipeline, default headless Chromium with one browser and <code>page.screenshot</code>, took 399.6 s. The recorder now renders the whole video twice and compares every frame, in 52.9 s: 7.5× faster. Before that, with only an 8-frame spot check, it took 26.4 s. Encoding both deliverables with every check takes another 33.6 s. All measured on 2026-09-28 on an Apple M4 laptop.</p>
     <div class="box bars" id="bars"></div>
-    <p class="note">Past 4 browsers there is no gain: the bottleneck moves to the single ffmpeg process that decodes the PNGs and writes the master.</p>
+    <p class="note">In that historical benchmark, past 4 browsers there was no gain: the bottleneck moved to the single ffmpeg process that decoded the PNGs and wrote the master. The table below describes that benchmark, not the current intro file.</p>
     <div class="scroll"><table>
       <thead><tr><th>Step</th><th>First pipeline</th><th>This recorder</th><th>How it is proven</th></tr></thead>
       <tbody>
         <tr><td class="name">3D rendering</td><td>SwiftShader (GPU emulated on the CPU)</td><td>ANGLE Metal (the Apple M4 GPU)</td><td>The browser's WebGL renderer string is read at start; SwiftShader stops the run</td></tr>
         <tr><td class="name">Screenshots</td><td>page.screenshot</td><td>CDP captureScreenshot with optimizeForSpeed</td><td>At 8 fast-moving moments the decoded pixels matched the old method 8/8, with no stale frame</td></tr>
-        <tr><td class="name">Parallelism</td><td>1 browser</td><td>4 independent browsers, frames dealt round-robin</td><td>The whole video is rendered a second time with every frame on another browser, and all frames are compared; GPU edge noise stays within 14 levels, and a frame that differs by more, or in more pixels than the tolerance allows, stops the run</td></tr>
+        <tr><td class="name">Parallelism</td><td>1 browser</td><td>4 independent browsers, frames dealt round-robin</td><td>The whole video is rendered a second time with every frame on another browser, and all frames are compared; a frame fails if over 0.01% of plane samples differ by more than 8 levels, or over 20 samples differ by more than 48 levels</td></tr>
         <tr><td class="name">Master</td><td>x264 CRF 17 (lossy)</td><td>x264 lossless</td><td>Deliverables are compressed once; the master must hold every frame</td></tr>
         <tr><td class="name">Look</td><td colspan="2">Mean SSIM 0.989 between old and new; the 71 frames under 0.95 are dense particle and dust frames that look identical side by side</td><td>ffmpeg ssim, frame by frame</td></tr>
         <tr><td class="name">Sound</td><td class="num">−21.2 LUFS · −2.1 dBTP · AAC 160 kbps</td><td class="num">−14.1 LUFS · −1.6 dBTP · AAC 127 kbps</td><td>Limit, then two-pass loudnorm that must report “linear”; the file is measured with ebur128. 160 kbps was over Meta's 128 kbps ceiling</td></tr>
@@ -248,6 +239,7 @@
 </main>
 
 <script src="fx/font-helvetiker-subset.js"></script>
+<script>window.FX_RENDER_SIZE = {w: 640, h: 360};</script>
 <script src="fx/demos.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
 <script src="fx/pack-dither.js"></script>
@@ -261,10 +253,13 @@
 <script src="fx/pack-stacks.js"></script>
 <script src="fx/studio-effects.js"></script>
 <script src="fx/pack-studio.js"></script>
+<script src="fx/catalog.js"></script>
+<script src="fx/gallery-layout.js"></script>
 <script>
 (() => {
-  const { DEMOS, R3 } = window.FX;
-  const KINDS = { shader: "3D and shaders", sim: "Simulations", character: "Characters", motion: "Motion", backdrop: "Backgrounds", ui: "UI and charts", type: "Type" };
+  const { R3 } = window.FX;
+  const { families, showcases, stats, byId } = window.FXCatalog;
+  const KINDS = { shader: "Rendered looks", sim: "Simulations", character: "Characters", motion: "Motion", backdrop: "Backgrounds", ui: "UI and charts", type: "Type" };
   // Tiles are shown most striking first. One missing from this list follows the listed ones, in the
   // order it was registered.
   const ORDER = ["studio-portal", "studio-themes", "studio-video-dots", "studio-freeze-orbit", "studio-echo", "studio-particle-lens", "studio-flight", "studio-gallery", "studio-lowpoly", "studio-dot-rhythm", "studio-dot-impact", "studio-time-remap", "studio-depth-dots", "studio-skin-cloud", "stack-pixi", "stack-rapier", "stack-gpu", "optical-moire", "optical-slit", "optical-ribbon", "optical-caustic", "optical-foil", "optical-morph", "gpuparticles", "clay", "liquid", "reaction", "domainrep", "chrome", "styles", "rigid", "particles", "lit3d", "rays", "dissolve", "smoke", "tunnel",
@@ -280,75 +275,109 @@
   const gallery = document.getElementById("gallery");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  for (const d of [...DEMOS].sort((a, b) => rank(a) - rank(b))) {
-    const fig = document.createElement("figure"); fig.className = "tile";
-    const stage = document.createElement("div"); stage.className = "stage";
-    if (d.aspect) stage.style.aspectRatio = d.aspect;
-    fig.innerHTML = `<figcaption><div class="pills"><span class="pill kind">${KINDS[d.kind] || "?"}</span>${NEEDS[d.grade] ? `<span class="grade" title="${NEEDS[d.grade][1]}">${NEEDS[d.grade][0]}</span>` : ""}</div><h3>${d.name}</h3><p>${d.purpose}</p>${d.seen ? `<p class="seen">Seen in: ${d.seen}</p>` : ""}<div class="chips">${d.chips.map((c) => `<code>${c}</code>`).join("")}</div></figcaption>`;
-    fig.prepend(stage);
-    (d.host ? document.getElementById(d.host) : gallery).appendChild(fig);
-    d.fig = fig;
-    try {
-      if (!KINDS[d.kind]) throw new Error(`unknown kind “${d.kind}”`);
-      if (!NEEDS[d.grade]) throw new Error(`unknown grade “${d.grade}”`);
-      if (d.gl && !R3) { stage.innerHTML = `<div class="nogl">3D tiles need WebGL and three.js from its CDN; one of them did not load here.</div>`; continue; }
-      const built = d.build(stage);
-      d.frame = typeof built === "function" ? built : built.frame;
-      d.ready = typeof built === "function" ? null : built.ready || null;
-      if (d.ready) d.ready.catch(() => {}); // draw() reports async initialization errors in the tile
-    } catch (e) {
-      stage.innerHTML = `<div class="oops">This tile failed to load: ${String(e.message || e).slice(0, 80)}</div>`;
-      d.frame = null;
-    }
-  }
-
-  const G = DEMOS.filter((d) => !d.host).sort((a, b) => rank(a) - rank(b));
-  document.getElementById("legend").innerHTML =
-    `<span><b>${DEMOS.length}</b> timeline effects: ${G.length} in the gallery and ${DEMOS.length - G.length} characters</span>` +
-    `<span>Needs: base stack only · plus a three.js add-on · custom shader · plus a library</span>`;
-  const state = { kind: "all", stack: "all" };
-  const mk = (host, key, opts) => {
-    for (const [v, label] of opts) {
-      const b = document.createElement("button"); b.type = "button"; b.textContent = label; b.setAttribute("aria-pressed", String(state[key] === v));
-      b.addEventListener("click", () => { state[key] = v; [...host.querySelectorAll("button")].forEach((x) => x.setAttribute("aria-pressed", String(x === b))); apply(); });
-      host.appendChild(b);
-    }
-  };
-  mk(document.getElementById("fKind"), "kind", [["all", "All"], ...Object.entries(KINDS).filter(([k]) => G.some((d) => d.kind === k))]);
-  mk(document.getElementById("fStack"), "stack", [["all", "All"], ...Object.entries(STACKS)]);
-  function apply() {
-    let n = 0;
-    for (const d of G) { const ok = (state.kind === "all" || d.kind === state.kind) && (state.stack === "all" || d.stacks.includes(state.stack)); d.fig.hidden = !ok; n += ok; }
-    document.getElementById("shown").textContent = `${n} shown`;
-  }
-  apply();
-
-  // One clock for every tile; only tiles on screen are drawn.
-  const io = new IntersectionObserver((es) => es.forEach((e) => { const d = DEMOS.find((x) => x.fig === e.target); if (d) { d.visible = e.isIntersecting; d.dirty = true; } }), { rootMargin: "120px" });
-  DEMOS.forEach((d) => io.observe(d.fig));
+  const cards = [];
   let playing = !reduce, clock = 0, last = performance.now(), lastDraw = 0;
-  const playBtn = document.getElementById("play");
-  const label = () => { playBtn.textContent = playing ? "⏸ Pause" : "▶ Play"; playBtn.setAttribute("aria-pressed", String(!playing)); };
-  playBtn.addEventListener("click", () => { playing = !playing; label(); DEMOS.forEach((d) => { d.dirty = true; }); });
-  label();
-  const draw = async (d, abs, hero = false) => {
-    if (!d.frame || d.drawing) return;
-    d.drawing = true;
-    const t = hero || (!playing && clock === 0) ? d.hero : abs % d.period;
-    try { if (d.ready) await d.ready; await d.frame(t, abs); }
-    catch (e) { d.frame = null; const error = document.createElement("div"); error.className = "oops"; error.textContent = "This effect is unavailable: " + (e.message || e); d.fig.querySelector(".stage").replaceChildren(error); }
-    finally { d.drawing = false; }
-  };
-  DEMOS.forEach(d => draw(d, d.hero, true));
-  function tick(now) {
-    const dt = Math.min(0.1, (now - last) / 1000); last = now;
-    if (playing) clock += dt;
-    if (now - lastDraw > 30) {
-      lastDraw = now;
-      for (const d of DEMOS) if (d.visible && !d.fig.hidden && (playing || d.dirty)) { draw(d, clock); d.dirty = false; }
+  const state = { kind: "all", stack: "all" };
+  const entryMatches = d => (state.kind === "all" || d.kind === state.kind) && (state.stack === "all" || d.stacks.includes(state.stack));
+  function details(card) {
+    const d = byId.get(card.selected);
+    card.caption.querySelector('.pills').innerHTML = `<span class="pill kind">${card.showcase ? 'Showcase' : KINDS[d.kind]}</span><span class="grade" title="${NEEDS[d.grade][1]}">${NEEDS[d.grade][0]}</span>`;
+    card.caption.querySelector('.chips').innerHTML = d.chips.map(c => `<code>${c}</code>`).join('');
+    card.caption.querySelector('.seen').textContent = d.seen ? 'Seen in: ' + d.seen : '';
+    card.caption.querySelector('.variant-description').textContent = card.family.entries.length > 1 ? d.purpose : '';
+  }
+  function choose(card, id) {
+    if (!card.family.entries.some(e => e.id === id)) throw new Error('Demo is not in this family: ' + id);
+    card.selected = id; card.dirty = true;
+    if (card.select) card.select.value = id;
+    for (const [key, instance] of card.instances) instance.stage.hidden = key !== id;
+    card.placeholder.hidden = card.instances.has(id);
+    details(card);
+  }
+  for (const [list, host, showcase] of [[families, gallery, false], [showcases, document.getElementById('showcaseGallery'), true]]) {
+    for (const family of [...list].sort((a,b) => rank(a)-rank(b))) {
+      const fig = document.createElement('figure'); fig.className = 'tile'; fig.dataset.effectId = family.id;
+      const preview = document.createElement('div'); preview.className = 'preview';
+      const placeholder = document.createElement('div'); placeholder.className = 'stage'; placeholder.innerHTML = '<span class="loading">Preview loads when visible</span>'; preview.appendChild(placeholder);
+      const caption = document.createElement('figcaption');
+      caption.innerHTML = `<div class="pills"></div><h3>${family.name}</h3><p>${family.purpose}</p><p class="variant-description"></p><p class="seen"></p><div class="chips"></div>`;
+      const card = {family, fig, preview, placeholder, caption, showcase, selected: family.id, instances:new Map(), work:Promise.resolve(), busy:false, visible:false, dirty:true};
+      if (family.entries.length > 1) {
+        const label = document.createElement('label'); label.className = 'variant-picker'; label.append('Variant');
+        const select = document.createElement('select'); select.setAttribute('aria-label', family.name + ' variant');
+        family.entries.forEach(d => { const option=document.createElement('option'); option.value=d.id; option.textContent=d.name; select.appendChild(option); });
+        select.onchange = () => { card.manual=false; choose(card, select.value); }; label.append(select); caption.insertBefore(label, caption.querySelector('.variant-description')); card.select=select;
+      }
+      fig.append(preview,caption); host.appendChild(fig); cards.push(card); details(card);
     }
+  }
+  document.querySelector('meta[name=description]').content = `${stats.techniques} motion-effect techniques, ${stats.variants} selectable variants and ${stats.showcases} film showcases. Landscape previews and verified MP4 export.`;
+  document.getElementById('legend').innerHTML = `<span><b>${stats.techniques}</b> technique families · ${stats.variants} selectable variants · ${stats.showcases} separate showcases</span><span>All previews: 16:9</span>`;
+  const mk = (host, key, opts) => {
+    for (const [v,label] of opts) {
+      const button=document.createElement('button'); button.type='button'; button.textContent=label; button.setAttribute('aria-pressed',String(state[key]===v));
+      button.onclick=()=>{ state[key]=v; [...host.querySelectorAll('button')].forEach(b=>b.setAttribute('aria-pressed',String(b===button))); apply(); }; host.appendChild(button);
+    }
+  };
+  function apply() {
+    let n=0;
+    for (const card of cards) {
+      if (card.showcase) continue;
+      const matches=card.family.entries.filter(entryMatches); card.fig.hidden=matches.length===0;
+      if (matches.length) { n++; if (!matches.some(d=>d.id===card.selected)) choose(card,matches[0].id); }
+      if (card.select) for (const option of card.select.options) option.disabled=!entryMatches(byId.get(option.value));
+      card.dirty=true;
+    }
+    document.getElementById('shown').textContent=`${n} techniques shown`;
+  }
+  mk(document.getElementById('fKind'),'kind', [['all','All'],...Object.entries(KINDS).filter(([k])=>families.some(f=>f.kind===k))]);
+  mk(document.getElementById('fStack'),'stack', [['all','All'],...Object.entries(STACKS)]);
+  apply();
+  async function instanceFor(card,id) {
+    if (card.instances.has(id)) return card.instances.get(id);
+    const d=byId.get(id), stage=document.createElement('div'); stage.className='stage'; stage.style.aspectRatio='16 / 9'; stage.dataset.demo=id;
+    stage.hidden=card.selected!==id; card.preview.appendChild(stage); card.placeholder.hidden=true;
+    const instance={stage,frame:null,failed:false}; card.instances.set(id,instance);
+    try {
+      if (d.gl && !R3) throw new Error('WebGL or the pinned three.js dependency is unavailable');
+      const target=FXGalleryLayout.mount(stage,d) || stage;
+      let built=d.build(target); built=FXGalleryLayout.adapt(stage,d,built);
+      if (built.ready) await built.ready;
+      instance.frame=typeof built==='function' ? built : built.frame;
+      if (typeof instance.frame!=='function') throw new Error('Missing frame(t) implementation');
+    } catch(error) { failure(instance,error); }
+    return instance;
+  }
+  function failure(instance,error) {
+    instance.failed=true; const message=document.createElement('div'); message.className='oops'; message.textContent='This effect is unavailable: '+(error.message || error); instance.stage.replaceChildren(message);
+  }
+  function draw(card,time,hero=false) {
+    card.busy=true;
+    const work=card.work.then(async()=>{
+      const id=card.selected, d=byId.get(id), instance=await instanceFor(card,id);
+      if (!instance.failed) try { await instance.frame(hero ? d.hero : time % d.period,time); } catch(error) { failure(instance,error); }
+      for (const [key,value] of card.instances) value.stage.hidden=key!==card.selected;
+      return instance;
+    });
+    card.work=work.catch(()=>{});
+    work.finally(()=>{ if(card.work===tail) card.busy=false; }).catch(()=>{});
+    const tail=card.work;
+    return work;
+  }
+  const io=new IntersectionObserver(entries=>{
+    for (const e of entries) { const card=cards.find(c=>c.fig===e.target); if(card) {card.visible=e.isIntersecting;card.dirty=true;} }
+  },{rootMargin:'120px'});
+  cards.forEach(card=>io.observe(card.fig));
+  const playBtn=document.getElementById('play');
+  function label(){playBtn.textContent=playing?'⏸ Pause':'▶ Play';playBtn.setAttribute('aria-pressed',String(!playing));}
+  playBtn.onclick=()=>{playing=!playing;label();cards.forEach(c=>{c.dirty=true;c.manual=false;});}; label();
+  function tick(now) {
+    const dt=Math.min(.1,(now-last)/1000);last=now;if(playing)clock+=dt;
+    if(now-lastDraw>30){lastDraw=now;for(const card of cards)if(card.visible&&!card.fig.hidden&&!card.busy&&!card.manual&&(playing||card.dirty)){card.dirty=false;draw(card,clock,!playing&&clock===0);}}
     requestAnimationFrame(tick);
   }
+  window.galleryAPI={cards,stats,filter(kind='all',stack='all'){state.kind=kind;state.stack=stack;apply();},pause(){playing=false;label();},selectVariant(id){const card=cards.find(c=>c.family.entries.some(e=>e.id===id));if(!card)throw new Error('Unknown demo: '+id);choose(card,id);return card;},async draw(id,time){const card=this.selectVariant(id);card.manual=true;return draw(card,time);}};
+  window.galleryReady=Promise.resolve(window.galleryAPI);
   requestAnimationFrame(tick);
 
   // render-time bars, to scale

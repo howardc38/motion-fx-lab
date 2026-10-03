@@ -170,13 +170,15 @@
   async function create(id, options = {}) {
     const study =
       studies.find((s) => s.id === id) ||
-      (id === "dot-battle" ? { module: "dots", mode: "battle" } : null);
+      (id === "dot-battle" ? { module: "battle", mode: "battle" } : null);
     if (!study) throw new Error("Unknown studio effect: " + id);
     const mod = await import(new URL(study.module + ".js", base));
     const effect =
-      study.module === "flight"
-        ? mod.createFlight(study.mode)
-        : await mod.createDots(study.mode, options);
+      study.module === "battle"
+        ? mod.createBattle()
+        : study.module === "flight"
+          ? mod.createFlight(study.mode)
+          : await mod.createDots(study.mode, options);
     Object.assign(effect.canvas.style, {
       width: "100%",
       height: "100%",

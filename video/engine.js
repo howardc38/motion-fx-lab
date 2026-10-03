@@ -205,6 +205,7 @@
   // ---------- local preview (space pauses, click restarts) ----------
   const frame = document.getElementById("frame");
   let t0 = performance.now(), paused = false, pausedAt = 0, recording = false;
+  let previewRender = Promise.resolve();
   function fit() {
     if (recording) return;
     const s = Math.min((innerWidth - 32) / W, (innerHeight - 32) / H);
@@ -213,8 +214,11 @@
   }
   async function loop(now) {
     if (recording) return;
-    if (!paused) await render(((now - t0) / 1000) % (DUR + 1));
-    requestAnimationFrame(loop);
+    if (!paused) {
+      previewRender = render(((now - t0) / 1000) % (DUR + 1));
+      await previewRender;
+    }
+    if (!recording) requestAnimationFrame(loop);
   }
   addEventListener("resize", fit);
   addEventListener("keydown", (e) => {
@@ -232,8 +236,11 @@
   window.__SIZE = { w: W, h: H };
   window.__cues = () => cues;
   // Recording shows the stage at its own size: the preview's fit() may have shrunk the frame.
-  window.__record = () => {
-    recording = true; document.body.classList.add("record");
+  window.__record = async () => {
+    recording = true;
+    // Stop scheduling previews and let any asynchronous hook finish before frame zero.
+    await previewRender;
+    document.body.classList.add("record");
     frame.style.width = `${W}px`; frame.style.height = `${H}px`;
     return render(0);
   };

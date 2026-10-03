@@ -7,10 +7,9 @@
       kind: s.kind,
       grade: s.grade,
       purpose: s.purpose,
-      stacks:
-        s.module === "flight" && s.id !== "lowpoly"
-          ? ["canvas"]
-          : ["canvas", "three"],
+      stacks: ["skin-cloud", "freeze-orbit", "particle-lens"].includes(s.id)
+        ? ["canvas", "three", "glsl"]
+        : ["lowpoly", "depth-dots"].includes(s.id) ? ["canvas", "three"] : ["canvas"],
       chips: [
         s.module === "flight" ? "original art / motion" : "fixed source time",
         s.grade === "A+"

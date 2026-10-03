@@ -49,7 +49,7 @@
   }
 
   const canvas2d = (s, w, h) => {
-    const c = document.createElement("canvas"); c.width = w; c.height = h; c.className = "p2-fill"; s.appendChild(c);
+    const c = document.createElement("canvas"); c.width = s.classList.contains("landscape") ? Math.round(h * 16 / 9) : w; c.height = h; c.className = "p2-fill"; s.appendChild(c);
     return c.getContext("2d");
   };
   // A canvas tile that uses web fonts: waits for them, then repaints the last requested t with the right faces.
@@ -261,7 +261,8 @@
     seen: SEEN, period: 6, hero: 0.72,
     build(s) {
       s.style.background = INK;
-      const g = canvas2d(s, 800, 1000), P = 6, COLS = 6, ROWS = 8, S = 60, OX = 20, OY = 10, h = S / 2;
+      const W = s.classList.contains("landscape") ? 8000 / 9 : 400;
+      const g = canvas2d(s, 800, 1000), P = 6, COLS = W > 400 ? 14 : 6, ROWS = 8, S = 60, OX = 20, OY = 10, h = S / 2;
       const R = rng(1919), PAL = [CREAM, CREAM, CREAM, INK, INK, INK, ORANGE, ORANGE, BLUE, BLUE, YELLOW];
       const KINDS = ["quarter", "half", "circle", "triangle", "square"];
       const tiles = [];
@@ -282,7 +283,7 @@
       };
       const paint = (t) => {
         g.setTransform(2, 0, 0, 2, 0, 0);
-        g.fillStyle = INK; g.fillRect(0, 0, 400, 500);
+        g.fillStyle = INK; g.fillRect(0, 0, W, 500);
         for (const tl of tiles) {
           let rot = tl.rot, sx = 1;
           for (const w of WAVES) {
@@ -297,12 +298,12 @@
           g.fillStyle = tl.fg; motif(tl.kind);
           g.restore();
         }
-        g.fillStyle = CREAM; g.fillRect(0, 216, 400, 68);
-        g.fillStyle = INK; g.fillRect(0, 216, 400, 2.5); g.fillRect(0, 281.5, 400, 2.5);
+        g.fillStyle = CREAM; g.fillRect(0, 216, W, 68);
+        g.fillStyle = INK; g.fillRect(0, 216, W, 2.5); g.fillRect(0, 281.5, W, 2.5);
         g.font = `italic 400 64px ${SERIF}`; g.textAlign = "center"; g.textBaseline = "alphabetic";
-        g.fillText("rhythm", 200, 267);
-        g.font = `700 9px ${MONO}`; g.textAlign = "left"; g.fillStyle = ORANGE; g.fillText("6 × 8", 22, 253);
-        g.textAlign = "right"; g.fillText("50 MS", 378, 253);
+        g.fillText("rhythm", W/2, 267);
+        g.font = `700 9px ${MONO}`; g.textAlign = "left"; g.fillStyle = ORANGE; g.fillText(`${COLS} × 8`, 22, 253);
+        g.textAlign = "right"; g.fillText("50 MS", W-22, 253);
       };
       return withFonts([`italic 400 64px ${SERIF}`, `700 9px ${MONO}`], paint);
     } });
@@ -313,12 +314,13 @@
     seen: SEEN, period: 8, hero: 1.6,
     build(s) {
       s.style.background = INK;
-      const g = canvas2d(s, 800, 1000), P = 8, LINES = 40, NS = 120, X0 = 40, X1 = 360, Y0 = 104, Y1 = 446;
+      const W = s.classList.contains("landscape") ? 8000 / 9 : 400;
+      const g = canvas2d(s, 800, 1000), P = 8, LINES = 40, NS = 120, X0 = 40, X1 = W-40, Y0 = 104, Y1 = 446;
       const noise = perlin3(7), xs = new Float64Array(NS + 1), env = new Float64Array(NS + 1), py = new Float64Array(NS + 1);
-      for (let j = 0; j <= NS; j++) { xs[j] = X0 + (X1 - X0) * (j / NS); env[j] = Math.exp(-Math.pow((xs[j] - 200) / 78, 2)); }
+      for (let j = 0; j <= NS; j++) { xs[j] = X0 + (X1 - X0) * (j / NS); env[j] = Math.exp(-Math.pow((xs[j] - W/2) / (W*.195), 2)); }
       const paint = (t) => {
         g.setTransform(2, 0, 0, 2, 0, 0);
-        g.fillStyle = INK; g.fillRect(0, 0, 400, 500);
+        g.fillStyle = INK; g.fillRect(0, 0, W, 500);
         // Time runs around a circle in two noise dimensions, so t = 0 and t = P meet exactly.
         const a = (TAU * t) / P, cy = Math.cos(a) * 0.85, cz = Math.sin(a) * 0.85;
         g.lineWidth = 1.25; g.lineJoin = "round"; g.strokeStyle = CREAM;
@@ -337,8 +339,8 @@
           g.stroke();
         }
         g.font = `italic 400 104px ${SERIF}`; g.textAlign = "center"; g.textBaseline = "alphabetic";
-        g.lineWidth = 14; g.strokeStyle = INK; g.strokeText("flow", 200, 296);
-        g.fillStyle = ORANGE; g.fillText("flow", 200, 296);
+        g.lineWidth = 14; g.strokeStyle = INK; g.strokeText("flow", W/2, 296);
+        g.fillStyle = ORANGE; g.fillText("flow", W/2, 296);
         g.font = `700 9px ${MONO}`; g.fillStyle = "rgba(242,239,232,.55)";
         g.textAlign = "left"; g.fillText("40 LINES · NOISE(x, i, t)", X0, 58);
         g.textAlign = "right"; g.fillText("SEED 7", X1, 58);
@@ -353,11 +355,12 @@
     seen: SEEN, period: 6, hero: 2.4,
     build(s) {
       s.style.background = INK;
+      const W = s.classList.contains("landscape") ? 8000 / 9 : 400, NC = W > 400 ? 15 : 7;
       const g = canvas2d(s, 800, 1000), P = 6, R = rng(4242);
       const WORDS = ["frame(t)", "render(t)", "t => f(t)", "pure", "0x1F", "lerp(a, b)", "ease(t)", "return", "const t", "spring()", "clamp(x)", "draw()", "t % 6", "noise(x, t)", "30 fps", "seed = 7", "0xFF5A1F", "=> {", "}", "sin(t)", "f(t) = f(t)", "no state"];
       // Seven columns; each picks only fragments that fit its width (JetBrains Mono advances 0.6 em a character).
-      const cols = [], CW = 400 / 7;
-      for (let k = 0; k < 7; k++) {
+      const cols = [], CW = W / NC;
+      for (let k = 0; k < NC; k++) {
         const size = [8, 9, 10, 11.5][Math.floor(R() * 4)], lh = size * 2.1, n = Math.ceil(500 / lh) + 3;
         const fit = WORDS.filter((w) => w.length * (0.6 * size + 0.4) <= CW - 8);
         const items = Array.from({ length: n }, () => {
@@ -371,7 +374,7 @@
       const TEXT = "Written\nin code.";
       const paint = (t) => {
         g.setTransform(2, 0, 0, 2, 0, 0);
-        g.fillStyle = INK; g.fillRect(0, 0, 400, 500);
+        g.fillStyle = INK; g.fillRect(0, 0, W, 500);
         g.textAlign = "left"; g.textBaseline = "top";
         g.letterSpacing = "0.4px"; // any letter spacing turns off JetBrains Mono's ligatures, so "=>" stays two characters
         for (const c of cols) {
@@ -386,7 +389,7 @@
         g.globalAlpha = 1; g.letterSpacing = "0px";
         const band = g.createLinearGradient(0, 140, 0, 420);
         band.addColorStop(0, "rgba(17,16,22,0)"); band.addColorStop(0.3, "rgba(17,16,22,.9)"); band.addColorStop(0.72, "rgba(17,16,22,.9)"); band.addColorStop(1, "rgba(17,16,22,0)");
-        g.fillStyle = band; g.fillRect(0, 140, 400, 280);
+        g.fillStyle = band; g.fillRect(0, 140, W, 280);
         const n = Math.floor(clamp((t - 0.5) * 13, 0, TEXT.length)), typed = TEXT.slice(0, n), done = n === TEXT.length;
         tx.textContent = typed.endsWith(".") ? typed.slice(0, -1) : typed; dot.textContent = typed.endsWith(".") ? "." : "";
         car.style.opacity = !done || Math.floor(t * 2.5) % 2 === 0 ? 1 : 0;
@@ -423,7 +426,8 @@
     build(s) {
       s.style.background = INK;
       const DATA = [22, 30, 27, 38, 35, 46, 44, 55, 52, 63, 70, 78], VOL = [40, 52, 45, 60, 48, 66, 58, 72, 64, 70, 80, 74];
-      const X0 = 44, X1 = 368, Y0 = 188, Y1 = 446, M = MONO.replace(/"/g, "'");
+      const wide = s.classList.contains("landscape");
+      const X0 = 44, X1 = wide ? 756 : 368, Y0 = wide ? 150 : 188, Y1 = wide ? 390 : 446, M = MONO.replace(/"/g, "'");
       const px = (i) => X0 + (i / 11) * (X1 - X0), py = (v) => Y1 - (v / 100) * (Y1 - Y0);
       const P0 = DATA.map((v, i) => [px(i), py(v)]);
       // Catmull-Rom through the data, sampled finely; arc length is measured here so the dash and the dot agree.
@@ -447,8 +451,8 @@
       };
       const line = "M" + pts.map((p) => `${f2(p[0])} ${f2(p[1])}`).join("L");
       const gid = nid("dcgrad"), cid = nid("dcclip");
-      const RC = [334, 76, 34];
-      s.innerHTML = `<svg class="p2-fill" viewBox="0 0 400 500" aria-hidden="true">
+      const RC = [wide ? 720 : 334, 76, 34];
+      s.innerHTML = `<svg class="p2-fill" viewBox="0 0 ${wide ? 800 : 400} ${wide ? 450 : 500}" aria-hidden="true">
         <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${ORANGE}" stop-opacity=".5"/><stop offset="1" stop-color="${ORANGE}" stop-opacity="0"/></linearGradient>
           <clipPath id="${cid}"><rect class="p2-dc-cr" x="${X0 - 2}" y="${Y0 - 40}" width="0" height="${Y1 - Y0 + 42}"/></clipPath></defs>
         <g class="p2-dc-all">

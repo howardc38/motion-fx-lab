@@ -600,9 +600,13 @@ export function flyer(id, t) {
         if (th.mode === "stitch") {
           line(g, x, y, x + 3, y + 3, col, 1.5);
           line(g, x + 3, y, x, y + 3, col, 1.5);
-        } else if (th.mode === "ascii")
-          word(g, "@#%*+:"[(x + y) % 6], x, y + 5, 6, th.ink, "monospace");
-        else if (th.mode === "dots") circle(g, x + 2, y + 2, 1.8, col);
+        } else if (th.mode === "ascii") {
+          // Dense glyphs represent dark source areas; cell coordinates stepped
+          // by six previously selected '@' everywhere from a six-glyph ramp.
+          const ramp = "@#%*+:";
+          const luminance = 0.2126 * image.data[k] + 0.7152 * image.data[k + 1] + 0.0722 * image.data[k + 2];
+          word(g, ramp[Math.min(ramp.length - 1, Math.floor(luminance / 256 * ramp.length))], x, y + 5, 6, th.ink, "monospace");
+        } else if (th.mode === "dots") circle(g, x + 2, y + 2, 1.8, col);
         else if (th.mode === "hatch") {
           g.fillStyle = col;
           g.fillRect(x, y, step, step);

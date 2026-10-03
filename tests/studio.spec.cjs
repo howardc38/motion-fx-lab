@@ -8,7 +8,7 @@ async function open(page) {
   await page.waitForFunction(() => window.studio?.current);
 }
 
-test("14 studio effects have independent visual frames and repeatable backward seeks", async ({
+test("14 studio demos move and reproduce their own frames after backward seeks", async ({
   page,
 }) => {
   await open(page);
@@ -206,4 +206,18 @@ test("invalid source import cannot delete an existing output sequence", () => {
   } finally {
     fs.rmSync(temp, { recursive: true, force: true });
   }
+});
+
+test('battle film has authored attacks, independent instances and a repeatable contact hold', async ({page}) => {
+  await page.goto('/examples/dot-battle.html');
+  await page.evaluate(async()=>{await __ready;await __record();});
+  const result=await page.evaluate(async()=>{
+    const film=filmEffect;
+    await __render(.6); const contact=film.canvas.toDataURL(); const pose=film.proof();
+    await __render(3); const kick=film.canvas.toDataURL();
+    await __render(.6); const again=film.canvas.toDataURL();
+    const other=await FXStudio.create('dot-battle'); await other.frame(3);
+    return {duration:__DUR, cues:__cues().length, changes:contact!==kick,repeat:contact===again,independent:other.canvas!==film.canvas,pose};
+  });
+  expect(result).toMatchObject({duration:19.2,cues:30,changes:true,repeat:true,independent:true});
 });

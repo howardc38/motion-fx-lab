@@ -165,26 +165,28 @@
     purpose: "Film texture that eats bitrate: at the same 2 Mbps, SSIM is 0.865 without grain and 0.742 with it.", period: 2, hero: 0.5,
     build(s) {
       s.style.background = "#000";
-      const c = document.createElement("canvas"); c.width = 360; c.height = 450; c.className = "fill"; s.appendChild(c);
+      const wide = s.classList.contains("landscape"), W = wide ? 800 : 360, H = 450;
+      const c = document.createElement("canvas"); c.width = W; c.height = H; c.className = "fill"; s.appendChild(c);
       const g = c.getContext("2d"), nz = document.createElement("canvas"); nz.width = 180; nz.height = 225;
       const ng = nz.getContext("2d"), img = ng.createImageData(180, 225);
       let last = -1;
       return (t, abs) => {
-        const step = Math.floor(abs * 20);
+        const step = Math.floor((abs ?? t) * 20);
         if (step === last) return; last = step;
-        const bg = g.createRadialGradient(180, 200, 20, 180, 225, 300); bg.addColorStop(0, "#3a2a44"); bg.addColorStop(1, "#050407");
-        g.fillStyle = bg; g.fillRect(0, 0, 360, 450);
-        g.fillStyle = "#f4eef8"; g.font = `900 34px ${LAT}`; g.textAlign = "center"; g.fillText("In class.", 180, 205); g.fillText("DMs waiting.", 180, 252);
+        const bg = g.createRadialGradient(W/2, 200, 20, W/2, 225, W*.8); bg.addColorStop(0, "#3a2a44"); bg.addColorStop(1, "#050407");
+        g.fillStyle = bg; g.fillRect(0, 0, W, H);
+        g.fillStyle = "#f4eef8"; g.font = `900 34px ${LAT}`; g.textAlign = "center"; g.fillText("In class.", W/2, 205); g.fillText("DMs waiting.", W/2, 252);
         let seed = step * 9301 + 49297;
         for (let i = 0; i < img.data.length; i += 4) { seed = (seed * 1103515245 + 12345) & 0x7fffffff; const v = seed >>> 23; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255; }
         ng.putImageData(img, 0, 0);
-        g.globalAlpha = 0.18; g.globalCompositeOperation = "overlay"; g.drawImage(nz, 0, 0, 360, 450);
+        g.globalAlpha = 0.18; g.globalCompositeOperation = "overlay"; g.drawImage(nz, 0, 0, W, H);
         g.globalAlpha = 1; g.globalCompositeOperation = "source-over";
       };
     } });
 
   // ================= 3D and shader effects (one shared WebGL renderer) =================
-  const GW = 480, GH = 600;
+  // A film may request native-size effects; gallery tiles retain their original dimensions.
+  const GW = window.FX_RENDER_SIZE?.w || 480, GH = window.FX_RENDER_SIZE?.h || 600;
   let R3 = null;
   try {
     if (window.THREE && THREE.EffectComposer && THREE.UnrealBloomPass && THREE.HalftonePass) {
@@ -328,7 +330,7 @@
       return mix(mix(mix(hash31(i),hash31(i+vec3(1,0,0)),f.x), mix(hash31(i+vec3(0,1,0)),hash31(i+vec3(1,1,0)),f.x),f.y),
                  mix(mix(hash31(i+vec3(0,0,1)),hash31(i+vec3(1,0,1)),f.x), mix(hash31(i+vec3(0,1,1)),hash31(i+vec3(1,1,1)),f.x),f.y), f.z); }`;
   demo({ id: "dissolve", gl: true, name: "Noise dissolve", kind: "shader", stacks: ["three", "glsl"], chips: ["onBeforeCompile shader patch", "3D noise", "UnrealBloomPass"], grade: "B",
-    purpose: "Text or a number melts away in noise; in the sample, a figure with no source that will not be sent.", period: 5, hero: 2.2,
+    purpose: "Text or a number melts away in noise; in the sample, a figure with no source that will not be sent.", period: 5, hero: 1.7,
     build(s) {
       const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(40, GW / GH, 0.1, 100);
       cam.position.set(0, 0.6, 8); cam.lookAt(0, 0, 0);
@@ -720,7 +722,7 @@
       return (t) => { const a = (t / 12) * Math.PI * 2; ls.forEach((l, i) => { l.style.transform = `translate(${Math.cos(a + i * 2.1) * 12}%, ${Math.sin(a * (i % 2 ? 1 : -1) + i) * 10}%)`; }); };
     } });
 
-  demo({ id: "lut", name: "Warm grade + soft glow", kind: "backdrop", stacks: ["css"], chips: ["preview: CSS filter", "final: r128 LUT pass"], grade: "A+",
+  demo({ id: "lut", name: "Warm grade + soft glow", kind: "backdrop", stacks: ["css"], chips: ["CSS colour filters", "background glow"], grade: "A",
     purpose: "A warm colour grade with a soft glow on the background; the text stays sharp.", period: 6, hero: 1.5,
     build(s) {
       const scene = () => `<div class="lut-sc"><div class="lut-sun"></div><div class="lut-win"></div><div class="lut-phone"><span>5 or 10 yrs?</span></div></div>`;
@@ -796,17 +798,17 @@
         tex.needsUpdate = true;
       };
       paint(); const ready = document.fonts.load(`900 78px ${LAT}`, "social_ops").then(paint);
-      const u = { uTex: { value: tex }, uT: { value: 0 } };
+      const u = { uTex: { value: tex }, uT: { value: 0 }, uAspect: {value: GH/GW} };
       scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({ uniforms: u,
         vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
-        fragmentShader: `uniform sampler2D uTex; uniform float uT; varying vec2 vUv;
+        fragmentShader: `uniform sampler2D uTex; uniform float uT, uAspect; varying vec2 vUv;
           float smin(float a, float b, float k){ float h = clamp(0.5 + 0.5*(b-a)/k, 0.0, 1.0); return mix(b, a, h) - k*h*(1.0-h); }
           float field(vec2 p){
             vec2 c1 = vec2(0.5 + 0.2*sin(uT*0.7), 0.62 + 0.18*cos(uT*0.9));
             vec2 c2 = vec2(0.5 + 0.18*cos(uT*0.5 + 1.0), 0.6 + 0.22*sin(uT*0.6 + 2.0));
             return smin(length(p - c1) - 0.19, length(p - c2) - 0.13, 0.12); }
           void main(){
-            vec2 p = vec2(vUv.x, vUv.y*1.25);
+            vec2 p = vec2(vUv.x, (vUv.y-.5)*uAspect+.625);
             float d = field(p); vec2 e = vec2(0.002, 0.0);
             vec2 n = vec2(field(p + e.xy) - field(p - e.xy), field(p + e.yx) - field(p - e.yx)) / (2.0*e.x);
             float inside = smoothstep(0.004, -0.004, d);
@@ -824,15 +826,16 @@
     purpose: "A word printed as halftone dots whose size breathes from fine to coarse and back. Once the dots grow, thin and dense strokes, such as small Chinese characters, break up.", period: 4, hero: 2,
     build(s) {
       s.style.background = "#ffd400";
-      const W = 360, H = 450, c = document.createElement("canvas"); c.width = W; c.height = H; c.className = "fill"; s.appendChild(c);
+      const wide = s.classList.contains("landscape"), W = wide ? 800 : 360, H = 450, c = document.createElement("canvas"); c.width = W; c.height = H; c.className = "fill"; s.appendChild(c);
       const g = c.getContext("2d"), off = document.createElement("canvas"); off.width = W; off.height = H;
       const og = off.getContext("2d", { willReadFrequently: true });
       let ink = null, last = null;
       const prep = () => {
         og.font = `900 100px ${LAT}`;
-        const px = Math.floor((100 * 300) / Math.max(og.measureText("HALF").width, og.measureText("TONE").width));
+        const px = Math.floor(100 * (wide ? W*.82 : 300) / (wide ? og.measureText("HALFTONE").width : Math.max(og.measureText("HALF").width, og.measureText("TONE").width)));
         og.clearRect(0, 0, W, H); og.fillStyle = "#000"; og.textAlign = "center"; og.textBaseline = "middle"; og.font = `900 ${px}px ${LAT}`;
-        og.fillText("HALF", W / 2, H / 2 - px * 0.52); og.fillText("TONE", W / 2, H / 2 + px * 0.52);
+        if (wide) og.fillText("HALFTONE", W/2, H/2);
+        else { og.fillText("HALF", W / 2, H / 2 - px * 0.52); og.fillText("TONE", W / 2, H / 2 + px * 0.52); }
         const d = og.getImageData(0, 0, W, H).data; ink = new Float32Array(W * H);
         for (let i = 0; i < W * H; i++) ink[i] = d[i * 4 + 3] / 255;
       };

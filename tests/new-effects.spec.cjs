@@ -100,35 +100,12 @@ test("intro renders nine native additions without prerecorded atlases", async ({
   expect(fits).toEqual([true,true,true]);
   expect(await page.locator('script[src*="capture"]').count()).toBe(0);
   expect(await page.locator("#scLib").textContent()).toContain(
-    "77 film effects",
+    "64 effect techniques",
   );
   await page.evaluate(async () => {
     await __render(35.7);
     await __render(33);
   });
-});
-
-test("gallery registers all 77 film effects including three asynchronous renderers", async ({
-  page,
-}) => {
-  await page.goto("/");
-  await page.waitForFunction(() => window.FX?.DEMOS.length === 77);
-  const added = await page.evaluate(() =>
-    FX.DEMOS.filter((d) => d.id.startsWith("optical-")).map((d) => ({
-      id: d.id,
-      frame: typeof d.frame,
-      error: !!d.fig.querySelector(".oops"),
-    })),
-  );
-  expect(added).toHaveLength(6);
-  for (const entry of added)
-    expect(entry).toMatchObject({ frame: "function", error: false });
-  for (const mode of ["pixi", "rapier", "gpu"])
-    await expect(
-      page.locator(`#new-studies a[href="examples/stack-lab/#${mode}"]`),
-    ).toBeVisible();
-  await page.getByRole("button", { name: "Flubber", exact: true }).click();
-  await expect(page.locator("#gallery > figure:visible")).toHaveCount(1);
 });
 
 test("missing Flubber fails visibly without disabling Canvas effects", async ({

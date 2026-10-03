@@ -24,17 +24,6 @@ function base(g, bg = "#f2eee4") {
   g.fillStyle = bg;
   g.fillRect(0, 0, W, H);
 }
-function caption(g, index, name) {
-  text(
-    g,
-    String(index + 1).padStart(2, "0") + " / " + name.toUpperCase(),
-    48,
-    680,
-    17,
-    "#536567",
-    "monospace",
-  );
-}
 export function createFlight(mode) {
   const canvas = document.createElement("canvas");
   canvas.width = W;

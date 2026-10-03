@@ -8,12 +8,15 @@ them into cues.json. Without clips this does nothing. The GIF has no sound, 800 
 import json
 import subprocess
 import sys
+from pathlib import Path
 
 
 def main(cues_path, video, out):
     clips = json.load(open(cues_path)).get("gif")
     if not clips:
-        print("no GIF clips declared (window.__gif); skipping the GIF")
+        # Only the caller's generated output is stale; never sweep sibling files.
+        Path(out).unlink(missing_ok=True)
+        print("no GIF clips declared (window.__gif); removed stale GIF output")
         return
     parts = [f"[0:v]trim={a}:{b},setpts=PTS-STARTPTS[c{i}]" for i, (a, b) in enumerate(clips)]
     joined = "".join(f"[c{i}]" for i in range(len(clips)))

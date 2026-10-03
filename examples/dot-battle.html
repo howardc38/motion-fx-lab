@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Dot battle — an original motion study</title>
+    <title>COUNTERFORM — an original dot fight</title>
     <link rel="icon" href="data:," />
     <style>
       body {
@@ -61,19 +61,11 @@
         padding: 0 16px;
       }
     </style>
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
-          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
-        }
-      }
-    </script>
     <script src="../fx/studio-effects.js"></script>
   </head>
   <body>
     <main>
-      <h1>Dot battle — an original motion study</h1>
+      <h1>COUNTERFORM — an original dot fight</h1>
       <div id="frame"></div>
       <nav>
         <a href="../index.html">Gallery</a><button id="play">Play</button
@@ -83,7 +75,7 @@
             id="seek"
             type="range"
             min="0"
-            max="40.8"
+            max="19.2"
             step="0.033333"
             value="0" /></label
         ><output id="clock">0.00 s</output
@@ -91,24 +83,20 @@
       </nav>
       <p id="error" role="alert"></p>
     </main>
-    <script>
+    <script type="module">
+      import {
+        BATTLE_DURATION,
+        BATTLE_MUSIC,
+        BATTLE_GIF,
+        BATTLE_POSTER,
+        battleCues,
+      } from "../fx/studio/battle.js";
       window.__SIZE = { w: 1280, h: 720 };
-      window.__DUR = 40.8;
-      window.__music = [[0, "build"], [2.4, "drop"], [16.8, "break"], [21.6, "final"], [38.4, "tail"]];
-      window.__gif = [
-        [3, 4],
-        [8, 9],
-        [14, 15],
-        [23, 24],
-        [28, 29],
-        [33, 34],
-        [37, 38],
-      ];
-      window.__poster = 6;
-      window.__cues = () =>
-        [2.4, 7.2, 12, 16.8, 21.6, 26.4]
-          .filter((t) => t < __DUR)
-          .map((t) => ({ t, name: "whoosh" }));
+      window.__DUR = BATTLE_DURATION;
+      window.__music = BATTLE_MUSIC;
+      window.__gif = BATTLE_GIF;
+      window.__poster = BATTLE_POSTER;
+      window.__cues = battleCues;
       let effect,
         playing = false,
         recording = false,

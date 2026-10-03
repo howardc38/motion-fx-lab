@@ -270,7 +270,7 @@ async function video(file, out, fps, n, gpu, verify) {
   const fps = +flag("--fps", 30);
   // One render pass of a 56-second, 3D-heavy page on an M4 with 16 GB: 4 browsers 19.4 s, 6 20.1 s, 8 22.6 s.
   const workers = +flag("--workers", 4);
-  if (!Number.isInteger(workers) || workers < 1 || !(fps > 0)) {
+  if (!Number.isInteger(workers) || workers < 1 || !Number.isFinite(fps) || !(fps > 0)) {
     throw new Error(`--workers needs a whole number >= 1 and --fps a positive number (got ${workers}, ${fps})`);
   }
   const [mode, file, ...rest] = argv;
@@ -279,9 +279,17 @@ async function video(file, out, fps, n, gpu, verify) {
   if ((mode === "video" || mode === "cues") && !rest[0]) throw new Error(`${mode} needs an output path`);
   server = await serve();
   if (mode === "video") {
-    const out = rest[0];
-    try { await video(file, out, fps, workers, gpu, verify); }
-    catch (e) { fs.rmSync(out, { force: true }); throw e; }
+    const out = path.resolve(rest[0]);
+    // Keep both render passes away from the destination and its .verify sibling.
+    // A failed load, encode or comparison must preserve the previous good master.
+    const work = fs.mkdtempSync(path.join(path.dirname(out), ".record-"));
+    const staged = path.join(work, path.basename(out));
+    try {
+      await video(file, staged, fps, workers, gpu, verify);
+      fs.renameSync(staged, out);
+    } finally {
+      fs.rmSync(work, { recursive: true, force: true });
+    }
     return;
   }
   const w = await open(file, gpu);

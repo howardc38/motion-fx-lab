@@ -20,6 +20,7 @@ import random
 import struct
 import sys
 import wave
+from bisect import bisect_right
 
 SR = 48_000
 BEAT = 0.6
@@ -98,14 +99,24 @@ CHORDS = [  # Am, F, C, G -- (bass root, triad)
 
 
 PLAN = []
+SECTION_STARTS = []
+END = 0.0
 
 
 def section(t):
-    name = PLAN[0][1]
-    for start, s in PLAN:
-        if t >= start:
-            name = s
-    return name
+    return section_span(t)[1]
+
+
+def section_span(t):
+    """The active authored section, including its own start and end."""
+    i = max(0, bisect_right(SECTION_STARTS, t) - 1)
+    start, name = PLAN[i]
+    end = PLAN[i + 1][0] if i + 1 < len(PLAN) else END
+    return start, name, end
+
+
+def progress(t, start, end):
+    return max(0.0, min(1.0, (t - start) / max(end - start, 1 / SR)))
 
 
 def starts(name, default):
@@ -113,17 +124,23 @@ def starts(name, default):
 
 
 def main(cues_path, out_path):
+    global END
     spec = json.load(open(cues_path))
     dur = float(spec["dur"])
     if not spec.get("music"):
         raise SystemExit(f"{cues_path} has no music sections: declare window.__music in the page")
     PLAN[:] = sorted((float(s), n) for s, n in spec["music"])
+    if not math.isfinite(dur) or dur <= 0 or any(not math.isfinite(s) or s < 0 for s, _ in PLAN):
+        raise SystemExit("music duration must be positive and section starts finite and non-negative")
+    SECTION_STARTS[:] = [s for s, _ in PLAN]
+    if len(set(SECTION_STARTS)) != len(SECTION_STARTS):
+        raise SystemExit("music sections must have distinct start times")
+    END = dur
+    rng.seed(11)
     known = {"intro", "build", "drop", "lift", "break", "final", "tail"}
     if not {n for _, n in PLAN} <= known:
         raise SystemExit(f"unknown music section(s) {sorted({n for _, n in PLAN} - known)}; use {sorted(known)}")
-    B0 = starts("build", 0.0)
-    D0 = starts("drop", B0 + 4.8)
-    T0 = starts("tail", dur)
+    D0 = starts("drop", starts("build", 0.0) + 4.8)
     N = n(dur + 1.0)
     mix = [0.0] * N
     K, CL, HB = kick(), clap(), heartbeat()
@@ -133,7 +150,7 @@ def main(cues_path, out_path):
     steps = int(dur / (BEAT / 4)) + 1
     for s in range(steps):
         t = s * BEAT / 4
-        sec = section(t)
+        start, sec, end = section_span(t)
         on_beat, eighth = s % 4 == 0, s % 2 == 0
         beat_in_bar = (s // 4) % 4
         if sec in ("intro", "break"):
@@ -142,12 +159,13 @@ def main(cues_path, out_path):
             add(mix, TICK, t, 0.10 if on_beat else 0.05)
         if sec == "build":
             if on_beat:
-                add(mix, K, t, 0.55 + 0.35 * (t - B0) / (D0 - B0))
+                add(mix, K, t, 0.55 + 0.35 * progress(t, start, end))
             add(mix, TICK, t, 0.07)
-            if t >= D0 - 2.4:  # snare roll into the drop, accelerating
-                rate = 2 if t < D0 - 1.2 else 1
+            roll_start = max(start, end - BAR)
+            if t >= roll_start and section(end) in ("drop", "lift", "final"):
+                rate = 2 if progress(t, roll_start, end) < 0.5 else 1
                 if s % rate == 0:
-                    add(mix, noise_burst(0.12, 30, lp=0.6), t, 0.12 + 0.25 * (t - (D0 - 2.4)) / 2.4)
+                    add(mix, noise_burst(0.12, 30, lp=0.6), t, 0.12 + 0.25 * progress(t, roll_start, end))
         if sec in ("drop", "lift", "final"):
             if on_beat:
                 add(mix, K, t, 1.0)
@@ -157,7 +175,7 @@ def main(cues_path, out_path):
                 add(mix, HAT, t, 0.08)
             if sec in ("lift", "final") and on_beat and beat_in_bar in (1, 3):
                 add(mix, CL, t, 0.45)
-        if sec == "tail" and t < T0 + 0.2 and on_beat:
+        if sec == "tail" and t < start + 0.2 and on_beat:
             add(mix, K, t, 0.6)
 
     # bass, pad and drone, sample by sample
@@ -167,12 +185,12 @@ def main(cues_path, out_path):
     phd = [0.0, 0.0]
     for i in range(N):
         t = i / SR
-        sec = section(t)
+        start, sec, end = section_span(t)
         root, triad = CHORDS[int(t / BAR) % 4] if t >= D0 else CHORDS[0]
         # bass: eighth-note pulse with a short pluck envelope
         env8 = math.exp(-((t % (BEAT / 2)) * 9))
         bass_on = {"intro": 0, "build": 0.7, "drop": 1, "lift": 1, "break": 0, "final": 1.1, "tail": 0}[sec]
-        cutoff = 180 + (900 * (t - B0) / (D0 - B0) if sec == "build" else 900 if bass_on else 0)
+        cutoff = 180 + (900 * progress(t, start, end) if sec == "build" else 900 if bass_on else 0)
         phb += root * 2 / SR
         a = 1 - math.exp(-2 * math.pi * cutoff / SR)
         y_b += a * (saw(phb) - y_b)
@@ -180,7 +198,7 @@ def main(cues_path, out_path):
         # pad: detuned saws, slow attack each bar, dark filter
         pad_on = {"intro": 0, "build": 0, "drop": 0.6, "lift": 0.7, "break": 1.0, "final": 0.8, "tail": 0.8}[sec]
         if sec == "tail":
-            pad_on *= max(0.0, 1 - (t - T0) / 2.2)
+            pad_on *= max(0.0, 1 - (t - start) / 2.2)
         pv = 0.0
         for k, f in enumerate(triad):
             for dtn, idx in ((0.998, 2 * k), (1.003, 2 * k + 1)):
@@ -197,7 +215,7 @@ def main(cues_path, out_path):
         ad = 1 - math.exp(-2 * math.pi * 260 / SR)
         y_d += ad * ((saw(phd[0]) + 0.7 * saw(phd[1])) / 1.7 - y_d)
         if sec == "tail":
-            drone_on *= max(0.0, 1 - (t - T0) / 2.2)
+            drone_on *= max(0.0, 1 - (t - start) / 2.2)
         d = y_d * drone_on * 0.45 * (0.8 + 0.2 * math.sin(2 * math.pi * 0.25 * t))
         mix[i] += b + p + d
 

@@ -9,7 +9,6 @@ import {
   instancedArray,
   uniform,
   vec3,
-  vec4,
   cos,
   sin,
   mix,

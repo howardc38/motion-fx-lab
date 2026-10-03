@@ -1,4 +1,4 @@
-# Original studio assets and fourteen film effects
+# Original studio assets and fourteen film demos
 
 The courier artwork, twenty poster treatments, mannequin geometry and 4.8-second
 skeletal sparring clip are original procedural assets. No reference-post images,
@@ -11,8 +11,10 @@ and [the dot-animation study](https://www.threads.com/@more.yu_/post/DeBkaXOE6y6
 
 ## Effect catalogue
 
-All IDs below are prefixed with `studio-` in the main gallery. Twenty art
-directions are presets of `themes`, not twenty additional effect registrations.
+All IDs below remain callable with the `studio-` prefix. The main gallery groups
+variants inside technique cards and puts collections in a separate showcase
+section; [the catalogue](../../fx/catalog.js) defines that relationship. Twenty art
+directions are presets of `themes`, not twenty additional techniques.
 
 | ID | Film effect | Implementation |
 |---|---|---|
@@ -52,7 +54,11 @@ The asset command exports `fighter.glb` with a real skeleton and animation clip,
 renders `examples/fight-source.html` twice at 24 fps, encodes `fight-source.mp4`,
 and imports it into `fight/frame-*.png` plus `fight/manifest.json`. The shipped
 frames are small enough to check in; a normal film rebuild can reuse them.
-`build:studio` delivers the two 40.8-second films, with sound, posters and GIFs.
+`build:studio` delivers the 40.8-second art-direction film and the 19.2-second
+COUNTERFORM fight, with sound, posters and GIFs. The fight uses a separate original
+2D illustrated rig in `fx/studio/battle.js`: anticipation, attack, contact holds,
+recoil, kicks and counterattacks. Its held perspective shot is 2.5D. The dedicated
+`freeze-orbit` technique remains a true orbit around animated GLB geometry.
 `build:showcase` also rebuilds the earlier films and the main intro.
 
 The asset tool uses Three.js r180 GLTFExporter and BufferGeometryUtils; playback

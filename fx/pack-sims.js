@@ -11,13 +11,13 @@
   const SEEN = "Threads · @designer.riven";
 
   // ================= Gray–Scott reaction–diffusion on the GPU =================
-  const RD_W = 240, RD_H = 300, RD_SPS = 900, RD_PERIOD = 10;
+  const RD_W = 240, RD_H = Math.round(RD_W * GH / GW), RD_SPS = 900, RD_PERIOD = 10;
   const RD_F = 0.0545, RD_K = 0.062;   // "coral" feed and kill rates, with Du = 1, Dv = 0.5, dt = 1
   const VERT = "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }";
 
   demo({ id: "reaction", gl: true, name: "Reaction–diffusion growing from text", kind: "sim", stacks: ["three", "glsl", "canvas"],
     chips: ["Gray–Scott on the GPU", "ping-pong half-float targets", `fixed ${RD_SPS} steps/s`], grade: "B",
-    purpose: "A word grows into coral: two chemicals react and diffuse on a 240×300 grid seeded by the letters. Organic texture from maths, no footage.",
+    purpose: "A word grows into coral: two chemicals react and diffuse on a seeded simulation grid seeded by the letters. Organic texture from maths, no footage.",
     seen: SEEN, period: RD_PERIOD, hero: 6,
     build(s) {
       const blit = glTile(s), cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), geo = new THREE.PlaneGeometry(2, 2);
@@ -129,8 +129,10 @@
       if (!window.Matter) throw new Error("Matter.js did not load");
       const { Engine, Bodies, Body, Composite } = window.Matter;
       s.style.background = CREAM;
-      const c = document.createElement("canvas"); c.width = RB_W; c.height = RB_H; c.className = "fill"; s.appendChild(c);
+      const wide = s.classList.contains("landscape"), width = wide ? Math.round(RB_H * 16 / 9) : RB_W;
+      const c = document.createElement("canvas"); c.width = width; c.height = RB_H; c.className = "fill"; s.appendChild(c);
       const g = c.getContext("2d");
+      const floorLength = wide ? width + 60 : FLOOR_L;
       const mat = { friction: 0.35, frictionStatic: 0.6, restitution: 0.15, density: 0.0012 };
 
       const letterBody = (k, x, y) => {
@@ -147,12 +149,12 @@
         const engine = Engine.create({ gravity: { x: 0, y: 2, scale: 0.001 }, positionIterations: 10, velocityIterations: 8, enableSleeping: false });
         engine.timing.timeScale = 1; engine.timing.timestamp = 0;
         const wall = (x, bottom) => Bodies.rectangle(x, (bottom - 900) / 2, 60, bottom + 900, { isStatic: true, friction: 0.1 });
-        const floor = Bodies.rectangle(HINGE.x + FLOOR_L / 2, HINGE.y, FLOOR_L, FLOOR_T, { isStatic: true, friction: 0.25, frictionStatic: 0.3 });
-        Composite.add(engine.world, [wall(-30, HINGE.y - FLOOR_T / 2), wall(RB_W + 30, HINGE.y - FLOOR_T / 2), floor]);
+        const floor = Bodies.rectangle(HINGE.x + floorLength / 2, HINGE.y, floorLength, FLOOR_T, { isStatic: true, friction: 0.25, frictionStatic: 0.3 });
+        Composite.add(engine.world, [wall(-30, HINGE.y - FLOOR_T / 2), wall(width + 30, HINGE.y - FLOOR_T / 2), floor]);
         const R = rng(8111), items = RB_SPAWN.map((o) => {
-          const y = -70;
-          const b = o.k === "circle" ? Bodies.circle(o.x, y, o.r, mat) : o.k === "tri" ? Bodies.polygon(o.x, y, 3, o.r, mat) : letterBody(o.k, o.x, y);
-          const glyph = { x: o.x - b.position.x, y: y - b.position.y };   // where the glyph's ink centre sits, in body space
+          const y = -70, x = wide ? 80 + o.x / RB_W * (width - 160) : o.x;
+          const b = o.k === "circle" ? Bodies.circle(x, y, o.r, mat) : o.k === "tri" ? Bodies.polygon(x, y, 3, o.r, mat) : letterBody(o.k, x, y);
+          const glyph = { x: x - b.position.x, y: y - b.position.y };   // where the glyph's ink centre sits, in body space
           Body.setAngle(b, (R() - 0.5) * 0.7);
           Body.setVelocity(b, { x: (R() - 0.5) * 1.2, y: 2 + R() * 2 });
           Body.setAngularVelocity(b, (R() - 0.5) * 0.04);
@@ -165,7 +167,7 @@
         const a = tiltAt((sim.n + 1) / RB_HZ);
         sim.floor.friction = sim.n >= TILT_AT * RB_HZ ? 0 : 0.25;   // Matter's friction is sticky on slopes; an icy floor lets the pile slide
         Body.setAngle(sim.floor, a, true);
-        Body.setPosition(sim.floor, { x: HINGE.x + Math.cos(a) * FLOOR_L / 2, y: HINGE.y + Math.sin(a) * FLOOR_L / 2 }, true);
+        Body.setPosition(sim.floor, { x: HINGE.x + Math.cos(a) * floorLength / 2, y: HINGE.y + Math.sin(a) * floorLength / 2 }, true);
         Engine.update(sim.engine, 1000 / RB_HZ);
         sim.n++;
       };
@@ -181,7 +183,7 @@
       };
       const path = (vs) => { g.beginPath(); g.moveTo(vs[0].x, vs[0].y); for (let i = 1; i < vs.length; i++) g.lineTo(vs[i].x, vs[i].y); g.closePath(); };
       const draw = () => {
-        g.fillStyle = CREAM; g.fillRect(0, 0, RB_W, RB_H);
+        g.fillStyle = CREAM; g.fillRect(0, 0, width, RB_H);
         g.fillStyle = "rgba(17,16,22,0.45)"; g.font = `700 15px ${MONO}`; g.textAlign = "left"; g.textBaseline = "alphabetic";
         g.fillText("MATTER.JS · 240 HZ", 24, 40);
         if (!glyphBox) glyphBox = glyphs();
@@ -201,7 +203,7 @@
         }
         const f = sim.floor;
         g.save(); g.translate(f.position.x, f.position.y); g.rotate(f.angle);
-        g.fillStyle = INK; g.fillRect(-FLOOR_L / 2, -FLOOR_T / 2, FLOOR_L, FLOOR_T); g.restore();
+        g.fillStyle = INK; g.fillRect(-floorLength / 2, -FLOOR_T / 2, floorLength, FLOOR_T); g.restore();
         g.fillStyle = CREAM; g.beginPath(); g.arc(HINGE.x + 30 * Math.cos(f.angle), HINGE.y + 30 * Math.sin(f.angle), 5, 0, Math.PI * 2); g.fill();
       };
       const frame = (t) => {

@@ -32,7 +32,8 @@
       window.__cues = () => [];
       let source;
       window.__ready = import("../fx/studio/scene.js").then(async (mod) => {
-        source = await mod.duel();
+        const assetUrl = document.querySelector('meta[name="source-asset"]')?.content;
+        source = await mod.duel(false, { assetUrl });
       });
       window.__render = async (t) => {
         await __ready;

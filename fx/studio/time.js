@@ -10,19 +10,17 @@ export function seeded(seed = 17) {
     return seed / 4294967296;
   };
 }
-export function timeAt(t, mode = "normal") {
+export function timeAt(t, mode = "normal", duration = 4.8, lastTime = duration - 1e-6) {
   t = Math.max(0, t);
-  if (mode === "freeze") return Math.min(t, 1.35);
-  if (mode === "reverse") return Math.max(0, 4.8 - t);
+  const scale = duration / 4.8;
+  if (mode === "freeze") return Math.min(t, 1.35 * scale);
+  // The exclusive loop endpoint wraps to frame zero; reverse starts at the final frame.
+  if (mode === "reverse") return Math.max(0, lastTime - t);
   if (mode === "steps") return Math.floor(t * 6) / 6;
-  if (mode === "ramp")
-    return t < 1.2
-      ? t
-      : t < 2.4
-        ? 1.2 + (t - 1.2) * 0.2
-        : t < 3.6
-          ? 1.44
-          : 1.44 + (t - 3.6) * 2;
+  if (mode === "ramp") {
+    const u = t / scale;
+    return scale * (u < 1.2 ? u : u < 2.4 ? 1.2 + (u - 1.2) * 0.2 : u < 3.6 ? 1.44 : 1.44 + (u - 3.6) * 2);
+  }
   return t;
 }
 export function impact(t, at = 2, duration = 0.7) {

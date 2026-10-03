@@ -1,0 +1,76 @@
+/* Landscape gallery layouts. Film pages retain their authored composition. */
+.stage.landscape { aspect-ratio:16/9; container-type:size; }
+.landscape .whip-l1 { top:8cqw; left:7cqw; font-size:20cqw; }
+.landscape .whip-l2 { top:25cqw; left:7cqw; font-size:20cqw; }
+.landscape .whip-badge { width:14cqw;height:14cqw;font-size:7cqw;right:9cqw;top:17cqw; }
+.landscape .whip-cap {bottom:4cqw;font-size:3cqw;}
+.landscape .chars {font-size:8cqw;line-height:1.15;}
+.landscape .doc {top:7cqw;padding:3cqw 5cqw;font-size:4cqw;gap:1.5cqw;}
+.landscape .doc-h {font-size:2.6cqw;}
+.landscape .ph {height:2cqw;margin-top:0;}
+.landscape .cnt {gap:2cqw;}
+.landscape .cnt-l {font-size:4cqw;}
+.landscape .cnt-n {font-size:11cqw;}
+.landscape .cnt-s {font-size:3cqw;}
+.landscape .ig-top {height:10cqw;font-size:3.3cqw;}
+.landscape .ig-top b {width:6cqw;height:6cqw;}
+.landscape .bub {font-size:3.5cqw;padding:2cqw 3cqw;}
+.landscape .them {top:15cqw;}
+.landscape .me {top:31cqw;}
+.landscape .auto {top:10cqw;}
+.landscape .auto b {font-size:6cqw;}
+.landscape .stampx {font-size:8cqw;border-width:.8cqw;top:65%;}
+.landscape .chipsx {top:36cqw;gap:2cqw;}
+.landscape .chipsx span {font-size:3.2cqw;padding:1cqw 2cqw;}
+.landscape .warnx {top:46cqw;font-size:3cqw;}
+.landscape .scanbar {height:.7cqw;}
+.landscape .gcard {top:9cqw;padding:4cqw;gap:2cqw;}
+.landscape .gc-h {font-size:3.5cqw;}
+.landscape .gc-h b {width:6cqw;height:6cqw;}
+.landscape .gc-q {font-size:3.8cqw;}
+.landscape .b1 {top:0;}.landscape .b2 {top:10cqw;}.landscape .b3 {top:25cqw;}
+.landscape .frost {top:11cqw;padding:4cqw;gap:3cqw;}
+.landscape .fr-t {font-size:6cqw;}
+.landscape .fr-k span {font-size:3.4cqw;padding:1.8cqw;}
+.landscape .orb {top:6cqw;}
+.landscape .orb-t {bottom:6cqw;font-size:7cqw;}
+.landscape .sc b {font-size:10cqw;}.landscape .sc span {font-size:4cqw;}
+.landscape .hook {top:8cqw;}.landscape .mask {font-size:7.5cqw;}
+.landscape .hook-s {font-size:3cqw;margin-top:3cqw;}
+.landscape .kar-ph {left:6cqw;right:65cqw;top:7cqw;height:30cqw;font-size:3cqw;}
+.landscape .kar {left:40cqw;right:5cqw;top:10cqw;font-size:5.8cqw;}
+.landscape .kar-tl {bottom:5cqw;gap:1cqw;}
+.landscape .kar-tl span {font-size:2.3cqw;}
+.landscape .stk {font-size:4.6cqw;padding:2cqw 3cqw;border-width:.8cqw;}
+.landscape .s1 {top:7cqw;left:7cqw;}.landscape .s2 {top:21cqw;left:29cqw;}.landscape .s3 {top:36cqw;left:12cqw;}
+.landscape .bt-cards {top:10cqw;grid-template-columns:repeat(4,1fr);gap:2cqw;}
+.landscape .bt-cards span {padding:7cqw 1cqw;font-size:4cqw;}
+.landscape .bt-dots {bottom:13cqw;}.landscape .bt-dots i {width:3cqw;height:3cqw;}
+.landscape .bt-bpm {bottom:5cqw;font-size:3cqw;}
+.landscape .gl-t {top:8cqw;gap:3cqw;}.landscape .gl-t b {font-size:8cqw;}.landscape .gl-t span {font-size:3.8cqw;max-width:65cqw;}
+.landscape .lut-win {left:6cqw;top:8cqw;width:52cqw;height:35cqw;border-width:1cqw;}
+.landscape .lut-sun {left:34cqw;top:14cqw;width:15cqw;height:15cqw;}
+.landscape .lut-phone {left:66cqw;top:21cqw;width:26cqw;height:27cqw;padding:2cqw;}
+.landscape .lut-phone span {font-size:3cqw;padding:2cqw;}
+.landscape .lut-glow {top:0;width:40cqw;height:40cqw;}
+.landscape .lut-lab {font-size:2.6cqw;}
+.landscape .tg3 {top:7cqw;left:12cqw;right:12cqw;padding:3cqw;gap:2cqw;}
+.landscape .tg-h {font-size:3cqw;}.landscape .tg-h b {width:5cqw;height:5cqw;font-size:2cqw;}
+.landscape .tg-h span {font-size:2cqw;}.landscape .tg-q {font-size:3cqw;padding:2cqw;}
+.landscape .tg-kb span {font-size:2.4cqw;padding:1.6cqw;}
+.landscape .glitch span {font-size:17cqw;}
+.landscape .p2-vt-row {font-size:7cqw;}.landscape .p2-vt-word {font-size:16cqw;}
+.landscape .p2-vt-read {font-size:2.6cqw;bottom:3cqw;}
+.landscape .p2-cr-h {font-size:10cqw;}.landscape .p2-cr-sub {top:auto;bottom:5cqw;font-size:2.6cqw;}
+.landscape .p2-cf-head {top:3cqw;left:6cqw;right:6cqw;}.landscape .p2-cf-head b {font-size:5cqw;}.landscape .p2-cf-head span {font-size:2cqw;}
+.landscape .p2-cf-grid {top:12cqw;left:6cqw;right:6cqw;gap:2cqw;}
+.landscape .p2-cf-card {aspect-ratio:2.5/1;}.landscape .p2-cf-f,.landscape .p2-cf-b {padding:1.5cqw;flex-direction:row;align-items:center;}
+.landscape .p2-cf-f i,.landscape .p2-cf-b i {font-size:1.8cqw;}.landscape .p2-cf-f b {font-size:3.2cqw;}.landscape .p2-cf-b b {font-size:3.8cqw;}
+.landscape .pd-bubble {font-size:3.6cqw;padding:1.6cqw 2.4cqw;border-width:.7cqw;}
+.landscape .pd-cards {top:63%;}
+.landscape .pd-card {left:-9cqw;top:-12cqw;width:18cqw;height:24cqw;padding:2cqw;font-size:2.8cqw;}
+.landscape .pd-card b {font-size:2.4cqw;}.landscape .pd-card i {font-size:2cqw;}
+.landscape .pd-logo b {font-size:11cqw;}.landscape .pd-logo i {font-size:2.4cqw;}
+.landscape .pd-slide {padding:8cqw 7cqw;font-size:8cqw;}
+.landscape .pd-badge {left:auto;right:6cqw;bottom:5cqw;width:25cqw;height:25cqw;border-width:.7cqw;}
+.landscape .pd-tag {left:7cqw;bottom:6cqw;font-size:2.6cqw;}

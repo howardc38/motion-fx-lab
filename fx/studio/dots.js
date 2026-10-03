@@ -2,12 +2,15 @@ import { PointField } from "./point-field.js";
 import { FrameSource } from "./frame-source.js";
 import { duel, surface } from "./scene.js";
 import * as THREE from "three";
-import { timeAt, impact, clamp } from "./time.js";
+import { timeAt, impact } from "./time.js";
 let sourcePromise;
 const source = () =>
   (sourcePromise ||= FrameSource.load(
     new URL("../../assets/studio/fight/manifest.json", import.meta.url),
-  ));
+  ).catch((error) => {
+    sourcePromise = undefined;
+    throw error;
+  }));
 const palettes = [
   ["#f5eedc", "#1c3150"],
   ["#f7d837", "#162b33"],
@@ -23,9 +26,12 @@ export async function createDots(mode, options = {}) {
       ? await FrameSource.load(new URL(options.sourceUrl, document.baseURI))
       : await source(),
     period =
-      options.loopDuration ||
+      options.loopDuration ??
       (options.sourceUrl ? input.data.count / input.data.fps : 4.8),
     sample = document.createElement("canvas");
+  if (!Number.isFinite(period) || period <= 0)
+    throw new Error("Loop duration must be positive and finite");
+  const lastTime = Math.max(0, Math.min(input.data.count - 1, Math.ceil(period * input.data.fps) - 1) / input.data.fps);
   sample.width = 640;
   sample.height = 360;
   const sg = sample.getContext("2d", { willReadFrequently: true });
@@ -53,7 +59,7 @@ export async function createDots(mode, options = {}) {
     tg.arc(16, 16, 14, 0, Math.PI * 2);
     tg.fill();
     const mat = new THREE.PointsMaterial({
-      size: 0.045,
+      size: 0.13,
       map: new THREE.CanvasTexture(texture),
       transparent: true,
       alphaTest: 0.1,
@@ -119,10 +125,10 @@ export async function createDots(mode, options = {}) {
         g.fillStyle = col;
         g.beginPath();
         g.ellipse(
-          x + layer * 7,
-          y,
-          r,
-          r * (kind === "impact" ? 1 - event * 0.65 : 1),
+          640 + (x - 640) * 1.35 + layer * 12,
+          360 + (y - 360) * 1.35,
+          r * 1.35,
+          r * 1.35 * (kind === "impact" ? 1 - event * 0.65 : 1),
           0,
           0,
           Math.PI * 2,
@@ -142,7 +148,8 @@ export async function createDots(mode, options = {}) {
   async function drawDepth(t, options = {}) {
     const data = await pixels(t),
       pos = [],
-      colors = [];
+      colors = [],
+      fillLight = new THREE.Color("#c8def0");
     let depthData = null;
     if (options.depthFrame) {
       sg.clearRect(0, 0, 640, 360);
@@ -159,7 +166,7 @@ export async function createDots(mode, options = {}) {
         pos.push((x - 320) / 105, (180 - y) / 105, (lum - 0.5) * 1.2);
         const co = new THREE.Color(
           `rgb(${data[k]},${data[k + 1]},${data[k + 2]})`,
-        );
+        ).lerp(fillLight, 0.55);
         colors.push(co.r, co.g, co.b);
       }
     depth.geometry.attributes.position.array.set(pos);
@@ -167,8 +174,10 @@ export async function createDots(mode, options = {}) {
     depth.geometry.attributes.position.needsUpdate = true;
     depth.geometry.attributes.color.needsUpdate = true;
     depth.geometry.setDrawRange(0, pos.length / 3);
-    depth.scene.background = new THREE.Color("#f5eedc");
-    depth.camera.position.set(Math.sin(t * 0.8) * 2.2, 0, 6.5);
+    // The source has pale clothing: a dark field and closer framing keep the
+    // surface readable instead of losing it against the cream page palette.
+    depth.scene.background = new THREE.Color("#10233b");
+    depth.camera.position.set(Math.sin(t * 0.8) * 1.1, 0, 4.1);
     depth.camera.lookAt(0, 0, 0);
     surface().render(depth.scene, depth.camera);
     g.drawImage(surface().domElement, 0, 0);
@@ -206,7 +215,7 @@ export async function createDots(mode, options = {}) {
         else if (t < 12) await draw2D(t, "impact", t);
         else if (t < 16.8) await draw2D(t, "echo", t);
         else if (t < 21.6) {
-          await draw2D(timeAt(t - 16.8, "ramp"), "ramp", t);
+          await draw2D(timeAt((t - 16.8) % period, "ramp", period, lastTime), "ramp", t);
           last.section = "source-time ramp and hold";
         } else if (t < 26.4) {
           await drawDepth(t - 21.6);
@@ -239,15 +248,15 @@ export async function createDots(mode, options = {}) {
       } else {
         const remap =
           options.timeMode ||
-          ["normal", "ramp", "reverse", "steps"][Math.floor(t / 4.8) % 4];
-        const src = mode === "ramp" ? timeAt(t % 4.8, remap) : t;
+          ["normal", "ramp", "reverse", "steps"][Math.floor(t / period) % 4];
+        const src = mode === "ramp" ? timeAt(t % period, remap, period, lastTime) : t;
         await draw2D(src, mode, t);
         if (mode === "ramp") last.remap = remap;
       }
       g.font = "500 17px monospace";
       g.textAlign = "left";
       g.fillStyle =
-        ["lens"].includes(mode) || (mode === "battle" && t >= 36)
+        ["lens", "depth"].includes(mode) || (mode === "battle" && (t >= 36 || (t >= 21.6 && t < 26.4)))
           ? "#dbe7ee"
           : "#41505c";
       g.fillText(

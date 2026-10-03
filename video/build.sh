@@ -35,5 +35,14 @@ for attempt in 1 2 3 4 5; do
 done
 
 POSTER=${POSTER_AT:-$(python3 -c 'import json, sys; p = json.load(open(sys.argv[1])).get("poster"); print("" if p is None else p)' "$WORK/cues.json")}
-python3 deliver.py "$WORK/master.mkv" "$WORK/mix.wav" ../media "$NAME" ${POSTER:-}
-python3 gif.py "$WORK/cues.json" "../media/$NAME.mp4" "../media/$NAME.gif"
+mkdir "$WORK/delivery"
+python3 deliver.py "$WORK/master.mkv" "$WORK/mix.wav" "$WORK/delivery" "$NAME" ${POSTER:-}
+python3 gif.py "$WORK/cues.json" "$WORK/delivery/$NAME.mp4" "$WORK/delivery/$NAME.gif"
+# A failed GIF must not leave a new film paired with an old README preview.
+ARTIFACTS=("$NAME.mp4" "${NAME}_hq.mp4" "$NAME.jpg")
+if [ -f "$WORK/delivery/$NAME.gif" ]; then
+  ARTIFACTS+=("$NAME.gif")
+else
+  ARTIFACTS+=(--remove "$NAME.gif")
+fi
+node publish.cjs "$WORK/delivery" ../media "${ARTIFACTS[@]}"

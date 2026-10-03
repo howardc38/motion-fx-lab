@@ -15,12 +15,21 @@ export function surface() {
   return renderer;
 }
 export async function actor(color, seed = 8, assetUrl) {
-  rigTools ||= Promise.all([import('three/addons/loaders/GLTFLoader.js'), import('three/addons/utils/SkeletonUtils.js')]);
+  rigTools ||= Promise.all([import('three/addons/loaders/GLTFLoader.js'), import('three/addons/utils/SkeletonUtils.js')]).catch((error) => {
+    rigTools = undefined;
+    throw error;
+  });
   const [{ GLTFLoader }, { clone }] = await rigTools;
   const url = assetUrl
     ? new URL(assetUrl, document.baseURI).href
     : new URL("../../assets/studio/fighter.glb", import.meta.url).href;
-  if (!models.has(url)) models.set(url, new GLTFLoader().loadAsync(url));
+  if (!models.has(url)) {
+    const pending = new GLTFLoader().loadAsync(url).catch((error) => {
+      if (models.get(url) === pending) models.delete(url);
+      throw error;
+    });
+    models.set(url, pending);
+  }
   const gltf = await models.get(url),
     root = clone(gltf.scene),
     mixer = new THREE.AnimationMixer(root);
@@ -112,7 +121,8 @@ export function sampleSkin(mesh, count, seed) {
             const vertex = triangles[i * 3 + j],
               w = weights[i * 3 + j];
             v += posed[vertex * 3 + k] * w;
-            cv += (col ? col.array[vertex * 3 + k] : 1) * w;
+            // Accessors honor normalized integer, RGBA and interleaved attributes.
+            cv += (col ? col.getComponent(vertex, k) : 1) * w;
           }
           positions[out + k] = v;
           colors[out + k] = cv * tint[k];
@@ -258,7 +268,6 @@ export function lowpoly() {
     b.position.set((i % 2 ? 1 : -1) * (3 + R() * 10), h / 2, -i * 0.7);
     scene.add(b);
   }
-  const rings = [];
   for (let i = 0; i < 9; i++) {
     const r = new THREE.Mesh(
       new THREE.TorusGeometry(1.5, 0.11, 5, 12),
@@ -270,7 +279,6 @@ export function lowpoly() {
     );
     r.position.set(Math.sin(i * 0.8) * 0.8, 3, -i * 7);
     scene.add(r);
-    rings.push(r);
   }
   return (t) => {
     camera.position.set(Math.sin(t * 0.7) * 0.6, 3, -(t % 6) * 8 + 4);
