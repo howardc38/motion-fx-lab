@@ -47,3 +47,8 @@ test('the full 3D orbit keeps both fighters inside the camera frame',async({page
  const bounds=await page.evaluate(async()=>{const {duel}=await import('/fx/studio/scene.js');const THREE=await import('three');const rig=await duel(true);const out=[];for(let t=0;t<6;t+=.375){rig.frame(t,{mode:'orbit'});const cloud=rig.scene.children.find(o=>o.isPoints),a=cloud.geometry.attributes.position,v=new THREE.Vector3();let maxX=0,maxY=0;for(let i=0;i<a.count;i++){v.fromBufferAttribute(a,i).project(rig.camera);maxX=Math.max(maxX,Math.abs(v.x));maxY=Math.max(maxY,Math.abs(v.y));}out.push({t,maxX,maxY});}return out;});
  for(const b of bounds){expect(b.maxX,`horizontal crop at ${b.t}`).toBeLessThan(.98);expect(b.maxY,`vertical crop at ${b.t}`).toBeLessThan(.98);}
 });
+test('screen-space fight treatments keep the wind-up limbs away from frame edges',async({page})=>{
+ await page.goto('/examples/studio.html');await page.waitForFunction(()=>window.studio?.current);
+ const hits=await page.evaluate(async()=>{const bad=[];for(const id of ['video-dots','echo','dot-impact','time-remap']){const e=await FXStudio.create(id);for(const t of [.3,.5,.7,1.5,2.5,3.5,4.2]){await e.frame(t);const d=e.canvas.getContext('2d').getImageData(0,0,1280,720).data;let dark=0;for(let y=90;y<700;y++)for(const x of [2,5,1274,1277]){const k=(y*1280+x)*4;if(Math.abs(d[k]-245)+Math.abs(d[k+1]-238)+Math.abs(d[k+2]-220)>40)dark++;}if(dark)bad.push({id,t,dark});}}return bad;});
+ expect(hits).toEqual([]);
+});

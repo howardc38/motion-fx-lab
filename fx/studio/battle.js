@@ -12,7 +12,7 @@ export const BATTLE_GIF = [
   [2.65, 3.65],
   [6.1, 7.1],
   [10, 11],
-  [15.1, 16.1],
+  [14.6, 15.6],
 ];
 export const BATTLE_POSTER = 3.04;
 // One authored event list drives contact, sound and local particle displacement.

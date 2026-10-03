@@ -3,7 +3,7 @@
     python3 gif.py cues.json video.mp4 out.gif
 
 The page lists the clips in window.__gif as [[start_seconds, end_seconds], ...]; record.cjs exports
-them into cues.json. Without clips this does nothing. The GIF has no sound, 800 px wide, 12 fps.
+them into cues.json. Without clips it removes only the specified stale GIF output. The GIF has no sound, 800 px wide, 12 fps.
 """
 import json
 import subprocess

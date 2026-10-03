@@ -78,7 +78,10 @@
         canvas.setAttribute("role", "img");
         canvas.setAttribute("aria-label", name);
         stage.appendChild(canvas);
-        return FXOptical.create(canvas, mode);
+        const frame = FXOptical.create(canvas, mode);
+        // Gallery frames receive (localTime, absoluteTime); optical's second
+        // argument is strength, so keep its default when adapting the callback.
+        return (t) => frame(t);
       },
     });
   }

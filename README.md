@@ -23,7 +23,7 @@ Describe the video to an AI coding assistant, or write it yourself. It becomes a
 </tr>
 </table>
 
-Plus characters drawn in code and 64 reusable effect techniques. The 55-second intro moves from four uses and character action into three stories: One Flight, Twenty Worlds; One Word, Many Forms; and One Push, Chain Reaction. It closes by changing text, scrubbing the timeline and exporting MP4. Their separate players are linked below. Each example is one HTML file with its text or numbers at the top; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
+Plus characters drawn in code and 64 reusable effect techniques. The 55-second intro moves from four uses and character action into three stories: One Flight, Twenty Worlds; One Word, Many Forms; and One Push, Chain Reaction. It closes by changing text, scrubbing the timeline and exporting MP4. The example films and effect settings are linked below. Each example is one HTML file with its text or numbers at the top; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
 
 ## Intro storyboard
 
@@ -43,10 +43,45 @@ These three intro stories combine existing capabilities; they do not add three
 new effect registrations. Source: [intro.html](video/intro.html) and
 [intro-stories.js](fx/intro-stories.js).
 
+## Published films and previews
+
+| Film | Authored length | Format | Preview | Source |
+|---|---:|---|---|---|
+| [Intro](media/intro.mp4) | 55.2 s | 16:9 | [GIF](media/intro.gif) · [poster](media/intro.jpg) | [HTML](video/intro.html) |
+| [Social reel](media/reel.mp4) | 12 s | 9:16 | [poster](media/reel.jpg) | [HTML](examples/reel.html) |
+| [Product demo](media/product.mp4) | 7.2 s | 16:9 | [poster](media/product.jpg) | [HTML](examples/product.html) |
+| [Infographic](media/infographic.mp4) | 14.4 s | 16:9 | [poster](media/infographic.jpg) | [HTML](examples/infographic.html) |
+| [B-roll](media/broll.mp4) | 12 s | 16:9 | [poster](media/broll.jpg) | [HTML](examples/broll.html) |
+| [Optical effects](media/optical.mp4) | 18 s | 16:9 | [GIF](media/optical.gif) · [poster](media/optical.jpg) | [HTML](examples/optical.html) |
+| [Filters, collisions and particles](media/stacks.mp4) | 24 s | 16:9 | [GIF](media/stacks.gif) · [poster](media/stacks.jpg) | [HTML](examples/stacks.html) |
+| [One Flight, Twenty Worlds](media/style-journey.mp4) | 40.8 s | 16:9 | [GIF](media/style-journey.gif) · [poster](media/style-journey.jpg) | [HTML](examples/style-journey.html) |
+| [COUNTERFORM](media/dot-battle.mp4) | 19.2 s | 16:9 | [GIF](media/dot-battle.gif) · [poster](media/dot-battle.jpg) | [HTML](examples/dot-battle.html) |
+| [Same Fight, Eight Treatments](media/fight-effects.mp4) | 24 s | 16:9 | [GIF](media/fight-effects.gif) · [poster](media/fight-effects.jpg) | [HTML](examples/fight-effects.html) |
+
+The four original use-case films intentionally have posters without GIFs. A GIF
+is a silent selection of shots, not the full film. MP4 container durations can be
+about 0.1 s longer than the authored timeline because of the final frame and
+encoding timestamps. `assets/studio/fight-source.mp4` is a silent green-screen
+source asset, not another finished film.
+
+```sh
+npm run build:all       # all ten published film bundles
+npm run build:showcase  # intro, optical, stacks and the three studio films
+npm run test:media      # source dimensions/duration and MP4/poster/GIF bundle checks
+```
+
+An appearance change to a shared renderer requires rebuilding its dependent
+films and previews. In particular, the intro embeds gallery adapters; the
+fight-effects comparison uses the shared studio effects. Run
+`npm run build:studio-assets` first when changing the shared fight choreography
+or the 3D model, then rebuild the dependent film bundles. Review actual moving
+pictures as well as tests: different metadata or pixels do not by themselves
+prove a useful or well-directed effect.
+
 ## Sound familiar?
 
 - **Changing one word means another export.** Your motion graphics live in a desktop app. You cannot diff them, review them in a pull request or render ten variants from a script.
-- **Code-to-video frameworks want React, and a licence.** Remotion is built on React, and companies of more than three people need a paid licence.
+- **Some alternatives use React and eligibility-based licensing.** Remotion uses React; its [licence](https://github.com/remotion-dev/remotion/blob/main/packages/core/LICENSE.md) offers free use for eligible individuals, small for-profit organizations and nonprofits, with a Company License for others.
 - **Headless Chrome renders your 3D on a CPU.** By default Playwright's headless Chromium runs WebGL on SwiftShader, a software GPU. On our test scene that was 99.8 ms a frame instead of 4.0 ms on the real GPU.
 - **Browser capture fails silently.** A lost WebGL context screenshots as a blank frame, with no error. Parallel browsers can disagree too: after a scale animation, one of ours kept laying out SVG labels at 0.6 of their size. A spot check of 8 frames missed that; we only caught it by comparing whole renders.
 - **Colours shift in the browser.** Converting screenshots to video with ffmpeg's defaults uses the BT.601 matrix and writes no colour tags, and browsers read untagged HD video as BT.709. Our pink `#ff90e8` played back as `#ff9fe8`.
@@ -293,11 +328,10 @@ A render that cannot be proven correct produces no file:
 
 | | This repo | Remotion | HyperFrames | After Effects |
 |---|---|---|---|---|
-| You write | HTML, CSS, SVG, Canvas, three.js, GLSL | React components | HTML | Nothing; you animate by hand |
-| Licence | 0BSD | Free for individuals and companies of up to 3 people; paid above that | Apache-2.0 | Paid subscription |
-| Maturity | New | Mature | v0.8, frame API marked experimental | Mature |
+| You author | HTML, CSS, SVG, Canvas, three.js, GLSL | React components | HTML compositions | Timeline compositions, expressions and scripts |
+| Licence | 0BSD | Free for eligible users; Company License otherwise | Apache-2.0 | Paid subscription |
 
-Remotion and HyperFrames checked on 2026-09-28 against their licence files and documentation.
+Workflow and licence references checked on 2026-10-03: [Remotion licence](https://github.com/remotion-dev/remotion/blob/main/packages/core/LICENSE.md), [HyperFrames documentation and licence](https://github.com/heygen-com/hyperframes), and [Adobe scripting documentation](https://helpx.adobe.com/after-effects/desktop/automate-in-after-effects/automate-animation/scripts.html).
 
 ## Render differences we found
 
@@ -314,7 +348,7 @@ The second was a one-pixel column at the edge of a tile while it scaled in: fram
 - The main gallery uses three.js r128; the three additional film modules pin r180. The gallery retains r128, which still ships the single-file UMD build and `examples/js` (removed in r161 and r148). Upgrading means re-tuning every colour, light and shader.
 - The 3D font has no CJK glyphs, so Chinese text stays flat.
 - The reaction–diffusion tile gives the same pixels every time on one GPU, but we saw a different pattern on SwiftShader than on Metal. It runs 900 steps a second on half-float textures, so small rounding differences between the two backends are the likely cause. The recorder never mixes the two in one run.
-- Automated browser regressions cover the new effects, audio contract, asynchronous recorder and intro playback. There is no CI yet; complete video builds are verified locally, and broader automated coverage of recorder failure paths is still needed.
+- Automated browser regressions cover effect contracts, editable chart data, gallery framing, asynchronous recording, publication rollback, intro playback and all ten published media bundles. There is no CI yet; complete video builds and visual review are performed locally. Bundle metadata checks do not prove visual freshness by themselves.
 
 ## Help wanted
 

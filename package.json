@@ -28,7 +28,9 @@
     "render:style-journey": "bash video/build.sh examples/style-journey.html",
     "render:dot-battle": "bash video/build.sh examples/dot-battle.html",
     "build:studio": "npm run render:style-journey && npm run render:dot-battle && npm run render:fight-effects",
-    "render:fight-effects": "bash video/build.sh examples/fight-effects.html"
+    "render:fight-effects": "bash video/build.sh examples/fight-effects.html",
+    "build:all": "npm run build:showcase && bash video/build.sh examples/reel.html && bash video/build.sh examples/product.html && bash video/build.sh examples/infographic.html && bash video/build.sh examples/broll.html",
+    "test:media": "playwright test tests/media.spec.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.59.1"

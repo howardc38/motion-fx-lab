@@ -224,13 +224,13 @@
     <h2>Stacks we looked at and left out</h2>
     <div class="cols">
       <div class="box"><h3>Later</h3><ul>
-        <li><b>three.js r128 → r186</b>: the original effects keep r128; the three new film modules pin r180 without migrating existing shaders.</li>
+        <li><b>Full three.js migration</b>: the original effects keep r128; newer film modules pin r180 without migrating every existing shader.</li>
         <li><b>GSAP</b>: not needed for these studies: Flubber handles the new concave outer-contour morph; the original polar morph remains available.</li>
-        <li><b>HyperFrames</b>: the same approach as ours, but at v0.8 with its frame API marked experimental.</li>
+        <li><b>HyperFrames</b>: another <a href="https://github.com/heygen-com/hyperframes">HTML-to-video framework</a>; the current films use this repository’s existing recorder.</li>
       </ul></div>
       <div class="box"><h3>No</h3><ul>
-        <li><b>Remotion</b>: videos are written as React components, and companies of more than three people need a paid licence.</li>
-        <li><b>lygia</b>: commercial use needs a Patron licence.</li>
+        <li><b>Remotion</b>: videos use React components; <a href="https://github.com/remotion-dev/remotion/blob/main/packages/core/LICENSE.md">free eligibility and Company License terms</a> depend on the user or organization.</li>
+        <li><b>lygia</b>: its <a href="https://github.com/patriciogonzalezvivo/lygia/blob/main/LICENSE.md">default Prosperity licence</a> covers noncommercial use and a 30-day commercial trial; it is not bundled here.</li>
         <li><b>Generative AI</b>: no AI actors, footage, depth maps or music. Characters are drawn in code or by an illustrator, and music is synthesised in code.</li>
       </ul></div>
     </div>

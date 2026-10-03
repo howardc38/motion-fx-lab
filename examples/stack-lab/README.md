@@ -55,6 +55,8 @@ independent browsers on the same backend; cross-device pixel equality is not
 promised.
 
 `fx/pack-stacks.js` registers `stack-pixi`, `stack-rapier`, and `stack-gpu` using
-`build(stage) -> {ready, frame(t)}`. Both gallery and intro use those same modules.
+`build(stage) -> {ready, frame(t)}`. The gallery uses all three modules; the current intro uses PixiJS and Rapier.
+WebGPU particles remain in the stack film and gallery, so the current intro does
+not require a WebGPU adapter.
 There are no recorded frame atlases in this path. The TSL attribution is in
 `NOTICE`; runtime dependency licences are in the root `THIRD_PARTY.md`.

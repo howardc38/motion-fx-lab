@@ -53,8 +53,8 @@
   <section class="scene paper" data-start="3.6">
     <div class="edge"></div>
     <div class="a mono" style="left:150px;top:220px;font-size:34px;font-weight:700;color:#5c5868" data-fx="up" data-at="0.2">CUPS SOLD</div>
-    <div class="a wide num" style="left:146px;top:290px;font-size:150px" data-fx="count" data-to="128450" data-at="0.3" data-dur="1.6" data-sfx="riser">0</div>
-    <div class="a" style="left:150px;top:500px;font-size:40px;font-weight:700;width:560px;line-height:1.3" data-fx="fade" data-at="1.4">Every quarter beat the one before.</div>
+    <div id="cups-total" class="a wide num" style="left:146px;top:290px;font-size:150px" data-fx="count" data-at="0.3" data-dur="1.6" data-sfx="riser">0</div>
+    <div id="quarter-summary" class="a" style="left:150px;top:500px;font-size:40px;font-weight:700;width:560px;line-height:1.3" data-fx="fade" data-at="1.4"></div>
     <div id="bars"></div>
   </section>
 
@@ -65,7 +65,7 @@
     <svg class="a" style="left:150px;top:220px" width="720" height="720" viewBox="0 0 200 200" aria-hidden="true">
       <g id="donut" transform="rotate(-90 100 100)" fill="none" stroke-width="34"></g>
     </svg>
-    <div class="a wide num" style="left:150px;top:500px;width:720px;text-align:center;font-size:120px;color:var(--paper)" data-fx="pop" data-at="1.0" data-sfx="impact"><span data-fx="count" data-to="38" data-at="1.0" data-dur="1.0">0</span>%</div>
+    <div class="a wide num" style="left:150px;top:500px;width:720px;text-align:center;font-size:120px;color:var(--paper)" data-fx="pop" data-at="1.0" data-sfx="impact"><span id="leading-share" data-fx="count" data-at="1.0" data-dur="1.0">0</span>%</div>
     <div id="legend"></div>
   </section>
 
@@ -74,7 +74,7 @@
     <div class="edge"></div>
     <div class="a mono" style="left:150px;top:110px;font-size:34px;font-weight:700;color:#5c4b00" data-fx="up" data-at="0.2">CUPS PER HOUR, AVERAGE DAY</div>
     <svg class="a" id="line" style="left:150px;top:200px" width="1620" height="640" viewBox="0 0 1620 640" aria-hidden="true"></svg>
-    <div class="sticker" id="peak" style="background:var(--pink)" data-fx="pop" data-at="1.5" data-sfx="stamp">Busiest: 3 pm</div>
+    <div class="sticker" id="peak" style="background:var(--pink)" data-fx="pop" data-at="1.5" data-sfx="stamp"></div>
     <div class="a mono" style="left:150px;top:960px;font-size:24px;color:#5c4b00" data-fx="fade" data-at="2.0">Every frame of this video is code · Motion FX Lab</div>
   </section>
 
@@ -87,6 +87,18 @@
   const quarters = [["Q1", 24310], ["Q2", 29870], ["Q3", 36540], ["Q4", 37730]];
   const drinks = [["Brown sugar", 38, "#ff90e8"], ["Jasmine green", 27, "#ffd400"], ["Oolong milk", 21, "#3b5bff"], ["Other", 14, "#8f8a9c"]];
   const hours = [[10, 180], [11, 260], [12, 420], [13, 610], [14, 700], [15, 880], [16, 760], [17, 640], [18, 540], [19, 470], [20, 350], [21, 260], [22, 180]];
+
+  // Bind summaries before engine.js captures the count targets and text.
+  document.getElementById("cups-total").dataset.to = quarters.reduce((sum, [, value]) => sum + value, 0);
+  document.getElementById("quarter-summary").textContent = quarters.length > 1 && quarters.every(([, value], i) => i === 0 || value > quarters[i - 1][1])
+    ? "Every quarter beat the one before." : "Cups sold by quarter.";
+  const leader = drinks.reduce((best, drink) => drink[1] > best[1] ? drink : best);
+  const share = document.getElementById("leading-share");
+  share.dataset.to = leader[1];
+  share.parentElement.setAttribute("role", "img");
+  share.parentElement.setAttribute("aria-label", `${leader[0]}: ${leader[1]}%`);
+  const [peakHour, peakCups] = hours.reduce((best, hour) => hour[1] > best[1] ? hour : best);
+  const hourLabel = h => `${h % 12 || 12} ${h < 12 ? "am" : "pm"}`;
 
   window.__poster = 9.5;   // the poster frame, in seconds
   window.__music = [[0, "intro"], [2.4, "build"], [4.8, "drop"], [9.6, "final"], [12, "tail"]];
@@ -112,14 +124,15 @@
   const pts = hours.map(([h, v]) => `${x(h).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
   const svg = document.getElementById("line");
   svg.innerHTML = `<g stroke="rgba(14,13,18,.18)" stroke-width="2">${hours.map(([h]) => `<line x1="${x(h)}" y1="${H - 50}" x2="${x(h)}" y2="${H - 40}"/>`).join("")}</g>` +
-    hours.filter(([h]) => h % 2 === 0).map(([h]) => `<text x="${x(h)}" y="${H - 8}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="22" fill="#5c4b00">${h > 12 ? h - 12 + " pm" : h === 12 ? "12 pm" : h + " am"}</text>`).join("") +
+    hours.filter(([h]) => h % 2 === 0).map(([h]) => `<text x="${x(h)}" y="${H - 8}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="22" fill="#5c4b00">${hourLabel(h)}</text>`).join("") +
     `<polygon id="area" points="${x(10)},${H - 60} ${pts} ${x(22)},${H - 60}" fill="rgba(14,13,18,.10)" opacity="0"/>` +
     `<polyline id="pl" points="${pts}" fill="none" stroke="#0e0d12" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>` +
-    `<circle id="dot" cx="${x(15)}" cy="${y(880)}" r="16" fill="#ff90e8" stroke="#0e0d12" stroke-width="6" opacity="0"/>`;
+    `<circle id="dot" cx="${x(peakHour)}" cy="${y(peakCups)}" r="16" fill="#ff90e8" stroke="#0e0d12" stroke-width="6" opacity="0"/>`;
   const pl = svg.querySelector("#pl"), area = svg.querySelector("#area"), dot = svg.querySelector("#dot"), L = pl.getTotalLength();
   pl.setAttribute("stroke-dasharray", `${L} ${L}`);
   const peak = document.getElementById("peak");
-  peak.style.left = `${150 + x(15) + 40}px`; peak.style.top = `${200 + y(880) - 40}px`;
+  peak.textContent = `Busiest: ${hourLabel(peakHour)}`;
+  peak.style.left = `${150 + x(peakHour) + 40}px`; peak.style.top = `${200 + y(peakCups) - 40}px`;
 
   const eo = (p) => 1 - Math.pow(1 - p, 3), clamp = (v) => Math.max(0, Math.min(1, v));
   window.__renderHooks = window.__renderHooks || [];

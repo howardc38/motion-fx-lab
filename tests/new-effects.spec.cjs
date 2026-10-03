@@ -344,3 +344,30 @@ test('recorder refuses a destroyed WebGPU device without publishing a movie',asy
     expect(result.error).toBeUndefined();expect(result.status).toBe(1);expect(result.stderr).toContain('WebGPU device lost');expect(fs.existsSync(out)).toBe(false);
   }finally{fs.rmSync(work,{recursive:true,force:true});}
 });
+
+test("optical gallery frames preserve default strength across absolute-time loops", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForFunction(() => window.galleryAPI);
+  const proof = await page.evaluate(async () => {
+    galleryAPI.pause();
+    const reference = document.createElement("canvas");
+    reference.width = 1120;
+    reference.height = 630;
+    const direct = FXOptical.create(reference, "ribbon");
+    direct(0.5);
+    const expected = reference.toDataURL();
+    direct(2.5);
+    const changed = reference.toDataURL();
+    const frames = [];
+    for (const absoluteTime of [0.5, 8.5]) {
+      const { stage } = await galleryAPI.draw("optical-ribbon", absoluteTime);
+      frames.push(stage.querySelector("canvas").toDataURL());
+    }
+    return {
+      moves: expected !== changed,
+      matchesDefault: frames.map(frame => frame === expected),
+      repeats: frames[0] === frames[1],
+    };
+  });
+  expect(proof).toEqual({ moves: true, matchesDefault: [true, true], repeats: true });
+});

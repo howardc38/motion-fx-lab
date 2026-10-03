@@ -131,10 +131,10 @@ export async function createDots(mode, options = {}) {
         g.fillStyle = col;
         g.beginPath();
         g.ellipse(
-          640 + (x - 640) * 1.35 + layer * 12,
-          360 + (y - 360) * 1.35,
-          r * 1.35,
-          r * 1.35 * (1 - localImpact * 0.65),
+          640 + (x - 640) * 1.1 + layer * 12,
+          360 + (y - 360) * 1.1,
+          r * 1.1,
+          r * 1.1 * (1 - localImpact * 0.65),
           0,
           0,
           Math.PI * 2,

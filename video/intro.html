@@ -153,10 +153,10 @@
     <div class="a uc" style="color:var(--sun)" data-fx="fade" data-at="0.1">03 · INFOGRAPHICS</div>
     <div class="a fxl" style="color:var(--paper)" data-fx="fade" data-at="0.2"><span>counting number</span><span>bars from data</span><span>donut from data</span></div>
     <div class="a mono" style="left:150px;top:250px;font-size:26px;color:var(--muted)" data-fx="up" data-at="0.3">CUPS SOLD · SAMPLE DATA</div>
-    <div class="a wide" style="left:146px;top:290px;font-size:140px;color:var(--paper);font-variant-numeric:tabular-nums" data-fx="count" data-to="128450" data-at="0.3" data-dur="1.5" data-sfx="riser">0</div>
+    <div id="cups-total" class="a wide" style="left:146px;top:290px;font-size:140px;color:var(--paper);font-variant-numeric:tabular-nums" data-fx="count" data-at="0.3" data-dur="1.5" data-sfx="riser">0</div>
     <div id="qrows"></div>
     <svg class="a" style="left:1030px;top:250px" width="480" height="480" viewBox="0 0 200 200" aria-hidden="true"><g id="donut" transform="rotate(-90 100 100)" fill="none" stroke-width="34"></g></svg>
-    <div class="a wide" style="left:1030px;top:440px;width:480px;text-align:center;font-size:96px;color:var(--paper)" data-fx="pop" data-at="1.3" data-sfx="impact"><span data-fx="count" data-to="38" data-at="1.3" data-dur="0.8">0</span>%</div>
+    <div class="a wide" style="left:1030px;top:440px;width:480px;text-align:center;font-size:96px;color:var(--paper)" data-fx="pop" data-at="1.3" data-sfx="impact"><span id="leading-share" data-fx="count" data-at="1.3" data-dur="0.8">0</span>%</div>
     <div id="legs"></div>
   </section>
 
@@ -257,7 +257,7 @@
   // Clips for the README's GIF, in seconds: four uses, the characters and the effect wall, short enough to load fast.
   // The poster frame, in seconds: the effect wall at rest.
   window.__poster = 29.25;
-  window.__gif = [[2.8, 4.6], [7.4, 9.2], [17.5, 18.8], [20.0, 21.4], [27.4, 30.8], [35.9, 39.9], [41.3, 44.9]];
+  window.__gif = [[2.8, 4.6], [7.4, 9.2], [17.5, 18.8], [20.0, 21.4], [27.4, 28.4], [29.1, 30.2], [32.4, 33.3], [35.9, 40.5], [41.3, 44.9]];
 
   const START = Object.fromEntries([...document.querySelectorAll(".scene")].map((el) => [el.id, +el.dataset.start]));
   const TAU = Math.PI * 2, eo = (p) => 1 - Math.pow(1 - p, 3), clamp = (v) => Math.max(0, Math.min(1, v));
@@ -281,6 +281,13 @@
   // 05 data
   const quarters = [["Q1", 24310], ["Q2", 29870], ["Q3", 36540], ["Q4", 37730]];
   const drinks = [["Brown sugar", 38, "#ff90e8"], ["Jasmine green", 27, "#ffd400"], ["Oolong milk", 21, "#3b5bff"], ["Other", 14, "#8f8a9c"]];
+  // Bind summaries before engine.js captures the animated count targets.
+  document.getElementById("cups-total").dataset.to = quarters.reduce((sum, [, value]) => sum + value, 0);
+  const leader = drinks.reduce((best, drink) => drink[1] > best[1] ? drink : best);
+  const share = document.getElementById("leading-share");
+  share.dataset.to = leader[1];
+  share.parentElement.setAttribute("role", "img");
+  share.parentElement.setAttribute("aria-label", `${leader[0]}: ${leader[1]}%`);
   const qmax = Math.max(...quarters.map((q) => q[1]));
   document.getElementById("qrows").innerHTML = quarters.map(([q, v], i) =>
     `<div class="qrow" style="top:${500 + i * 92}px"><span class="q">${q}</span><div class="bar" style="width:${Math.round((v / qmax) * 560)}px" data-fx="grow" data-at="${0.6 + i * 0.15}" data-dur="0.55"></div>` +

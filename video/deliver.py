@@ -6,11 +6,14 @@
   out_dir/name.mp4     for the web: the high-quality file if it fits in CAP bytes, else two-pass to CAP
   out_dir/name.jpg     poster frame from the web file (default: a third of the way in)
 
+Publication requires Node.js and the sibling publish.cjs rollback helper.
+
 Audio is limited and then brought to -14 LUFS by a linear gain, with a true peak under -1 dBTP,
 as AAC at 128 kbps and 48 kHz, which is Meta's audio ceiling. Video is BT.709, tagged. Everything
 is made and checked in a scratch folder and moved into out_dir only when every check has passed.
 """
 import json
+import math
 import os
 import re
 import shutil
@@ -220,6 +223,12 @@ def main():
     try:
         dur = float(probe(master)["format"]["duration"])
         poster_at = sys.argv[5] if len(sys.argv) > 5 else f"{dur / 3:.2f}"
+        try:
+            poster_seconds = float(poster_at)
+        except ValueError:
+            raise SystemExit("poster_seconds must be a finite number within the master duration")
+        if not math.isfinite(dur) or dur <= 0 or not math.isfinite(poster_seconds) or not 0 <= poster_seconds < dur:
+            raise SystemExit("poster_seconds must be a finite number within the master duration")
         audio = master_for_aac(mix, work)
         hq = os.path.join(work, f"{name}_hq.mp4")
         preview = os.path.join(work, f"{name}.mp4")
@@ -235,8 +244,13 @@ def main():
             print(f"web video {kbps}k two-pass")
         check(preview, master, cap=CAP, max_bps=HQ_MAX_BPS)
         run("ffmpeg", "-y", "-loglevel", "error", "-ss", poster_at, "-i", preview, "-frames:v", "1", "-q:v", "3", poster)
-        for f in (hq, preview, poster):
-            os.replace(f, os.path.join(out_dir, os.path.basename(f)))
+        # FFmpeg can exit successfully without producing a frame near EOF.
+        if not os.path.isfile(poster) or os.path.getsize(poster) == 0:
+            raise SystemExit("poster extraction produced no image")
+        # Direct deliver.py callers need the same rollback as build.sh: a late
+        # replacement failure must not pair new videos with the previous poster.
+        publisher = os.path.join(os.path.dirname(os.path.abspath(__file__)), "publish.cjs")
+        run("node", publisher, work, out_dir, *(os.path.basename(f) for f in (hq, preview, poster)))
     finally:
         shutil.rmtree(work, ignore_errors=True)
 
