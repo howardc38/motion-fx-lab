@@ -23,7 +23,25 @@ Describe the video to an AI coding assistant, or write it yourself. It becomes a
 </tr>
 </table>
 
-Plus characters drawn in code and 64 reusable effect techniques. The 55-second intro shows four uses, characters, the optical and GPU effects, and new art-direction and dot-animation chapters rendered directly from time. Their separate players are linked below. Each example is one HTML file with its text or numbers at the top; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
+Plus characters drawn in code and 64 reusable effect techniques. The 55-second intro moves from four uses and character action into three stories: One Flight, Twenty Worlds; One Word, Many Forms; and One Push, Chain Reaction. It closes by changing text, scrubbing the timeline and exporting MP4. Their separate players are linked below. Each example is one HTML file with its text or numbers at the top; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
+
+## Intro storyboard
+
+| Time | Story |
+|---|---|
+| 0–2.4 s | Motion graphics in plain HTML |
+| 2.4–16.8 s | Social clips, product demos, infographics and B-roll; 3.6 s each |
+| 16.8–21.6 s | A character hands over information; a short fight beat shows action |
+| 21.6–26.4 s | Selected surface, type, image distortion and shape effects |
+| 26.4–33.6 s | One Flight, Twenty Worlds: six readable styles, then the twenty-style overview |
+| 33.6–40.8 s | One Word, Many Forms: FLOW → slices → dots → scatter → FLOW |
+| 40.8–45.6 s | One Push, Chain Reaction: follow the fall, then reveal all 48 dominoes |
+| 45.6–50.4 s | Scrub time, change WAVE to FLOW and export MP4 |
+| 50.4–55.2 s | Repository and licence CTA |
+
+These three intro stories combine existing capabilities; they do not add three
+new effect registrations. Source: [intro.html](video/intro.html) and
+[intro-stories.js](fx/intro-stories.js).
 
 ## Sound familiar?
 
@@ -60,7 +78,7 @@ bash video/build.sh examples/reel.html  # any example, or a page of your own
 python3 -m http.server 8000              # optional gallery preview: http://localhost:8000/
 ```
 
-Rendering needs macOS on Apple silicon for the GPU path, plus Node, Python 3 (standard library only) and ffmpeg with libx264. Tested with Node 26.8.1, Python 3.12.10, ffmpeg 8.1.1 and Playwright 1.59.1. Without a Metal GPU, render on SwiftShader with `RECORD_ARGS="--cpu --workers 2" bash video/build.sh examples/reel.html`. Films containing WebGPU effects, including the current intro and `examples/stacks.html`, require a real WebGPU adapter and refuse `--cpu`.
+Rendering needs macOS on Apple silicon for the GPU path, plus Node, Python 3 (standard library only) and ffmpeg with libx264. Tested with Node 26.8.1, Python 3.12.10, ffmpeg 8.1.1 and Playwright 1.59.1. Without a Metal GPU, render on SwiftShader with `RECORD_ARGS="--cpu --workers 2" bash video/build.sh examples/reel.html`. Films containing WebGPU effects, such as `examples/stacks.html`, require a real WebGPU adapter and refuse `--cpu`.
 
 The build verifies the video, audio, poster and optional GIF in a staging directory before replacing the matching bundle in `media/`. A failed render or GIF generation preserves the previous bundle.
 
@@ -138,7 +156,7 @@ Then run `bash video/build.sh video/yours.html`.
 | `video/sfx.py`, `video/music.py` | Sound effects and music synthesised from oscillators and noise |
 | `video/deliver.py` | Loudness mastering and the final MP4 files, each checked before it is delivered |
 | `video/gif.py` | The GIF preview, cut from the clips the page declares |
-| `video/intro.html` | The source of the intro video |
+| `video/intro.html`, `fx/intro-stories.js` | Intro storyboard and the continuous flight, typography and edit/export sequences |
 | `examples/` | Four original use-case films, plus the six-effect optical player/film and the three-effect film and its parameter preview page |
 | `fx/stack-effects.js`, `fx/pack-stacks.js`, `fx/stacks/` | Reusable PixiJS, Rapier and WebGPU timeline effects and gallery adapters |
 | `fx/studio/`, `fx/studio-effects.js`, `fx/pack-studio.js` | Fourteen film effects, twenty art directions, fixed-frame footage, skeletal points and time controls |
@@ -167,7 +185,7 @@ The first 36 effects were built for short promo videos about an Instagram DM ass
 
 ## Art-direction and dot-animation films
 
-**[One flight. Twenty worlds.](media/style-journey.mp4)** · **[Dot battle](media/dot-battle.mp4)** · **[All fourteen effect settings](examples/studio.html)** · **[Asset and technique guide](assets/studio/README.md)**
+**[One flight. Twenty worlds.](media/style-journey.mp4)** · **[Dot battle](media/dot-battle.mp4)** · **[Same fight. Eight treatments.](media/fight-effects.mp4)** · **[All fourteen effect settings](examples/studio.html)** · **[Asset and technique guide](assets/studio/README.md)**
 
 Fourteen additional demos cover a flying character, cross-frame style changes,
 twenty art directions, a gallery camera journey, low-poly flight, footage-to-dots,
@@ -178,9 +196,11 @@ effect registrations. The art-direction film runs for 40.8 seconds; the rebuilt
 COUNTERFORM dot battle runs for 19.2 seconds.
 
 The battle film uses original illustrated fighters with authored joint poses,
-root travel, contact holds, counterattacks and timed echoes. Its frozen perspective
-shot is 2.5D, not a true camera orbit around reconstructed people. The separate
-geometry demos use original stylised mannequins. The flying courier and poster
+root travel, planted steps, fixed-length limbs, counterattacks and short contact holds.
+Dodges have whooshes without false impact cues; particles originate at actual
+contacts. The brief held shot uses a 2D camera push. The eight related dot demos
+use volumetric Amber/Teal characters baked from the same choreography, including
+separate attack and defence clips. The real 3D orbit holds their contact pose. The flying courier and poster
 artwork are also original. The 2D dot technique demos
 sample a checked-in RGBA sequence; the true 3D demos load an animated GLB and keep
 surface samples attached to the deforming skeleton. A full camera orbit uses
@@ -190,7 +210,7 @@ techniques rather than duplicating the reference posts' characters or footage.
 
 ```sh
 npm run build:studio-assets   # rebuild GLB, verified source clip and RGBA frames
-npm run build:studio          # both films, with sound, posters and GIFs
+npm run build:studio          # all three films, with sound, posters and GIFs
 ```
 
 The checked-in assets make the first command optional for normal film builds.
@@ -233,10 +253,10 @@ npm run render:stacks
 npm run build:showcase
 ```
 
-The last command renders both studio films, the three-effect film, optical film and intro, each
+The last command renders all three studio films, the three-effect film, optical film and intro, each
 with audio, every-frame comparison, delivery checks, posters and GIFs. The
 recorder automatically serves repository pages over loopback HTTP for ES modules.
-Pinned CDN dependencies require internet access. The WebGPU film and intro need
+Pinned CDN dependencies require internet access. The WebGPU film needs
 a real supported adapter; missing or lost devices fail the render without a
 WebGL substitute. The parameter preview page is an authoring aid; viewers receive
 an ordinary MP4.

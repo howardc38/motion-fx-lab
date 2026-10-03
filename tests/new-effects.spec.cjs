@@ -82,30 +82,29 @@ test("optical export supplies working audio and GIF contracts to the full build"
   }
 });
 
-test("intro renders nine native additions without prerecorded atlases", async ({
-  page,
-}) => {
+test("intro tells three film stories with native frames and reproducible seeks", async ({page}) => {
   await page.goto("/video/intro.html");
-  await page.evaluate(async () => {
-    await __ready;
-    await __record();
-    await __render(33);
+  await page.evaluate(async()=>{await __ready;await __record();});
+  const result=await page.evaluate(async()=>{
+    const samples=[];
+    for(const t of [27,33.1,34,36.6,37.8,40.3,45.3,46.5,48,49.4]){
+      await __render(t);samples.push({t,...await introProof()});
+    }
+    await __render(37.8);const first=document.querySelector('#word-shot canvas').toDataURL();
+    await __render(40);await __render(37.8);
+    return {samples,repeat:first===document.querySelector('#word-shot canvas').toDataURL(),gpu:__REQUIRES_WEBGPU};
   });
-  expect(await page.locator('[data-demo^="optical-"]').count()).toBe(6);
-  expect(await page.locator('[data-demo^="stack-"] canvas').count()).toBe(3);
-  const fits = await page.locator('[data-demo^="stack-"] canvas').evaluateAll(canvases => canvases.map(canvas => {
-    const a=canvas.getBoundingClientRect(), b=canvas.parentElement.getBoundingClientRect();
-    return Math.abs(a.width-b.width)<1 && Math.abs(a.height-b.height)<1;
-  }));
-  expect(fits).toEqual([true,true,true]);
-  expect(await page.locator('script[src*="capture"]').count()).toBe(0);
-  expect(await page.locator("#scLib").textContent()).toContain(
-    "64 effect techniques",
-  );
-  await page.evaluate(async () => {
-    await __render(35.7);
-    await __render(33);
-  });
+  expect(result.gpu).toBe(false);expect(result.repeat).toBe(true);
+  expect(result.samples.find(s=>s.t===33.1).worlds).toMatchObject({phase:'overview',count:20});
+  expect(result.samples.find(s=>s.t===36.6).word.phase).toBe('dots');
+  expect(result.samples.find(s=>s.t===37.8).word.phase).toBe('scatter');
+  expect(result.samples.find(s=>s.t===40.3).word.phase).toBe('resolved');
+  expect(result.samples.find(s=>s.t===45.3).chain.fallen).toBe(48);
+  expect(result.samples.find(s=>s.t===46.5).edit.word).toBe('WAVE');
+  expect(result.samples.find(s=>s.t===48).edit.word).toBe('FLOW');
+  expect(result.samples.find(s=>s.t===49.4).edit.exported).toBe(true);
+  await expect(page.locator('#scLib')).toContainText('64 effect techniques');
+  expect(await page.locator('#scStacks').count()).toBe(0);
 });
 
 test("missing Flubber fails visibly without disabling Canvas effects", async ({

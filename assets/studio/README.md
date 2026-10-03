@@ -1,7 +1,7 @@
 # Original studio assets and fourteen film demos
 
-The courier artwork, twenty poster treatments, mannequin geometry and 4.8-second
-skeletal sparring clip are original procedural assets. No reference-post images,
+The courier artwork, twenty poster treatments, Amber/Teal fighter geometry and 4.8-second
+skeletal fight excerpt are original procedural assets. No reference-post images,
 characters, downloaded motion capture, generated-human footage or external music
 are bundled. The results demonstrate the techniques, not a shot-for-shot copy of
 the reference videos. The code and original assets use the repository's 0BSD licence.
@@ -40,6 +40,12 @@ line printer, handheld pixels, low poly, stencil, and embroidered patch.
 They are stylised procedural interpretations, not automatic historical-style
 transfer for arbitrary photographs.
 
+The dot conversion, temporal echoes, impact, time remapping and relief sample the
+same newly rendered fight excerpt. The skin, orbit and lens demos use the actual
+3D Amber/Teal geometry. An orbit holds the block at 0.6 s; lens particles leave
+the kick contact while most of the figure remains intact. Every effect keeps its
+own operation instead of replaying the finished fight film.
+
 ## Reproduce the assets and films
 
 ```sh
@@ -50,14 +56,16 @@ npm run build:studio
 bash video/build.sh video/intro.html
 ```
 
-The asset command exports `fighter.glb` with a real skeleton and animation clip,
+The asset command exports `fighter.glb` with two skinned fighters and separate
+Amber/Teal animation clips, baked from `createChoreography()` in `battle.js`. It
 renders `examples/fight-source.html` twice at 24 fps, encodes `fight-source.mp4`,
 and imports it into `fight/frame-*.png` plus `fight/manifest.json`. The shipped
 frames are small enough to check in; a normal film rebuild can reuse them.
-`build:studio` delivers the 40.8-second art-direction film and the 19.2-second
-COUNTERFORM fight, with sound, posters and GIFs. The fight uses a separate original
+`build:studio` delivers the 40.8-second art-direction film, the 19.2-second
+COUNTERFORM fight and a 24-second eight-treatment comparison, with sound, posters
+and GIFs. Use `npm run render:fight-effects` for the comparison alone. The fight uses a separate original
 2D illustrated rig in `fx/studio/battle.js`: anticipation, attack, contact holds,
-recoil, kicks and counterattacks. Its held perspective shot is 2.5D. The dedicated
+recoil, kicks and counterattacks. Its short held shot is a 2D camera push. The dedicated
 `freeze-orbit` technique remains a true orbit around animated GLB geometry.
 `build:showcase` also rebuilds the earlier films and the main intro.
 
@@ -97,7 +105,9 @@ For `themes`, pass `{theme: 0..19}` to `frame`; for `time-remap`, pass
 grayscale image as `{depthFrame}`; absent one it uses a labeled luminance relief.
 The three 3D point effects also accept `{modelUrl}` at creation, for an
 uncompressed GLB with a skinned mesh and at least one animation clip. Normalize
-its scale/origin to the supplied mannequin's scene. The first clip is used;
+custom models to the original metre-scale duel scene. For ordinary custom GLBs the
+first clip is used. The bundled Counterform model selects Amber/Teal clips and
+the matching mesh, preserving their authored world positions;
 point colors come from vertex/material colors, rather than texture UV sampling.
 
 ## Six reusable capabilities
@@ -110,7 +120,7 @@ point colors come from vertex/material colors, rather than texture UV sampling.
 - `scene.js` point material: camera-relative point size, focus and soft bokeh.
 
 The 2.5D relief does not infer hidden anatomy. True orbit uses the actual 3D
-mannequin, including its unseen side/back. Surface samples retain their triangle
+fighters, including their unseen sides and backs. Surface samples retain their triangle
 and barycentric coordinates as the skin moves; they are not randomly regenerated
 each frame. Impact times are authored cues, not an automatic collision detector.
 Depth of field is an art-directed point-sprite approximation, not a physical lens

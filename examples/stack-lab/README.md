@@ -26,7 +26,7 @@ This calls `bash video/build.sh examples/stacks.html` and produces
 audio. Every frame is independently rendered twice and compared; the delivery
 pipeline checks codecs, colour tags, frame counts, loudness, peaks and size.
 `npm run record:stacks` remains an alias for the same verified render command.
-`npm run build:showcase` rebuilds both studio films, this film, the optical film and the main intro.
+`npm run build:showcase` rebuilds all three studio films, this film, the optical film and the main intro.
 
 The recorder starts a loopback HTTP server for local ES modules and closes it
 when done. To preview manually, run `python3 -m http.server 8000` and open

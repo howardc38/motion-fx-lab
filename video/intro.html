@@ -28,6 +28,8 @@
   body.record { display: block; }
   body.record #frame { position: fixed; left: 0; top: 0; }
   body.record #stage { transform: none !important; }
+  .story-canvas canvas {width:100%;height:100%;display:block;}
+  [hidden] {display:none !important;}
   .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; }
   .edge { position: absolute; top: 0; bottom: 0; width: 26px; margin-left: -1px; background: var(--pink); opacity: 0; }
   .a { position: absolute; }
@@ -124,7 +126,7 @@
   </section>
 
   <!-- 02 product demos -->
-  <section class="scene paper dots darkdots" data-start="7.2" id="scProduct">
+  <section class="scene paper dots darkdots" data-start="6" id="scProduct">
     <div class="edge"></div>
     <div class="a uc" style="color:#c2267f" data-fx="fade" data-at="0.1">02 · PRODUCT DEMOS</div>
     <div class="a fxl" style="color:var(--ink)" data-fx="fade" data-at="0.2"><span>3D camera move</span><span>cursor and tap</span><span>state change</span><span>callout</span></div>
@@ -146,7 +148,7 @@
   </section>
 
   <!-- 03 infographics -->
-  <section class="scene ink dots" data-start="12" id="scData">
+  <section class="scene ink dots" data-start="9.6" id="scData">
     <div class="edge"></div>
     <div class="a uc" style="color:var(--sun)" data-fx="fade" data-at="0.1">03 · INFOGRAPHICS</div>
     <div class="a fxl" style="color:var(--paper)" data-fx="fade" data-at="0.2"><span>counting number</span><span>bars from data</span><span>donut from data</span></div>
@@ -159,7 +161,7 @@
   </section>
 
   <!-- 04 b-roll -->
-  <section class="scene ink" data-start="16.8" id="scBroll">
+  <section class="scene ink" data-start="13.2" id="scBroll">
     <div class="edge"></div>
     <div class="a uc" style="color:var(--sun)" data-fx="fade" data-at="0.1">04 · B-ROLL</div>
     <div class="a fxl" style="color:var(--paper)" data-fx="fade" data-at="0.2"><span>seamless loops</span><span>any resolution</span><span>under your titles</span></div>
@@ -175,75 +177,46 @@
     <div class="plab" style="left:1250px" data-fx="fade" data-at="1.0">NETWORK · CANVAS</div>
   </section>
 
-  <!-- 05 characters -->
-  <section class="scene ink dots" data-start="21.6" id="scChars">
+  <section class="scene ink" data-start="16.8" id="scChars">
     <div class="edge"></div>
-    <div class="a uc" style="color:var(--sun)" data-fx="fade" data-at="0.1">CHARACTERS</div>
-    <div class="a fxl" style="color:var(--paper)" data-fx="fade" data-at="0.2"><span>toon shading</span><span>SVG rig</span><span>pixel dither</span><span>blinks and waves</span></div>
-    <div class="a wide" style="left:150px;top:300px;font-size:96px;color:var(--paper)" data-fx="up" data-at="0.2">Characters,</div>
-    <div class="a wide" style="left:150px;top:400px;font-size:96px;color:var(--paper)" data-fx="up" data-at="0.3">drawn</div>
-    <div class="a wide pk" style="left:150px;top:500px;font-size:96px" data-fx="up" data-at="0.4">in code.</div>
-    <div class="a mono" style="left:156px;top:680px;font-size:30px;line-height:1.6;color:var(--paper)" data-fx="fade" data-at="0.9">No AI art. Every pose,<br>blink and wave is<br>a function of t.</div>
-    <div class="tile" style="left:924px;top:300px;width:280px" data-fx="pop" data-at="0.5" data-sfx="pop"><div class="stage" data-demo="toon" data-t0="0.5"></div><div class="lab">3D toon + outline</div></div>
-    <div class="tile" style="left:1232px;top:300px;width:280px" data-fx="pop" data-at="0.7" data-sfx="pop"><div class="stage" data-demo="flat" data-t0="0.7"></div><div class="lab">2D flat SVG</div></div>
-    <div class="tile" style="left:1540px;top:300px;width:280px" data-fx="pop" data-at="0.9" data-sfx="pop"><div class="stage" data-demo="dithercards" data-t0="0.9"></div><div class="lab">dithered pixels</div></div>
+    <i data-fx="fade" data-at="3.25" data-sfx="thump"></i><i data-fx="fade" data-at="4.27" data-sfx="whoosh"></i>
+    <div id="character-guide">
+      <div class="a wide" style="left:135px;top:200px;font-size:100px;width:720px">Give characters<br>a job.</div>
+      <div class="a" style="left:140px;top:510px;font:700 43px/1.3 var(--lat);width:600px;color:var(--pink)">Introduce an idea.<br>Hand it over.<br>React.</div>
+      <div class="tile" style="left:1010px;top:80px;width:650px"><div class="stage" data-demo="dithercards" data-rate="1.25"></div></div>
+    </div>
+    <div id="character-action" class="a" style="inset:0;background:#142a39" hidden>
+      <div id="battle-shot" class="stage" style="position:absolute;left:0;top:0;width:1920px;height:1080px;aspect-ratio:16/9"></div>
+      <div class="a" style="left:135px;top:115px;font:900 70px var(--lat);color:#f4ecd8">Or choreograph the action.</div>
+    </div>
   </section>
 
-  <!-- 06 six additions to the repeatable timeline library -->
-  <section class="scene ink" data-start="26.4" id="scLib">
+  <section class="scene ink" data-start="21.6" id="scLib">
     <div class="edge"></div>
-    <div class="a wide" style="left:135px;top:100px;font-size:76px" data-fx="left" data-at="0.1"><span data-technique-count>64</span> effect techniques.</div>
-    <div class="a mono" style="left:140px;top:205px;font-size:26px;color:var(--pink)" data-fx="fade" data-at="0.15">Six new optical studies. Scrub to any frame.</div>
-    <div class="tile" style="left:135px;top:290px;width:520px" data-fx="pop" data-at="0.25" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-moire" data-t0="0.25"></div><div class="lab">Moiré interference</div></div>
-    <div class="tile" style="left:690px;top:290px;width:520px" data-fx="pop" data-at="0.34" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-slit" data-t0="0.34"></div><div class="lab">Slit-scan typography</div></div>
-    <div class="tile" style="left:1245px;top:290px;width:520px" data-fx="pop" data-at="0.43" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-ribbon" data-t0="0.43"></div><div class="lab">Folding paper ribbon</div></div>
-    <div class="tile" style="left:135px;top:628px;width:520px" data-fx="pop" data-at="0.52" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-caustic" data-t0="0.52"></div><div class="lab">Caustic light</div></div>
-    <div class="tile" style="left:690px;top:628px;width:520px" data-fx="pop" data-at="0.61" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-foil" data-t0="0.61"></div><div class="lab">Holographic foil</div></div>
-    <div class="tile" style="left:1245px;top:628px;width:520px" data-fx="pop" data-at="0.70" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-morph" data-t0="0.70"></div><div class="lab">Arbitrary-path morph</div></div>
+    <div class="a wide" style="left:135px;top:95px;font-size:76px"><span data-technique-count>64</span> effect techniques.</div>
+    <div class="a mono" id="montage-label" style="left:140px;top:210px;font-size:28px;color:var(--pink)">Surface and colour</div>
+    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-foil"></div></div>
+    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-slit"></div></div>
+    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="stack-pixi"></div></div>
+    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-morph"></div></div>
   </section>
 
-  <section class="scene paper" data-start="31.2" id="scStyle">
-    <div class="edge"></div>
-    <div class="a wide" style="left:135px;top:95px;font-size:82px" data-fx="left" data-at="0.1">One flight. Twenty worlds.</div>
-    <div class="tile" style="left:135px;top:240px;width:1180px" data-fx="up" data-at="0.25"><div class="stage" style="aspect-ratio:16/9" data-demo="studio-gallery" data-rate="8"></div></div>
-    <div class="a" style="left:1370px;top:320px;width:400px;font:900 48px/1.2 var(--lat)" data-fx="up" data-at="0.4">Draw.<br>Fly.<br>Transform.</div>
-    <div class="a mono" style="left:1370px;top:600px;width:360px;font-size:23px;line-height:1.6" data-fx="fade" data-at="0.6">20 art directions<br>Shared character motion<br>Cross-frame style changes</div>
+  <section class="scene" data-start="26.4" id="scStyle">
+    <div id="worlds-shot" class="a story-canvas" style="inset:0"></div>
   </section>
-  <section class="scene ink" data-start="36" id="scDot">
-    <div class="edge"></div>
-    <div class="a wide" style="left:135px;top:95px;font-size:82px" data-fx="left" data-at="0.1">Choreograph every dot.</div>
-    <div class="tile" style="left:135px;top:245px;width:1240px" data-fx="up" data-at="0.2"><div id="battle-shot" class="stage" style="aspect-ratio:16/9"></div></div>
-    <div class="tile" style="left:1430px;top:310px;width:355px" data-fx="up" data-at="0.4"><div class="stage" style="aspect-ratio:16/9" data-demo="studio-freeze-orbit" data-rate="1.25"></div><div class="lab">Separate technique: real 3D orbit</div></div>
-    <div class="a" style="left:1430px;top:565px;width:350px;font:900 38px/1.25 var(--lat)" data-fx="up" data-at="0.5">Anticipate.<br>Strike.<br>Hold.<br>Recover.</div>
-    <div class="a mono" style="left:140px;top:980px;font-size:22px;color:var(--muted)" data-fx="fade" data-at="0.8">Original 2D fight · time echoes · contact beats</div>
+  <section class="scene" data-start="33.6" id="scWord">
+    <i data-fx="fade" data-at="1.2" data-sfx="whoosh"></i><i data-fx="fade" data-at="2.4" data-sfx="pop"></i><i data-fx="fade" data-at="3.6" data-sfx="riser"></i><i data-fx="fade" data-at="6.4" data-sfx="impact"></i>
+    <div id="word-shot" class="a story-canvas" style="inset:0"></div>
   </section>
-
-  <!-- 07 native timeline effects, computed for every requested frame -->
-  <section class="scene ink dots" data-start="40.8" id="scStacks">
-    <div class="edge"></div>
-    <div class="a wide" style="left:135px;top:130px;font-size:90px" data-fx="left" data-at="0.1">More ways to make motion.</div>
-    <div class="a mono" style="left:140px;top:250px;font-size:26px;color:var(--pink)" data-fx="fade" data-at="0.2">New stacks. Real filters, collisions and GPU compute.</div>
-    <div class="tile" style="left:135px;top:390px;width:520px" data-fx="up" data-at="0.30" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="stack-pixi" data-rate="1.45833333"></div><div style="font:900 44px var(--lat);margin-top:24px">PixiJS</div><div class="lab">Displacement + blur + colour</div></div>
-    <div class="tile" style="left:690px;top:390px;width:520px" data-fx="up" data-at="0.42" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="stack-rapier" data-rate="1.87500000"></div><div style="font:900 44px var(--lat);margin-top:24px">Rapier</div><div class="lab">48 colliding dominoes</div></div>
-    <div class="tile" style="left:1245px;top:390px;width:520px" data-fx="up" data-at="0.54" data-sfx="pop"><div class="stage" style="aspect-ratio:16/9" data-demo="stack-gpu" data-rate="1.66666667"></div><div style="font:900 44px var(--lat);margin-top:24px">WebGPU / TSL</div><div class="lab">65,536 GPU-updated particles</div></div>
-    <div class="a mono" style="left:140px;top:850px;font-size:23px;color:var(--muted)" data-fx="fade" data-at="1.1">Rendered from time · fixed physics steps · GPU compute</div>
+  <section class="scene" data-start="40.8" id="scChain">
+    <i data-fx="fade" data-at="0.7" data-sfx="tap"></i><i data-fx="fade" data-at="1.1" data-sfx="tick" data-sfx-repeat="10" data-sfx-every="0.28"></i>
+    <div id="chain-shot" class="a story-canvas" style="inset:0"></div>
+    <div class="a wide" style="left:85px;top:85px;font-size:70px;color:#173d30">One push. Chain reaction.</div>
+    <div class="a mono" id="chain-result" style="left:90px;bottom:90px;font-size:32px;color:#173d30">One nudge starts it.</div>
   </section>
-
-  <!-- 08 timeline frames checked -->
-  <section class="scene paper" data-start="45.6" id="scRender">
-    <div class="edge"></div>
-    <div class="a wide" style="left:120px;top:100px;font-size:84px" data-fx="left" data-at="0.1">Timeline frames, checked.</div>
-    <div class="box" style="left:120px;top:300px" data-fx="pop" data-at="0.4" data-sfx="tap"><b>Chromium<br>on the GPU</b><span>ANGLE Metal</span></div>
-    <div class="arrow" style="left:512px;top:382px;width:50px" data-fx="grow" data-at="0.6"></div>
-    <div class="box" style="left:572px;top:300px" data-fx="pop" data-at="0.7" data-sfx="tap"><b>Every frame<br>rendered twice</b><span>and compared</span></div>
-    <div class="arrow" style="left:964px;top:382px;width:50px" data-fx="grow" data-at="0.9"></div>
-    <div class="box" style="left:1024px;top:300px" data-fx="pop" data-at="1.0" data-sfx="tap"><b>4 browsers<br>in parallel</b><span>round-robin frames</span></div>
-    <div class="arrow" style="left:1416px;top:382px;width:50px" data-fx="grow" data-at="1.2"></div>
-    <div class="box" style="left:1476px;top:300px;width:324px" data-fx="pop" data-at="1.3" data-sfx="tap"><b>MP4</b><span>−14 LUFS · BT.709</span></div>
-    <div class="a mono" style="left:124px;top:600px;font-size:34px;color:#8f8a9c;text-decoration:line-through" data-fx="fade" data-at="1.8">default headless Chromium: 399.6 s</div>
-    <div class="a wide" style="left:120px;top:660px;font-size:150px" data-fx="pop" data-at="2.2" data-sfx="impact">52.9 s</div>
-    <div class="sticker" style="left:760px;top:700px;background:var(--pink);transform:rotate(-4deg)" data-fx="slam" data-at="2.7" data-base="rotate(-4deg)" data-sfx="stamp">7.5× faster</div>
-    <div class="a mono" style="left:124px;top:870px;font-size:24px;color:#5c5868" data-fx="fade" data-at="3.0">Earlier 56-second benchmark · 1693 frames · every frame rendered twice and compared · Apple M4</div>
+  <section class="scene" data-start="45.6" id="scRender">
+    <i data-fx="fade" data-at="1.8" data-sfx="type"></i><i data-fx="fade" data-at="3.5" data-sfx="ding"></i>
+    <div id="edit-shot" class="a story-canvas" style="inset:0"></div>
   </section>
 
   <!-- 09 call to action -->
@@ -278,13 +251,13 @@
 <script>
 (() => {
   document.querySelectorAll("[data-technique-count]").forEach(el => el.textContent = FXCatalog.stats.techniques);
-  window.__REQUIRES_WEBGPU = true;
+  window.__REQUIRES_WEBGPU = false;
   // Music sections for music.py, in seconds (one bar = 2.4 s).
-  window.__music = [[0, "build"], [2.4, "drop"], [16.8, "break"], [21.6, "final"], [31.2, "lift"], [36, "drop"], [40.8, "lift"], [45.6, "final"], [52.8, "tail"]];
+  window.__music = [[0, "build"], [2.4, "drop"], [16.8, "break"], [21.6, "final"], [26.4, "lift"], [33.6, "drop"], [40.8, "final"], [45.6, "break"], [50.4, "final"], [52.8, "tail"]];
   // Clips for the README's GIF, in seconds: four uses, the characters and the effect wall, short enough to load fast.
   // The poster frame, in seconds: the effect wall at rest.
-  window.__poster = 29.6;
-  window.__gif = [[2.8, 5.6], [8.0, 10.8], [12.6, 15.4], [22.2, 24.8], [27.2, 29.8], [32.0, 34.4], [37.0, 39.4], [42.0, 44.2]];
+  window.__poster = 29.25;
+  window.__gif = [[2.8, 4.6], [7.4, 9.2], [17.5, 18.8], [20.0, 21.4], [27.4, 30.8], [35.9, 39.9], [41.3, 44.9]];
 
   const START = Object.fromEntries([...document.querySelectorAll(".scene")].map((el) => [el.id, +el.dataset.start]));
   const TAU = Math.PI * 2, eo = (p) => 1 - Math.pow(1 - p, 3), clamp = (v) => Math.max(0, Math.min(1, v));
@@ -338,22 +311,43 @@
     if (!d) throw new Error(`unknown demo ${el.dataset.demo}`);
     const built = d.build(el);
     const scene = el.closest(".scene");
-    return { d, frame: typeof built === "function" ? built : built.frame, ready: built && built.ready, scene, s0: +scene.dataset.start, t0: +(el.dataset.t0 || 0), rate: +(el.dataset.rate || 1) };
+    return { el, d, frame: typeof built === "function" ? built : built.frame, ready: built && built.ready, scene, s0: +scene.dataset.start, t0: +(el.dataset.t0 || 0), rate: +(el.dataset.rate || 1) };
   });
-  const battleReady = FXStudio.create("dot-battle").then(effect => {
-    document.getElementById("battle-shot").appendChild(effect.canvas);
-    return effect;
-  });
-  window.__ready = Promise.all([document.fonts.ready, battleReady, ...hosted.map((h) => h.ready).filter(Boolean)]);
+  const mount=(id,effect)=>{document.getElementById(id).appendChild(effect.canvas);return effect;};
+  const battleReady=FXStudio.create("dot-battle").then(e=>mount("battle-shot",e));
+  const storiesReady=import('../fx/intro-stories.js').then(m=>({
+    worlds:mount('worlds-shot',m.createWorlds()),
+    word:mount('word-shot',m.createWordforms()),
+    edit:mount('edit-shot',m.createEditStory()),
+  }));
+  const chainReady=FXStack.create('rapier').then(e=>mount('chain-shot',e));
+  window.__ready=Promise.all([document.fonts.ready,battleReady,storiesReady,chainReady,...hosted.map(h=>h.ready).filter(Boolean)]);
+  window.introProof=async()=>({worlds:(await storiesReady).worlds.proof(),word:(await storiesReady).word.proof(),edit:(await storiesReady).edit.proof(),chain:(await chainReady).proof()});
 
   const hudScene = document.getElementById("hudScene"), hudTc = document.getElementById("hudTc");
   const starts = [...document.querySelectorAll(".scene")].map((s) => +s.dataset.start);
 
   window.__renderHooks = window.__renderHooks || [];
   window.__renderHooks.push(async (t) => {
-    if (t >= START.scDot && t < START.scStacks) await (await battleReady).frame(t - START.scDot);
+    const fight=t>=19.8 && t<21.6;
+    document.getElementById('character-guide').hidden=fight;
+    document.getElementById('character-action').hidden=!fight;
+    if(fight) await (await battleReady).frame(5.15+(t-19.8));
+    const montage=Math.max(0,Math.min(3,Math.floor((t-START.scLib)/1.2)));
+    document.querySelectorAll('.montage-shot').forEach((el,i)=>el.hidden=i!==montage);
+    document.getElementById('montage-label').textContent=['Surface and colour','Type in motion','Distort an image','Transform a shape'][montage];
+    const stories=await storiesReady;
+    if(t>=START.scStyle&&t<START.scWord)stories.worlds.frame(t-START.scStyle);
+    if(t>=START.scWord&&t<START.scChain)stories.word.frame(t-START.scWord);
+    if(t>=START.scChain&&t<START.scRender){
+      const local=t-START.scChain;
+      const source=local<.6?local*.6:local<4.1?.36+(local-.6)*2.7:9.81;
+      const chain=await chainReady;await chain.frame(source,{camera:'follow'});
+      document.getElementById('chain-result').textContent=local<3.8?'One nudge starts it.':chain.proof().fallen+' dominoes. One connected motion.';
+    }
+    if(t>=START.scRender&&t<START.scCta)stories.edit.frame(t-START.scRender);
     for (const h of hosted) {
-      if (h.scene.style.visibility === "hidden") continue;
+      if (h.scene.style.visibility === "hidden" || h.el.closest("[hidden]")) continue;
       const local = Math.max(0, t - h.s0 - h.t0);
       await h.frame((local * h.rate) % h.d.period, local * h.rate);
     }

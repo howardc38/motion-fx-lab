@@ -164,7 +164,7 @@ test("real GLB surface points animate, while freeze orbit changes only camera", 
   });
   expect(r.a.points).toBe(16000);
   expect(r.a.sample).not.toEqual(r.b.sample);
-  expect(r.x.sourceTime).toBe(1.35);
+  expect(r.x.sourceTime).toBe(0.6);
   expect(r.y.sample).toEqual(r.x.sample);
   expect(r.y.camera).not.toEqual(r.x.camera);
   const header = fs
@@ -219,5 +219,5 @@ test('battle film has authored attacks, independent instances and a repeatable c
     const other=await FXStudio.create('dot-battle'); await other.frame(3);
     return {duration:__DUR, cues:__cues().length, changes:contact!==kick,repeat:contact===again,independent:other.canvas!==film.canvas,pose};
   });
-  expect(result).toMatchObject({duration:19.2,cues:30,changes:true,repeat:true,independent:true});
+  expect(result).toMatchObject({duration:19.2,cues:27,changes:true,repeat:true,independent:true});
 });

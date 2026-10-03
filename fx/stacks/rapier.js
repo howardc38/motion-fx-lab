@@ -185,7 +185,12 @@ export async function create() {
         17,
         19 * Math.cos(a) - 13 * Math.sin(a),
       );
-      camera.lookAt(0, 0.3, 0);
+      if (options.camera === "follow") {
+        const lead=path[Math.min(path.length-1,fallen())];
+        const u=Math.max(0,Math.min(1,(seconds-7.2)/2.2)),blend=u*u*(3-2*u);
+        camera.position.set((lead.x+2)*(1-blend)+13*blend,7*(1-blend)+17*blend,(lead.z+11)*(1-blend)+19*blend);
+        camera.lookAt(lead.x*(1-blend),.3,lead.z*(1-blend));
+      } else camera.lookAt(0, 0.3, 0);
       renderer.render(scene, camera);
     },
 

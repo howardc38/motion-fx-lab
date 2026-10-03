@@ -16,10 +16,10 @@
       import { makeFighter } from "../fx/studio/fighter-asset.js";
       import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
       window.buildAsset = async () => {
-        const { scene, clip } = makeFighter();
+        const { scene, clips } = makeFighter();
         const data = await new GLTFExporter().parseAsync(scene, {
           binary: true,
-          animations: [clip],
+          animations: clips,
         });
         const a = document.createElement("a");
         a.href = URL.createObjectURL(new Blob([data]));

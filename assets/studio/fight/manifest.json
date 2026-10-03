@@ -4,6 +4,6 @@
   "width": 640,
   "height": 360,
   "pattern": "frame-%06d.png",
-  "sourceSha256": "82098ab142bf9031fc6b1cc714e3c783bc5ab30e2850b3abd7b3012b797b894f",
+  "sourceSha256": "4d2647a5952134dfa54f9ae1e94bfe65ff9bf73278454b6c6c91c5edce0c3acc",
   "alpha": "keyed"
 }

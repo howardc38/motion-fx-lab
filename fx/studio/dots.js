@@ -3,6 +3,8 @@ import { FrameSource } from "./frame-source.js";
 import { duel, surface } from "./scene.js";
 import * as THREE from "three";
 import { timeAt, impact } from "./time.js";
+import {createChoreography} from "./battle.js";
+const fightContacts=createChoreography().events.filter(e=>e.kind!=="dodge"&&e.t<4.8);
 let sourcePromise;
 const source = () =>
   (sourcePromise ||= FrameSource.load(
@@ -90,9 +92,12 @@ export async function createDots(mode, options = {}) {
     g.fillStyle = bg;
     g.fillRect(0, 0, 1280, 720);
     const spacing =
-      kind === "rhythm" ? [4, 7, 11, 5][phase] : kind === "ramp" ? 5 : 5;
-    const event = impact(outputTime % 4.8, 1.2, 0.85),
-      copies = kind === "echo" ? 5 : 1;
+      kind === "rhythm" ? [3, 5, 8, 4][phase] : 3;
+    const hit=fightContacts.find(e=>outputTime%period>=e.t&&outputTime%period<e.t+.35);
+    const age=hit?outputTime%period-hit.t:0;
+    const event=hit?Math.sin(age/.35*Math.PI)*Math.exp(-age*2):0;
+    const center=hit?hit.point:[640,330];
+    const copies = kind === "echo" ? 5 : 1;
     let amount = 0;
     for (let layer = copies - 1; layer >= 0; layer--) {
       const data = await pixels(t - layer * 0.1);
@@ -106,17 +111,18 @@ export async function createDots(mode, options = {}) {
         let x = sx * 2,
           y = sy * 2,
           r = spacing * (ink ? 0.35 + 0.55 * Math.sqrt(1 - luminance) : 0.86);
+        const localImpact=kind==="impact"?event*Math.exp(-((x-center[0])**2+(y-center[1])**2)/19000):0;
         if (kind === "impact") {
-          const near = Math.exp(-((x - 640) ** 2 + (y - 330) ** 2) / 100000),
+          const near = Math.exp(-((x - center[0]) ** 2 + (y - center[1]) ** 2) / 19000),
             burst = event * near;
           x =
-            640 +
-            (x - 640) * (1 + 0.28 * event) +
-            Math.sin(sx * 17 + sy * 31) * burst * 150;
+            center[0] +
+            (x - center[0]) * (1 + 0.28 * localImpact) +
+            Math.sin(sx * 17 + sy * 31) * burst * 65;
           y =
-            360 +
-            (y - 360) * (1 - 0.5 * event) +
-            Math.cos(sx * 19 + sy * 13) * burst * 100;
+            center[1] +
+            (y - center[1]) * (1 - 0.5 * localImpact) +
+            Math.cos(sx * 19 + sy * 13) * burst * 42;
         }
         const col =
           copies > 1 && layer > 0
@@ -128,7 +134,7 @@ export async function createDots(mode, options = {}) {
           640 + (x - 640) * 1.35 + layer * 12,
           360 + (y - 360) * 1.35,
           r * 1.35,
-          r * 1.35 * (kind === "impact" ? 1 - event * 0.65 : 1),
+          r * 1.35 * (1 - localImpact * 0.65),
           0,
           0,
           Math.PI * 2,
@@ -198,7 +204,7 @@ export async function createDots(mode, options = {}) {
         g.drawImage(
           rig.frame(t, {
             mode,
-            background: mode === "lens" ? "#09121a" : "#f5eedc",
+            background: "#102638",
           }),
           0,
           0,
@@ -256,7 +262,7 @@ export async function createDots(mode, options = {}) {
       g.font = "500 17px monospace";
       g.textAlign = "left";
       g.fillStyle =
-        ["lens", "depth"].includes(mode) || (mode === "battle" && (t >= 36 || (t >= 21.6 && t < 26.4)))
+        ["lens", "depth", "skin", "orbit"].includes(mode) || (mode === "battle" && (t >= 36 || (t >= 21.6 && t < 26.4)))
           ? "#dbe7ee"
           : "#41505c";
       g.fillText(

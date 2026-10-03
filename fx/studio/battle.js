@@ -3,7 +3,7 @@ export const BATTLE_DURATION = 19.2;
 export const BATTLE_MUSIC = [
   [0, "build"],
   [2.4, "drop"],
-  [8.4, "break"],
+  [7.8, "break"],
   [9.6, "final"],
   [18, "tail"],
 ];
@@ -15,34 +15,27 @@ export const BATTLE_GIF = [
   [15.1, 16.1],
 ];
 export const BATTLE_POSTER = 3.04;
-const hits = [
-  0.6, 1.8, 3, 4.2, 5.4, 6.6, 7.8, 10.2, 11.4, 12.6, 13.2, 13.8, 15, 16.2, 17.4,
-];
-export const battleCues = () =>
-  hits.flatMap((t, i) => [
-    { t: t - 0.22, name: "whoosh", gain: 0.6 },
-    { t, name: i % 3 ? "stamp" : "impact", gain: 0.65 },
-  ]);
+// One authored event list drives contact, sound and local particle displacement.
+// A miss has a travelling hand/foot, but no impact sound, shake or burst.
+export const BATTLE_BEATS = [
+  [.6, "block", 0, 6, 6], [1.8, "hit", 1, 6, 2],
+  [3, "hit", 0, 10, 2], [4.2, "dodge", 1, 10, 2],
+  [5.4, "block", 0, 6, 6], [6.6, "dodge", 1, 10, 10],
+  [7.8, "block", 0, 6, 6], [10.2, "block", 0, 10, 6],
+  [11.4, "dodge", 0, 6, 2], [12.6, "hit", 0, 6, 2],
+  [13.2, "block", 0, 6, 6], [13.8, "hit", 1, 6, 2],
+  [15, "clash", 0, 10, 10], [16.2, "block", 1, 6, 6],
+  [17.4, "block", 0, 6, 6],
+].map(([t, kind, actor, limb, target]) => ({t, kind, actor, limb, target}));
+export const battleCues = () => BATTLE_BEATS.flatMap(e => [
+  {t:e.t-.18, name:"whoosh", gain:e.kind === "dodge" ? .8 : .5},
+  ...(e.kind === "dodge" ? [] : [{t:e.t, name:e.kind === "block" ? "thump" : "impact", gain:e.kind === "block" ? .45 : .65}]),
+]);
 
-export function createBattle() {
-  const W = 1280,
-    H = 720,
-    c = document.createElement("canvas");
-  c.width = W;
-  c.height = H;
-  const ctx = c.getContext("2d", { willReadFrequently: true }),
-    src = document.createElement("canvas");
-  src.width = W;
-  src.height = H;
-  const g = src.getContext("2d", { willReadFrequently: true });
-  let lastProof = null;
-  const mix = (a, b, t) => a + (b - a) * t,
-    clamp = (x) => Math.max(0, Math.min(1, x)),
-    ease = (x) => x * x * (3 - 2 * x),
-    rnd = (n) => {
-      let q = Math.sin(n * 127.1 + 311.7) * 43758.5453;
-      return q - Math.floor(q);
-    };
+const mix=(a,b,t)=>a+(b-a)*t;
+const clamp=x=>Math.max(0,Math.min(1,x));
+const ease=x=>x*x*(3-2*x);
+export function createChoreography() {
   // Every pose is authored in joint-space: hip, shoulder, head, rear elbow/hand,
   // front elbow/hand, rear knee/ankle, front knee/ankle. No motion-capture asset.
   const P = {
@@ -75,7 +68,7 @@ export function createBattle() {
       513, -75, 602, 67, 429, 43, 491,
     ],
     kick: [
-      -18, 410, -74, 314, -98, 270, -120, 345, -58, 378, 3, 333, 62, 305, -48,
+      30, 410, -74, 314, -98, 270, -120, 345, -58, 378, 3, 333, 62, 305, -48,
       500, -63, 602, 94, 352, 232, 290,
     ],
     sweep: [
@@ -87,7 +80,7 @@ export function createBattle() {
       -104, 416, 103, 354, 143, 442,
     ],
     fly: [
-      -20, 334, -75, 237, -98, 190, -145, 279, -185, 234, -22, 244, 33, 190,
+      10, 334, -75, 237, -98, 190, -145, 279, -185, 234, -22, 244, 33, 190,
       -67, 411, -146, 475, 94, 330, 236, 279,
     ],
     fall: [
@@ -99,7 +92,7 @@ export function createBattle() {
       532, -131, 602, 59, 540, 131, 602,
     ],
     upper: [
-      38, 406, 68, 285, 48, 231, 7, 325, 77, 342, 141, 266, 153, 171, -30, 508,
+      38, 406, 68, 285, 48, 231, 7, 325, 77, 342, 125, 360, 185, 250, -30, 508,
       -113, 602, 112, 497, 119, 602,
     ],
     land: [
@@ -139,8 +132,8 @@ export function createBattle() {
     [6.76, "land", 455],
     [7.2, "load", 364],
     [7.8, "jab", 442],
-    [8.4, "jab", 442],
-    [9.1, "jab", 442],
+    [8.4, "guard", 400],
+    [9.1, "kickload", 380],
     [9.6, "kickload", 340],
     [10.2, "fly", 451],
     [10.3, "fly", 451],
@@ -149,8 +142,8 @@ export function createBattle() {
     [11.4, "jab", 480],
     [11.49, "jab", 480],
     [12, "upperload", 428],
-    [12.6, "upper", 468],
-    [12.69, "upper", 468],
+    [12.6, "upper", 525],
+    [12.69, "upper", 525],
     [12.96, "guard", 456],
     [13.2, "jab", 478],
     [13.29, "jab", 478],
@@ -174,10 +167,10 @@ export function createBattle() {
     [0.36, "guard", 918],
     [0.6, "block", 784],
     [0.69, "block", 784],
-    [1.14, "load", 856],
-    [1.5, "load", 836],
-    [1.8, "jab", 700],
-    [1.9, "jab", 700],
+    [1.14, "guard", 760],
+    [1.5, "load", 690],
+    [1.8, "jab", 570],
+    [1.9, "jab", 570],
     [2.36, "guard", 851],
     [2.75, "block", 840],
     [3, "recoil", 655],
@@ -194,9 +187,9 @@ export function createBattle() {
     [6.6, "sweep", 794],
     [6.72, "sweep", 794],
     [7.2, "load", 874],
-    [7.8, "jab", 777],
-    [8.4, "jab", 777],
-    [9.1, "jab", 777],
+    [7.8, "block", 775],
+    [8.4, "guard", 850],
+    [9.1, "block", 850],
     [9.6, "guard", 867],
     [10.2, "block", 799],
     [10.3, "block", 799],
@@ -205,17 +198,17 @@ export function createBattle() {
     [11.4, "duck", 820],
     [11.5, "duck", 820],
     [12, "guard", 808],
-    [12.6, "fall", 647],
-    [12.72, "fall", 647],
+    [12.6, "recoil", 650],
+    [12.72, "fall", 685],
     [12.98, "guard", 820],
     [13.2, "block", 811],
     [13.29, "block", 811],
-    [13.55, "load", 827],
-    [13.8, "jab", 713],
+    [13.55, "load", 730],
+    [13.8, "jab", 630],
     [14.2, "load", 870],
     [14.7, "kickload", 845],
-    [15, "kick", 788],
-    [15.1, "kick", 788],
+    [15, "kick", 918],
+    [15.1, "kick", 918],
     [15.65, "guard", 837],
     [16.2, "jab", 763],
     [16.29, "jab", 763],
@@ -225,17 +218,74 @@ export function createBattle() {
     [18, "finish", 882],
     [19.2, "finish", 882],
   ];
-  function state(track, t) {
-    let k = 0;
-    while (k < track.length - 2 && t >= track[k + 1][0]) k++;
-    let a = track[k],
-      b = track[k + 1],
-      u = ease(clamp((t - a[0]) / (b[0] - a[0])));
-    return {
-      p: P[a[1]].map((v, i) => mix(v, P[b[1]][i], u)),
-      x: mix(a[2], b[2], u),
-    };
+  // Solve a two-link limb, choosing the bend nearest the authored silhouette.
+  function solve(root, end, hint, upper, lower) {
+    let dx=end[0]-root[0], dy=end[1]-root[1], dist=Math.hypot(dx,dy);
+    const reach=Math.max(Math.abs(upper-lower)+.01, Math.min(upper+lower-.01,dist));
+    const ux=dx/(dist||1), uy=dy/(dist||1);
+    end=[root[0]+ux*reach,root[1]+uy*reach];
+    const along=(upper*upper-lower*lower+reach*reach)/(2*reach);
+    const bend=Math.sqrt(Math.max(0,upper*upper-along*along));
+    const a=[root[0]+ux*along-uy*bend,root[1]+uy*along+ux*bend];
+    const b=[root[0]+ux*along+uy*bend,root[1]+uy*along-ux*bend];
+    const near=q=>Math.hypot(q[0]-hint[0],q[1]-hint[1]);
+    return {joint:near(a)<near(b)?a:b,end};
   }
+  function state(track, t) {
+    let k=0;
+    while(k<track.length-2 && t>=track[k+1][0]) k++;
+    const a=track[k],b=track[k+1],u=clamp((t-a[0])/(b[0]-a[0])),v=ease(u);
+    const x=mix(a[2],b[2],v),p=P[a[1]].map((n,i)=>mix(n,P[b[1]][i],v));
+    // Front foot lands first; trailing foot follows. Grounded feet travel through
+    // an arc, rather than skating along the floor with the pelvis.
+    for(const foot of [8,10]) {
+      const i=foot*2;
+      if(P[a[1]][i+1]>590 && P[b[1]][i+1]>590) {
+        const face=track===B?-1:1;
+        const ax=a[2]+face*P[a[1]][i],bx=b[2]+face*P[b[1]][i],travel=Math.abs(bx-ax);
+        if(travel>14) {
+          const step=foot===10?clamp(u/.65):clamp((u-.3)/.7);
+          p[i]=face*(mix(ax,bx,ease(step))-x);
+          p[i+1]=602-Math.sin(step*Math.PI)*Math.min(54,travel*.3);
+        }
+      }
+    }
+    const limb=(base,joint,end,up,low)=>{
+      const r=solve(base,p.slice(end*2,end*2+2),p.slice(joint*2,joint*2+2),up,low);
+      p.splice(joint*2,2,...r.joint);p.splice(end*2,2,...r.end);
+    };
+    limb([p[2]-18,p[3]+10],3,4,85,85);
+    limb([p[2]+17,p[3]+10],5,6,85,85);
+    limb([p[0]-13,p[1]],7,8,105,117);
+    limb([p[0]+13,p[1]],9,10,105,117);
+    return {p,x};
+  }
+  const world=(st,id,index)=>[st.x+(id?-1:1)*st.p[index*2],st.p[index*2+1]];
+  function contact(e) {
+    const attacker=state(e.actor?B:A,e.t),defender=state(e.actor?A:B,e.t);
+    const from=world(attacker,e.actor,e.limb),to=world(defender,1-e.actor,e.target);
+    return {...e,from,to,point:from.map((n,i)=>(n+to[i])/2),distance:Math.hypot(from[0]-to[0],from[1]-to[1])};
+  }
+  const events=BATTLE_BEATS.map(contact);
+
+  const sourceTime=t=>t>=7.8 && t<8.4?7.8:t>=8.4 && t<9.6?7.8+(t-8.4)*1.5:t;
+  return {pose:(id,t)=>state(id?B:A,Math.max(0,Math.min(19.2,t))),events,sourceTime};
+}
+
+export function createBattle() {
+  const W = 1280,
+    H = 720,
+    c = document.createElement("canvas");
+  c.width = W;
+  c.height = H;
+  const ctx = c.getContext("2d", { willReadFrequently: true }),
+    src = document.createElement("canvas");
+  src.width = W;
+  src.height = H;
+  const g = src.getContext("2d", { willReadFrequently: true });
+  let lastProof = null;
+  const {pose,events,sourceTime}=createChoreography();
+  const impactAt=t=>events.find(e=>e.kind!=="dodge" && t>=e.t && t<e.t+.2);
   function poly(points, color) {
     g.fillStyle = color;
     g.beginPath();
@@ -368,7 +418,12 @@ export function createBattle() {
       [-5, 0],
       [-8, 22],
     ].map(([x, y]) => [head[0] + x, head[1] + y]);
-    poly(hair, ink);
+    if(id) {
+      g.fillStyle=ink;g.beginPath();g.ellipse(head[0]-5,head[1]-17,34,27,-.2,0,Math.PI*2);g.fill();
+      g.beginPath();g.arc(head[0]-32,head[1]-35,17,0,Math.PI*2);g.fill();
+      poly([[head[0]-36,head[1]-34],[head[0]-69,head[1]-9],[head[0]-62,head[1]+30],[head[0]-43,head[1]+8]],ink);
+    } else poly(hair, ink);
+    g.strokeStyle=light;g.lineWidth=7;g.beginPath();g.moveTo(head[0]-25,head[1]-11);g.lineTo(head[0]+25,head[1]-14);g.stroke();
     g.fillStyle = ink;
     g.fillRect(head[0] + 18, head[1] - 5, 13, 5);
     g.strokeStyle = ink;
@@ -391,279 +446,86 @@ export function createBattle() {
     }
     g.restore();
   }
-  const palettes = [
-    ["#efe7d2", "#142b3a"],
-    ["#f96939", "#122c39"],
-    ["#12212e", null],
-    ["#f1ca38", "#142738"],
-    ["#ede6d6", "#183145"],
-    ["#102634", null],
-    ["#f37046", "#142d3a"],
-    ["#f3e8d2", "#142b3a"],
+  const shots = [
+    {at:0,end:2.4,z:1.06,y:386,bg:"#efe7d2",ink:"#142b3a",step:5},
+    {at:2.4,end:4.8,z:1.14,y:365,bg:"#f06c40",ink:"#122c39",step:5},
+    {at:4.8,end:7.8,z:1.03,y:389,bg:"#122638",ink:null,step:4},
+    {at:7.8,end:8.4,z:1.28,y:346,bg:"#efe7d2",ink:"#142b3a",step:4},
+    {at:8.4,end:9.6,z:1.05,y:384,bg:"#efe7d2",ink:"#142b3a",step:5},
+    {at:9.6,end:12,z:1.09,y:362,bg:"#eecb52",ink:"#172e3e",step:5},
+    {at:12,end:14.4,z:1.13,y:368,bg:"#122638",ink:null,step:4},
+    {at:14.4,end:17.4,z:1.06,y:360,bg:"#efe7d2",ink:"#142b3a",step:5},
+    {at:17.4,end:19.2,z:1.14,y:375,bg:"#f06c40",ink:"#122c39",step:4},
   ];
+  const shotAt=t=>shots.find(s=>t<s.end)||shots.at(-1);
   function camera(t) {
-    let z = 1.04,
-      x = 640,
-      y = 385,
-      rot = 0;
-    if (t < 0.36) {
-      z = mix(1.34, 1.05, t / 0.36);
-    } else if (t < 1.2) {
-      z = 1.3;
-      x = 640;
-      y = 353;
-      rot = -0.025;
-    } else if (t < 2.4) {
-      z = 1.14;
-      rot = 0.022;
-    } else if (t < 3.6) {
-      z = 1.22;
-      y = 356;
-      rot = -0.05;
-    } else if (t < 4.8) {
-      z = 1.12;
-      rot = 0.04;
-    } else if (t < 6) {
-      z = 1.4;
-      x = 642;
-      y = 366;
-    } else if (t < 7.2) {
-      z = 1.03;
-      y = 397;
-      rot = -0.03;
-    } else if (t < 8.4) {
-      z = 1.2;
-      y = 344;
-    } else if (t < 9.6) {
-      z = 1.55;
-      y = 314;
-      rot = (t - 9) * 0.16;
-    } else if (t < 10.8) {
-      z = 1.15;
-      y = 315;
-      rot = -0.04;
-    } else if (t < 12) {
-      z = 1.35;
-      y = 382;
-      rot = 0.045;
-    } else if (t < 13.2) {
-      z = 1.25;
-      y = 320;
-      rot = -0.04;
-    } else if (t < 14.4) {
-      z = 1.4;
-      y = 333;
-    } else if (t < 15.6) {
-      z = 1.1;
-      y = 313;
-      rot = 0.035;
-    } else if (t < 16.8) {
-      z = 1.22;
-      y = 364;
-    } else {
-      z = 1.14;
-      y = 365;
-    }
-    let hit = hits.find((v) => t >= v && t < v + 0.2);
-    if (hit !== undefined) {
-      let e = Math.exp(-(t - hit) * 20);
-      x += Math.sin((t - hit) * 100) * 12 * e;
-      y += Math.cos((t - hit) * 75) * 8 * e;
-      z += 0.055 * e;
-    }
-    return { z, x, y, rot };
+    const shot=shotAt(t),u=clamp((t-shot.at)/(shot.end-shot.at));
+    let z=shot.z+.025*u,x=640,y=shot.y,rot=.012*Math.sin(u*Math.PI);
+    if(t>=7.8 && t<8.4) {z+=.12*u;rot=-.025+.05*u;x+=35*u;}
+    const hit=impactAt(t);
+    if(hit) {const age=t-hit.t,e=Math.exp(-age*22);x+=Math.sin(age*90)*7*e;y+=Math.sin(age*75)*4*e;}
+    return {z,x,y,rot};
   }
-  function source(t, ghost = 0, override = null) {
-    g.clearRect(0, 0, W, H);
-    const cam = camera(t);
-    g.save();
-    g.translate(W / 2, H / 2);
-    g.rotate(cam.rot);
-    g.scale(cam.z, cam.z);
-    g.translate(-cam.x, -cam.y);
-    fighter(state(A, Math.max(0, t - ghost)), 1, 0, t, override);
-    fighter(state(B, Math.max(0, t - ghost)), -1, 1, t, override);
-    g.restore();
-    return g.getImageData(0, 0, W, H).data;
+  function project(point,t) {
+    const cam=camera(t),x=(point[0]-cam.x)*cam.z,y=(point[1]-cam.y)*cam.z;
+    return [640+x*Math.cos(cam.rot)-y*Math.sin(cam.rot),360+x*Math.sin(cam.rot)+y*Math.cos(cam.rot)];
   }
-  function dots(data, t, spacing, solid, alpha = 1, ghost = 0) {
-    ctx.globalAlpha = alpha;
-    const last = hits.filter((x) => t >= x).at(-1),
-      age = t - last,
-      burst = age >= 0 && age < 0.22 ? Math.sin((age / 0.22) * Math.PI) : 0;
-    const freeze = t >= 8.4 && t < 9.6;
-    const theta = ((t - 8.4) / 1.2) * Math.PI * 0.28;
-    for (let y = 2; y < H; y += spacing)
-      for (let x = 2; x < W; x += spacing) {
-        let k = (y * W + x) * 4;
-        if (data[k + 3] < 100) continue;
-        let r =
-            spacing *
-            (0.28 + (0.17 * (data[k] + data[k + 1] + data[k + 2])) / 765),
-          px = x,
-          py = y;
-        const dist = Math.hypot(x - 655, y - 315);
-        if (dist < 130 && burst) {
-          px += Math.sin(k) * burst * 23;
-          py += Math.cos(k) * burst * 18;
-          r *= 1 - 0.25 * burst;
-        }
-        if (freeze) {
-          const depth = ((data[k] + data[k + 1] + data[k + 2]) / 765) * 65;
-          px = 640 + (x - 640) * Math.cos(theta) + depth * Math.sin(theta);
-          py = y + (x - 640) * Math.sin(theta) * 0.11;
-        }
-        ctx.fillStyle =
-          solid || `rgb(${data[k]},${data[k + 1]},${data[k + 2]})`;
-        ctx.beginPath();
-        ctx.ellipse(
-          px,
-          py,
-          r,
-          r * (burst && dist < 130 ? 0.65 : 1),
-          0,
-          0,
-          Math.PI * 2,
-        );
-        ctx.fill();
-      }
-    ctx.globalAlpha = 1;
+  function source(t,ghost=0,outputTime=t) {
+    g.clearRect(0,0,W,H);
+    const cam=camera(outputTime),poseTime=Math.max(0,t-ghost);
+    g.save();g.translate(W/2,H/2);g.rotate(cam.rot);g.scale(cam.z,cam.z);g.translate(-cam.x,-cam.y);
+    fighter(pose(0,poseTime),1,0,poseTime);fighter(pose(1,poseTime),-1,1,poseTime);g.restore();
+    return g.getImageData(0,0,W,H).data;
+  }
+  function dots(data,t,spacing,solid,alpha=1) {
+    ctx.globalAlpha=alpha;
+    const event=impactAt(t),age=event?t-event.t:0;
+    const burst=event?Math.sin(clamp(age/.2)*Math.PI):0;
+    const point=event?project(event.point,t):[0,0];
+    for(let y=2;y<H;y+=spacing) for(let x=2;x<W;x+=spacing) {
+      const k=(y*W+x)*4;if(data[k+3]<100)continue;
+      const lum=(data[k]*.299+data[k+1]*.587+data[k+2]*.114)/255;
+      let r=spacing*(solid?.30+.18*(1-lum):.43),px=x,py=y;
+      const near=Math.max(0,1-Math.hypot(x-point[0],y-point[1])/90),kick=burst*near;
+      px+=Math.sin(k)*kick*17;py+=Math.cos(k)*kick*12;
+      ctx.fillStyle=solid||`rgb(${Math.max(70,data[k])},${Math.max(94,data[k+1])},${Math.max(115,data[k+2])})`;
+      ctx.beginPath();ctx.ellipse(px,py,r,r*(1-kick*.3),0,0,Math.PI*2);ctx.fill();
+    }
+    ctx.globalAlpha=1;
   }
   function frame(t) {
-    if (!Number.isFinite(t)) throw new Error("Frame time must be finite");
-    t = Math.min(19.2, Math.max(0, t));
-    const pi = Math.floor(t / 1.2) % palettes.length,
-      pal = palettes[pi],
-      bg = t >= 18 ? "#112937" : pal[0];
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
-    // Fine registration lines and minimal editorial typography anchor the frame.
-    ctx.globalAlpha = 0.15;
-    ctx.strokeStyle = pal[1] || "#bcdad7";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(44, 662);
-    ctx.lineTo(1236, 662);
-    ctx.stroke();
-    ctx.globalAlpha = 1;
-    const spacing =
-      t < 1.2
-        ? 5
-        : t < 2.4
-          ? 7
-          : t < 3.6
-            ? 5
-            : t < 4.8
-              ? 6
-              : t < 6
-                ? 4
-                : t < 7.2
-                  ? 6
-                  : t < 8.4
-                    ? 5
-                    : t < 9.6
-                      ? 5
-                      : t < 10.8
-                        ? 6
-                        : t < 12
-                          ? 4
-                          : t < 13.2
-                            ? 5
-                            : t < 14.4
-                              ? 6
-                              : 5;
-    let motionTime = t >= 8.4 && t < 9.6 ? 7.8 : t;
-    const trail =
-      (t >= 4.8 && t < 7.2) || (t >= 10.8 && t < 12) || (t >= 13.2 && t < 16.8);
-    if (trail) {
-      for (let n = 3; n > 0; n--) {
-        dots(
-          source(motionTime, n * 0.065),
-          t,
-          spacing,
-          n === 3 ? "#ebae67" : n === 2 ? "#e87179" : "#518fb0",
-          0.19 + (3 - n) * 0.08,
-          n,
-        );
-      }
+    if(!Number.isFinite(t))throw new Error("Frame time must be finite");
+    t=Math.max(0,Math.min(BATTLE_DURATION,t));
+    const shot=shotAt(t),motionTime=sourceTime(t),poses=[pose(0,motionTime),pose(1,motionTime)];
+    const closing=clamp((t-18)/.55);
+    ctx.fillStyle=shot.bg;ctx.fillRect(0,0,W,H);
+    // Ground contact and jump height remain legible even when the ink changes.
+    ctx.fillStyle=shot.ink||"#c0d7de";
+    for(let id=0;id<2;id++) {
+      const q=project([poses[id].x,606],t);
+      ctx.globalAlpha=.12*(1-closing);ctx.beginPath();ctx.ellipse(q[0],q[1],100,9,0,0,Math.PI*2);ctx.fill();
     }
-    if (t < 18) dots(source(motionTime), t, spacing, pal[1]);
-    else {
-      let u = clamp((t - 18) / 0.65);
-      dots(source(18), t, 7, "#f3dec2", (1 - u) * 0.38);
-      ctx.fillStyle = "#f0e6d1";
-      ctx.textAlign = "center";
-      ctx.font = "900 96px Arial";
-      ctx.fillText("COUNTERFORM", 640, 344);
-      ctx.font = "18px Arial";
-      ctx.letterSpacing = "7px";
-      ctx.fillText("A FIGHT IN DOTS", 640, 393);
-      ctx.letterSpacing = "0px";
-      ctx.textAlign = "left";
+    ctx.globalAlpha=1;
+    // Echoes belong to fast attacks, not every idle breath or held pose.
+    const trail=events.some(e=>t>e.t-.18 && t<e.t+.045) && !(t>=7.8&&t<8.4);
+    if(trail) for(let n=3;n>0;n--) dots(source(motionTime,n*.055,t),t,shot.step,["#ea9576","#61a5b5","#a4b4b0"][n-1],.17+(3-n)*.06);
+    dots(source(motionTime,0,t),t,shot.step,shot.ink,1-closing*.85);
+    const event=impactAt(t);
+    if(event) {
+      const u=clamp((t-event.t)/.16),[x,y]=project(event.point,t);
+      ctx.strokeStyle=shot.ink||"#f5d6a3";ctx.globalAlpha=(1-u)*.85;ctx.lineWidth=2*(1-u);
+      for(let n=0;n<10;n++) {const a=n/10*Math.PI*2,r=14+u*44;ctx.beginPath();ctx.moveTo(x+Math.cos(a)*r,y+Math.sin(a)*r);ctx.lineTo(x+Math.cos(a)*(r+12),y+Math.sin(a)*(r+12));ctx.stroke();}
+      ctx.globalAlpha=1;
     }
-    // Short radial marks are tied to authored contact, never a long full-frame explosion.
-    for (const h of hits) {
-      const d = t - h;
-      if (d < 0 || d > 0.16) continue;
-      let u = d / 0.16;
-      const cp = {
-        0.6: [688, 278],
-        1.8: [458, 278],
-        3: [687, 284],
-        4.2: [551, 310],
-        5.4: [718, 278],
-        6.6: [550, 562],
-        7.8: [639, 278],
-        10.2: [688, 279],
-        11.4: [694, 391],
-        12.6: [621, 247],
-        13.2: [726, 278],
-        13.8: [465, 278],
-        15: [640, 288],
-        16.2: [519, 278],
-        17.4: [712, 278],
-      }[String(h)] || [688, 278];
-      const cc = camera(t),
-        dx = (cp[0] - cc.x) * cc.z,
-        dy = (cp[1] - cc.y) * cc.z,
-        cx = 640 + dx * Math.cos(cc.rot) - dy * Math.sin(cc.rot),
-        cy = 360 + dx * Math.sin(cc.rot) + dy * Math.cos(cc.rot);
-      ctx.strokeStyle = pal[1] || "#f5d6a3";
-      ctx.lineWidth = 3 * (1 - u);
-      ctx.globalAlpha = (1 - u) * 0.8;
-      for (let n = 0; n < 18; n++) {
-        const a = (n / 18) * Math.PI * 2,
-          r = 28 + u * 100;
-        ctx.beginPath();
-        ctx.moveTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
-        ctx.lineTo(cx + Math.cos(a) * (r + 16), cy + Math.sin(a) * (r + 16));
-        ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
+    ctx.fillStyle=shot.ink||"#d9e7e7";ctx.font="600 14px Arial";ctx.textAlign="left";ctx.fillText("COUNTERFORM",44,40);
+    ctx.textAlign="right";ctx.font="12px Arial";ctx.fillText("ORIGINAL CHOREOGRAPHY",1236,40);ctx.textAlign="left";
+    if(t>=18) {
+      ctx.globalAlpha=closing;ctx.fillStyle="#142b3a";ctx.textAlign="center";
+      ctx.font="900 94px Arial";ctx.fillText("COUNTERFORM",640,340+(1-closing)*24);
+      ctx.font="18px Arial";ctx.letterSpacing="6px";ctx.fillText("A FIGHT IN DOTS",640,386+(1-closing)*24);
+      ctx.letterSpacing="0px";ctx.textAlign="left";ctx.globalAlpha=1;
     }
-    ctx.fillStyle = t >= 18 ? "#b7cbc9" : pal[1] || "#dbd9c7";
-    ctx.font = "600 13px Arial";
-    ctx.fillText("COUNTERFORM", 44, 40);
-    ctx.textAlign = "right";
-    ctx.font = "12px Arial";
-    ctx.fillText("ORIGINAL MOTION / 2026", 1236, 40);
-    ctx.fillText(
-      `${String(Math.min(16, Math.floor(t / 1.2) + 1)).padStart(2, "0")} / 16`,
-      1236,
-      688,
-    );
-    ctx.textAlign = "left";
-    if (t < 0.36) {
-      ctx.fillStyle = pal[1] || "#f4e6cb";
-      ctx.font = "900 52px Arial";
-      ctx.fillText("READY?", 44, 630);
-    }
-    lastProof = {
-      t,
-      poses: [state(A, motionTime), state(B, motionTime)],
-      spacing,
-      dimension: t >= 8.4 && t < 9.6 ? "2.5D relief" : "2D illustration",
-    };
+    lastProof={t,sourceTime:motionTime,poses,spacing:shot.step,camera:camera(t),contacts:events,activeImpact:event?.t??null,dimension:"2D illustration",hold:t>=7.8&&t<8.4};
   }
 
   return {

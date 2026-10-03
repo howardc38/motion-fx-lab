@@ -27,7 +27,8 @@
     "build:studio-assets": "node tools/build-studio-assets.cjs",
     "render:style-journey": "bash video/build.sh examples/style-journey.html",
     "render:dot-battle": "bash video/build.sh examples/dot-battle.html",
-    "build:studio": "npm run render:style-journey && npm run render:dot-battle"
+    "build:studio": "npm run render:style-journey && npm run render:dot-battle && npm run render:fight-effects",
+    "render:fight-effects": "bash video/build.sh examples/fight-effects.html"
   },
   "devDependencies": {
     "@playwright/test": "1.59.1"

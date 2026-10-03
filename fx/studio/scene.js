@@ -14,7 +14,7 @@ export function surface() {
   }
   return renderer;
 }
-export async function actor(color, seed = 8, assetUrl) {
+export async function actor(color, seed = 8, assetUrl, role = 0) {
   rigTools ||= Promise.all([import('three/addons/loaders/GLTFLoader.js'), import('three/addons/utils/SkeletonUtils.js')]).catch((error) => {
     rigTools = undefined;
     throw error;
@@ -35,15 +35,18 @@ export async function actor(color, seed = 8, assetUrl) {
     mixer = new THREE.AnimationMixer(root);
   if (!gltf.animations.length)
     throw new Error("The GLB needs a skeletal animation clip");
-  const duration = Math.round(gltf.animations[0].duration * 1e6) / 1e6;
+  const authored=gltf.animations.some(c=>c.name==='Amber')&&gltf.animations.some(c=>c.name==='Teal');
+  const clip=authored?gltf.animations.find(c=>c.name===(role?'Teal':'Amber')):gltf.animations[0];
+  if(authored){const remove=[];root.traverse(o=>{if(o.isSkinnedMesh&&o.userData.counterform!==role)remove.push(o);});remove.forEach(o=>o.removeFromParent());}
+  const duration = Math.round(clip.duration * 1e6) / 1e6;
   if (!(duration > 0))
     throw new Error("The animation must have positive duration");
-  mixer.clipAction(gltf.animations[0]).play();
+  mixer.clipAction(clip).play();
   const meshes = [];
   root.traverse((o) => {
     if (o.isSkinnedMesh) {
       o.material = o.material.clone();
-      o.material.color.set(color);
+      o.material.color.set(authored?"#ffffff":color);
       meshes.push(o);
     }
   });
@@ -58,7 +61,7 @@ export async function actor(color, seed = 8, assetUrl) {
       root.updateMatrixWorld(true);
       meshes.forEach((m) => m.skeleton.update());
     },
-    seed,
+    seed, authored,
   };
 }
 // Area-weighted barycentric samples retain triangle identity while the skin moves.
@@ -132,10 +135,12 @@ export function sampleSkin(mesh, count, seed) {
   };
 }
 const VERT = `attribute vec3 color; varying vec3 vColor; varying float vBlur;uniform float uSize,uFocus,uDOF;void main(){vec4 p=modelViewMatrix*vec4(position,1.);float d=max(.1,-p.z);vBlur=clamp(abs(d-uFocus)*uDOF,0.,14.);gl_PointSize=clamp(uSize*540./d+vBlur,1.,70.);gl_Position=projectionMatrix*p;vColor=color;}`;
-const FRAG = `varying vec3 vColor;varying float vBlur;void main(){float r=length(gl_PointCoord-.5)*2.;float alpha=(1.-smoothstep(.55,1.,r))/(1.+vBlur*.08);if(alpha<.01)discard;gl_FragColor=vec4(vColor,alpha);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}`;
+const FRAG = `varying vec3 vColor;varying float vBlur;void main(){float r=length(gl_PointCoord-.5)*2.;float alpha=(1.-smoothstep(.55,1.,r))/(1.+vBlur*.08);if(alpha<.01)discard;gl_FragColor=vec4(max(vColor,vec3(.045,.055,.07)),alpha);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}`;
 export async function duel(points = false, { assetUrl } = {}) {
   const scene = new THREE.Scene(),
     camera = new THREE.PerspectiveCamera(38, 1280 / 720, 0.1, 100);
+  const sourceCamera=new THREE.OrthographicCamera(-4,4,2.25,-2.25,.1,100);
+  sourceCamera.position.set(0,1.5125,10);sourceCamera.lookAt(0,1.5125,0);
   camera.position.set(3.1, 2.35, 5.4);
   camera.lookAt(0, 1.05, 0);
   scene.add(new THREE.HemisphereLight("#ffffff", "#72859a", 2.3));
@@ -144,12 +149,13 @@ export async function duel(points = false, { assetUrl } = {}) {
   scene.add(key);
   const fighters = await Promise.all([
     actor("#f28a61", 31, assetUrl),
-    actor("#68c7ce", 91, assetUrl),
+    actor("#68c7ce", 91, assetUrl, 1),
   ]);
-  fighters[0].root.position.x = -0.7;
-  fighters[1].root.position.x = 0.7;
-  fighters[0].root.rotation.y = Math.PI / 2;
-  fighters[1].root.rotation.y = -Math.PI / 2;
+  const authored=fighters.every(f=>f.authored);
+  if(!authored){
+    fighters[0].root.position.x=-.7;fighters[1].root.position.x=.7;
+    fighters[0].root.rotation.y=Math.PI/2;fighters[1].root.rotation.y=-Math.PI/2;
+  }
   fighters.forEach((f) => scene.add(f.root));
   let cloud,
     samplers = [],
@@ -182,7 +188,7 @@ export async function duel(points = false, { assetUrl } = {}) {
       transparent: true,
       depthWrite: false,
       uniforms: {
-        uSize: { value: 0.038 },
+        uSize: { value: 0.044 },
         uFocus: { value: 7 },
         uDOF: { value: 0 },
       },
@@ -196,41 +202,46 @@ export async function duel(points = false, { assetUrl } = {}) {
     scene,
     camera,
     frame(t, { mode = "source", background = "#00ff00" } = {}) {
-      const src = mode === "orbit" ? timeAt(t, "freeze") : t;
-      fighters.forEach((f, i) => f.pose(src + (i * f.duration) / 2));
+      const src = mode === "orbit" ? (authored ? .6 : timeAt(t, "freeze")) : mode === "lens" && authored ? Math.min(t,3) : t;
+      fighters.forEach((f, i) => f.pose(src + (authored?0:(i * f.duration) / 2)));
       if (points) {
         for (const { sample, offset } of samplers)
           sample.write(positions, colors, offset);
         cloud.geometry.attributes.position.needsUpdate = true;
         cloud.geometry.attributes.color.needsUpdate = true;
         material.depthWrite = mode !== "lens";
-        material.uniforms.uDOF.value = mode === "lens" ? 3.8 : 0;
+        material.uniforms.uDOF.value = mode === "lens" ? (t<2.5?.5:3.5) : 0;
         material.uniforms.uFocus.value =
-          mode === "lens" ? 3 + Math.sin(t) * 2 : 7;
+          mode === "lens" ? 5.1 - Math.sin(t)*.5 : 7;
         if (mode === "lens") {
-          const burst = impact(t, 2.2, 1.4) * 7;
+          const burst = impact(t, 3.2, 0.65) * 2.2;
           for (let i = 0; i < positions.length; i += 3) {
-            positions[i] += Math.sin(i * 12.989) * burst;
-            positions[i + 1] += Math.cos(i * 4.13) * burst * 0.5;
-            positions[i + 2] += Math.sin(i * 9.87) * burst;
+            const near=Math.exp(-((positions[i]-.4)**2+(positions[i+1]-2)**2)/.9);
+            const spray=(i/3)%7<2?burst*near:0;
+            positions[i] += Math.sin(i * 12.989) * spray;
+            positions[i + 1] += Math.cos(i * 4.13) * spray * 0.5;
+            positions[i + 2] += spray*2.8;
           }
         }
       }
       if (mode === "orbit") {
         const angle = (t / 6) * Math.PI * 2;
-        camera.position.set(Math.sin(angle) * 4.8, 2.4, Math.cos(angle) * 4.8);
+        const radius=authored?6.6:4.8;
+        camera.position.set(Math.sin(angle)*radius,2.4,Math.cos(angle)*radius);
       } else if (mode === "lens")
         camera.position.set(
           0.8,
           1.8,
-          6.5 - 3.8 * (0.5 - 0.5 * Math.cos((t * Math.PI) / 3)),
+          6.8 - 2.2 * (0.5 - 0.5 * Math.cos((t * Math.PI) / 3)),
         );
+      else if(authored) camera.position.set(0,1.4,5.5);
       else camera.position.set(3.1, 2.35, 5.4);
-      camera.lookAt(0, 1.05, 0);
+      camera.lookAt(0, authored?1.35:1.05, 0);
       scene.background = new THREE.Color(background);
-      surface().render(scene, camera);
+      surface().render(scene, authored && mode === "source" ? sourceCamera : camera);
       lastProof = {
         sourceTime: src,
+        choreography:authored?"COUNTERFORM":"custom GLB",
         points: positions ? positions.length / 3 : 0,
         camera: camera.position.toArray(),
         sample: positions

@@ -1,187 +1,60 @@
-// Original, deliberately stylised mannequin. No downloaded character or motion data.
-import * as THREE from "three";
-import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
-export function makeFighter() {
-  const bones = [],
-    parts = [];
-  function bone(name, parent, x, y, z) {
-    const b = new THREE.Bone();
-    b.name = name;
-    b.position.set(x, y, z);
-    if (parent) parent.add(b);
-    bones.push(b);
-    return b;
+// Original volumetric versions of the two COUNTERFORM fighters. Both clips are
+// baked from the same joint-space choreography used by the 2D film.
+import * as THREE from 'three';
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+import {createChoreography} from './battle.js';
+export function makeFighter(){
+ const scene=new THREE.Group();scene.name='CounterformDuel';
+ const motion=createChoreography(),clips=[];
+ for(let id=0;id<2;id++){
+  const prefix=id?'Teal':'Amber',bones=[],parts=[],tracks=[],descriptors=[];
+  const root=new THREE.Bone();root.name=prefix+'_root';bones.push(root);
+  const ink='#142b3a',cloth=id?'#258b99':'#eb7044',accent=id?'#69c4c9':'#f9b079',skin='#f7d4a4';
+  function joint(name,sample){const b=new THREE.Bone();b.name=prefix+'_'+name;root.add(b);bones.push(b);descriptors.push({b,sample});return b;}
+  function piece(b,geo,pos,scale,color){
+   geo=geo.index?geo.toNonIndexed():geo;geo.scale(...scale);geo.translate(...pos);
+   const n=geo.attributes.position.count,indices=new Uint16Array(n*4),weights=new Float32Array(n*4),colors=new Float32Array(n*3),c=new THREE.Color(color);
+   for(let i=0;i<n;i++){indices[i*4]=bones.indexOf(b);weights[i*4]=1;colors.set([c.r,c.g,c.b],i*3);}
+   geo.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(indices,4));geo.setAttribute('skinWeight',new THREE.Float32BufferAttribute(weights,4));geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));parts.push(geo);
   }
-  const root = bone("root", null, 0, 0, 0),
-    hips = bone("hips", root, 0, 1.03, 0),
-    chest = bone("chest", hips, 0, 0.48, 0),
-    head = bone("head", chest, 0, 0.48, 0);
-  const joints = { root, hips, chest, head };
-  for (const side of ["L", "R"]) {
-    const s = side === "L" ? -1 : 1;
-    joints["arm" + side] = bone("arm" + side, chest, s * 0.34, 0.28, 0);
-    joints["fore" + side] = bone(
-      "fore" + side,
-      joints["arm" + side],
-      0,
-      -0.43,
-      0,
-    );
-    joints["leg" + side] = bone("leg" + side, hips, s * 0.17, -0.08, 0);
-    joints["shin" + side] = bone(
-      "shin" + side,
-      joints["leg" + side],
-      0,
-      -0.48,
-      0,
-    );
+  const sphere=()=>new THREE.SphereGeometry(1,12,8),cylinder=(a=1,b=1)=>new THREE.CylinderGeometry(a,b,1,10,1);
+  const point=(pose,index,z=0,dx=0,dy=0)=>new THREE.Vector3((pose.x+(id?-1:1)*(pose.p[index*2]+dx)-640)/160,(602-pose.p[index*2+1]-dy)/160,z);
+  const face=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),id?Math.PI:0);
+  const at=(index,z=0)=>pose=>({position:point(pose,index,z),quaternion:face,scale:[1,1,1]});
+  function segment(name,from,to,width,color,z,offset=0){
+   const bone=joint(name,pose=>{const a=point(pose,from,z,offset),b=point(pose,to,z),v=b.clone().sub(a);return {position:a.clone().add(b).multiplyScalar(.5),quaternion:new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),v.clone().normalize()),scale:[1,v.length(),1]};});
+   piece(bone,cylinder(.85,1),[0,0,0],[width,1,width*.8],color);
+   piece(bone,sphere(),[0,.47,0],[width*.85,.055,width*.7],color);
+   piece(bone,sphere(),[0,-.47,0],[width,.055,width*.8],color);
+   return bone;
   }
-  root.updateMatrixWorld(true);
-  function piece(b, g, pos, scale, color) {
-    g = g.toNonIndexed();
-    g.scale(...scale);
-    g.translate(...pos);
-    g.applyMatrix4(b.matrixWorld);
-    const n = g.attributes.position.count,
-      skin = new Uint16Array(n * 4),
-      weights = new Float32Array(n * 4),
-      colors = new Float32Array(n * 3),
-      c = new THREE.Color(color);
-    for (let i = 0; i < n; i++) {
-      skin[i * 4] = bones.indexOf(b);
-      weights[i * 4] = 1;
-      colors.set([c.r, c.g, c.b], i * 3);
-    }
-    g.setAttribute("skinIndex", new THREE.Uint16BufferAttribute(skin, 4));
-    g.setAttribute("skinWeight", new THREE.Float32BufferAttribute(weights, 4));
-    g.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
-    parts.push(g);
+  segment('rear_thigh',0,7,.175,ink,-.12,-13);segment('rear_shin',7,8,.125,cloth,-.12);
+  segment('front_thigh',0,9,.195,cloth,.13,13);segment('front_shin',9,10,.13,cloth,.13);
+  segment('rear_arm',1,3,.105,ink,-.15,-18);segment('rear_forearm',3,4,.085,skin,-.15);
+  segment('body',0,1,.225,cloth,0);
+  segment('neck',1,2,.07,skin,.02);
+  const belt=joint('belt',at(0));piece(belt,new THREE.BoxGeometry(1,1,1),[0,0,0],[.51,.12,.33],ink);
+  const sash=joint('sash',pose=>({position:point(pose,0,-.02),quaternion:face.clone().multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1),Math.sin(pose.p[0]*.02)*.15)),scale:[1,1,1]}));
+  const shape=new THREE.Shape();shape.moveTo(-.16,0);shape.lineTo(-.6,.13);shape.lineTo(-.95,.28);shape.lineTo(-.77,-.04);shape.lineTo(-.3,-.12);shape.closePath();
+  piece(sash,new THREE.ExtrudeGeometry(shape,{depth:.035,bevelEnabled:false}),[0,0,0],[1,1,1],accent);
+  segment('front_arm',1,5,.125,cloth,.19,17);const fore=segment('front_forearm',5,6,.095,skin,.19);
+  piece(fore,cylinder(),[0,.3,0],[.10,.24,.085],accent);
+  for(const [name,index,z] of [['rear_hand',4,-.15],['front_hand',6,.19]]){const b=joint(name,at(index,z));piece(b,sphere(),[0,0,0],[.10,.10,.095],skin);}
+  for(const [name,index,z] of [['rear_boot',8,-.12],['front_boot',10,.13]]){const b=joint(name,at(index,z));piece(b,sphere(),[.04,.02,0],[.19,.075,.12],ink);}
+  const head=joint('head',at(2,.025));piece(head,sphere(),[.035,0,0],[.185,.23,.17],skin);
+  piece(head,sphere(),[.21,-.015,0],[.065,.05,.10],skin);
+  piece(head,new THREE.BoxGeometry(1,1,1),[0,.075,0],[.39,.045,.34],accent);
+  piece(head,sphere(),[-.035,.14,0],[.20,.16,.18],ink);
+  if(id){piece(head,sphere(),[-.18,.24,0],[.10,.11,.11],ink);piece(head,sphere(),[-.28,.02,0],[.065,.24,.08],ink);}
+  else for(let j=0;j<6;j++){const geo=new THREE.ConeGeometry(.08,.24,5);geo.rotateZ((j-2.5)*-.20);piece(head,geo,[-.18+j*.065,.27+(j%2)*.04,0],[1,1,1],ink);}
+  piece(head,new THREE.BoxGeometry(1,1,1),[.13,.005,.154],[.055,.025,.025],ink);
+  const mesh=new THREE.SkinnedMesh(mergeGeometries(parts),new THREE.MeshStandardMaterial({vertexColors:true,roughness:.85}));mesh.name=prefix;mesh.userData.counterform=id;mesh.add(root);mesh.bind(new THREE.Skeleton(bones));scene.add(mesh);
+  const times=Array.from({length:145},(_,i)=>i/30);
+  for(const {b,sample} of descriptors){const pos=[],rot=[],sc=[];
+   for(const t of times){const v=sample(motion.pose(id,t));pos.push(...v.position.toArray());rot.push(...v.quaternion.toArray());sc.push(...v.scale);}
+   tracks.push(new THREE.VectorKeyframeTrack(b.name+'.position',times,pos),new THREE.QuaternionKeyframeTrack(b.name+'.quaternion',times,rot),new THREE.VectorKeyframeTrack(b.name+'.scale',times,sc));
   }
-  const ball = () => new THREE.SphereGeometry(1, 12, 8),
-    limb = () => new THREE.CylinderGeometry(1, 1, 1, 10, 2);
-  piece(hips, ball(), [0, 0, 0], [0.27, 0.23, 0.19], "#abb9c5");
-  piece(chest, ball(), [0, 0.02, 0], [0.33, 0.43, 0.2], "#f3e8d8");
-  piece(head, ball(), [0, 0.03, 0], [0.205, 0.26, 0.19], "#f3e8d8");
-  piece(
-    head,
-    new THREE.BoxGeometry(1, 1, 1),
-    [0, 0.09, 0.17],
-    [0.31, 0.055, 0.06],
-    "#172330",
-  );
-  for (const side of ["L", "R"]) {
-    piece(
-      joints["arm" + side],
-      limb(),
-      [0, -0.215, 0],
-      [0.095, 0.43, 0.095],
-      "#f3e8d8",
-    );
-    piece(
-      joints["fore" + side],
-      limb(),
-      [0, -0.19, 0],
-      [0.08, 0.38, 0.08],
-      "#c8d1d6",
-    );
-    piece(
-      joints["fore" + side],
-      ball(),
-      [0, -0.42, 0],
-      [0.12, 0.14, 0.12],
-      "#172330",
-    );
-    piece(
-      joints["leg" + side],
-      limb(),
-      [0, -0.24, 0],
-      [0.13, 0.48, 0.13],
-      "#abb9c5",
-    );
-    piece(
-      joints["shin" + side],
-      limb(),
-      [0, -0.22, 0],
-      [0.105, 0.44, 0.105],
-      "#abb9c5",
-    );
-    piece(
-      joints["shin" + side],
-      ball(),
-      [0, -0.45, 0.08],
-      [0.13, 0.09, 0.23],
-      "#172330",
-    );
-  }
-  const geometry = mergeGeometries(parts),
-    material = new THREE.MeshStandardMaterial({
-      vertexColors: true,
-      roughness: 0.7,
-    });
-  const mesh = new THREE.SkinnedMesh(geometry, material);
-  mesh.name = "CourierFighter";
-  mesh.add(root);
-  mesh.bind(new THREE.Skeleton(bones));
-  const times = Array.from({ length: 49 }, (_, i) => i * 0.1),
-    tracks = [];
-  for (const name of [
-    "hips",
-    "chest",
-    "head",
-    "armL",
-    "armR",
-    "foreL",
-    "foreR",
-    "legL",
-    "legR",
-    "shinL",
-    "shinR",
-  ]) {
-    const values = [];
-    for (const t of times) {
-      const cycle = (t / 4.8) * Math.PI * 2,
-        punch = Math.pow(Math.max(0, Math.sin(cycle)), 6),
-        kick = Math.pow(Math.max(0, -Math.sin(cycle)), 8);
-      let x = 0,
-        y = 0,
-        z = 0;
-      if (name === "hips") {
-        x = 0.08 * Math.sin(cycle);
-        y = 0.08 * Math.sin(cycle * 2);
-      }
-      if (name === "chest") {
-        y = -0.35 * punch + 0.12 * Math.sin(cycle);
-        x = -0.13 * punch;
-      }
-      if (name === "head") {
-        y = 0.15 * punch;
-        x = 0.04 * Math.sin(cycle * 2);
-      }
-      if (name === "armR") {
-        x = -0.65 - 1.05 * punch;
-        z = -0.2;
-      }
-      if (name === "armL") {
-        x = -0.9 + 0.3 * punch;
-        z = 0.15;
-      }
-      if (name.startsWith("fore")) x = -0.8 * (1 - punch);
-      if (name === "legL") {
-        x = -0.12 - 1.35 * kick;
-        z = -0.12;
-      }
-      if (name === "legR") {
-        x = 0.18 + 0.13 * punch;
-        z = 0.1;
-      }
-      if (name === "shinL") x = 0.2 + 0.45 * (1 - kick);
-      if (name === "shinR") x = 0.2;
-      const q = new THREE.Quaternion().setFromEuler(new THREE.Euler(x, y, z));
-      values.push(q.x, q.y, q.z, q.w);
-    }
-    tracks.push(
-      new THREE.QuaternionKeyframeTrack(name + ".quaternion", times, values),
-    );
-  }
-  return { scene: mesh, clip: new THREE.AnimationClip("Spar", 4.8, tracks) };
+  clips.push(new THREE.AnimationClip(prefix,4.8,tracks));
+ }
+ return {scene,clips,clip:clips[0]};
 }
