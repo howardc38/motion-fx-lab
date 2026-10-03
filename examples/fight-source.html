@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="icon" href="data:," />
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #00ff00;
+      }
+      canvas {
+        width: 640px;
+        height: 360px;
+        display: block;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas width="640" height="360"></canvas>
+    <script>
+      window.__SIZE = { w: 640, h: 360 };
+      window.__DUR = 4.8;
+      window.__record = () => {};
+      window.__cues = () => [];
+      let source;
+      window.__ready = import("../fx/studio/scene.js").then(async (mod) => {
+        source = await mod.duel();
+      });
+      window.__render = async (t) => {
+        await __ready;
+        const c = document.querySelector("canvas");
+        c.getContext("2d").drawImage(source.frame(t), 0, 0, 640, 360);
+      };
+    </script>
+  </body>
+</html>

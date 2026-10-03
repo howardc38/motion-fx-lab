@@ -1,0 +1,9 @@
+{
+  "fps": 24,
+  "count": 116,
+  "width": 640,
+  "height": 360,
+  "pattern": "frame-%06d.png",
+  "sourceSha256": "82098ab142bf9031fc6b1cc714e3c783bc5ab30e2850b3abd7b3012b797b894f",
+  "alpha": "keyed"
+}

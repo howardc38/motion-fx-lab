@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Motion FX Lab</title>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/webgpu":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.webgpu.js","three/tsl":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.tsl.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
-<meta name="description" content="63 film effects with deterministic timelines, physics, WebGPU compute and verified MP4 export.">
+<meta name="description" content="77 film effects with deterministic timelines, physics, WebGPU compute and verified MP4 export.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
@@ -111,13 +111,13 @@
     <h1>Motion FX Lab</h1>
     <p class="lede">Describe a video to an AI coding assistant, or write it yourself: it becomes a web page, and this repo renders the page to MP4, frame by frame. Nothing in the picture or the sound is AI-generated, so every frame is exact, editable like code and the same on every render. Every tile below is drawn live in your browser by the same code. Each card says what it does, how it is drawn and what it needs; filter them by kind or by the way they are drawn. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch. The sample text comes from our own videos for an Instagram DM assistant; swap in your own words. The original video pipeline uses 16 stacks; Flubber, PixiJS, Rapier and WebGPU/TSL extend the film-effect library.</p>
     <div class="legend" id="legend"></div>
-    <video class="intro" controls playsinline preload="metadata" poster="media/intro.jpg" src="media/intro.mp4" aria-label="Intro video, 46 seconds, with sound"></video>
+    <video class="intro" controls playsinline preload="metadata" poster="media/intro.jpg" src="media/intro.mp4" aria-label="Intro video, 55 seconds, with sound"></video>
   </header>
 
   <section id="uses">
     <span class="eyebrow">What it is for</span>
     <h2>Videos you can make with it</h2>
-    <p class="note">Each of these is one HTML file in <code>examples/</code>, with its data or text at the top. Change it and run <code>bash video/build.sh examples/infographic.html</code> for a new MP4. The 46-second intro above shows all four uses, characters, the six new optical effects and three additional film effects rendered directly from time. The shops and studio are fictional, and their numbers are sample data.</p>
+    <p class="note">Each of these is one HTML file in <code>examples/</code>, with its data or text at the top. Change it and run <code>bash video/build.sh examples/infographic.html</code> for a new MP4. The 55-second intro above shows all four uses, characters, the six new optical effects and three additional film effects rendered directly from time. The shops and studio are fictional, and their numbers are sample data.</p>
     <div class="uses">
       <figure><video controls playsinline preload="none" poster="media/reel.jpg" src="media/reel.mp4" aria-label="Social clip example, 12 seconds"></video><figcaption><b>Social clips</b>9:16, 4:5 or 16:9.</figcaption></figure>
       <figure><video controls playsinline preload="none" poster="media/product.jpg" src="media/product.mp4" aria-label="Product demo example, 7 seconds"></video><figcaption><b>Product demos</b>Your screen, a cursor, a tap.</figcaption></figure>
@@ -135,6 +135,16 @@
     </div>
     <div class="gallery" id="gallery"></div>
     <p class="note">The grading tile previews the look with a CSS filter; a real grade would use the LUT pass that ships with three.js r128, and the glow stays off the text. The original 3D and shader tiles share one WebGL canvas; the three optical shaders share a second context. Reaction–diffusion draws the same pixels every time on one GPU, but not the same pattern on every GPU.</p>
+  </section>
+
+  <section id="studio-studies">
+    <span class="eyebrow">14 new film effects · 20 art directions</span>
+    <h2>Travel through styles. Turn motion into dots.</h2>
+    <p class="note">Original flying artwork, precise video-frame sampling, impact and echoes, 2.5D relief, and real skinned 3D point clouds. <a href="examples/studio.html">Open all 14 effect settings</a>. The twenty art directions are presets, not twenty extra effects.</p>
+    <div class="uses">
+      <figure><video controls playsinline preload="metadata" poster="media/style-journey.jpg" src="media/style-journey.mp4"></video><figcaption><b>One flight. Twenty worlds.</b>All twenty art directions, cross-frame transformations and a tracked gallery journey. <a href="examples/style-journey.html">Timeline player</a></figcaption></figure>
+      <figure><video controls playsinline preload="metadata" poster="media/dot-battle.jpg" src="media/dot-battle.mp4"></video><figcaption><b>Dot battle</b>An original skeletal animation becomes sampled footage, temporal echoes, 2.5D relief and true 3D freeze-orbit particles. <a href="examples/dot-battle.html">Timeline player</a></figcaption></figure>
+    </div>
   </section>
 
   <section id="new-studies">
@@ -249,19 +259,21 @@
 <script src="fx/pack-optical.js"></script>
 <script src="fx/stack-effects.js"></script>
 <script src="fx/pack-stacks.js"></script>
+<script src="fx/studio-effects.js"></script>
+<script src="fx/pack-studio.js"></script>
 <script>
 (() => {
   const { DEMOS, R3 } = window.FX;
   const KINDS = { shader: "3D and shaders", sim: "Simulations", character: "Characters", motion: "Motion", backdrop: "Backgrounds", ui: "UI and charts", type: "Type" };
   // Tiles are shown most striking first. One missing from this list follows the listed ones, in the
   // order it was registered.
-  const ORDER = ["stack-pixi", "stack-rapier", "stack-gpu", "optical-moire", "optical-slit", "optical-ribbon", "optical-caustic", "optical-foil", "optical-morph", "gpuparticles", "clay", "liquid", "reaction", "domainrep", "chrome", "styles", "rigid", "particles", "lit3d", "rays", "dissolve", "smoke", "tunnel",
+  const ORDER = ["studio-portal", "studio-themes", "studio-video-dots", "studio-freeze-orbit", "studio-echo", "studio-particle-lens", "studio-flight", "studio-gallery", "studio-lowpoly", "studio-dot-rhythm", "studio-dot-impact", "studio-time-remap", "studio-depth-dots", "studio-skin-cloud", "stack-pixi", "stack-rapier", "stack-gpu", "optical-moire", "optical-slit", "optical-ribbon", "optical-caustic", "optical-foil", "optical-morph", "gpuparticles", "clay", "liquid", "reaction", "domainrep", "chrome", "styles", "rigid", "particles", "lit3d", "rays", "dissolve", "smoke", "tunnel",
     "vartype", "glitch", "morph", "cardflip", "ridgelines", "rhythm", "coderain", "timing", "datachart", "whip", "uifly", "drawflow", "blueprint", "glass", "sweep",
     "hook", "chars", "karaoke", "stamp", "count", "type", "mark", "scan", "sticker", "ring", "beat", "wipe", "orbs", "gradient", "lut", "grain", "halftonetype",
     "ditherpeek", "dithercards", "ditheravatar", "dithercharacter", "toon", "flat", "bounce", "halftone"];
   // What a tile needs beyond the page itself.
-  const NEEDS = { "A": ["Base stack only", "Needs nothing beyond HTML, CSS, SVG, Canvas and three.js r128"],
-    "A+": ["Plus a three.js add-on", "Loads one more file from three.js r128's examples, such as a bloom or halftone pass"],
+  const NEEDS = { "A": ["Base stack only", "Needs nothing beyond HTML, CSS, SVG, Canvas and the existing three.js core"],
+    "A+": ["Plus a three.js add-on", "Uses three.js add-ons, such as post-processing or animated GLB loading"],
     "B": ["Custom shader", "Needs a GLSL shader written for it"], "C": ["Plus a library", "Needs one more library"] };
   const rank = (d) => (ORDER.includes(d.id) ? ORDER.indexOf(d.id) : ORDER.length);
   const STACKS = { css: "HTML/CSS", svg: "SVG", canvas: "Canvas 2D", three: "Three.js", glsl: "Custom GLSL", physics: "Matter.js", flubber: "Flubber", pixi: "PixiJS", rapier: "Rapier", webgpu: "WebGPU / TSL" };

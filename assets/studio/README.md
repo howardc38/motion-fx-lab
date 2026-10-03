@@ -1,0 +1,111 @@
+# Original studio assets and fourteen film effects
+
+The courier artwork, twenty poster treatments, mannequin geometry and 4.8-second
+skeletal sparring clip are original procedural assets. No reference-post images,
+characters, downloaded motion capture, generated-human footage or external music
+are bundled. The results demonstrate the techniques, not a shot-for-shot copy of
+the reference videos. The code and original assets use the repository's 0BSD licence.
+
+Technique references: [the art-direction journey](https://www.threads.com/@ai_cpocoder/post/Dd_nuqND8R-)
+and [the dot-animation study](https://www.threads.com/@more.yu_/post/DeBkaXOE6y6).
+
+## Effect catalogue
+
+All IDs below are prefixed with `studio-` in the main gallery. Twenty art
+directions are presets of `themes`, not twenty additional effect registrations.
+
+| ID | Film effect | Implementation |
+|---|---|---|
+| `flight` | Flying courier and cape | Shared pose with layered limbs and a deforming cape |
+| `portal` | Cross-frame style portal | One pose clipped into independently styled panels |
+| `themes` | Twenty art directions | Typography, motifs, material texture and figure treatment |
+| `gallery` | Art-gallery camera journey | Layout/scale interpolation, tracked horizontal travel, pull-out |
+| `lowpoly` | Low-poly flight course | Actual 3D city geometry and perspective rings |
+| `video-dots` | Video to animated dots | Deterministic RGBA frame sampling and luminance-dependent dot radius |
+| `dot-rhythm` | Beat-driven dot styles | Palette and spacing changes every 0.3 s at 100 BPM |
+| `dot-impact` | Dot impact and recovery | Compression, seeded offsets and a short recovery envelope |
+| `echo` | Colored temporal echoes | Five distinct earlier source frames, not RGB channel splitting |
+| `time-remap` | Source-time remapping | Normal, ramp/hold, reverse, stepped source clocks |
+| `depth-dots` | 2.5D dot relief | Shallow luminance-derived depth or a supplied depth image |
+| `skin-cloud` | Animated skinned point cloud | 16,000 stable barycentric samples attached to animated GLB geometry |
+| `freeze-orbit` | Frozen action, moving camera | Hold the real 3D pose; orbit the camera through 360 degrees |
+| `particle-lens` | Particle rush and depth of field | Geometry-bound scatter and depth-dependent soft point sprites |
+
+The twenty treatments are petroglyph, tomb painting, mosaic, stained glass,
+illuminated initial, proportion study, silhouette, ukiyo-e, cross-stitch,
+strongman bill, constructivism, art deco, golden-age comic, neon, silkscreen,
+line printer, handheld pixels, low poly, stencil, and embroidered patch.
+They are stylised procedural interpretations, not automatic historical-style
+transfer for arbitrary photographs.
+
+## Reproduce the assets and films
+
+```sh
+npm ci
+npx playwright install chromium
+npm run build:studio-assets
+npm run build:studio
+bash video/build.sh video/intro.html
+```
+
+The asset command exports `fighter.glb` with a real skeleton and animation clip,
+renders `examples/fight-source.html` twice at 24 fps, encodes `fight-source.mp4`,
+and imports it into `fight/frame-*.png` plus `fight/manifest.json`. The shipped
+frames are small enough to check in; a normal film rebuild can reuse them.
+`build:studio` delivers the two 40.8-second films, with sound, posters and GIFs.
+`build:showcase` also rebuilds the earlier films and the main intro.
+
+The asset tool uses Three.js r180 GLTFExporter and BufferGeometryUtils; playback
+uses GLTFLoader, SkeletonUtils and AnimationMixer. These are existing Three.js
+add-ons/core facilities, not a new rendering framework. Blender, AE and a depth
+estimation model are not required by these examples.
+
+## Use your own footage
+
+```sh
+python3 video/import-clip.py input.mp4 assets/my-clip --fps 24 --width 640 --height 360
+# For an evenly lit green background, add: --key 0x00ff00
+# Use --replace only when intentionally rebuilding an existing frame directory.
+```
+
+Import completes in a temporary sibling directory before replacing a prior
+sequence. Its manifest records dimensions, frame rate, count and source hash.
+Alpha is preserved, or produced by chroma key and despill. A decoded frame cache
+is bounded; seeking backward does not depend on the last decoded frame.
+
+With the r180 import map from `examples/studio.html` and `fx/studio-effects.js`:
+
+```js
+const effect = await FXStudio.create('video-dots', {
+  sourceUrl: '/assets/my-clip/manifest.json'
+});
+stage.appendChild(effect.canvas);
+await effect.frame(1.2);
+```
+
+Imported frames are normalized to a 640×360 sampling grid. The built-in source
+loops at 4.8 s; custom sources default to their manifest duration, or accept an
+explicit `loopDuration`. `FrameSource` and `PointField` can also be used directly.
+For `themes`, pass `{theme: 0..19}` to `frame`; for `time-remap`, pass
+`{timeMode: 'normal'|'ramp'|'reverse'|'steps'}`. `depth-dots` accepts a decoded
+grayscale image as `{depthFrame}`; absent one it uses a labeled luminance relief.
+The three 3D point effects also accept `{modelUrl}` at creation, for an
+uncompressed GLB with a skinned mesh and at least one animation clip. Normalize
+its scale/origin to the supplied mannequin's scene. The first clip is used;
+point colors come from vertex/material colors, rather than texture UV sampling.
+
+## Six reusable capabilities
+
+- `frame-source.js` + `video/import-clip.py`: indexed footage, alpha and bounded decode cache.
+- `themes.js`: shared-pose art-direction treatments, motifs and typography.
+- `point-field.js`: deterministic screen-grid identity, color and visibility.
+- `time.js`: independent source clocks, seeded randomness, beat/hit envelopes.
+- `scene.js`: animated GLB loading and stable, skin-aware surface samples.
+- `scene.js` point material: camera-relative point size, focus and soft bokeh.
+
+The 2.5D relief does not infer hidden anatomy. True orbit uses the actual 3D
+mannequin, including its unseen side/back. Surface samples retain their triangle
+and barycentric coordinates as the skin moves; they are not randomly regenerated
+each frame. Impact times are authored cues, not an automatic collision detector.
+Depth of field is an art-directed point-sprite approximation, not a physical lens
+solver. Every exported frame remains a function of time and fixed input assets.

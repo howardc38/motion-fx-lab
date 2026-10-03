@@ -22,8 +22,12 @@
     "render": "bash video/build.sh intro.html",
     "test:effects": "playwright test --config playwright.config.cjs",
     "record:stacks": "npm run render:stacks",
-    "build:showcase": "npm run render:stacks && bash video/build.sh examples/optical.html && bash video/build.sh video/intro.html",
-    "render:stacks": "bash video/build.sh examples/stacks.html"
+    "build:showcase": "npm run build:studio && npm run render:stacks && bash video/build.sh examples/optical.html && bash video/build.sh video/intro.html",
+    "render:stacks": "bash video/build.sh examples/stacks.html",
+    "build:studio-assets": "node tools/build-studio-assets.cjs",
+    "render:style-journey": "bash video/build.sh examples/style-journey.html",
+    "render:dot-battle": "bash video/build.sh examples/dot-battle.html",
+    "build:studio": "npm run render:style-journey && npm run render:dot-battle"
   },
   "devDependencies": {
     "@playwright/test": "1.59.1"

@@ -100,7 +100,7 @@ test("intro renders nine native additions without prerecorded atlases", async ({
   expect(fits).toEqual([true,true,true]);
   expect(await page.locator('script[src*="capture"]').count()).toBe(0);
   expect(await page.locator("#scLib").textContent()).toContain(
-    "63 film effects",
+    "77 film effects",
   );
   await page.evaluate(async () => {
     await __render(35.7);
@@ -108,11 +108,11 @@ test("intro renders nine native additions without prerecorded atlases", async ({
   });
 });
 
-test("gallery registers all 63 film effects including three asynchronous renderers", async ({
+test("gallery registers all 77 film effects including three asynchronous renderers", async ({
   page,
 }) => {
   await page.goto("/");
-  await page.waitForFunction(() => window.FX?.DEMOS.length === 63);
+  await page.waitForFunction(() => window.FX?.DEMOS.length === 77);
   const added = await page.evaluate(() =>
     FX.DEMOS.filter((d) => d.id.startsWith("optical-")).map((d) => ({
       id: d.id,

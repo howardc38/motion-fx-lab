@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="icon" href="data:," />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <script type="module">
+      import { makeFighter } from "../fx/studio/fighter-asset.js";
+      import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
+      window.buildAsset = async () => {
+        const { scene, clip } = makeFighter();
+        const data = await new GLTFExporter().parseAsync(scene, {
+          binary: true,
+          animations: [clip],
+        });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([data]));
+        a.download = "fighter.glb";
+        a.click();
+      };
+    </script>
+  </body>
+</html>

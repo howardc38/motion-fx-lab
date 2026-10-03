@@ -2,7 +2,7 @@ const { defineConfig } = require("@playwright/test");
 
 module.exports = defineConfig({
   testDir: "./tests",
-  testMatch: "new-effects.spec.cjs",
+  testMatch: ["new-effects.spec.cjs", "studio.spec.cjs"],
   timeout: 90000,
   workers: 1,
   reporter: "list",

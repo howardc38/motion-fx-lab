@@ -1,10 +1,10 @@
 # Motion FX Lab
 
-**Motion graphics as plain web pages, rendered to MP4 you can trust.** 63 film effects in HTML, CSS, SVG, Canvas, three.js, GLSL, Matter.js, Flubber, PixiJS, Rapier and WebGPU/TSL, and a recorder that turns any timeline page into an MP4. On our 3D-heavy test video it was 7.5× faster than a default headless browser, while rendering every frame twice and comparing the two before it gives you a file.
+**Motion graphics as plain web pages, rendered to MP4 you can trust.** 77 film effects in HTML, CSS, SVG, Canvas, three.js, GLSL, Matter.js, Flubber, PixiJS, Rapier and WebGPU/TSL, and a recorder that turns any timeline page into an MP4. On our 3D-heavy test video it was 7.5× faster than a default headless browser, while rendering every frame twice and comparing the two before it gives you a file.
 
-[![Highlights from the intro video (no sound). Click for the full 46-second video with sound.](media/intro.gif)](media/intro.mp4)
+[![Highlights from the intro video (no sound). Click for the full 55-second video with sound.](media/intro.gif)](media/intro.mp4)
 
-▶ **[Full intro video, with sound](media/intro.mp4)** (46 s, rendered by this repo) · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · **Licence: [0BSD](LICENSE)**, no conditions · No build step · No AI-generated images or sound
+▶ **[Full intro video, with sound](media/intro.mp4)** (55 s, rendered by this repo) · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · **Licence: [0BSD](LICENSE)**, no conditions · No build step · No AI-generated images or sound
 
 GitHub does not play video files from a repository inline, so the loop above is a GIF. The gallery plays the real video.
 
@@ -23,7 +23,7 @@ Describe the video to an AI coding assistant, or write it yourself. It becomes a
 </tr>
 </table>
 
-Plus characters drawn in code and 63 timeline effects. The 46-second intro shows four uses, characters, all six new optical studies, and three additional PixiJS / Rapier / WebGPU effects rendered directly from time. Their separate players are linked below. Each example is one HTML file with its text or numbers at the top; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
+Plus characters drawn in code and 77 timeline effects. The 55-second intro shows four uses, characters, the optical and GPU effects, and new art-direction and dot-animation chapters rendered directly from time. Their separate players are linked below. Each example is one HTML file with its text or numbers at the top; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
 
 ## Sound familiar?
 
@@ -40,7 +40,7 @@ Plus characters drawn in code and 63 timeline effects. The 46-second intro shows
 | Pain | What this repo does |
 |---|---|
 | Hand-built, un-diffable animation | Every timeline effect is a small function of time in a plain web page. Serve the gallery over localhost; no framework or bundler. |
-| Starting from a blank page | 63 timeline effects you can copy: kinetic type, UI mock-ups, charts, generative patterns, ray-marched and GPU-particle shaders, physics simulations, chrome, and toon, flat and dithered characters. |
+| Starting from a blank page | 77 timeline effects you can copy: kinetic type, UI mock-ups, charts, generative patterns, ray-marched and GPU-particle shaders, physics simulations, chrome, and toon, flat and dithered characters. |
 | Slow 3D in headless Chrome | GPU rendering through ANGLE Metal, lossless CDP screenshots and 4 browsers in parallel: **399.6 s → 52.9 s** for a 56-second, 3D-heavy video, including the second render that verifies it. |
 | Silent wrong frames | The whole video is rendered twice, each frame on a different browser, and every frame is compared. The recorder also stops on a CPU fallback, a lost WebGL context, a page error or a font that did not load. |
 | Colour shifts | Screenshots are converted with the BT.709 matrix and every file is tagged BT.709; the checks refuse an untagged file. |
@@ -66,7 +66,7 @@ The build overwrites the files in `media/`, which are the ones this repo ships.
 
 ## Proof
 
-Measured on an Apple M4 laptop on 2026-09-28; the two previous-intro rows on 2026-09-29, before the nine new studies were added. Those historical timings are not measurements of the current 46-second intro.
+Measured on an Apple M4 laptop on 2026-09-28; the two previous-intro rows on 2026-09-29, before the nine new studies were added. Those historical timings are not measurements of the current 55-second intro.
 
 | | |
 |---|---|
@@ -98,7 +98,7 @@ demo({ id: "count", kind: "type", period: 3.2, hero: 2.4, /* name, stacks, chips
   } });
 ```
 
-No `requestAnimationFrame` state, no clock, no unseeded randomness at draw time. Stateful simulations follow the same rule: frame `t` shows the state after exactly `round(t × steps per second)` fixed steps from a fixed start, a cache only saves re-running steps already taken, and asking for an earlier `t` starts again from step 0. That is what lets you scrub to any moment, render a frame again and get the same pixels, and split a video across browsers. The original 3D tiles share one WebGL renderer; the three optical shaders share a second WebGL context. Each copies its result into its own canvas. PixiJS and Rapier own renderer contexts; WebGPU/TSL uses a compute-capable device. All effects obey the same awaited timeline contract.
+No `requestAnimationFrame` state, no clock, no unseeded randomness at draw time. Stateful simulations follow the same rule: frame `t` shows the state after exactly `round(t × steps per second)` fixed steps from a fixed start, a cache only saves re-running steps already taken, and asking for an earlier `t` starts again from step 0. That is what lets you scrub to any moment, render a frame again and get the same pixels, and split a video across browsers. The original 3D tiles share one WebGL renderer; the three optical shaders share a second WebGL context. Each copies its result into its own canvas. PixiJS and Rapier own renderer contexts; WebGPU/TSL uses a compute-capable device. The studio effects share an additional r180 renderer. All effects obey the same awaited timeline contract.
 
 ```
 page.html ─ record.cjs cues ─► cues.json ─► sfx.py + music.py ─► mix.wav ──────────┐
@@ -139,22 +139,57 @@ Then run `bash video/build.sh video/yours.html`.
 | `video/intro.html` | The source of the intro video |
 | `examples/` | Four original use-case films, plus the six-effect optical player/film and the three-effect film and its parameter preview page |
 | `fx/stack-effects.js`, `fx/pack-stacks.js`, `fx/stacks/` | Reusable PixiJS, Rapier and WebGPU timeline effects and gallery adapters |
+| `fx/studio/`, `fx/studio-effects.js`, `fx/pack-studio.js` | Fourteen film effects, twenty art directions, fixed-frame footage, skeletal points and time controls |
+| `assets/studio/` | Original animated GLB, source clip, transparent frame sequence and technique guide |
+| `video/import-clip.py`, `tools/build-studio-assets.cjs` | Import fixed-FPS RGBA footage or regenerate the original studio assets |
 | `video/serve.cjs` | Loopback server used by the recorder for local ES modules |
 | `video/build.sh` | The whole pipeline in one command |
 
 ## The effects
 
-63 timeline effects: 55 in the gallery and 8 in its character section. Each card gives its kind, how it is drawn and what it needs beyond the page: the base stack only (36 effects), one more three.js r128 add-on file (7), a custom shader (15), or additional libraries (5: Matter.js, Flubber, PixiJS, Rapier and WebGPU/TSL effects).
+77 timeline effects: 69 in the gallery and 8 in its character section. Each card gives its kind, how it is drawn and what it needs beyond the page: the base stack only (47 effects), three.js add-ons (10), a custom shader (15), or additional libraries (5: Matter.js, Flubber, PixiJS, Rapier and WebGPU/TSL effects).
 
-- **3D and shaders (17, WebGL / WebGPU):** 200,000 particles moved on the GPU, ray-marched clay with smooth blending, liquid-glass refraction, an endless grid by domain repetition, chrome with a painted environment map, one object in five styles (Bayer dither, halftone, ASCII, pixel sort, risograph), particles that assemble into words, lit 3D type with soft shadows, rays with bloom and dust, a noise dissolve patched into a lit material, fbm smoke, a line tunnel, moiré interference, procedural caustic light, holographic foil, PixiJS liquid poster, WebGPU orbital particles.
+- **3D and shaders (24, WebGL / WebGPU):** 200,000 particles moved on the GPU, ray-marched clay with smooth blending, liquid-glass refraction, an endless grid by domain repetition, chrome with a painted environment map, one object in five styles (Bayer dither, halftone, ASCII, pixel sort, risograph), particles that assemble into words, lit 3D type with soft shadows, rays with bloom and dust, a noise dissolve patched into a lit material, fbm smoke, a line tunnel, moiré interference, procedural caustic light, holographic foil, PixiJS liquid poster, WebGPU orbital particles, twenty art directions, a low-poly flight course, footage-to-dots, rhythmic dot styles, 2.5D relief, skinned point clouds, and particle depth of field.
 - **Simulations (3):** reaction–diffusion (Gray–Scott) growing out of a word, rigid bodies falling and stacking at 240 Hz, and a Rapier 3D domino chain at 120 Hz.
-- **Characters (8):** an agent character dithered to three inks, peeking over a logo in a coin rain, fanning out cards, narrating from a badge and standing; the same agent toon-shaded with outlines and drawn as flat SVG with a per-part rig; and a halftoned figure built from spheres and cylinders, bouncing and standing.
-- **Motion (6):** a 0.5 s wipe, beat sync, squash and stretch next to its timing graph, a polar shape morph on a spring, a folding paper ribbon, a Flubber morph between concave outer contours.
+- **Characters (9):** an agent character dithered to three inks, peeking over a logo in a coin rain, fanning out cards, narrating from a badge and standing; the same agent toon-shaded with outlines and drawn as flat SVG with a per-part rig; and a halftoned figure built from spheres and cylinders, bouncing and standing; plus the original flying courier with an animated cape.
+- **Motion (12):** a 0.5 s wipe, beat sync, squash and stretch next to its timing graph, a polar shape morph on a spring, a folding paper ribbon, a Flubber morph between concave outer contours, a cross-frame style portal, gallery camera travel, dot impacts, temporal echoes, time remapping and freeze-orbit camera motion.
 - **Backgrounds (7):** film grain, glow orbs, a low-contrast flowing gradient, a warm grade with a soft glow, Bauhaus tile rhythm, noise ridgelines, a code-rain backdrop.
 - **UI and charts (9):** light sweep, frosted glass, scan and check, a camera move over a UI card, blueprint callouts on a dot grid, a self-drawing flow chart, a self-drawing data chart, a 3D card-flip grid, a 24-hour countdown ring.
 - **Type (13):** whip-in letters with motion blur, an RGB-split glitch, halftone dots on a word, character pops, highlighter, counting numbers, typewriter, a red flash with a shake and a stamp, a 3-second headline hook, word-synced captions, sticker labels, variable-font kinetic type, slit-scan typography.
 
 The first 36 effects were built for short promo videos about an Instagram DM assistant for insurance agents in Hong Kong, which is why the sample text talks about DMs, drafts and savings plans. Swap in your own words.
+
+## Art-direction and dot-animation studio
+
+**[One flight. Twenty worlds.](media/style-journey.mp4)** · **[Dot battle](media/dot-battle.mp4)** · **[All fourteen effect settings](examples/studio.html)** · **[Asset and technique guide](assets/studio/README.md)**
+
+Fourteen additional demos cover a flying character, cross-frame style changes,
+twenty art directions, a gallery camera journey, low-poly flight, footage-to-dots,
+beat-controlled styles, dot impact/recovery, colored time echoes, source-time
+remapping, 2.5D relief, animated skinned point clouds, freeze-orbit motion and
+particle depth of field. The twenty art directions are presets, not twenty extra
+effect registrations. Both combined films run for 40.8 seconds.
+
+The figures and motion are original stylised mannequins, built and animated in
+code. The flying courier and poster artwork are also original. The 2D dot demos
+sample a checked-in RGBA sequence; the true 3D demos load an animated GLB and keep
+surface samples attached to the deforming skeleton. A full camera orbit uses
+that actual geometry. Luminance-derived 2.5D relief is explicitly labeled and
+does not claim to reconstruct hidden anatomy. These films demonstrate the
+techniques rather than duplicating the reference posts' characters or footage.
+
+```sh
+npm run build:studio-assets   # rebuild GLB, verified source clip and RGBA frames
+npm run build:studio          # both films, with sound, posters and GIFs
+```
+
+The checked-in assets make the first command optional for normal film builds.
+Use `video/import-clip.py` for your own footage. The implementation extends the
+existing Three.js stack with GLTFLoader, GLTFExporter, SkeletonUtils and
+BufferGeometryUtils, plus AnimationMixer and a stable skin-aware surface sampler.
+No Blender, AE, image generator or depth model is required to reproduce the
+shipped demos. Source paths, frame APIs, presets and limitations are documented
+in [the studio guide](assets/studio/README.md).
 
 ## Nine new film effects
 
@@ -188,7 +223,7 @@ npm run render:stacks
 npm run build:showcase
 ```
 
-The last command renders the three-effect film, optical film and intro, each
+The last command renders both studio films, the three-effect film, optical film and intro, each
 with audio, every-frame comparison, delivery checks, posters and GIFs. The
 recorder automatically serves repository pages over loopback HTTP for ES modules.
 Pinned CDN dependencies require internet access. The WebGPU film and intro need
@@ -199,7 +234,7 @@ an ordinary MP4.
 Run `REQUIRE_WEBGPU=1 npm run test:effects` on a supported GPU to require actual
 compute-buffer checks. Tests cover optical seeks and audio, all three new frame
 APIs, backward simulation seeks, gallery registration, native intro rendering,
-asynchronous screenshot ordering and rejection cleanup. Python 3, ffmpeg and
+asynchronous screenshot ordering, rejection cleanup, all fourteen studio effects, source-frame indexing, alpha, stable point identities and independent pose/camera clocks. Python 3, ffmpeg and
 Chromium are needed. There is no CI yet.
 
 ## Effects we learnt from other people's videos
