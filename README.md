@@ -14,12 +14,12 @@ Describe the video to an AI coding assistant, or write it yourself. It becomes a
 
 <table>
 <tr>
-<td width="50%"><a href="media/reel.mp4"><img src="media/reel.jpg" alt="Social clip example: a phone showing a booking app" width="200"></a><br><b>Social clips.</b> 9:16, 4:5 or 16:9. <a href="media/reel.mp4">12 s video</a> · <a href="examples/reel.html">source</a></td>
-<td width="50%"><a href="media/product.mp4"><img src="media/product.jpg" alt="Product demo example: a booking screen after a tap"></a><br><b>Product demos.</b> Your screen, a cursor, a tap. <a href="media/product.mp4">7 s video</a> · <a href="examples/product.html">source</a></td>
+<td width="50%"><a href="media/reel.mp4"><img src="media/reel.gif" alt="Social clip example: a phone showing a booking app" width="200"></a><br><b>Social clips.</b> 9:16, 4:5 or 16:9. <a href="media/reel.mp4">12 s video</a> · <a href="examples/reel.html">source</a></td>
+<td width="50%"><a href="media/product.mp4"><img src="media/product.gif" alt="Product demo example: a booking screen after a tap"></a><br><b>Product demos.</b> Your screen, a cursor, a tap. <a href="media/product.mp4">7 s video</a> · <a href="examples/product.html">source</a></td>
 </tr>
 <tr>
-<td><a href="media/infographic.mp4"><img src="media/infographic.jpg" alt="Infographic example: a donut chart of drink shares"></a><br><b>Infographics.</b> Charts drawn from your numbers. <a href="media/infographic.mp4">14 s video</a> · <a href="examples/infographic.html">source</a></td>
-<td><a href="media/broll.mp4"><img src="media/broll.jpg" alt="B-roll example: noise ridgelines"></a><br><b>B-roll.</b> Background loops with no seam. <a href="media/broll.mp4">12 s video</a> · <a href="examples/broll.html">source</a></td>
+<td><a href="media/infographic.mp4"><img src="media/infographic.gif" alt="Infographic example: a donut chart of drink shares"></a><br><b>Infographics.</b> Charts drawn from your numbers. <a href="media/infographic.mp4">14 s video</a> · <a href="examples/infographic.html">source</a></td>
+<td><a href="media/broll.mp4"><img src="media/broll.gif" alt="B-roll example: noise ridgelines"></a><br><b>B-roll.</b> Background loops with no seam. <a href="media/broll.mp4">12 s video</a> · <a href="examples/broll.html">source</a></td>
 </tr>
 </table>
 
@@ -66,17 +66,17 @@ Click a preview for its full MP4 with sound. These GIFs are silent highlights.
 | Film | Authored length | Format | Preview | Source |
 |---|---:|---|---|---|
 | [Intro](media/intro.mp4) | 55.2 s | 16:9 | [GIF](media/intro.gif) · [poster](media/intro.jpg) | [HTML](video/intro.html) |
-| [Social reel](media/reel.mp4) | 12 s | 9:16 | [poster](media/reel.jpg) | [HTML](examples/reel.html) |
-| [Product demo](media/product.mp4) | 7.2 s | 16:9 | [poster](media/product.jpg) | [HTML](examples/product.html) |
-| [Infographic](media/infographic.mp4) | 14.4 s | 16:9 | [poster](media/infographic.jpg) | [HTML](examples/infographic.html) |
-| [B-roll](media/broll.mp4) | 12 s | 16:9 | [poster](media/broll.jpg) | [HTML](examples/broll.html) |
+| [Social reel](media/reel.mp4) | 12 s | 9:16 | [GIF](media/reel.gif) · [poster](media/reel.jpg) | [HTML](examples/reel.html) |
+| [Product demo](media/product.mp4) | 7.2 s | 16:9 | [GIF](media/product.gif) · [poster](media/product.jpg) | [HTML](examples/product.html) |
+| [Infographic](media/infographic.mp4) | 14.4 s | 16:9 | [GIF](media/infographic.gif) · [poster](media/infographic.jpg) | [HTML](examples/infographic.html) |
+| [B-roll](media/broll.mp4) | 12 s | 16:9 | [GIF](media/broll.gif) · [poster](media/broll.jpg) | [HTML](examples/broll.html) |
 | [Optical effects](media/optical.mp4) | 18 s | 16:9 | [GIF](media/optical.gif) · [poster](media/optical.jpg) | [HTML](examples/optical.html) |
 | [Filters, collisions and particles](media/stacks.mp4) | 24 s | 16:9 | [GIF](media/stacks.gif) · [poster](media/stacks.jpg) | [HTML](examples/stacks.html) |
 | [One Flight, Twenty Worlds](media/style-journey.mp4) | 40.8 s | 16:9 | [GIF](media/style-journey.gif) · [poster](media/style-journey.jpg) | [HTML](examples/style-journey.html) |
 | [COUNTERFORM](media/dot-battle.mp4) | 19.2 s | 16:9 | [GIF](media/dot-battle.gif) · [poster](media/dot-battle.jpg) | [HTML](examples/dot-battle.html) |
 | [Same Fight, Eight Treatments](media/fight-effects.mp4) | 24 s | 16:9 | [GIF](media/fight-effects.gif) · [poster](media/fight-effects.jpg) | [HTML](examples/fight-effects.html) |
 
-The four original use-case films intentionally have posters without GIFs. A GIF
+All ten published films have animated GIF previews and still posters. A GIF
 is a silent selection of shots, not the full film. MP4 container durations can be
 about 0.1 s longer than the authored timeline because of the final frame and
 encoding timestamps. `assets/studio/fight-source.mp4` is a silent green-screen

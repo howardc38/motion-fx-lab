@@ -100,6 +100,7 @@
   const [peakHour, peakCups] = hours.reduce((best, hour) => hour[1] > best[1] ? hour : best);
   const hourLabel = h => `${h % 12 || 12} ${h < 12 ? "am" : "pm"}`;
 
+  window.__gif = [[4, 5.8], [7.7, 9.5], [11.3, 13.1]];
   window.__poster = 9.5;   // the poster frame, in seconds
   window.__music = [[0, "intro"], [2.4, "build"], [4.8, "drop"], [9.6, "final"], [12, "tail"]];
 
