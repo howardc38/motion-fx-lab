@@ -43,6 +43,24 @@ These three intro stories combine existing capabilities; they do not add three
 new effect registrations. Source: [intro.html](video/intro.html) and
 [intro-stories.js](fx/intro-stories.js).
 
+## Animated previews
+
+Click a preview for its full MP4 with sound. These GIFs are silent highlights.
+
+<table>
+<tr>
+<td width="50%"><a href="media/style-journey.mp4"><img src="media/style-journey.gif" alt="One Flight, Twenty Worlds animated preview" width="400"></a><br><b>One Flight, Twenty Worlds</b></td>
+<td width="50%"><a href="media/dot-battle.mp4"><img src="media/dot-battle.gif" alt="COUNTERFORM dot fight animated preview" width="400"></a><br><b>COUNTERFORM</b></td>
+</tr>
+<tr>
+<td><a href="media/fight-effects.mp4"><img src="media/fight-effects.gif" alt="Same Fight, Eight Treatments animated preview" width="400"></a><br><b>Same Fight, Eight Treatments</b></td>
+<td><a href="media/optical.mp4"><img src="media/optical.gif" alt="Six optical effects animated preview" width="400"></a><br><b>Optical effects</b></td>
+</tr>
+<tr>
+<td colspan="2"><a href="media/stacks.mp4"><img src="media/stacks.gif" alt="Filters, collisions and particles animated preview" width="400"></a><br><b>Filters, collisions and particles</b></td>
+</tr>
+</table>
+
 ## Published films and previews
 
 | Film | Authored length | Format | Preview | Source |
