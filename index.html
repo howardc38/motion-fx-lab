@@ -120,7 +120,8 @@
   <header>
     <span class="eyebrow">Open source · 0BSD</span>
     <h1>Motion FX Lab</h1>
-    <p class="lede">Describe a video to an AI coding assistant, or write it yourself: it becomes a web page, and this repo renders the page to MP4, frame by frame. Nothing in the picture or the sound is AI-generated, so every frame is exact, editable like code and the same on every render. Every tile below is drawn live in your browser by the same code. Each main card demonstrates one technique family; its selector compares variants of that technique. All technique cards, including characters, share landscape framing and the same filters. Preset collections and combined films are listed separately and do not inflate the technique count. A card marked “Seen in” is an effect we spotted in someone else's video and rebuilt from scratch. The sample text comes from our own videos for an Instagram DM assistant; swap in your own words. The original video pipeline uses 16 stacks; Flubber, PixiJS, Rapier and WebGPU/TSL extend the film-effect library.</p>
+    <p class="lede">Make social clips, product demos, infographics and animated backgrounds as editable web pages, then export them to MP4. Write the code yourself or work with an AI coding assistant. The shipped examples use code-drawn visuals and synthesised music.</p>
+    <nav class="legend" aria-label="On this page"><a href="#uses">Watch examples</a><a href="#effects">Browse effects</a><a href="#studio-studies">Showcase films</a><a href="#make-video">Make a video</a><a href="https://github.com/howardc38/motion-fx-lab">Get the source</a></nav>
     <div class="legend" id="legend"></div>
     <video class="intro" controls playsinline preload="metadata" poster="media/intro.jpg" src="media/intro.mp4" aria-label="Intro video, 55 seconds, with sound"></video>
   </header>
@@ -128,7 +129,7 @@
   <section id="uses">
     <span class="eyebrow">What it is for</span>
     <h2>Videos you can make with it</h2>
-    <p class="note">Each of these is one HTML file in <code>examples/</code>, with its data or text at the top. Change it and run <code>bash video/build.sh examples/infographic.html</code> for a new MP4. The 55-second intro above shows four uses, character action, a selected effects montage, then three stories: One Flight, Twenty Worlds; One Word, Many Forms; and One Push, Chain Reaction. It closes with timeline editing and MP4 export. The shops and studio are fictional, and their numbers are sample data.</p>
+    <p class="note">These silent GIFs preview four uses. Click a preview or “Play with sound” for the full MP4. Each example has editable text or data in <code>examples/</code>. The shops, studio and numbers are fictional sample content.</p>
     <div class="uses">
       <figure><div class="film-preview"><img src="media/reel.gif" alt="Social clips animated preview" loading="lazy"><button type="button" aria-label="Play Social clips video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/reel.jpg" src="media/reel.mp4" aria-label="Social clip example, 12 seconds"></video></div><figcaption><b>Social clips</b>9:16 portrait example. Gallery effects use 16:9; films can also export 4:5 or 16:9.</figcaption></figure>
       <figure><div class="film-preview"><img src="media/product.gif" alt="Product demos animated preview" loading="lazy"><button type="button" aria-label="Play Product demos video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/product.jpg" src="media/product.mp4" aria-label="Product demo example, 7 seconds"></video></div><figcaption><b>Product demos</b>Your screen, a cursor, a tap.</figcaption></figure>
@@ -137,7 +138,10 @@
     </div>
   </section>
 
-  <section aria-label="Effects">
+  <section id="effects" aria-labelledby="effects-title">
+    <span class="eyebrow">Reusable effects</span>
+    <h2 id="effects-title">Choose an effect for your film</h2>
+    <p class="note">These previews are drawn live from the same code you can use in a film. Each card represents one effect family; use its selector to compare variants. Every effect family, including characters, uses a 16:9 preview and participates in the filters. Collections below combine techniques and are counted separately. “Seen in” names a visual reference rebuilt with original content. Replace the sample copy with your own.</p>
     <div class="toolbar">
       <div class="group" id="fKind"><span>Kind</span></div>
       <div class="group" id="fStack"><span>Drawn with</span></div>
@@ -150,25 +154,27 @@
 
   <section id="studio-studies">
     <span class="eyebrow">Art direction and dot-animation films</span>
-    <h2>Travel through styles. Turn motion into dots.</h2>
-    <p class="note">Original flying artwork and a shared Counterform fight: footage dots, impact, echoes, time remapping, 2.5D relief and real skinned 3D point clouds. <a href="examples/studio.html">Open studio settings</a>. The twenty art directions are presets, not twenty extra effects.</p>
+    <h2>Three films built from the effects</h2>
+    <p class="note">Watch a complete art-direction journey, a choreographed fight and a comparison of eight treatments of that fight. <a href="examples/studio.html">Adjust the studio effects</a>. The twenty art directions are presets of the same collection.</p>
     <div class="uses">
-      <figure><video controls playsinline preload="metadata" poster="media/style-journey.jpg" src="media/style-journey.mp4"></video><figcaption><b>One flight. Twenty worlds.</b>All twenty art directions, cross-frame transformations and a tracked gallery journey. <a href="examples/style-journey.html">Timeline player</a></figcaption></figure>
-      <figure><video controls playsinline preload="metadata" poster="media/dot-battle.jpg" src="media/dot-battle.mp4"></video><figcaption><b>COUNTERFORM · Dot battle</b>A 19-second original illustrated fight: punches, blocks, sweeps and flying kicks, with contact holds and colored time echoes. Misses and impacts have different cues; a short 2D camera push holds the contact. The eight related dot demos share its choreography through rebuilt 3D fighters, with a separate true 3D orbit. <a href="examples/dot-battle.html">Timeline player</a></figcaption></figure>
-      <figure><video controls playsinline preload="metadata" poster="media/fight-effects.jpg" src="media/fight-effects.mp4"></video><figcaption><b>Same fight. Eight treatments.</b>The rebuilt characters across footage dots, frozen camera orbit, temporal echoes, lens particles, impact, time control, relief and skinned points. <a href="examples/fight-effects.html">Timeline player</a></figcaption></figure>
+      <figure><video controls playsinline preload="metadata" poster="media/style-journey.jpg" src="media/style-journey.mp4" aria-label="One Flight, Twenty Worlds, 41 seconds, with sound"></video><figcaption><b>One Flight, Twenty Worlds · 41 s</b>One courier travels through twenty art directions, with a continuous pose across changing artwork. <a href="examples/style-journey.html">Timeline player</a></figcaption></figure>
+      <figure><video controls playsinline preload="metadata" poster="media/dot-battle.jpg" src="media/dot-battle.mp4" aria-label="COUNTERFORM dot fight, 19 seconds, with sound"></video><figcaption><b>COUNTERFORM · 19 s</b>An original 2D fight with punches, blocks, sweeps, flying kicks and short contact holds. The related dot demos share its choreography through 3D characters. <a href="examples/dot-battle.html">Timeline player</a></figcaption></figure>
+      <figure><video controls playsinline preload="metadata" poster="media/fight-effects.jpg" src="media/fight-effects.mp4" aria-label="Same Fight, Eight Treatments, 24 seconds, with sound"></video><figcaption><b>Same Fight, Eight Treatments · 24 s</b>Compare dots, echoes, impact, time remapping, relief and particles. The frozen orbit uses real 3D geometry; the image-relief treatment is 2.5D. <a href="examples/fight-effects.html">Timeline player</a></figcaption></figure>
     </div>
   </section>
 
   <section id="new-studies">
-    <span class="eyebrow">Nine new studies</span>
-    <h2>Optical effects and new stacks</h2>
-    <p class="note">The six optical effects above use the timeline's frame(t) contract. <a href="examples/optical.html">Open the optical study player</a> to compare them and scrub time. PixiJS, Rapier and WebGPU/TSL use the same awaited frame(t) contract. <a href="examples/stacks.html">Watch or scrub their 24-second film</a>; export it with <code>npm run render:stacks</code>.</p>
+    <span class="eyebrow">More film examples</span>
+    <h2>Shape, light and physical motion</h2>
+    <p class="note">An 18-second film combines six optical looks; a 24-second film shows image distortion, a domino chain and orbital particles. Watch the finished films below, or open the <a href="examples/optical.html">optical player</a> and <a href="examples/stacks.html">motion player</a> to scrub their timelines.</p>
     <div class="cols">
-      <div class="box"><h3><a href="examples/stack-lab/#pixi">PixiJS · Liquid poster ↗</a></h3><p>Displacement, blur and colour filters. Script the transition from the original poster to its filtered image.</p></div>
-      <div class="box"><h3><a href="examples/stack-lab/#rapier">Rapier · Chain reaction ↗</a></h3><p>48 three-dimensional dominoes, actual collisions and a fixed 120 Hz physics step. A scripted camera follows the chain.</p></div>
-      <div class="box"><h3><a href="examples/stack-lab/#gpu">WebGPU / TSL · Orbital matter ↗</a></h3><p>65,536 particles updated in GPU storage buffers. Requires WebGPU on HTTPS or localhost; no WebGL substitute.</p></div>
+      <div class="box"><h3><a href="examples/stack-lab/#pixi">Liquid poster ↗</a></h3><p>Displacement, blur and colour filters. Script the transition from the original poster to its filtered image.</p></div>
+      <div class="box"><h3><a href="examples/stack-lab/#rapier">Chain reaction ↗</a></h3><p>One push sets 48 dominoes in motion through real collisions. The intro follows the falling chain; the settings player shows the whole scene.</p></div>
+      <div class="box"><h3><a href="examples/stack-lab/#gpu">Orbital particles ↗</a></h3><p>65,536 particles orbit, gather and disperse. The editable preview needs a WebGPU-capable browser on HTTPS or localhost; the finished MP4 plays as a normal video.</p></div>
     </div>
+    <p><b>Optical effects · 18 s</b></p>
     <video class="intro" controls playsinline preload="metadata" poster="media/optical.jpg" src="media/optical.mp4" aria-label="18-second optical film with synthesised sound"></video>
+    <p><b>Filters, collisions and particles · 24 s</b></p>
     <video class="intro" controls playsinline preload="metadata" poster="media/stacks.jpg" src="media/stacks.mp4" aria-label="24-second verified film of PixiJS, Rapier and WebGPU effects"></video>
   </section>
 
@@ -179,10 +185,18 @@
     <div class="gallery" id="showcaseGallery"></div>
   </section>
 
+  <section id="make-video">
+    <span class="eyebrow">Make a video</span>
+    <h2>Choose an example. Edit it. Export.</h2>
+    <p class="note">After <a href="https://github.com/howardc38/motion-fx-lab#quick-start">setting up the repository</a>, edit an example’s words, numbers or timeline and run its build command:</p>
+    <pre style="margin:0;padding:16px;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px"><code>bash video/build.sh examples/product.html</code></pre>
+    <p class="note">The build writes an MP4, a high-quality copy, a poster and the declared GIF preview. <a href="https://github.com/howardc38/motion-fx-lab#published-films-and-previews">Browse all ten film sources and rebuild commands</a>. The recorder compares every frame across two independent renders and checks the delivered audio and video.</p>
+  </section>
+
   <section>
-    <span class="eyebrow">Stack</span>
-    <h2>The original pipeline and new stacks</h2>
-    <p class="note">16 stacks: 5 for the picture, 6 for 3D, 1 for physics, 2 for sound and 2 for rendering. The gallery also uses Flubber for arbitrary outer-contour morphs. PixiJS, Rapier and modern three.js/TSL are reusable timeline modules; r180 imports coexist with the original r128 effects.</p>
+    <span class="eyebrow">Implementation</span>
+    <h2>How the films are built</h2>
+    <p class="note">The library combines drawing APIs, renderers, simulation libraries and export tools. Original effects use three.js r128; the newer 3D and compute modules pin r180. The tools below support the films and previews on this page.</p>
     <div class="scroll">
       <table>
         <thead><tr><th>Stack</th><th>What it is</th><th>Why</th><th>What it does here</th></tr></thead>
@@ -193,14 +207,14 @@
 
   <section id="pipeline">
     <span class="eyebrow">Rendering</span>
-    <h2>From HTML to MP4, measured</h2>
-    <p class="note">Measured on a 56-second, 1,693-frame promo of ours with heavy 3D (the promo itself is not in this repo). Timed from launching the browsers to a finished lossless master. Our first pipeline, default headless Chromium with one browser and <code>page.screenshot</code>, took 399.6 s. The recorder now renders the whole video twice and compares every frame, in 52.9 s: 7.5× faster. Before that, with only an 8-frame spot check, it took 26.4 s. Encoding both deliverables with every check takes another 33.6 s. All measured on 2026-09-28 on an Apple M4 laptop.</p>
+    <h2>A recorded rendering benchmark</h2>
+    <p class="note">Measured on a 56-second, 1,693-frame promo of ours with heavy 3D (the promo itself is not in this repo). Timed from launching the browsers to a finished lossless master. Our first pipeline, default headless Chromium with one browser and <code>page.screenshot</code>, took 399.6 s. In that test, rendering the whole video twice and comparing every frame took 52.9 s: 7.5× faster than the first pipeline. Before that, with only an 8-frame spot check, it took 26.4 s. Encoding both deliverables with every check took another 33.6 s. All measured on 2026-09-28 on an Apple M4 laptop.</p>
     <div class="box bars" id="bars"></div>
     <p class="note">In that historical benchmark, past 4 browsers there was no gain: the bottleneck moved to the single ffmpeg process that decoded the PNGs and wrote the master. The table below describes that benchmark, not the current intro file.</p>
     <div class="scroll"><table>
-      <thead><tr><th>Step</th><th>First pipeline</th><th>This recorder</th><th>How it is proven</th></tr></thead>
+      <thead><tr><th>Step</th><th>First pipeline</th><th>Verified recorder in that test</th><th>How it is proven</th></tr></thead>
       <tbody>
-        <tr><td class="name">3D rendering</td><td>SwiftShader (GPU emulated on the CPU)</td><td>ANGLE Metal (the Apple M4 GPU)</td><td>The browser's WebGL renderer string is read at start; SwiftShader stops the run</td></tr>
+        <tr><td class="name">3D rendering</td><td>SwiftShader (GPU emulated on the CPU)</td><td>ANGLE Metal (the Apple M4 GPU)</td><td>The browser's WebGL renderer string is read at start; an unexpected SwiftShader fallback stops a GPU run</td></tr>
         <tr><td class="name">Screenshots</td><td>page.screenshot</td><td>CDP captureScreenshot with optimizeForSpeed</td><td>At 8 fast-moving moments the decoded pixels matched the old method 8/8, with no stale frame</td></tr>
         <tr><td class="name">Parallelism</td><td>1 browser</td><td>4 independent browsers, frames dealt round-robin</td><td>The whole video is rendered a second time with every frame on another browser, and all frames are compared; a frame fails if over 0.01% of plane samples differ by more than 8 levels, or over 20 samples differ by more than 48 levels</td></tr>
         <tr><td class="name">Master</td><td>x264 CRF 17 (lossy)</td><td>x264 lossless</td><td>Deliverables are compressed once; the master must hold every frame</td></tr>
@@ -210,29 +224,29 @@
         <tr><td class="name">Web preview</td><td class="num">13.8 MB</td><td class="num">13.9 MB · two-pass 1870 kbps</td><td>Over 15 MB, it retries once at a lower rate, then stops</td></tr>
       </tbody></table></div>
     <div class="cols">
-      <div class="box"><h3>What the checks caught on their first day: 4 runs stopped, no broken video shipped</h3><ul>
+      <div class="box"><h3>What the checks caught during development</h3><ul>
         <li>A writer-loop bug: too few frames, stop.</li>
-        <li>Re-rendered frames differed: GPU edge noise on rotated text. The rule moved from byte-identical to a pixel tolerance; a wrong frame differs by 100,000+ pixels and still stops the run. Later, a spot check of 8 frames missed a browser that drew a label wrongly, so every frame is now rendered twice. The label had kept a stale size after a scale animation; <code>engine.js</code> now prevents that.</li>
+        <li>Re-rendered frames differed: GPU edge noise on rotated text. Pixel tolerance handles small GPU edge differences; it does not judge the composition or motion quality. Later, a spot check of 8 frames missed a browser that drew a label wrongly, so every frame is now rendered twice. The label had kept a stale size after a scale animation; <code>engine.js</code> now prevents that.</li>
         <li>A decoder deadlock: the frame comparison, the frame counts and every delivery step now have a time limit, so a hang there fails loudly.</li>
         <li>A bad argument: refused before starting.</li>
       </ul></div>
       <div class="box"><h3>Left out, and why</h3><ul>
-        <li><b>HEVC</b>: the high-quality file has no size pressure and H.264 is enough; the web preview must play in every browser.</li>
-        <li>The GPU speed-up is verified on macOS only; without a Metal GPU, render with <code>--cpu</code>.</li>
+        <li><b>HEVC</b>: the high-quality file has no size pressure and H.264 is enough; H.264 is used for broad browser compatibility.</li>
+        <li>GPU benchmarks were measured on macOS. WebGL-only films can use <code>--cpu</code>; films with WebGPU compute require a compatible GPU adapter.</li>
       </ul></div>
     </div>
   </section>
 
   <section>
-    <span class="eyebrow">Not added</span>
-    <h2>Stacks we looked at and left out</h2>
+    <span class="eyebrow">Design choices</span>
+    <h2>Tools and authoring choices</h2>
     <div class="cols">
-      <div class="box"><h3>Later</h3><ul>
+      <div class="box"><h3>Current rendering choices</h3><ul>
         <li><b>Full three.js migration</b>: the original effects keep r128; newer film modules pin r180 without migrating every existing shader.</li>
-        <li><b>GSAP</b>: not needed for these studies: Flubber handles the new concave outer-contour morph; the original polar morph remains available.</li>
+        <li><b>Timelines</b>: each frame is calculated directly from time. These examples use the local timeline engine rather than a GSAP runtime.</li>
         <li><b>HyperFrames</b>: another <a href="https://github.com/heygen-com/hyperframes">HTML-to-video framework</a>; the current films use this repository’s existing recorder.</li>
       </ul></div>
-      <div class="box"><h3>No</h3><ul>
+      <div class="box"><h3>Other workflows and assets</h3><ul>
         <li><b>Remotion</b>: videos use React components; <a href="https://github.com/remotion-dev/remotion/blob/main/packages/core/LICENSE.md">free eligibility and Company License terms</a> depend on the user or organization.</li>
         <li><b>lygia</b>: its <a href="https://github.com/patriciogonzalezvivo/lygia/blob/main/LICENSE.md">default Prosperity licence</a> covers noncommercial use and a 30-day commercial trial; it is not bundled here.</li>
         <li><b>Generative AI</b>: no AI actors, footage, depth maps or music. Characters are drawn in code or by an illustrator, and music is synthesised in code.</li>
@@ -295,7 +309,7 @@
   const entryMatches = d => (state.kind === "all" || d.kind === state.kind) && (state.stack === "all" || d.stacks.includes(state.stack));
   function details(card) {
     const d = byId.get(card.selected);
-    card.caption.querySelector('.pills').innerHTML = `<span class="pill kind">${card.showcase ? 'Showcase' : KINDS[d.kind]}</span><span class="grade" title="${NEEDS[d.grade][1]}">${NEEDS[d.grade][0]}</span>`;
+    card.caption.querySelector('.pills').innerHTML = `<span class="pill kind">${card.showcase ? 'Collection' : KINDS[d.kind]}</span><span class="grade" title="${NEEDS[d.grade][1]}">${NEEDS[d.grade][0]}</span>`;
     card.caption.querySelector('.chips').innerHTML = d.chips.map(c => `<code>${c}</code>`).join('');
     card.caption.querySelector('.seen').textContent = d.seen ? 'Seen in: ' + d.seen : '';
     card.caption.querySelector('.variant-description').textContent = card.family.entries.length > 1 ? d.purpose : '';
@@ -325,8 +339,8 @@
       fig.append(preview,caption); host.appendChild(fig); cards.push(card); details(card);
     }
   }
-  document.querySelector('meta[name=description]').content = `${stats.techniques} motion-effect techniques, ${stats.variants} selectable variants and ${stats.showcases} film showcases. Landscape previews and verified MP4 export.`;
-  document.getElementById('legend').innerHTML = `<span><b>${stats.techniques}</b> technique families · ${stats.variants} selectable variants · ${stats.showcases} separate showcases</span><span>All previews: 16:9</span>`;
+  document.querySelector('meta[name=description]').content = `${stats.techniques} effect families, ${stats.variants} variants and ${stats.showcases} collections. Animated film previews, editable examples and verified MP4 export.`;
+  document.getElementById('legend').innerHTML = `<span><b>${stats.techniques}</b> effect families · ${stats.variants} selectable variants · ${stats.showcases} collections</span><span>Effect previews: 16:9</span>`;
   const mk = (host, key, opts) => {
     for (const [v,label] of opts) {
       const button=document.createElement('button'); button.type='button'; button.textContent=label; button.setAttribute('aria-pressed',String(state[key]===v));
@@ -395,7 +409,7 @@
   requestAnimationFrame(tick);
 
   // render-time bars, to scale
-  const bars = [["First pipeline: 1 browser, CPU-emulated GPU", 399.6, "old", false], ["This recorder: 4 browsers, every frame rendered twice (default)", 52.9, "", true],
+  const bars = [["First pipeline: 1 browser, CPU-emulated GPU", 399.6, "old", false], ["Verified benchmark: 4 browsers, every frame rendered twice", 52.9, "", true],
     ["Spot check only: 1 browser", 71.0, "", false], ["Spot check only: 4 browsers", 26.4, "", false], ["Spot check only: 6 browsers", 28.5, "", false], ["Spot check only: 8 browsers", 31.9, "", false]];
   document.getElementById("bars").innerHTML = bars.map(([l, v, c, best]) => `<div class="bar${best ? " best" : ""}"><span>${l}</span><div style="padding-right:90px"><i class="${c}" style="width:${(v / 399.6 * 100).toFixed(1)}%"><b>${v.toFixed(1)} s</b></i></div></div>`).join("");
 
@@ -416,24 +430,25 @@
     ["Shadows (SpotLight, soft)", "Lights that cast shadows", "Depth", "The 3D “6%” casting on the floor"],
     ["Physics"],
     ["Matter.js 0.20.0", "2D rigid-body physics", "Things that fall, collide and stack", "The rigid-body tile, stepped at a fixed 240 Hz so every frame can be recomputed"],
-    ["New studies"],
+    ["Additional film modules"],
     ["Flubber 0.4.2", "Outer-contour interpolation", "Morph concave paths", "Monogram → lightning → heart, sampled directly at t"],
     ["PixiJS 8.22.0", "2D scene graph and filter pipeline", "Compose texture effects", "Liquid poster with displacement, blur and colour grading"],
     ["Rapier 0.21.0", "3D WASM rigid-body physics", "Real collisions", "48 dominoes, fixed 120 Hz, rendered with three.js r180"],
-    ["three.js r180 / WebGPU / TSL", "GPU compute and node materials", "Keep particle state on the GPU", "65,536 particles; isolated from the gallery's r128 renderer"],
+    ["three.js r180 / WebGPU / TSL", "Modern 3D rendering and GPU compute", "Animated geometry and compute-driven particles", "Counterform skeletons, frozen orbits, skinned points, low-poly flight and 65,536 orbital particles"],
+    ["GLTFLoader / AnimationMixer / SkeletonUtils", "Animated 3D assets", "Reuse a rig and its authored motion", "Amber and Teal share the fight choreography through separate animation clips"],
     ["Sound"],
-    ["Python synth (sfx.py)", "Sound effects from maths", "Every move has a sound", "17 sounds: pop, whoosh, stamp, typing…"],
+    ["Python synth (sfx.py)", "Sound effects from maths", "Timed cues for selected actions", "17 sounds: pop, whoosh, stamp, typing…"],
     ["Python synth (music.py)", "Music from maths", "A music bed", "100 BPM, Am–F–C–G, sections declared by the video page"],
     ["Rendering"],
     ["Playwright + Chromium", "A headless browser", "Seek to t, capture the frame", "Every frame of every video"],
-    ["ffmpeg", "Audio and video tool", "Encode and mix", "x264, amix, alimiter, AAC"],
+    ["ffmpeg", "Audio and video tool", "Import, encode and mix", "RGBA frame import, chroma key, x264, audio mastering, posters and GIFs"],
   ];
   const newRows = [
-    ["ANGLE Metal (M4 GPU)", "WebGL on the real GPU", "Fast 3D", "Default headless Chromium emulates the GPU on the CPU (SwiftShader)"],
+    ["ANGLE Metal (M4 GPU)", "WebGL on the real GPU", "Fast 3D", "The benchmark’s default headless browser used SwiftShader"],
     ["CDP fast capture", "Chrome's own screenshot call with optimizeForSpeed", "Lossless and quicker", "Pixel-identical to page.screenshot (8 of 8 frames)"],
     ["Parallel browsers", "Several Chromium processes share the frames", "Several times faster", "Tabs in one browser barely help"],
-    ["Loudness", "alimiter + two-pass loudnorm + ebur128", "Every video equally loud", "−14 LUFS target, true peak ≤ −1 dBTP"],
-    ["Fail-closed checks", "A check at every step", "No silently broken video", "GPU, lost WebGL context, page errors, fonts, re-render match, frame count, size, loudness"],
+    ["Loudness", "alimiter + two-pass loudnorm + ebur128", "Consistent target loudness", "−14 LUFS target, true peak ≤ −1 dBTP"],
+    ["Fail-closed checks", "A check at every step", "Stop on detected rendering or delivery errors", "GPU, lost WebGL context, page errors, fonts, re-render match, frame count, size, loudness"],
   ];
   document.getElementById("stackRows").innerHTML = rows.map((r) => r.length === 1
     ? `<tr class="grp"><th colspan="4">${r[0]}</th></tr>`
