@@ -201,20 +201,21 @@ export async function duel(points = false, { assetUrl } = {}) {
   return {
     scene,
     camera,
-    frame(t, { mode = "source", background = "#00ff00" } = {}) {
+    frame(t, { mode = "source", background = "#00ff00", solid = false, treatment = true } = {}) {
       const src = mode === "orbit" ? (authored ? .6 : timeAt(t, "freeze")) : mode === "lens" && authored ? Math.min(t,3) : t;
       fighters.forEach((f, i) => f.pose(src + (authored?0:(i * f.duration) / 2)));
       if (points) {
+        fighters.forEach(f=>f.root.visible=solid);cloud.visible=!solid;
         for (const { sample, offset } of samplers)
           sample.write(positions, colors, offset);
         cloud.geometry.attributes.position.needsUpdate = true;
         cloud.geometry.attributes.color.needsUpdate = true;
         material.depthWrite = mode !== "lens";
-        material.uniforms.uDOF.value = mode === "lens" ? (t<2.5?.5:3.5) : 0;
+        material.uniforms.uDOF.value = mode === "lens" && treatment ? (t<2.5?.5:3.5) : 0;
         material.uniforms.uFocus.value =
           mode === "lens" ? 5.1 - Math.sin(t)*.5 : 7;
         if (mode === "lens") {
-          const burst = impact(t, 3.2, 0.65) * 2.2;
+          const burst = treatment ? impact(t, 3.2, 0.65) * 2.2 : 0;
           for (let i = 0; i < positions.length; i += 3) {
             const near=Math.exp(-((positions[i]-.4)**2+(positions[i+1]-2)**2)/.9);
             const spray=(i/3)%7<2?burst*near:0;

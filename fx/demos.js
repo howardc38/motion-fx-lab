@@ -162,7 +162,7 @@
     } });
 
   demo({ id: "grain", name: "Film grain", kind: "backdrop", stacks: ["canvas"], chips: ["Canvas 2D", "new grain every 3 frames"], grade: "A",
-    purpose: "Film texture that eats bitrate: at the same 2 Mbps, SSIM is 0.865 without grain and 0.742 with it.", period: 2, hero: 0.5,
+    purpose: "Fine grain changes over the image to give an animated film texture. Keep it subtle behind text; dense noise increases video bitrate.", period: 2, hero: 0.5,
     build(s) {
       s.style.background = "#000";
       const wide = s.classList.contains("landscape"), W = wide ? 800 : 360, H = 450;
@@ -785,7 +785,7 @@
     } });
 
   demo({ id: "liquid", gl: true, name: "Liquid glass refraction", kind: "shader", stacks: ["three", "glsl", "canvas"], chips: ["custom GLSL refraction", "dispersion"], grade: "B",
-    purpose: "Glass that bends and splits what is behind it. three.js r128 has no real refraction, so a custom shader fakes it.", period: 8, hero: 2,
+    purpose: "A screen-space glass effect bends and splits a background image. This tile uses UV distortion, rather than a thick 3D transparent body.", period: 8, hero: 2,
     build(s) {
       const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
       const bgc = document.createElement("canvas"); bgc.width = GW; bgc.height = GH; const g = bgc.getContext("2d");

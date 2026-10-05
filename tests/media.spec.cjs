@@ -6,6 +6,11 @@ for(const name of films)test(`published ${name} bundle agrees with its authoring
  await page.goto(`/${name==='intro'?'video':'examples'}/${name}.html`);
  await page.waitForFunction(()=>window.__DUR&&window.__SIZE);
  const spec=await page.evaluate(()=>({duration:__DUR,size:__SIZE,gif:window.__gif||[],poster:window.__poster??__DUR/3}));
+ const readme=fs.readFileSync(path.resolve(__dirname,'../README.md'),'utf8');
+ const row=readme.split('\n').find(line=>line.startsWith('|')&&line.includes('](media/'+name+'.mp4)')&&line.includes('[poster]'));
+ expect(row,`README published row for ${name}`).toBeTruthy();
+ const cells=row.split('|').map(c=>c.trim());expect(parseFloat(cells[3])).toBeCloseTo(spec.duration,2);
+ expect(cells[4]).toBe(spec.size.w<spec.size.h?'9:16':'16:9');
  const media=path.resolve(__dirname,'../media'),movie=probe(path.join(media,name+'.mp4'));
  const v=movie.streams.find(s=>s.codec_type==='video'),a=movie.streams.find(s=>s.codec_type==='audio');
  expect([v.width,v.height]).toEqual([spec.size.w,spec.size.h]);expect(v.codec_name).toBe('h264');expect(v.r_frame_rate).toBe('30/1');

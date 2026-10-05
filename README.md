@@ -1,6 +1,6 @@
 # Motion FX Lab
 
-**Motion graphics as plain web pages, rendered to MP4 you can trust.** 67 effect techniques, 13 selectable variants and 5 combined showcases in HTML, CSS, SVG, Canvas, three.js, GLSL, Matter.js, Flubber, PixiJS, Rapier and WebGPU/TSL, and a recorder that turns any timeline page into an MP4. On our 3D-heavy test video it was 7.5× faster than a default headless browser, while rendering every frame twice and comparing the two before it gives you a file.
+**Make editable motion graphics and export them to MP4:** social clips, product demos, infographics, animated titles, backgrounds and character sequences. Start with one of 13 films, then adapt its copy, data or motion. The effect library contains 67 families, 13 selectable variants and 5 combined showcases. Every exported frame is rendered twice and compared before delivery.
 
 [![Highlights from the intro video (no sound). Click for the full 55-second video with sound.](media/intro.gif)](media/intro.mp4)
 
@@ -23,66 +23,83 @@ Describe the video to an AI coding assistant, or write it yourself. It becomes a
 </tr>
 </table>
 
-Plus characters drawn in code and 67 reusable effect techniques. The 55-second intro moves from four uses and character action into three stories: One Flight, Twenty Worlds; One Word, Many Forms; and One Push, Chain Reaction. It closes by changing text, scrubbing the timeline and exporting MP4. The example films and effect settings are linked below. Each example is one HTML file with its text or numbers at the top; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
+Plus characters drawn in code and 67 reusable effect techniques. The 55-second intro moves from four uses and character action into three stories: One Flight, Twenty Worlds; One Word, Many Forms; and One Push, Chain Reaction. It closes by changing text, scrubbing the timeline and exporting MP4. Use the viewing guide below to choose a starting point. The four use-case examples keep their editable text or numbers near the top of their HTML files; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
 
-## Intro storyboard
+## Choose a film by purpose
 
-| Time | Story |
-|---|---|
-| 0–2.4 s | Motion graphics in plain HTML |
-| 2.4–16.8 s | Social clips, product demos, infographics and B-roll; 3.6 s each |
-| 16.8–21.6 s | A character hands over information; a short fight beat shows action |
-| 21.6–26.4 s | Water material, type, drop impact and shape morphing |
-| 26.4–33.6 s | One Flight, Twenty Worlds: six readable styles, then the twenty-style overview |
-| 33.6–40.8 s | One Word, Many Forms: 流動 → solid lettering → particles → contour lines → signal breakup → 流動 |
-| 40.8–45.6 s | One Push, Chain Reaction: follow the fall, then reveal all 48 dominoes |
-| 45.6–50.4 s | Scrub time, change WAVE to FLOW and export MP4 |
-| 50.4–55.2 s | Repository and licence CTA |
+The [website](https://howardc38.github.io/motion-fx-lab/) puts films before the effect
+library. Start with a use case, watch a complete sequence, then compare treatments.
+Every preview links to an MP4 with sound; GIFs are silent excerpts.
 
-These three intro stories combine existing capabilities; they do not add three
-new effect registrations. Source: [intro.html](video/intro.html) and
-[intro-stories.js](fx/intro-stories.js).
+| What you want to make | Start here | What the films demonstrate |
+|---|---|---|
+| Social, product and data videos | [Social reel](media/reel.mp4), [Product demo](media/product.mp4), [Infographic](media/infographic.mp4), [B-roll](media/broll.mp4) | Campaign structure, one UI interaction, data-driven graphics and seamless source loops |
+| Titles and material sequences | [One word](media/word-forms.mp4), [One drop](media/water-forms.mp4) | A continuous typography transformation; authored 3D water and shape choreography |
+| Character action and art direction | [One flight](media/style-journey.mp4), [One scene](media/scene-eras.mp4), [COUNTERFORM](media/dot-battle.mp4) | Travel between artworks, preserve a whole room across styles, choreograph a fight |
+| Compare treatments | [Eight fight treatments](media/fight-effects.mp4), [Six optical treatments](media/optical.mp4), [Image distortion, collisions and particles](media/stacks.mp4) | Isolate an operation before selecting it for a film |
 
-## Animated previews
+**Film count is not effect count.** The intro reuses highlights. Social and Product
+share the same booking-app mock-up but demonstrate different formats and pacing.
+COUNTERFORM and Eight Treatments share choreography: the first is a complete action
+sequence, the second isolates visual and timing operations. The water film uses 3D
+surfaces; the poster in the three-operation comparison uses 2D image distortion.
+One Flight moves a courier between artworks; One Scene preserves a room, props and
+a cup-lifting action while changing their treatment. None of these combinations
+adds an extra unique effect to the 67-family count.
 
-Click a preview for its full MP4 with sound. These GIFs are silent highlights.
+The four use-case GIFs are above. The remaining films are grouped below in the same
+order as the website.
+
+### Titles and materials
 
 <table>
 <tr>
-<td width="50%"><a href="media/style-journey.mp4"><img src="media/style-journey.gif" alt="One Flight, Twenty Worlds animated preview" width="400"></a><br><b>One Flight, Twenty Worlds</b></td>
-<td width="50%"><a href="media/dot-battle.mp4"><img src="media/dot-battle.gif" alt="COUNTERFORM dot fight animated preview" width="400"></a><br><b>COUNTERFORM</b></td>
+<td width="50%"><a href="media/word-forms.mp4"><img src="media/word-forms.gif" alt="One word. Many forms. animated preview" width="400"></a><br><b>One word. Many forms.</b><br>Brand names, title cards and chapter openers.</td>
+<td width="50%"><a href="media/water-forms.mp4"><img src="media/water-forms.gif" alt="One drop. Many forms. animated preview" width="400"></a><br><b>One drop. Many forms.</b><br>Material studies, atmospheric reveals and visual transitions.</td>
+</tr>
+</table>
+
+### Character action and art direction
+
+<table>
+<tr>
+<td width="50%"><a href="media/style-journey.mp4"><img src="media/style-journey.gif" alt="One flight. Twenty worlds. animated preview" width="400"></a><br><b>One flight. Twenty worlds.</b><br>Character-led journeys and transitions between visual worlds.</td>
+<td width="50%"><a href="media/scene-eras.mp4"><img src="media/scene-eras.gif" alt="One scene. Many eras. animated preview" width="400"></a><br><b>One scene. Many eras.</b><br>Art-direction comparisons and illustrated explainers.</td>
 </tr>
 <tr>
-<td><a href="media/fight-effects.mp4"><img src="media/fight-effects.gif" alt="Same Fight, Eight Treatments animated preview" width="400"></a><br><b>Same Fight, Eight Treatments</b></td>
-<td><a href="media/optical.mp4"><img src="media/optical.gif" alt="Six optical effects animated preview" width="400"></a><br><b>Optical effects</b></td>
+<td width="50%"><a href="media/dot-battle.mp4"><img src="media/dot-battle.gif" alt="COUNTERFORM animated preview" width="400"></a><br><b>COUNTERFORM</b><br>Action beats and character choreography.</td>
+</tr>
+</table>
+
+### Effect comparisons
+
+<table>
+<tr>
+<td width="50%"><a href="media/fight-effects.mp4"><img src="media/fight-effects.gif" alt="Same fight. Eight treatments. animated preview" width="400"></a><br><b>Same fight. Eight treatments.</b><br>Choosing a visual treatment for motion footage or a rigged character.</td>
+<td width="50%"><a href="media/optical.mp4"><img src="media/optical.gif" alt="Six optical treatments animated preview" width="400"></a><br><b>Six optical treatments</b><br>Graphic textures, transitions and surface treatments.</td>
 </tr>
 <tr>
-<td colspan="2"><a href="media/stacks.mp4"><img src="media/stacks.gif" alt="Filters, collisions and particles animated preview" width="400"></a><br><b>Filters, collisions and particles</b></td>
+<td width="50%"><a href="media/stacks.mp4"><img src="media/stacks.gif" alt="Image distortion, collisions and particles animated preview" width="400"></a><br><b>Image distortion, collisions and particles</b><br>Distorted posters, chain-reaction sequences and abstract particle motion.</td>
 </tr>
-<tr>
-<td><a href="media/water-forms.mp4"><img src="media/water-forms.gif" alt="A water drop becomes a crown splash, liquid shapes and an underwater scene" width="400"></a><br><b>One drop. Many forms.</b></td>
-<td><a href="media/word-forms.mp4"><img src="media/word-forms.gif" alt="Chinese lettering changes from solid geometry to particles, contours and signal breakup" width="400"></a><br><b>One word. Many forms.</b></td>
-</tr>
-<tr><td colspan="2"><a href="media/scene-eras.mp4"><img src="media/scene-eras.gif" alt="The same cup-lifting action in eight room treatments" width="400"></a><br><b>One scene. Many eras.</b></td></tr>
 </table>
 
 ## Published films and previews
 
-| Film | Authored length | Format | Preview | Source |
-|---|---:|---|---|---|
-| [Intro](media/intro.mp4) | 55.2 s | 16:9 | [GIF](media/intro.gif) · [poster](media/intro.jpg) | [HTML](video/intro.html) |
-| [Social reel](media/reel.mp4) | 12 s | 9:16 | [GIF](media/reel.gif) · [poster](media/reel.jpg) | [HTML](examples/reel.html) |
-| [Product demo](media/product.mp4) | 7.2 s | 16:9 | [GIF](media/product.gif) · [poster](media/product.jpg) | [HTML](examples/product.html) |
-| [Infographic](media/infographic.mp4) | 14.4 s | 16:9 | [GIF](media/infographic.gif) · [poster](media/infographic.jpg) | [HTML](examples/infographic.html) |
-| [B-roll](media/broll.mp4) | 12 s | 16:9 | [GIF](media/broll.gif) · [poster](media/broll.jpg) | [HTML](examples/broll.html) |
-| [Optical effects](media/optical.mp4) | 18 s | 16:9 | [GIF](media/optical.gif) · [poster](media/optical.jpg) | [HTML](examples/optical.html) |
-| [Filters, collisions and particles](media/stacks.mp4) | 24 s | 16:9 | [GIF](media/stacks.gif) · [poster](media/stacks.jpg) | [HTML](examples/stacks.html) |
-| [One Flight, Twenty Worlds](media/style-journey.mp4) | 40.8 s | 16:9 | [GIF](media/style-journey.gif) · [poster](media/style-journey.jpg) | [HTML](examples/style-journey.html) |
-| [COUNTERFORM](media/dot-battle.mp4) | 19.2 s | 16:9 | [GIF](media/dot-battle.gif) · [poster](media/dot-battle.jpg) | [HTML](examples/dot-battle.html) |
-| [Same Fight, Eight Treatments](media/fight-effects.mp4) | 24 s | 16:9 | [GIF](media/fight-effects.gif) · [poster](media/fight-effects.jpg) | [HTML](examples/fight-effects.html) |
-| [One drop. Many forms.](media/water-forms.mp4) | 21.6 s | 16:9 | [GIF](media/water-forms.gif) · [poster](media/water-forms.jpg) | [HTML](examples/water-forms.html) |
-| [One word. Many forms.](media/word-forms.mp4) | 21.6 s | 16:9 | [GIF](media/word-forms.gif) · [poster](media/word-forms.jpg) | [HTML](examples/word-forms.html) |
-| [One scene. Many eras.](media/scene-eras.mp4) | 24 s | 16:9 | [GIF](media/scene-eras.gif) · [poster](media/scene-eras.jpg) | [HTML](examples/scene-eras.html) |
+| Purpose | Film | Authored length | Format | Preview | Source |
+|---|---|---:|---|---|---|
+| Overview | [Intro](media/intro.mp4) | 55.2 s | 16:9 | [GIF](media/intro.gif) · [poster](media/intro.jpg) | [HTML](video/intro.html) |
+| Everyday video formats | [Social clips](media/reel.mp4) | 12 s | 9:16 | [GIF](media/reel.gif) · [poster](media/reel.jpg) | [HTML](examples/reel.html) |
+| Everyday video formats | [Product demos](media/product.mp4) | 7.2 s | 16:9 | [GIF](media/product.gif) · [poster](media/product.jpg) | [HTML](examples/product.html) |
+| Everyday video formats | [Infographics](media/infographic.mp4) | 14.4 s | 16:9 | [GIF](media/infographic.gif) · [poster](media/infographic.jpg) | [HTML](examples/infographic.html) |
+| Everyday video formats | [Animated backgrounds](media/broll.mp4) | 12 s | 16:9 | [GIF](media/broll.gif) · [poster](media/broll.jpg) | [HTML](examples/broll.html) |
+| Titles and materials | [One word. Many forms.](media/word-forms.mp4) | 21.6 s | 16:9 | [GIF](media/word-forms.gif) · [poster](media/word-forms.jpg) | [HTML](examples/word-forms.html) |
+| Titles and materials | [One drop. Many forms.](media/water-forms.mp4) | 21.6 s | 16:9 | [GIF](media/water-forms.gif) · [poster](media/water-forms.jpg) | [HTML](examples/water-forms.html) |
+| Character action and art direction | [One flight. Twenty worlds.](media/style-journey.mp4) | 40.8 s | 16:9 | [GIF](media/style-journey.gif) · [poster](media/style-journey.jpg) | [HTML](examples/style-journey.html) |
+| Character action and art direction | [One scene. Many eras.](media/scene-eras.mp4) | 24 s | 16:9 | [GIF](media/scene-eras.gif) · [poster](media/scene-eras.jpg) | [HTML](examples/scene-eras.html) |
+| Character action and art direction | [COUNTERFORM](media/dot-battle.mp4) | 19.2 s | 16:9 | [GIF](media/dot-battle.gif) · [poster](media/dot-battle.jpg) | [HTML](examples/dot-battle.html) |
+| Effect comparisons | [Same fight. Eight treatments.](media/fight-effects.mp4) | 38.4 s | 16:9 | [GIF](media/fight-effects.gif) · [poster](media/fight-effects.jpg) | [HTML](examples/fight-effects.html) |
+| Effect comparisons | [Six optical treatments](media/optical.mp4) | 18 s | 16:9 | [GIF](media/optical.gif) · [poster](media/optical.jpg) | [HTML](examples/optical.html) |
+| Effect comparisons | [Image distortion, collisions and particles](media/stacks.mp4) | 24 s | 16:9 | [GIF](media/stacks.gif) · [poster](media/stacks.jpg) | [HTML](examples/stacks.html) |
 
 All thirteen published films have animated GIF previews and still posters. A GIF
 is a silent selection of shots, not the full film. MP4 container durations can be
@@ -103,6 +120,24 @@ fight-effects comparison uses the shared studio effects. Run
 or the 3D model, then rebuild the dependent film bundles. Review actual moving
 pictures as well as tests: different metadata or pixels do not by themselves
 prove a useful or well-directed effect.
+
+## Intro storyboard
+
+| Time | Story |
+|---|---|
+| 0–2.4 s | Motion graphics in plain HTML |
+| 2.4–16.8 s | Social clips, product demos, infographics and B-roll; 3.6 s each |
+| 16.8–21.6 s | A character hands over information; a short fight beat shows action |
+| 21.6–26.4 s | Water material, type, drop impact and shape morphing |
+| 26.4–33.6 s | One Flight, Twenty Worlds: six readable styles, then the twenty-style overview |
+| 33.6–40.8 s | One Word, Many Forms: 流動 → solid lettering → particles → contour lines → signal breakup → 流動 |
+| 40.8–45.6 s | One Push, Chain Reaction: follow the fall, then reveal all 48 dominoes |
+| 45.6–50.4 s | Scrub time, change WAVE to FLOW and export MP4 |
+| 50.4–55.2 s | Repository and licence CTA |
+
+These three intro stories combine existing capabilities; they do not add three
+new effect registrations. Source: [intro.html](video/intro.html) and
+[intro-stories.js](fx/intro-stories.js).
 
 ## Sound familiar?
 
@@ -231,6 +266,12 @@ Then run `bash video/build.sh video/yours.html`.
 
 ## The effects
 
+Short studies isolate an operation. The related fight studies use **input / effect**
+comparisons so the difference is visible even when they share the same characters.
+Open a study at full size to compare source clocks, a fixed versus moving camera,
+solid versus sampled geometry, or a local contact before and after deformation.
+Drawing tools and implementation chips are expandable details.
+
 **67 technique families, 13 selectable variants and 5 separate showcases.** All 77 original demo IDs remain available; eight additions bring the callable total to 85. The gallery uses one 16:9 card per technique, including characters; variants are selected inside that card. Every main card participates in the kind and renderer filters. Renderers initialize when their cards approach the viewport.
 
 [fx/catalog.js](fx/catalog.js) owns this classification. Character poses/compositions, dot palettes, shape-morph implementations, particle-text implementations, diagram layouts and flythrough scenes are variants of their respective families. The five-style shader comparison, twenty-art-direction collection, combined gallery journey, underwater scene and eight-treatment room are showcases, not additional techniques. Transparent liquid morphing belongs to clay; solid CJK type belongs to lit3d; whole-frame signal breakup belongs to glitch. “Unique” means a distinct demonstrated operation; it does not mean every effect uses an unrelated rendering algorithm.
@@ -304,7 +345,7 @@ root travel, planted steps, fixed-length limbs, counterattacks and short contact
 Dodges have whooshes without false impact cues; particles originate at actual
 contacts. The brief held shot uses a 2D camera push. The eight related dot demos
 use volumetric Amber/Teal characters baked from the same choreography, including
-separate attack and defence clips. The real 3D orbit holds their contact pose. The flying courier and poster
+separate attack and defence clips. The real 3D orbit holds their contact pose. The 38.4-second treatment comparison gives each operation 4.8 seconds and places its reference beside the result. The flying courier and poster
 artwork are also original. The 2D dot technique demos
 sample a checked-in RGBA sequence; the true 3D demos load an animated GLB and keep
 surface samples attached to the deforming skeleton. A full camera orbit uses
@@ -327,7 +368,7 @@ in [the studio guide](assets/studio/README.md).
 
 ## Optical and simulation films
 
-**[Optical film](media/optical.mp4)** · **[Optical player](examples/optical.html)** · **[PixiJS / Rapier / WebGPU film](media/stacks.mp4)** · **[Three-effect timeline](examples/stacks.html)** · **[Effect settings](examples/stack-lab/)**
+**[Optical film](media/optical.mp4)** · **[Optical player](examples/optical.html)** · **[Image distortion, collisions and particles](media/stacks.mp4)** · **[Three-effect timeline](examples/stacks.html)** · **[Effect settings](examples/stack-lab/)**
 
 The six optical effects are moiré interference, slit-scan type, a folding paper
 ribbon, caustic light, holographic foil and arbitrary-path morphing. Load Flubber

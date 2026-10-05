@@ -62,7 +62,7 @@ renders `examples/fight-source.html` twice at 24 fps, encodes `fight-source.mp4`
 and imports it into `fight/frame-*.png` plus `fight/manifest.json`. The shipped
 frames are small enough to check in; a normal film rebuild can reuse them.
 `build:studio` delivers the 40.8-second art-direction film, the 19.2-second
-COUNTERFORM fight and a 24-second eight-treatment comparison, with sound, posters
+COUNTERFORM fight and a 38.4-second eight-treatment comparison, with sound, posters
 and GIFs. Use `npm run render:fight-effects` for the comparison alone. The fight uses a separate original
 2D illustrated rig in `fx/studio/battle.js`: anticipation, attack, contact holds,
 recoil, kicks and counterattacks. Its short held shot is a 2D camera push. The dedicated
@@ -125,3 +125,32 @@ and barycentric coordinates as the skin moves; they are not randomly regenerated
 each frame. Impact times are authored cues, not an automatic collision detector.
 Depth of field is an art-directed point-sprite approximation, not a physical lens
 solver. Every exported frame remains a function of time and fixed input assets.
+
+## Read the short studies as comparisons
+
+The gallery uses `FXStudio.preview(id)` for the nine dot-related study IDs
+(including the palette/spacing variant). It returns the same awaited
+`{canvas, frame(t), proof()}` contract, but places a reference beside the effect.
+`FXStudio.create(id)` still returns the raw reusable output for authored films.
+The [studio player](../../examples/studio.html?compare=1#video-dots) can switch
+between these presentations. `fx/studio/study-preview.js` owns the comparison
+layout and source-time selections; it is not an additional effect registration.
+
+| Study | What the viewer compares | Why it is a separate operation |
+|---|---|---|
+| Footage dots | Colour footage / dot rendering of the same frame | Samples 2D pixels into dots |
+| Dot rhythm | Original footage / beat-controlled dots | A variant of footage dots, not a new family |
+| Temporal echoes | One dot frame / several earlier dot frames | Layers different source times |
+| Dot impact | Unchanged / deformed contact region | Local compression, scattering and recovery; shown in slow close-up |
+| Time remapping | Normal / remapped source clock | Changes playback time without changing the drawing method |
+| Image relief | Held image / angled shallow dot surface | Brightness produces 2.5D depth, not hidden anatomy |
+| Skinned points | Solid rig / sampled surface of that rig | Points stay attached to real animated geometry |
+| Frozen orbit | Fixed / orbiting camera on the same held pose | Camera time advances while pose time holds |
+| Particle lens | Sharp / scattered soft points with identical camera and pose | Changes spatial scatter and depth-dependent focus |
+
+The long **Same Fight, Eight Treatments** comparison runs for 38.4 seconds:
+eight chapters of 4.8 seconds, using the same comparison factory as the gallery.
+It excludes the dot-rhythm variant and demonstrates ramp/hold in the time-remap
+chapter; the short study also cycles through normal, reverse and stepped playback.
+It deliberately reuses COUNTERFORM choreography. COUNTERFORM itself remains the
+19.2-second authored fight film, rather than a catalogue of processing methods.

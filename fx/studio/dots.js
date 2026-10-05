@@ -183,7 +183,10 @@ export async function createDots(mode, options = {}) {
     // The source has pale clothing: a dark field and closer framing keep the
     // surface readable instead of losing it against the cream page palette.
     depth.scene.background = new THREE.Color("#10233b");
-    depth.camera.position.set(Math.sin(t * 0.8) * 1.1, 0, 4.1);
+    if (options.cameraAngle !== undefined) {
+      if (!Number.isFinite(options.cameraAngle)) throw new Error("Camera angle must be finite");
+      depth.camera.position.set(Math.sin(options.cameraAngle)*4.8,0,Math.cos(options.cameraAngle)*4.8);
+    } else depth.camera.position.set(Math.sin(t * 0.8) * 1.1, 0, 4.1);
     depth.camera.lookAt(0, 0, 0);
     surface().render(depth.scene, depth.camera);
     g.drawImage(surface().domElement, 0, 0);
@@ -198,11 +201,16 @@ export async function createDots(mode, options = {}) {
   return {
     canvas,
     async frame(t, options = {}) {
-      if (mode === "depth") {
+      if (mode === "source") {
+        // Use the same fixed source sampling size as the dot treatment.
+        await pixels(t);g.fillStyle="#f5eedc";g.fillRect(0,0,1280,720);
+        g.drawImage(sample,-64,-36,1408,792);last={sourceIndex:input.indexAt(t%period)};
+      } else if (mode === "depth") {
         await drawDepth(t, options);
       } else if (["skin", "orbit", "lens"].includes(mode)) {
         g.drawImage(
           rig.frame(t, {
+            ...options,
             mode,
             background: "#102638",
           }),
@@ -259,6 +267,7 @@ export async function createDots(mode, options = {}) {
         await draw2D(src, mode, t);
         if (mode === "ramp") last.remap = remap;
       }
+      if (options.labels === false) return;
       g.font = "500 17px monospace";
       g.textAlign = "left";
       g.fillStyle =

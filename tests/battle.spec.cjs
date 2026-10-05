@@ -39,8 +39,8 @@ test('all eight dot demos use the rebuilt fight and keep their distinct temporal
 });
 test('eight-treatment film is exportable and seeks every chapter without stale canvases',async({page})=>{
  await page.goto('/examples/fight-effects.html');
- const p=await page.evaluate(async()=>{await __ready;await __record();const frames=[];for(const t of [.7,3.7,6.7,9.7,12.7,15.7,18.7,21.7]){await __render(t);frames.push(document.querySelector('#film').toDataURL());}await __render(.7);return {duration:__DUR,cues:__cues().length,unique:new Set(frames).size,repeat:frames[0]===document.querySelector('#film').toDataURL()};});
- expect(p).toEqual({duration:24,cues:7,unique:8,repeat:true});
+ const p=await page.evaluate(async()=>{await __ready;await __record();const frames=[];for(const t of [.7,5.5,10.3,15.1,19.9,24.7,29.5,34.3]){await __render(t);frames.push(document.querySelector('#film').toDataURL());}await __render(.7);return {duration:__DUR,cues:__cues().length,unique:new Set(frames).size,repeat:frames[0]===document.querySelector('#film').toDataURL()};});
+ expect(p).toEqual({duration:38.4,cues:7,unique:8,repeat:true});
 });
 test('the full 3D orbit keeps both fighters inside the camera frame',async({page})=>{
  await page.goto('/examples/studio.html');await page.waitForFunction(()=>window.studio?.current);

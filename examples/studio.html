@@ -40,7 +40,8 @@
       a {
         color: #efba81;
       }
-      input {
+      input[type="checkbox"] {width:auto;}
+      input[type="range"] {
         width: 300px;
         max-width: 60vw;
       }
@@ -77,7 +78,7 @@
       <nav>
         <a href="../index.html">Gallery</a
         ><select id="effect" aria-label="Effect"></select
-        ><select id="theme" aria-label="Art direction" hidden></select>
+        ><select id="theme" aria-label="Art direction" hidden></select><label id="compare-control" hidden><input type="checkbox" id="compare"> Input / effect comparison</label>
       </nav>
       <div id="frame"></div>
       <nav>
@@ -98,6 +99,7 @@
     </main>
     <script>
       const effects = new Map();
+      const compare=document.getElementById("compare");compare.checked=new URLSearchParams(location.search).get("compare")==="1";
       let current,
         id,
         clock = 0,
@@ -155,22 +157,28 @@
         renderedKey = "";
         document.getElementById("play").textContent = "Play";
         const s = FXStudio.studies.find((s) => s.id === id);
+        const comparing=compare.checked&&!!FXStudio.previews[id];
         seek.max = s.period;
+        document.getElementById("compare-control").hidden=!FXStudio.previews[id];
         theme.hidden = id !== "themes";
-        document.getElementById("description").textContent = s.purpose;
+        document.getElementById("description").textContent = comparing ? FXStudio.previews[id].watch+" "+FXStudio.previews[id].note : s.purpose;
         document.getElementById("error").textContent = "";
         try {
-          if (!effects.has(id)) effects.set(id, FXStudio.create(id));
-          const e = await effects.get(id);
+          const key=id+(comparing?":comparison":":effect");
+          if (!effects.has(key)) effects.set(key, comparing?FXStudio.preview(id):FXStudio.create(id));
+          const e = await effects.get(key);
           if (request !== token) return;
           current = e;
           document.getElementById("frame").replaceChildren(e.canvas);
           await draw();
-          history.replaceState(null, "", "#" + id);
+          if (request !== token) return;
+          const url=new URL(location.href);url.hash=id;if(comparing)url.searchParams.set("compare","1");else url.searchParams.delete("compare");
+          history.replaceState(null, "", url);
         } catch (e) {
           document.getElementById("error").textContent = e.message;
         }
       }
+      compare.onchange=()=>select(selector.value);
       selector.onchange = () => select(selector.value);
       theme.onchange = () => { renderedKey = ""; };
       seek.oninput = () => {
@@ -190,7 +198,7 @@
             (clock + Math.min((now - last) / 1000, 0.1)) %
             FXStudio.studies.find((s) => s.id === id).period;
         }
-        const key = id + ':' + clock + ':' + theme.value;
+        const key = token + ':' + id + ':' + clock + ':' + theme.value;
         if (current && !busy && key !== renderedKey) { await draw(); renderedKey = key; }
         last = now;
         requestAnimationFrame(loop);
