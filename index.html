@@ -226,7 +226,7 @@
   <section id="effects" aria-labelledby="effects-title">
     <span class="eyebrow">Reusable effects</span>
     <h2 id="effects-title">Single effects to reuse</h2>
-    <p class="note">These short studies isolate an operation. Browser effects run from code; Blender studies replay baked simulation frames with editable source recipes. Each card represents one effect family; use its selector to compare variants. Every effect family, including characters, uses a 16:9 preview and participates in the filters. Collections below combine techniques and are counted separately. “Seen in” names a visual reference rebuilt with original content. Replace the sample copy with your own.</p>
+    <p class="note">Ordered for visual impact, with contrasting looks in the first rows. Each short study isolates an operation. Browser effects run from code; Blender studies replay baked simulation frames with editable source recipes. Each card represents one effect family; use its selector to compare variants. Every effect family, including characters, uses a 16:9 preview and participates in the filters. Collections below combine techniques and are counted separately. “Seen in” names a visual reference rebuilt with original content. Replace the sample copy with your own.</p>
     <div class="toolbar">
       <div class="group" id="fKind"><span>Kind</span></div>
       <div class="group" id="fStack"><span>Drawn with</span></div>
@@ -345,19 +345,38 @@
   const { R3 } = window.FX;
   const { families, showcases, stats, byId } = window.FXCatalog;
   const KINDS = { shader: "Materials & image treatments", sim: "Physics & growth", character: "Characters", motion: "Motion & timing", backdrop: "Backgrounds", ui: "UI & data", type: "Type" };
-  // Tiles are shown most striking first. One missing from this list follows the listed ones, in the
-  // order it was registered.
-  const ORDER = ["studio-portal", "studio-themes", "studio-video-dots", "studio-freeze-orbit", "studio-echo", "studio-particle-lens", "studio-flight", "studio-gallery", "studio-lowpoly", "studio-dot-rhythm", "studio-dot-impact", "studio-time-remap", "studio-depth-dots", "studio-skin-cloud", "stack-pixi", "stack-rapier", "stack-gpu", "optical-moire", "optical-slit", "optical-ribbon", "optical-caustic", "optical-foil", "optical-morph", "gpuparticles", "clay", "liquid", "reaction", "domainrep", "chrome", "styles", "rigid", "particles", "lit3d", "rays", "dissolve", "smoke", "tunnel",
-    "vartype", "glitch", "morph", "cardflip", "ridgelines", "rhythm", "coderain", "timing", "datachart", "whip", "uifly", "drawflow", "blueprint", "glass", "sweep",
-    "hook", "chars", "karaoke", "stamp", "count", "type", "mark", "scan", "sticker", "ring", "beat", "wipe", "orbs", "gradient", "lut", "grain", "halftonetype",
-    "ditherpeek", "dithercards", "ditheravatar", "dithercharacter", "toon", "flat", "bounce", "halftone"];
+  // Curated by visual impact and contrast between neighbouring looks. New families follow this list.
+  const ORDER = [
+    "gpuparticles", "domainrep", "optical-foil",
+    "liquid", "clay", "stack-gpu",
+    "studio-portal", "optical-caustic", "stack-rapier",
+    "water-material", "optical-ribbon", "studio-freeze-orbit",
+    "chrome", "studio-flight", "fluid-smoke",
+    "reaction", "optical-slit", "tunnel",
+    "fluid-overflow", "lit3d", "studio-particle-lens",
+    "water-impact", "dissolve", "optical-moire",
+    "studio-echo", "organic-contours", "stack-pixi",
+    "studio-dot-impact", "rays", "dithercharacter",
+    "studio-skin-cloud", "studio-video-dots", "optical-morph",
+    "toon", "studio-depth-dots", "smoke",
+    "rigid", "halftone", "flat",
+    "glitch", "vartype", "cardflip",
+    "rhythm", "ridgelines", "coderain",
+    "studio-time-remap", "uifly", "hook",
+    "whip", "chars", "karaoke",
+    "datachart", "timing", "glass",
+    "sweep", "stamp", "beat",
+    "sticker", "orbs", "gradient",
+    "ring", "count", "type",
+    "mark", "scan", "wipe",
+    "halftonetype", "lut", "grain",
+  ];
+  const PREVIEW_HERO = {gpuparticles:1.5}; // Show the flowing form when motion is paused.
   // What a tile needs beyond the page itself.
   const NEEDS = { "A": ["Base stack only", "Needs nothing beyond HTML, CSS, SVG, Canvas and the existing three.js core"],
     "A+": ["Plus a three.js add-on", "Uses three.js add-ons, such as post-processing or animated GLB loading"],
     "B": ["Custom shader", "Needs a GLSL shader written for it"], "C": ["Plus a library", "Needs one more library"], "D": ["Offline Blender bake", "Playback uses cached frames; changing the simulation requires Blender"] };
-  const first=["fluid-overflow","fluid-smoke","hook","lit3d","uifly","datachart","water-material","dithercharacter","clay","studio-flight","glitch","studio-video-dots","studio-freeze-orbit","studio-echo"];
-  const ordered=[...new Set([...first,...ORDER])];
-  const rank = (d) => (ordered.includes(d.id) ? ordered.indexOf(d.id) : ordered.length);
+  const rank = d => ORDER.includes(d.id) ? ORDER.indexOf(d.id) : ORDER.length;
   const STACKS = { blender: "Blender (offline)", css: "HTML/CSS", svg: "SVG", canvas: "Canvas 2D", three: "Three.js", glsl: "Custom GLSL", physics: "Matter.js", flubber: "Flubber", pixi: "PixiJS", rapier: "Rapier", webgpu: "WebGPU / TSL" };
   const gallery = document.getElementById("gallery");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -447,7 +466,7 @@
     card.busy=true;
     const work=card.work.then(async()=>{
       const id=card.selected, d=byId.get(id), instance=await instanceFor(card,id);
-      if (!instance.failed) try { await instance.frame(hero ? d.hero : time % d.period,time); } catch(error) { failure(instance,error); }
+      if (!instance.failed) try { await instance.frame(hero ? (PREVIEW_HERO[d.id] ?? d.hero) : time % d.period,time); } catch(error) { failure(instance,error); }
       for (const [key,value] of card.instances) value.stage.hidden=key!==card.selected;
       return instance;
     });
