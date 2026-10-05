@@ -2,9 +2,9 @@
 
 **Make editable motion graphics and export them to MP4:** social clips, product demos, infographics, animated titles, backgrounds and character sequences. Start with one of 16 films, then adapt its copy, data or motion. The effect library contains 69 families, 14 selectable variants and 5 combined showcases. Every exported frame is rendered twice and compared before delivery.
 
-[![Highlights from the intro video (no sound). Click for the full 55-second video with sound.](media/intro.gif)](media/intro.mp4)
+[![Highlights from the intro video (no sound). Click for the full 55-second video with sound.](media/intro.gif?v=2c29173)](media/intro.mp4?v=2c29173)
 
-▶ **[Full intro video, with sound](media/intro.mp4)** (55 s, rendered by this repo) · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · **Licence: [0BSD](LICENSE)**, no conditions · No build step · No AI-generated images or sound
+▶ **[Full intro video, with sound](media/intro.mp4?v=2c29173)** (55 s, rendered by this repo) · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · **Licence: [0BSD](LICENSE)**, no conditions · No build step · No AI-generated images or sound
 
 GitHub does not play video files from a repository inline, so the loop above is a GIF. The gallery plays the real video.
 
@@ -94,7 +94,7 @@ order as the website.
 
 | Purpose | Film | Authored length | Format | Preview | Source |
 |---|---|---:|---|---|---|
-| Overview | [Intro](media/intro.mp4) | 55.2 s | 16:9 | [GIF](media/intro.gif) · [poster](media/intro.jpg) | [HTML](video/intro.html) |
+| Overview | [Intro](media/intro.mp4?v=2c29173) | 55.2 s | 16:9 | [GIF](media/intro.gif?v=2c29173) · [poster](media/intro.jpg?v=2c29173) | [HTML](video/intro.html) |
 | Everyday video formats | [Social clips](media/reel.mp4) | 12 s | 9:16 | [GIF](media/reel.gif) · [poster](media/reel.jpg) | [HTML](examples/reel.html) |
 | Everyday video formats | [Product demos](media/product.mp4) | 7.2 s | 16:9 | [GIF](media/product.gif) · [poster](media/product.jpg) | [HTML](examples/product.html) |
 | Everyday video formats | [Infographics](media/infographic.mp4) | 14.4 s | 16:9 | [GIF](media/infographic.gif) · [poster](media/infographic.jpg) | [HTML](examples/infographic.html) |

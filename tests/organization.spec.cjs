@@ -1,4 +1,17 @@
 const { test, expect } = require("@playwright/test");
+test("updated pages bypass a cached pre-fluid catalog", async ({ page }) => {
+  await page.route("**/fx/catalog.js", route => route.fulfill({
+    contentType: "text/javascript",
+    body: "throw new Error('Old unversioned catalog was loaded');",
+  }));
+  for (const url of ["/", "/video/intro.html"]) {
+    await page.goto(url);
+    await page.waitForFunction(() => window.FXCatalog);
+    expect(await page.evaluate(() => FXCatalog.stats)).toEqual({
+      techniques: 69, variants: 14, showcases: 5, demos: 88,
+    });
+  }
+});
 async function open(page) {
   await page.goto("/");
   await page.waitForFunction(() => window.galleryAPI);

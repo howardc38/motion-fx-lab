@@ -7,7 +7,7 @@ for(const name of films)test(`published ${name} bundle agrees with its authoring
  await page.waitForFunction(()=>window.__DUR&&window.__SIZE);
  const spec=await page.evaluate(()=>({duration:__DUR,size:__SIZE,gif:window.__gif||[],poster:window.__poster??__DUR/3}));
  const readme=fs.readFileSync(path.resolve(__dirname,'../README.md'),'utf8');
- const row=readme.split('\n').find(line=>line.startsWith('|')&&line.includes('](media/'+name+'.mp4)')&&line.includes('[poster]'));
+ const row=readme.split('\n').find(line=>line.startsWith('|')&&line.includes('[poster]')&&[...line.matchAll(/\]\(([^)]+)\)/g)].some(([,href])=>new URL(href,'https://local.test/').pathname==='/media/'+name+'.mp4'));
  expect(row,`README published row for ${name}`).toBeTruthy();
  const cells=row.split('|').map(c=>c.trim());expect(parseFloat(cells[3])).toBeCloseTo(spec.duration,2);
  expect(cells[4]).toBe(spec.size.w<spec.size.h?'9:16':'16:9');
