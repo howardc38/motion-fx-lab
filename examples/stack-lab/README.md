@@ -1,6 +1,6 @@
 # Film effect settings
 
-PixiJS, Rapier and WebGPU/TSL are three of the gallery's **67 effect techniques**.
+PixiJS, Rapier and WebGPU/TSL are three of the gallery's **69 effect techniques**.
 Use this page to preview parameters and scrub the timeline. Their production
 implementations live in `fx/stacks/` and all expose an asynchronous `frame(t)`.
 The frame recorder awaits completion before capturing each frame.

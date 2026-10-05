@@ -1,0 +1,32 @@
+{
+  "domain": "LIQUID",
+  "resolution": 64,
+  "width": 1280,
+  "height": 720,
+  "samples": [
+    {
+      "frame": 45,
+      "vertices": 3912,
+      "insideObstacleBeyondTolerance": 0,
+      "collisionTolerance": 0.11484375223517418
+    },
+    {
+      "frame": 100,
+      "vertices": 9608,
+      "insideObstacleBeyondTolerance": 0,
+      "collisionTolerance": 0.11484375223517418
+    },
+    {
+      "frame": 180,
+      "vertices": 14286,
+      "insideObstacleBeyondTolerance": 0,
+      "collisionTolerance": 0.11484375223517418
+    },
+    {
+      "frame": 260,
+      "vertices": 23850,
+      "insideObstacleBeyondTolerance": 0,
+      "collisionTolerance": 0.11484375223517418
+    }
+  ]
+}

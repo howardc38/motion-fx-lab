@@ -1,0 +1,9 @@
+{
+  "script": "tools/blender/render.py",
+  "scriptSha256": "ac01d64cb4cb0267e6d421bbf85d90a8a47370248b31e3b9a934d713e6bc3ff2",
+  "engine": "BLENDER_EEVEE",
+  "width": 1280,
+  "height": 720,
+  "frames": 289,
+  "fps": 30
+}

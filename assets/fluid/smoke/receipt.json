@@ -1,0 +1,12 @@
+{
+  "recipe": "smoke",
+  "blender": "5.2.2 LTS",
+  "fps": 30,
+  "frameStart": 1,
+  "frameEnd": 289,
+  "resolution": 80,
+  "domain": "GAS",
+  "viscosity": null,
+  "bakedData": true,
+  "scriptSha256": "62fcfd1357f30e9741e744f0137e773b4cea09436f42618643259052e660cce6"
+}

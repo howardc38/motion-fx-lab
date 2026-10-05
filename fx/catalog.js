@@ -3,6 +3,7 @@
 // counted as additional techniques merely because they have another demo ID.
 (() => {
   const variants = {
+    'fluid-viscous': 'fluid-overflow',
     'water-morph': 'clay',
     'cjk-solid': 'lit3d',
     'frame-glitch': 'glitch',

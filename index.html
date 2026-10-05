@@ -133,7 +133,7 @@
     <h1>Motion FX Lab</h1>
     <p class="lede">Make social clips, product demos, infographics, animated titles and character sequences as editable web pages, then export them to MP4. Start with a finished example and adapt its copy, data or motion. Write code yourself or work with an AI coding assistant; the shipped visuals and music are made in code.</p>
     <nav class="legend" aria-label="On this page"><a href="#uses">Everyday videos</a><a href="#material-films">Titles &amp; materials</a><a href="#studio-studies">Characters &amp; styles</a><a href="#new-studies">Compare treatments</a><a href="#make-video">Edit &amp; export</a><a href="#effects">Effect library</a><a href="https://github.com/howardc38/motion-fx-lab">Get the source</a></nav>
-    <p class="note">Watch the 55-second overview, choose a film by purpose below, then explore its component effects. The 13 films include this overview, finished sequences and comparison reels; they are not 13 extra techniques.</p>
+    <p class="note">Watch the 55-second overview, choose a film by purpose below, then explore its component effects. The 16 films include this overview, finished sequences and comparison reels; they are not additional technique registrations.</p>
     <div class="legend" id="legend"></div>
     <video class="intro" data-film-id="intro" controls playsinline preload="metadata" poster="media/intro.jpg" src="media/intro.mp4" aria-label="Intro video, 55 seconds, with sound"></video>
   </header>
@@ -174,6 +174,18 @@
       <figure id="film-water-forms" data-film-id="water-forms">
         <div class="film-preview"><img src="media/water-forms.gif" alt="One drop. Many forms. animated preview" loading="lazy"><button type="button" aria-label="Play One drop. Many forms. video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/water-forms.jpg" src="media/water-forms.mp4" aria-label="One drop. Many forms., 21.6 s · 16:9, with sound"></video></div>
         <figcaption><b>One drop. Many forms.</b><span class="film-meta">21.6 s · 16:9</span><p>A falling drop creates a crown and rebound, changes into liquid shapes and leads below the surface.</p><p><strong>Use for:</strong> Material studies, atmospheric reveals and visual transitions.</p><p class="film-relation">Authored 3D surfaces and splashes; not a general fluid simulator.</p><p class="film-links"><a href="examples/water-forms.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/examples/water-forms.html">View source</a></p><p class="film-effects">Explore: <a href="#demo-water-material">Water material</a> · <a href="#demo-water-impact">Drop impact</a> · <a href="#demo-water-morph">Liquid morph</a></p></figcaption>
+      </figure>
+      <figure id="film-fluid-overflow" data-film-id="fluid-overflow">
+        <div class="film-preview"><img src="media/fluid-overflow.gif" alt="Overflow animated preview" loading="lazy"><button type="button" aria-label="Play Overflow video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/fluid-overflow.jpg" src="media/fluid-overflow.mp4" aria-label="Overflow, 9.6 seconds, with sound"></video></div>
+        <figcaption><b>Overflow</b><span class="film-meta">9.6 s · 16:9</span><p>A clear stream hits a sculpted vessel and breaks into curved sheets and airborne drops.</p><p><strong>Use for:</strong> Liquid impact, material reveals and dramatic inserts.</p><p class="film-relation">Fluid motion is simulated in Blender; the browser replays the rendered result.</p><p class="film-links"><a href="examples/fluid-overflow.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/tools/blender/README.md">Rebuild the scene</a></p><p class="film-effects">Explore: <a href="#demo-fluid-overflow">Overflow study</a></p></figcaption>
+      </figure>
+      <figure id="film-fluid-viscous" data-film-id="fluid-viscous">
+        <div class="film-preview"><img src="media/fluid-viscous.gif" alt="Slow Gold animated preview" loading="lazy"><button type="button" aria-label="Play Slow Gold video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/fluid-viscous.jpg" src="media/fluid-viscous.mp4" aria-label="Slow Gold, 9.6 seconds, with sound"></video></div>
+        <figcaption><b>Slow Gold</b><span class="film-meta">9.6 s · 16:9</span><p>A thick golden stream coats a ceramic loop, stretches downward and collects on its pedestal.</p><p><strong>Use for:</strong> Glossy material sequences and product-style close-ups.</p><p class="film-relation">A viscosity variation of liquid flow, with a camera staged to show the coated face.</p><p class="film-links"><a href="examples/fluid-viscous.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/tools/blender/README.md">Rebuild the scene</a></p><p class="film-effects">Explore: <a href="#demo-fluid-viscous">Slow Gold study</a></p></figcaption>
+      </figure>
+      <figure id="film-fluid-smoke" data-film-id="fluid-smoke">
+        <div class="film-preview"><img src="media/fluid-smoke.gif" alt="Find the Form animated preview" loading="lazy"><button type="button" aria-label="Play Find the Form video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/fluid-smoke.jpg" src="media/fluid-smoke.mp4" aria-label="Find the Form, 9.6 seconds, with sound"></video></div>
+        <figcaption><b>Find the Form</b><span class="film-meta">9.6 s · 16:9</span><p>A moving smoke volume passes around solid lettering, dissipates, and leaves a gold title in the light.</p><p><strong>Use for:</strong> Title reveals, atmosphere and character or product entrances.</p><p class="film-relation">The smoke is a baked 3D volume; edit the Blender scene to change its flow.</p><p class="film-links"><a href="examples/fluid-smoke.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/tools/blender/README.md">Rebuild the scene</a></p><p class="film-effects">Explore: <a href="#demo-fluid-smoke">Find the Form study</a></p></figcaption>
       </figure>
     </div>
   </section>
@@ -223,13 +235,13 @@
     <h2>Choose an example. Edit it. Export.</h2>
     <p class="note">After <a href="https://github.com/howardc38/motion-fx-lab#quick-start">setting up the repository</a>, edit an example’s words, numbers or timeline and run its build command:</p>
     <pre style="margin:0;padding:16px;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px"><code>bash video/build.sh examples/product.html</code></pre>
-    <p class="note">The build writes an MP4, a high-quality copy, a poster and the declared GIF preview. <a href="https://github.com/howardc38/motion-fx-lab#published-films-and-previews">Browse all thirteen film sources and rebuild commands</a>. The recorder compares every frame across two independent renders and checks the delivered audio and video.</p>
+    <p class="note">The build writes an MP4, a high-quality copy, a poster and the declared GIF preview. <a href="https://github.com/howardc38/motion-fx-lab#published-films-and-previews">Browse all sixteen film sources and rebuild commands</a>. The recorder compares every frame across two independent renders and checks the delivered audio and video.</p>
   </section>
 
   <section id="effects" aria-labelledby="effects-title">
     <span class="eyebrow">Reusable effects</span>
     <h2 id="effects-title">Choose an effect for your film</h2>
-    <p class="note">These previews are drawn live from the same code you can use in a film. Each card represents one effect family; use its selector to compare variants. Every effect family, including characters, uses a 16:9 preview and participates in the filters. Collections below combine techniques and are counted separately. “Seen in” names a visual reference rebuilt with original content. Replace the sample copy with your own.</p>
+    <p class="note">These short studies isolate an operation. Browser effects run from code; Blender studies replay baked simulation frames with editable source recipes. Each card represents one effect family; use its selector to compare variants. Every effect family, including characters, uses a 16:9 preview and participates in the filters. Collections below combine techniques and are counted separately. “Seen in” names a visual reference rebuilt with original content. Replace the sample copy with your own.</p>
     <div class="toolbar">
       <div class="group" id="fKind"><span>Kind</span></div>
       <div class="group" id="fStack"><span>Drawn with</span></div>
@@ -330,6 +342,8 @@
 <script src="fx/pack-studio.js"></script>
 <script src="fx/material-effects.js"></script>
 <script src="fx/pack-materials.js"></script>
+<script src="fx/fluid-effects.js"></script>
+<script src="fx/pack-fluid.js"></script>
 <script src="fx/catalog.js"></script>
 <script src="fx/gallery-layout.js"></script>
 <script>
@@ -355,11 +369,11 @@
   // What a tile needs beyond the page itself.
   const NEEDS = { "A": ["Base stack only", "Needs nothing beyond HTML, CSS, SVG, Canvas and the existing three.js core"],
     "A+": ["Plus a three.js add-on", "Uses three.js add-ons, such as post-processing or animated GLB loading"],
-    "B": ["Custom shader", "Needs a GLSL shader written for it"], "C": ["Plus a library", "Needs one more library"] };
-  const first=["hook","lit3d","uifly","datachart","water-material","dithercharacter","clay","studio-flight","glitch","studio-video-dots","studio-freeze-orbit","studio-echo"];
+    "B": ["Custom shader", "Needs a GLSL shader written for it"], "C": ["Plus a library", "Needs one more library"], "D": ["Offline Blender bake", "Playback uses cached frames; changing the simulation requires Blender"] };
+  const first=["fluid-overflow","fluid-smoke","hook","lit3d","uifly","datachart","water-material","dithercharacter","clay","studio-flight","glitch","studio-video-dots","studio-freeze-orbit","studio-echo"];
   const ordered=[...new Set([...first,...ORDER])];
   const rank = (d) => (ordered.includes(d.id) ? ordered.indexOf(d.id) : ordered.length);
-  const STACKS = { css: "HTML/CSS", svg: "SVG", canvas: "Canvas 2D", three: "Three.js", glsl: "Custom GLSL", physics: "Matter.js", flubber: "Flubber", pixi: "PixiJS", rapier: "Rapier", webgpu: "WebGPU / TSL" };
+  const STACKS = { blender: "Blender (offline)", css: "HTML/CSS", svg: "SVG", canvas: "Canvas 2D", three: "Three.js", glsl: "Custom GLSL", physics: "Matter.js", flubber: "Flubber", pixi: "PixiJS", rapier: "Rapier", webgpu: "WebGPU / TSL" };
   const gallery = document.getElementById("gallery");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -506,6 +520,8 @@
     ["Shadows (SpotLight, soft)", "Lights that cast shadows", "Depth", "The 3D “6%” casting on the floor"],
     ["Physics"],
     ["Matter.js 0.20.0", "2D rigid-body physics", "Things that fall, collide and stack", "The rigid-body tile, stepped at a fixed 240 Hz so every frame can be recomputed"],
+    ["Offline simulation"],
+    ["Blender 5.2 LTS / Mantaflow", "Optional offline 3D tool", "Liquids, viscosity and volumetric gas", "Original Python scenes bake simulation and render fixed frames; viewing and browser export do not require Blender"],
     ["Additional film modules"],
     ["Flubber 0.4.2", "Outer-contour interpolation", "Morph concave paths", "Monogram → lightning → heart, sampled directly at t"],
     ["PixiJS 8.22.0", "2D scene graph and filter pipeline", "Compose texture effects", "Liquid poster with displacement, blur and colour grading"],

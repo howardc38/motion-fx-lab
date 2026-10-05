@@ -1,0 +1,32 @@
+{
+  "domain": "GAS",
+  "resolution": 80,
+  "width": 1280,
+  "height": 720,
+  "samples": [
+    {
+      "frame": 45,
+      "densityCells": 162000,
+      "maxDensity": 0.99560546875,
+      "nonemptyCells": 23503
+    },
+    {
+      "frame": 100,
+      "densityCells": 162000,
+      "maxDensity": 0.99462890625,
+      "nonemptyCells": 28443
+    },
+    {
+      "frame": 180,
+      "densityCells": 162000,
+      "maxDensity": 0.0,
+      "nonemptyCells": 0
+    },
+    {
+      "frame": 260,
+      "densityCells": 162000,
+      "maxDensity": 0.0,
+      "nonemptyCells": 0
+    }
+  ]
+}

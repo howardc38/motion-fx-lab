@@ -28,15 +28,15 @@ test("all published films have one purpose group before the effect library", asy
   }));
   expect(p.groups.map((g) => g.films)).toEqual([
     ["reel", "product", "infographic", "broll"],
-    ["word-forms", "water-forms"],
+    ["word-forms", "water-forms", "fluid-overflow", "fluid-viscous", "fluid-smoke"],
     ["style-journey", "scene-eras", "dot-battle"],
     ["fight-effects", "optical", "stacks"],
   ]);
-  expect(new Set(p.ids).size).toBe(13);
-  expect(p.ids).toHaveLength(13);
+  expect(new Set(p.ids).size).toBe(16);
+  expect(p.ids).toHaveLength(16);
   expect(p.groups.every((g) => g.beforeEffects)).toBe(true);
   expect(p.badLinks).toEqual([]);
-  await expect(page.locator(".film-preview img")).toHaveCount(12);
+  await expect(page.locator(".film-preview img")).toHaveCount(15);
   await expect(page.locator("#composition-presets")).not.toHaveAttribute(
     "open",
   );
@@ -55,7 +55,7 @@ test("a film link reveals its precise variant and clears incompatible filters", 
     "true",
   );
   await expect(page.locator("#shown")).toHaveText(
-    "67 / 67 effect families shown",
+    "69 / 69 effect families shown",
   );
   await page.locator('#film-scene-eras a[href="#demo-scene-eras"]').click();
   await expect(page.locator("#composition-presets")).toHaveAttribute("open");

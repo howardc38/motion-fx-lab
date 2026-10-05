@@ -1,6 +1,6 @@
 # Motion FX Lab
 
-**Make editable motion graphics and export them to MP4:** social clips, product demos, infographics, animated titles, backgrounds and character sequences. Start with one of 13 films, then adapt its copy, data or motion. The effect library contains 67 families, 13 selectable variants and 5 combined showcases. Every exported frame is rendered twice and compared before delivery.
+**Make editable motion graphics and export them to MP4:** social clips, product demos, infographics, animated titles, backgrounds and character sequences. Start with one of 16 films, then adapt its copy, data or motion. The effect library contains 69 families, 14 selectable variants and 5 combined showcases. Every exported frame is rendered twice and compared before delivery.
 
 [![Highlights from the intro video (no sound). Click for the full 55-second video with sound.](media/intro.gif)](media/intro.mp4)
 
@@ -23,7 +23,7 @@ Describe the video to an AI coding assistant, or write it yourself. It becomes a
 </tr>
 </table>
 
-Plus characters drawn in code and 67 reusable effect techniques. The 55-second intro moves from four uses and character action into three stories: One Flight, Twenty Worlds; One Word, Many Forms; and One Push, Chain Reaction. It closes by changing text, scrubbing the timeline and exporting MP4. Use the viewing guide below to choose a starting point. The four use-case examples keep their editable text or numbers near the top of their HTML files; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
+Plus characters drawn in code and 69 reusable effect techniques. The 55-second intro moves from four uses and character action into three stories: One Flight, Twenty Worlds; One Word, Many Forms; and One Push, Chain Reaction. It closes by changing text, scrubbing the timeline and exporting MP4. Use the viewing guide below to choose a starting point. The four use-case examples keep their editable text or numbers near the top of their HTML files; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
 
 ## Choose a film by purpose
 
@@ -34,7 +34,7 @@ Every preview links to an MP4 with sound; GIFs are silent excerpts.
 | What you want to make | Start here | What the films demonstrate |
 |---|---|---|
 | Social, product and data videos | [Social reel](media/reel.mp4), [Product demo](media/product.mp4), [Infographic](media/infographic.mp4), [B-roll](media/broll.mp4) | Campaign structure, one UI interaction, data-driven graphics and seamless source loops |
-| Titles and material sequences | [One word](media/word-forms.mp4), [One drop](media/water-forms.mp4) | A continuous typography transformation; authored 3D water and shape choreography |
+| Titles and material sequences | [One word](media/word-forms.mp4), [One drop](media/water-forms.mp4), [Overflow](media/fluid-overflow.mp4), [Slow Gold](media/fluid-viscous.mp4), [Find the Form](media/fluid-smoke.mp4) | Continuous typography, authored water shapes, simulated liquids and volumetric smoke |
 | Character action and art direction | [One flight](media/style-journey.mp4), [One scene](media/scene-eras.mp4), [COUNTERFORM](media/dot-battle.mp4) | Travel between artworks, preserve a whole room across styles, choreograph a fight |
 | Compare treatments | [Eight fight treatments](media/fight-effects.mp4), [Six optical treatments](media/optical.mp4), [Image distortion, collisions and particles](media/stacks.mp4) | Isolate an operation before selecting it for a film |
 
@@ -45,7 +45,7 @@ sequence, the second isolates visual and timing operations. The water film uses 
 surfaces; the poster in the three-operation comparison uses 2D image distortion.
 One Flight moves a courier between artworks; One Scene preserves a room, props and
 a cup-lifting action while changing their treatment. None of these combinations
-adds an extra unique effect to the 67-family count.
+adds an extra unique effect to the 69-family count.
 
 The four use-case GIFs are above. The remaining films are grouped below in the same
 order as the website.
@@ -56,6 +56,13 @@ order as the website.
 <tr>
 <td width="50%"><a href="media/word-forms.mp4"><img src="media/word-forms.gif" alt="One word. Many forms. animated preview" width="400"></a><br><b>One word. Many forms.</b><br>Brand names, title cards and chapter openers.</td>
 <td width="50%"><a href="media/water-forms.mp4"><img src="media/water-forms.gif" alt="One drop. Many forms. animated preview" width="400"></a><br><b>One drop. Many forms.</b><br>Material studies, atmospheric reveals and visual transitions.</td>
+</tr>
+<tr>
+<td width="50%"><a href="media/fluid-overflow.mp4"><img src="media/fluid-overflow.gif" alt="Overflow animated preview" width="400"></a><br><b>Overflow</b><br>Liquid impact, material reveals and dramatic inserts.</td>
+<td width="50%"><a href="media/fluid-viscous.mp4"><img src="media/fluid-viscous.gif" alt="Slow Gold animated preview" width="400"></a><br><b>Slow Gold</b><br>Glossy material sequences and product-style close-ups.</td>
+</tr>
+<tr>
+<td width="50%"><a href="media/fluid-smoke.mp4"><img src="media/fluid-smoke.gif" alt="Find the Form animated preview" width="400"></a><br><b>Find the Form</b><br>Title reveals, atmosphere and character or product entrances.</td>
 </tr>
 </table>
 
@@ -94,6 +101,9 @@ order as the website.
 | Everyday video formats | [Animated backgrounds](media/broll.mp4) | 12 s | 16:9 | [GIF](media/broll.gif) · [poster](media/broll.jpg) | [HTML](examples/broll.html) |
 | Titles and materials | [One word. Many forms.](media/word-forms.mp4) | 21.6 s | 16:9 | [GIF](media/word-forms.gif) · [poster](media/word-forms.jpg) | [HTML](examples/word-forms.html) |
 | Titles and materials | [One drop. Many forms.](media/water-forms.mp4) | 21.6 s | 16:9 | [GIF](media/water-forms.gif) · [poster](media/water-forms.jpg) | [HTML](examples/water-forms.html) |
+| Titles and materials | [Overflow](media/fluid-overflow.mp4) | 9.6 s | 16:9 | [GIF](media/fluid-overflow.gif) · [poster](media/fluid-overflow.jpg) | [HTML](examples/fluid-overflow.html) |
+| Titles and materials | [Slow Gold](media/fluid-viscous.mp4) | 9.6 s | 16:9 | [GIF](media/fluid-viscous.gif) · [poster](media/fluid-viscous.jpg) | [HTML](examples/fluid-viscous.html) |
+| Titles and materials | [Find the Form](media/fluid-smoke.mp4) | 9.6 s | 16:9 | [GIF](media/fluid-smoke.gif) · [poster](media/fluid-smoke.jpg) | [HTML](examples/fluid-smoke.html) |
 | Character action and art direction | [One flight. Twenty worlds.](media/style-journey.mp4) | 40.8 s | 16:9 | [GIF](media/style-journey.gif) · [poster](media/style-journey.jpg) | [HTML](examples/style-journey.html) |
 | Character action and art direction | [One scene. Many eras.](media/scene-eras.mp4) | 24 s | 16:9 | [GIF](media/scene-eras.gif) · [poster](media/scene-eras.jpg) | [HTML](examples/scene-eras.html) |
 | Character action and art direction | [COUNTERFORM](media/dot-battle.mp4) | 19.2 s | 16:9 | [GIF](media/dot-battle.gif) · [poster](media/dot-battle.jpg) | [HTML](examples/dot-battle.html) |
@@ -101,15 +111,15 @@ order as the website.
 | Effect comparisons | [Six optical treatments](media/optical.mp4) | 18 s | 16:9 | [GIF](media/optical.gif) · [poster](media/optical.jpg) | [HTML](examples/optical.html) |
 | Effect comparisons | [Image distortion, collisions and particles](media/stacks.mp4) | 24 s | 16:9 | [GIF](media/stacks.gif) · [poster](media/stacks.jpg) | [HTML](examples/stacks.html) |
 
-All thirteen published films have animated GIF previews and still posters. A GIF
+All sixteen published films have animated GIF previews and still posters. A GIF
 is a silent selection of shots, not the full film. MP4 container durations can be
 about 0.1 s longer than the authored timeline because of the final frame and
 encoding timestamps. `assets/studio/fight-source.mp4` is a silent green-screen
 source asset, not another finished film.
 
 ```sh
-npm run build:all       # all thirteen published film bundles
-npm run build:showcase  # intro, optical, stacks, the three studio films and three material films
+npm run build:all       # all sixteen published film bundles
+npm run build:showcase  # intro, optical, stacks, studio films, material films and three baked-fluid films
 npm run test:media      # source dimensions/duration and MP4/poster/GIF bundle checks
 ```
 
@@ -128,7 +138,7 @@ prove a useful or well-directed effect.
 | 0–2.4 s | Motion graphics in plain HTML |
 | 2.4–16.8 s | Social clips, product demos, infographics and B-roll; 3.6 s each |
 | 16.8–21.6 s | A character hands over information; a short fight beat shows action |
-| 21.6–26.4 s | Water material, type, drop impact and shape morphing |
+| 21.6–26.4 s | Baked liquid motion, type, volumetric smoke and shape morphing |
 | 26.4–33.6 s | One Flight, Twenty Worlds: six readable styles, then the twenty-style overview |
 | 33.6–40.8 s | One Word, Many Forms: 流動 → solid lettering → particles → contour lines → signal breakup → 流動 |
 | 40.8–45.6 s | One Push, Chain Reaction: follow the fall, then reveal all 48 dominoes |
@@ -154,7 +164,7 @@ new effect registrations. Source: [intro.html](video/intro.html) and
 | Pain | What this repo does |
 |---|---|
 | Hand-built, un-diffable animation | Every timeline effect is a small function of time in a plain web page. Serve the gallery over localhost; no framework or bundler. |
-| Starting from a blank page | 67 effect techniques you can copy: kinetic type, UI mock-ups, charts, generative patterns, ray-marched and GPU-particle shaders, physics simulations, chrome, and toon, flat and dithered characters. |
+| Starting from a blank page | 69 effect techniques you can copy: kinetic type, UI mock-ups, charts, generative patterns, ray-marched and GPU-particle shaders, physics simulations, chrome, and toon, flat and dithered characters. |
 | Slow 3D in headless Chrome | GPU rendering through ANGLE Metal, lossless CDP screenshots and 4 browsers in parallel: **399.6 s → 52.9 s** for a 56-second, 3D-heavy video, including the second render that verifies it. |
 | Silent wrong frames | The whole video is rendered twice, each frame on a different browser, and every frame is compared. The recorder also stops on a CPU fallback, a lost WebGL context, a page error or a font that did not load. |
 | Colour shifts | Screenshots are converted with the BT.709 matrix and every file is tagged BT.709; the checks refuse an untagged file. |
@@ -212,7 +222,7 @@ demo({ id: "count", kind: "type", period: 3.2, hero: 2.4, /* name, stacks, chips
   } });
 ```
 
-No `requestAnimationFrame` state, no clock, no unseeded randomness at draw time. Stateful simulations follow the same rule: frame `t` shows the state after exactly `round(t × steps per second)` fixed steps from a fixed start, a cache only saves re-running steps already taken, and asking for an earlier `t` starts again from step 0. That is what lets you scrub to any moment, render a frame again and get the same pixels, and split a video across browsers. The original 3D tiles share one WebGL renderer; the three optical shaders share a second WebGL context. Each copies its result into its own canvas. PixiJS and Rapier own renderer contexts; WebGPU/TSL uses a compute-capable device. The studio effects share an additional r180 renderer. All effects obey the same awaited timeline contract.
+No `requestAnimationFrame` state, no clock, no unseeded randomness at draw time. Browser-side stateful simulations follow the same rule: frame `t` shows the state after exactly `round(t × steps per second)` fixed steps from a fixed start, a cache only saves re-running steps already taken, and asking for an earlier `t` starts again from step 0. That is what lets you scrub to any moment, render a frame again and get the same pixels, and split a video across browsers. The original 3D tiles share one WebGL renderer; the three optical shaders share a second WebGL context. Each copies its result into its own canvas. PixiJS and Rapier own renderer contexts; WebGPU/TSL uses a compute-capable device. The studio effects share an additional r180 renderer. Blender fluids instead select a frame from a completed offline bake; their physics do not run in the browser. All effects obey the same awaited timeline contract.
 
 ```
 page.html ─ record.cjs cues ─► cues.json ─► sfx.py + music.py ─► mix.wav ──────────┐
@@ -241,12 +251,13 @@ Then run `bash video/build.sh video/yours.html`.
 
 | Path | What it is |
 |---|---|
-| `index.html` | The gallery: every effect running live, filtered by kind or by how it is drawn, with the stack table and render measurements |
+| `index.html` | The gallery: timeline previews, including replayed offline bakes, filtered by kind or implementation, with the stack table and render measurements |
 | `fx/catalog.js`, `fx/gallery-layout.js`, `fx/gallery-layout.css` | Technique/variant/showcase classification and landscape gallery compositions; original demo IDs remain compatible with films |
 | `fx/demos.js`, `fx/demos.css` | The core effects, each `build(stage)` returning `frame(t, abs)`, their styles, and the helpers the packs share (`window.FX`) |
 | `fx/pack-dither.js`, `fx/pack-2d.js`, `fx/pack-shaders.js`, `fx/pack-sims.js` | Effect packs: the dithered character, 2D motion and generative patterns, GLSL shaders, and the two simulations. Each registers its tiles with `FX.demo` |
 | `fx/optical-effects.js`, `fx/pack-optical.js` | Shared optical renderer and six timeline effects: moiré, slit-scan type, ribbon, caustic light, foil and path morph |
 | `fx/material-effects.js`, `fx/pack-materials.js`, `fx/material-studies/` | Shared water surfaces, CJK solids, contours, frame glitch, room treatments and film choreography |
+| `tools/blender/`, `assets/fluid/`, `fx/fluid/` | Optional Mantaflow scene generation, verified baked frame assets and deterministic replay |
 | `fx/material-player.js` | Shared pause, seek and export player for the three material films |
 | `assets/type/`, `tools/build-cjk-font.py` | Licensed vector glyph subset and optional offline outline exporter |
 | `fx/font-helvetiker-subset.js` | 14 glyphs of Helvetiker Bold for the extruded 3D text |
@@ -256,7 +267,7 @@ Then run `bash video/build.sh video/yours.html`.
 | `video/deliver.py` | Loudness mastering and the final MP4 files, each checked before it is delivered |
 | `video/gif.py` | The GIF preview, cut from the clips the page declares |
 | `video/intro.html`, `fx/intro-stories.js` | Intro storyboard and the continuous flight, typography and edit/export sequences |
-| `examples/` | Four original use-case films, plus the six-effect optical player/film and the three-effect film and its parameter preview page |
+| `examples/` | Fifteen example films, timeline players and effect settings; the overview intro is in `video/` |
 | `fx/stack-effects.js`, `fx/pack-stacks.js`, `fx/stacks/` | Reusable PixiJS, Rapier and WebGPU timeline effects and gallery adapters |
 | `fx/studio/`, `fx/studio-effects.js`, `fx/pack-studio.js` | Fourteen film effects, twenty art directions, fixed-frame footage, skeletal points and time controls |
 | `assets/studio/` | Original animated GLB, source clip, transparent frame sequence and technique guide |
@@ -272,7 +283,7 @@ Open a study at full size to compare source clocks, a fixed versus moving camera
 solid versus sampled geometry, or a local contact before and after deformation.
 Drawing tools and implementation chips are expandable details.
 
-**67 technique families, 13 selectable variants and 5 separate showcases.** All 77 original demo IDs remain available; eight additions bring the callable total to 85. The gallery uses one 16:9 card per technique, including characters; variants are selected inside that card. Every main card participates in the kind and renderer filters. Renderers initialize when their cards approach the viewport.
+**69 technique families, 14 selectable variants and 5 separate showcases.** All 77 original demo IDs remain available; eleven additions bring the callable total to 88. The gallery uses one 16:9 card per technique, including characters; variants are selected inside that card. Every main card participates in the kind and renderer filters. Renderers initialize when their cards approach the viewport.
 
 [fx/catalog.js](fx/catalog.js) owns this classification. Character poses/compositions, dot palettes, shape-morph implementations, particle-text implementations, diagram layouts and flythrough scenes are variants of their respective families. The five-style shader comparison, twenty-art-direction collection, combined gallery journey, underwater scene and eight-treatment room are showcases, not additional techniques. Transparent liquid morphing belongs to clay; solid CJK type belongs to lit3d; whole-frame signal breakup belongs to glitch. “Unique” means a distinct demonstrated operation; it does not mean every effect uses an unrelated rendering algorithm.
 
@@ -325,8 +336,34 @@ three times its source clock, preserving its 7.2-second chapter.
 
 The checked-in CJK outlines require no Python package to render. Adding glyphs uses
 an optional fontTools build step; see [the font asset guide](assets/type/README.md).
-Blender is not a dependency of these films. A future physically simulated fluid
-workflow would require its own baking and asset-import implementation.
+These original procedural material films do not require Blender. The separate
+baked-fluid films below use an optional offline simulation and rendering workflow.
+
+## Offline liquid and smoke films
+
+**[Overflow](media/fluid-overflow.mp4)** · **[Slow Gold](media/fluid-viscous.mp4)** · **[Find the Form](media/fluid-smoke.mp4)**
+
+These three original scenes add simulated liquid/vessel interaction, a high-viscosity
+flow variant and a volumetric smoke reveal. They are scripted in Blender 5.2 LTS
+and baked with Mantaflow. Overflow uses Cycles for transparent refraction; the other
+scenes use Eevee. Geometry, lights, cameras and materials are defined in source.
+
+The browser replays checked-in 1280×720 frames at fixed times, then adds editable
+film typography, synthesised sound and the normal MP4/GIF delivery checks.
+**Blender is needed to change/rebuild the 3D simulation, not to watch the films or
+export their supplied frame assets.** Browser verification compares the final
+composite across independent browsers; it does not rerun or validate fluid physics.
+
+```sh
+npm run render:fluid-films                     # use the checked-in frames
+python3 tools/blender/build.py overflow --replace  # optional Blender rebuild
+```
+
+See [scene recipes, bake controls and provenance](tools/blender/README.md).
+`fluid-overflow` and `fluid-smoke` are two technique families; `fluid-viscous`
+is a variant of `fluid-overflow`. The three finished films are not counted again
+as extra effects. The earlier procedural water and smoke studies remain available
+for work that needs fast browser-side changes.
 
 ## Art-direction and dot-animation films
 
@@ -409,7 +446,7 @@ an ordinary MP4.
 Run `REQUIRE_WEBGPU=1 npm run test:effects` on a supported GPU to require actual
 compute-buffer checks. Tests cover optical seeks and audio, all three new frame
 APIs, backward simulation seeks, gallery registration, native intro rendering,
-asynchronous screenshot ordering, rejection cleanup, all fourteen studio demos, source-frame indexing, alpha, stable point identities and independent pose/camera clocks. Gallery checks render all 85 IDs, verify undistorted 16:9 frames, filter characters and enforce the technique/variant/showcase mapping. Failure tests preserve existing films and asset bundles; the rebuilt battle is checked for independent instances and repeatable attack frames. Python 3, ffmpeg and
+asynchronous screenshot ordering, rejection cleanup, all fourteen studio demos, source-frame indexing, alpha, stable point identities and independent pose/camera clocks. Gallery checks render all 88 IDs, verify undistorted 16:9 frames, filter characters and enforce the technique/variant/showcase mapping. Failure tests preserve existing films and asset bundles; the rebuilt battle is checked for independent instances and repeatable attack frames. Python 3, ffmpeg and
 Chromium are needed. There is no CI yet.
 
 ## Effects we learnt from other people's videos
@@ -458,7 +495,7 @@ The second was a one-pixel column at the edge of a tile while it scaled in: fram
 - The main gallery uses three.js r128; the newer studio, material and compute modules pin r180. The gallery retains r128, which still ships the single-file UMD build and `examples/js` (removed in r161 and r148). Upgrading means re-tuning every colour, light and shader.
 - The original Helvetiker subset is Latin-only. Solid CJK lettering uses 50 bundled outline glyphs; adding other characters requires rebuilding that asset.
 - The reaction–diffusion tile gives the same pixels every time on one GPU, but we saw a different pattern on SwiftShader than on Metal. It runs 900 steps a second on half-float textures, so small rounding differences between the two backends are the likely cause. The recorder never mixes the two in one run.
-- Automated browser regressions cover effect contracts, editable chart data, gallery framing, asynchronous recording, publication rollback, intro playback and all thirteen published media bundles. There is no CI yet; complete video builds and visual review are performed locally. Bundle metadata checks do not prove visual freshness by themselves.
+- Automated browser regressions cover effect contracts, editable chart data, gallery framing, asynchronous recording, publication rollback, intro playback and all sixteen published media bundles. There is no CI yet; complete video builds and visual review are performed locally. Bundle metadata checks do not prove visual freshness by themselves.
 
 ## Help wanted
 

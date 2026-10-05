@@ -193,11 +193,11 @@
 
   <section class="scene ink" data-start="21.6" id="scLib">
     <div class="edge"></div>
-    <div class="a wide" style="left:135px;top:95px;font-size:76px"><span data-technique-count>67</span> effect techniques.</div>
+    <div class="a wide" style="left:135px;top:95px;font-size:76px"><span data-technique-count>69</span> effect techniques.</div>
     <div class="a mono" id="montage-label" style="left:140px;top:210px;font-size:28px;color:var(--pink)">Surface and colour</div>
-    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="water-material"></div></div>
+    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="fluid-overflow"></div></div>
     <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-slit"></div></div>
-    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="water-impact" data-t0="1.2"></div></div>
+    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="fluid-smoke" data-t0="1.2"></div></div>
     <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-morph"></div></div>
   </section>
 
@@ -222,7 +222,7 @@
   <!-- 09 call to action -->
   <section class="scene pinkbg" data-start="50.4" id="scCta">
     <div class="edge"></div>
-    <div class="a mono" style="left:156px;top:130px;font-size:28px;font-weight:700" data-fx="fade" data-at="0.1"><span data-technique-count>67</span> techniques · selectable variants · frame-by-frame export</div>
+    <div class="a mono" style="left:156px;top:130px;font-size:28px;font-weight:700" data-fx="fade" data-at="0.1"><span data-technique-count>69</span> techniques · selectable variants · frame-by-frame export</div>
     <div class="a wide" style="left:150px;top:210px;font-size:200px" data-fx="slam" data-at="0.15" data-sfx="impact">Fork it.</div>
     <div class="a mono" style="left:158px;top:470px;font-size:46px;font-weight:700" data-fx="type" data-at="0.7" data-dur="1.1" data-sfx="type">github.com/howardc38/motion-fx-lab</div>
     <div class="sticker" style="left:150px;top:620px;background:#fff;transform:rotate(-3deg)" data-fx="pop" data-at="2.0" data-base="rotate(-3deg)" data-sfx="ding">0BSD · use it for anything</div>
@@ -249,6 +249,8 @@
 <script src="../fx/pack-studio.js"></script>
 <script src="../fx/material-effects.js"></script>
 <script src="../fx/pack-materials.js"></script>
+<script src="../fx/fluid-effects.js"></script>
+<script src="../fx/pack-fluid.js"></script>
 <script src="../fx/catalog.js"></script>
 <script>
 (() => {
@@ -344,7 +346,7 @@
     if(fight) await (await battleReady).frame(5.15+(t-19.8));
     const montage=Math.max(0,Math.min(3,Math.floor((t-START.scLib)/1.2)));
     document.querySelectorAll('.montage-shot').forEach((el,i)=>el.hidden=i!==montage);
-    document.getElementById('montage-label').textContent=['Light through water','Type in motion','Drop, crown and rebound','Transform a shape'][montage];
+    document.getElementById('montage-label').textContent=['Liquid meets a vessel','Type in motion','Smoke meets type','Transform a shape'][montage];
     const stories=await storiesReady;
     if(t>=START.scStyle&&t<START.scWord)stories.worlds.frame(t-START.scStyle);
     if(t>=START.scWord&&t<START.scChain)stories.word.frame(t-START.scWord);

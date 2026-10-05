@@ -83,3 +83,13 @@ instructions are in [`assets/type/README.md`](assets/type/README.md).
 
 fontTools 4.60.1 is an optional offline build dependency under MIT. It is not
 loaded by the gallery or needed to render the checked-in films.
+
+## Optional offline Blender tool
+
+Blender 5.2 LTS and its built-in Mantaflow system are external build tools, not
+bundled runtimes. Blender is distributed under the GNU GPL; see
+[Blender's licence information](https://www.blender.org/about/license/). The Python
+scene recipes, primitive geometry, lighting and animation authored here are original.
+Blender's built-in Bfont supplies the rendered FORM lettering; no font file is copied
+into this repository. The cached frames are rendered scene outputs, not downloaded
+footage. Cycles denoising is part of rendering; no generative-image model is used.

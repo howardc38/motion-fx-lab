@@ -180,7 +180,7 @@ test("transparent external glitch sources do not inherit the previous image", as
 test("every GIF film card opens its own playable video", async ({ page }) => {
   await gallery(page);
   const cards = page.locator(".film-preview");
-  expect(await cards.count()).toBe(12);
+  expect(await cards.count()).toBe(15);
   for (let i = 0; i < (await cards.count()); i++) {
     const c = cards.nth(i);
     await c.locator("button").click();

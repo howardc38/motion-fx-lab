@@ -1,0 +1,9 @@
+{
+  "script": "tools/blender/scenes.py",
+  "scriptSha256": "62fcfd1357f30e9741e744f0137e773b4cea09436f42618643259052e660cce6",
+  "engine": "CYCLES",
+  "width": 1280,
+  "height": 720,
+  "frames": 289,
+  "fps": 30
+}

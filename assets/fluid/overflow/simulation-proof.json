@@ -1,0 +1,24 @@
+{
+  "domain": "LIQUID",
+  "resolution": 80,
+  "width": 1280,
+  "height": 720,
+  "samples": [
+    {
+      "frame": 45,
+      "vertices": 17592
+    },
+    {
+      "frame": 100,
+      "vertices": 31630
+    },
+    {
+      "frame": 180,
+      "vertices": 21904
+    },
+    {
+      "frame": 260,
+      "vertices": 40662
+    }
+  ]
+}

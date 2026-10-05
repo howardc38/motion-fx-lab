@@ -8,3 +8,6 @@ video/mismatch/
 test-results/
 playwright-report/
 __pycache__/
+
+# Rebuildable Blender simulation caches and uncompressed frames
+.blender-cache/

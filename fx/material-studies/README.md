@@ -42,8 +42,8 @@ HTML entrypoints own text, poster selection and GIF excerpts; keep excerpts with
 
 The room has a continuous six-second cup-lifting action across style wipes.
 Art names describe original treatments inspired by visual traditions, not exact
-historical reconstructions. The intro keeps its 55.2-second timeline, replaces two
-montage shots with water, and samples the complete word film at 3× speed.
+historical reconstructions. The intro keeps its 55.2-second timeline, selects baked liquid and smoke in its montage, and samples the complete word film
+at 3× speed.
 
 Use `npm run build:materials` for all three bundles, or pass one HTML file to
 `video/build.sh`. Each declares audio cues, music, poster time and GIF excerpts.
