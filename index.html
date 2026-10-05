@@ -148,6 +148,7 @@
       <span class="shown" id="shown"></span>
       <button id="play" type="button" aria-pressed="false">⏸ Pause</button>
     </div>
+    <p class="note" id="catalog-availability"><span id="available" aria-live="polite"></span> <a href="#showcases" id="showcase-count"></a></p>
     <div class="gallery" id="gallery"></div>
     <p class="note">The colour-grade technique uses CSS filters and a separate glow; it is not a LUT implementation. The original 3D and shader tiles share one WebGL canvas; the three optical shaders share a second context. Reaction–diffusion draws the same pixels every time on one GPU, but not the same pattern on every GPU.</p>
   </section>
@@ -362,15 +363,17 @@
     }
   };
   function apply() {
-    let n=0;
+    let n=0, demoCount=0, variantCount=0;
     for (const card of cards) {
       if (card.showcase) continue;
       const matches=card.family.entries.filter(entryMatches); card.fig.hidden=matches.length===0;
-      if (matches.length) { n++; if (!matches.some(d=>d.id===card.selected)) choose(card,matches[0].id); }
+      if (matches.length) { n++; demoCount+=matches.length; variantCount+=matches.filter(d=>d.role==='variant').length; if (!matches.some(d=>d.id===card.selected)) choose(card,matches[0].id); }
       if (card.select) for (const option of card.select.options) option.disabled=!entryMatches(byId.get(option.value));
       card.dirty=true;
     }
-    document.getElementById('shown').textContent=`${n} techniques shown`;
+    document.getElementById('shown').textContent=`${n} / ${stats.techniques} effect families shown`;
+    document.getElementById('available').textContent=`${demoCount} ${demoCount===1?'demo matches':'demos match'} these filters${variantCount ? `, including ${variantCount} variant${variantCount===1?'':'s'} in the card selectors` : ''}.`;
+    document.getElementById('showcase-count').textContent=`${stats.showcases} combined showcases below ↘`;
   }
   mk(document.getElementById('fKind'),'kind', [['all','All'],...Object.entries(KINDS).filter(([k])=>families.some(f=>f.kind===k))]);
   mk(document.getElementById('fStack'),'stack', [['all','All'],...Object.entries(STACKS)]);
