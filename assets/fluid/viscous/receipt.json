@@ -1,12 +1,14 @@
 {
   "recipe": "viscous",
+  "revision": 2,
   "blender": "5.2.2 LTS",
   "fps": 30,
   "frameStart": 1,
   "frameEnd": 289,
-  "resolution": 64,
+  "resolution": 96,
   "domain": "LIQUID",
-  "viscosity": 0.03500000014901161,
+  "viscosity": 0.02500000037252903,
   "bakedData": true,
-  "scriptSha256": "62fcfd1357f30e9741e744f0137e773b4cea09436f42618643259052e660cce6"
+  "script": "tools/blender/liquid-scenes.py",
+  "scriptSha256": "159c1112c1e815bb250d37e2a77c4d1c689ea20e7f21c10f4b88d810c67bcada"
 }

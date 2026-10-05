@@ -1,0 +1,8 @@
+{
+  "script": "tools/blender/finish-mesh.py",
+  "scriptSha256": "fccce6f0c8b9c2d44fc07a529cd03e4f76ec1cb7403fe056568a8c5fa243d5ed",
+  "scale": 2,
+  "particleRadius": 1.7000000476837158,
+  "smoothPositive": 2,
+  "smoothNegative": 2
+}

@@ -2,7 +2,7 @@
 python3 tools/blender/publish-frames.py .blender-cache/overflow-final assets/fluid/overflow
 Only generated output is replaced, and only after validation. Caches stay outside Git.
 """
-import argparse,json,pathlib,subprocess,tempfile,hashlib,shutil,struct,zlib
+import argparse,json,pathlib,subprocess,tempfile,hashlib,shutil,struct,zlib,math
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 
 def sha(path):
@@ -46,14 +46,25 @@ def main():
  if expected_domain=='LIQUID' and any(x.get('vertices',0)<=8 for x in proof['samples']):p.error('Liquid mesh evidence is empty')
  if expected_domain=='GAS' and any(x.get('maxDensity',0)<=0 for x in proof['samples'][:2]):p.error('Smoke density evidence is empty')
  if receipt['recipe']=='viscous' and any(x.get('insideObstacleBeyondTolerance',1)>0 for x in proof['samples']):p.error('Obstacle collision check is missing or failed')
- if sha(ROOT/'tools/blender/scenes.py')!=receipt['scriptSha256']:p.error('The scene source changed after baking; rebuild from the current recipe')
+ scene_script=receipt.get('script','tools/blender/scenes.py')
+ if scene_script not in ['tools/blender/scenes.py','tools/blender/liquid-scenes.py']:p.error('Unknown scene source')
+ if sha(ROOT/scene_script)!=receipt['scriptSha256']:p.error('The scene source changed after baking; rebuild from the current recipe')
+ mesh=None
+ if receipt.get('revision')==2:
+  mesh=json.loads((a.work/'mesh-receipt.json').read_text())
+  if mesh.get('script')!='tools/blender/finish-mesh.py' or mesh.get('scriptSha256')!=sha(ROOT/'tools/blender/finish-mesh.py'):p.error('Mesh reconstruction source changed or is missing')
+  if mesh.get('particleRadius')!=proof.get('meshParticleRadius'):p.error('Mesh reconstruction and inspection settings disagree')
+ if receipt.get('revision')==2 and receipt['recipe']=='overflow':
+  initial=proof.get('initialWaterVolume',0)
+  finite=lambda x:isinstance(x,(int,float)) and math.isfinite(x)
+  if not finite(initial) or initial<.5 or any(not finite(s.get('meshVolume')) or s['meshVolume']<initial*.7 or not finite(s.get('poolHeight')) or s['poolHeight']<=.8 for s in proof['samples']) or proof['samples'][-1]['poolHeight']<1.17:p.error('Water retention or rim-height evidence is missing or failed')
  if render.get('script') not in ['tools/blender/scenes.py','tools/blender/render.py']:p.error('Unknown render source')
  if sha(ROOT/render['script'])!=render['scriptSha256']:p.error('The render source changed after rendering')
  if a.output.exists() and not a.replace:p.error('Output exists; use --replace to replace this generated asset')
  frames=sorted((a.work/'frames').glob('frame-*.png'))
  if len(frames)!=expected:p.error(f'Expected {expected} source frames, found {len(frames)}')
  completed=(a.work/'render-receipt.json').stat().st_mtime_ns
- scene_changed=(a.work/'scene.blend').stat().st_mtime_ns
+ scene_changed=max((a.work/'scene.blend').stat().st_mtime_ns,render.get('startedAtNs',0))
  for frame in frames:
   changed=frame.stat().st_mtime_ns
   if not scene_changed <= changed <= completed:p.error(f'{frame.name}: timestamp {changed} outside completed render [{scene_changed}, {completed}]; do not publish a partial rerender')
@@ -68,7 +79,9 @@ def main():
   if len(files)!=expected:raise RuntimeError('Web frame conversion count mismatch')
   info=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-of','json',str(files[0])]))['streams'][0]
   if (info['width'],info['height'])!=(1280,720):raise RuntimeError('Only full-resolution 1280x720 renders can be published')
-  data={'fps':receipt['fps'],'count':expected,'width':1280,'height':720,'pattern':'frame-%06d.jpg','alpha':'opaque','recipe':receipt['recipe'],'blender':receipt['blender'],'sourceScriptSha256':receipt['scriptSha256'],'renderSource':render,'bakeResolution':receipt['resolution'],'sceneSha256':sha(a.work/'scene.blend'),'sourceFrameHashes':{f.name:sha(f) for f in files}}
+  hashes={f.name:sha(f) for f in files};version=hashlib.sha256(json.dumps(hashes,sort_keys=True).encode()).hexdigest()[:16]
+  data={'fps':receipt['fps'],'count':expected,'width':1280,'height':720,'pattern':'frame-%06d.jpg?v='+version,'version':version,'alpha':'opaque','recipe':receipt['recipe'],'blender':receipt['blender'],'sourceScript':scene_script,'sourceScriptSha256':receipt['scriptSha256'],'renderSource':render,'bakeResolution':receipt['resolution'],'sceneSha256':sha(a.work/'scene.blend'),'sourceFrameHashes':hashes}
+  if mesh:data['meshSource']=mesh;shutil.copy2(a.work/'mesh-receipt.json',tmp/'mesh-receipt.json')
   (tmp/'manifest.json').write_text(json.dumps(data,indent=2)+'\n');shutil.copy2(a.work/'receipt.json',tmp/'receipt.json');shutil.copy2(a.work/'simulation-proof.json',tmp/'simulation-proof.json');shutil.copy2(a.work/'render-receipt.json',tmp/'render-receipt.json')
   # The existing publisher installs files/directories with rollback on failure.
   driver="const {publishBundle}=require('./video/publish.cjs');publishBundle(process.argv[1],process.argv[2],[process.argv[3]]).catch(e=>{console.error(e);process.exit(1)});"

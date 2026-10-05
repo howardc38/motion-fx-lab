@@ -6,8 +6,8 @@ No Blender binary, external model, stock footage or generated image is bundled.
 
 | Recipe | Film | What changes |
 |---|---|---|
-| `overflow` | Overflow | Liquid inflow interacts with a sculpted open vessel; sheets and droplets leave the rim. Cycles renders transparent refraction. |
-| `viscous` | Slow Gold | The high-viscosity solver produces a thicker stream over a ceramic loop. The finishing camera observes the coated face. |
+| `overflow` | Overflow | A low-height inlet adds water to a partly filled vessel. The level rises to the rim and excess water runs down the outside. |
+| `viscous` | Slow Gold | A moving gold-coloured stream lays a viscous sheet over a dark ceramic loop, stretches and drains onto the plinth. |
 | `smoke` | Find the Form | Gas flows around solid lettering, then dissipates. Material and light staging reveal the gold form. |
 
 Each scene lasts 9.6 seconds, with 289 full-resolution frames at 30 fps including
@@ -49,49 +49,61 @@ under `.blender-cache/`; incomplete work is retained for diagnosis. `--keep-work
 retains successful work too. Simulation caches and uncompressed frames are ignored
 by Git and can be large. Baking and rendering are substantially slower than replay.
 
-- `scenes.py` defines geometry, emitters, collisions, materials and physics. Liquid
-  recipes use a meshed Mantaflow domain; the thick stream enables the viscosity
-  solver. Smoke uses a gas domain with real density fields and dissolves after its
-  emitters turn off. Edit these parameters and rebake to change the motion.
+- `liquid-scenes.py` defines the current liquid recipes: vessel/loop geometry,
+  inflow, collisions, viscosity, lights and cameras. `scenes.py` supplies smoke
+  with a gas domain that dissolves after its emitters turn off. Edit the relevant
+  recipe and rebake to change motion. Both liquid films use Cycles; smoke uses Eevee.
+- `finish-mesh.py` reconstructs the final liquid surface from the completed data
+  cache. Its overlapping particle radius reduces gaps in the draft surface;
+  `mesh-receipt.json` records this separate stage. No physics is rebaked.
 - `inspect-bake.py` verifies completed caches, nonempty liquid meshes / active smoke
-  density, and sampled obstacle penetration for the torus recipe. These checks are
-  sanity checks, not a scientific validation of the numerical fluid solution.
+  density, and sampled obstacle penetration for the torus recipe. The revised
+  Overflow also checks retained water volume and a pool surface that reaches the
+  rim. This caught severe volume loss in an earlier obstacle configuration. These
+  are sanity checks, not a proof of exact mass conservation or scientific accuracy.
 - `render.py` renders cached motion and applies the final camera/light treatment.
   Changing cameras or materials needs rendering again; it can reuse the simulation.
 - `publish-frames.py` validates the sequence and installs it through the existing
   rollback-capable publisher. Output is a full-frame opaque beauty plate. It is
   not a transparent actor cutout or an editable 3D mesh in the browser.
 
-The first Overflow and Find the Form plates were rendered through `scenes.py`'s
-render action; their render receipts preserve that actual source path and hash.
-The common rebuild command uses `render.py` for all recipes. The two paths use the
-same saved scene; Slow Gold additionally applies the coated-face camera treatment.
+The smoke plate was rendered through `scenes.py`'s render action; its receipt
+preserves that source path and hash. The first liquid recipes remain in that file
+for provenance, but `build.py` selects `liquid-scenes.py` for current liquid rebuilds.
+The common finishing renderer is `render.py`; it supports retained legacy scenes too.
 
 ## Rerender a retained cache
 
 Use `--keep-work` for the initial build. It prints the retained directory, such as
 `.blender-cache/overflow-abc123`. Put camera, light or material finishing edits in
 `render.py`, which opens the saved scene without changing its baked geometry.
-Replace the sample directory below with the printed path:
+Replace the sample directory below with the printed path. Check representative
+frames before rendering a complete movie:
 
 ```sh
+blender -b --factory-startup --python-exit-code 2 --python tools/blender/render.py -- --recipe overflow --work .blender-cache/overflow-abc123 --stills 35,100,180,260
 blender -b --factory-startup --python-exit-code 2 --python tools/blender/render.py -- --recipe overflow --work .blender-cache/overflow-abc123
 python3 tools/blender/publish-frames.py .blender-cache/overflow-abc123 assets/fluid/overflow --replace
 bash video/build.sh examples/fluid-overflow.html
 ```
 
+Stills go to `stills-final/` and do not create a completed-render receipt. To change
+only mesh reconstruction, run `finish-mesh.py` on the retained work directory, then
+rerun `inspect-bake.py` and the render/publication sequence. It invalidates old
+inspection and render receipts because the geometry changed.
+
 The same sequence resumes a failed render when its bake and simulation proof are
 complete. It rerenders the entire sequence so a partial render cannot mix frames.
 If inspection was interrupted, first run
 `blender -b --factory-startup --python-exit-code 2 --python tools/blender/inspect-bake.py -- .blender-cache/overflow-abc123`.
-An incomplete bake must be rebuilt. Changing `scenes.py` also requires a new bake:
+An incomplete bake must be rebuilt. Changing the recipe source also requires a new bake:
 the publisher rejects old receipts whose scene-source hash no longer matches.
 
 ## Verification boundary
 
 Bake and render receipts record Blender version, settings and the source-script
-hashes. Final simulation resolution is defined only in `scenes.py`; inspection records the actual saved domain resolution and image dimensions, and publication checks that evidence rather than maintaining a second recipe table. `simulation-proof.json` samples actual generated geometry or smoke density.
-The frame manifest hashes the published images. The normal browser recorder then
+hashes. Final simulation resolution is defined in the selected recipe source; inspection records the actual saved domain resolution and image dimensions, and publication checks that evidence rather than maintaining a second recipe table. `simulation-proof.json` samples actual generated geometry or smoke density.
+The frame manifest hashes the published images and versions frame URLs by their combined fingerprint, so a replacement cannot reuse old cached images. The normal browser recorder then
 renders and compares every final composite frame on independent browser instances,
 and checks video/audio delivery. It does **not** perform a second independent fluid
 simulation or claim pixel-identical rebakes across Blender versions or hardware.

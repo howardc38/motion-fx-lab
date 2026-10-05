@@ -1,9 +1,10 @@
 {
-  "script": "tools/blender/scenes.py",
-  "scriptSha256": "62fcfd1357f30e9741e744f0137e773b4cea09436f42618643259052e660cce6",
+  "script": "tools/blender/render.py",
+  "scriptSha256": "069d4cacde58f76d2b31b21baadd523fbf37b346fc2fe7764abd816cc522788a",
   "engine": "CYCLES",
   "width": 1280,
   "height": 720,
   "frames": 289,
-  "fps": 30
+  "fps": 30,
+  "startedAtNs": 1791218407400610000
 }

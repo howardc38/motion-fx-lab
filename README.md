@@ -2,9 +2,9 @@
 
 **Make editable motion graphics and export them to MP4:** social clips, product demos, infographics, animated titles, backgrounds and character sequences. Choose a use-case example or finished sequence, then adapt its copy, data or motion. The full index also includes comparison reels and single-effect renders: 16 videos in total. The effect library contains 69 families, 14 selectable variants and 5 combined showcases. Every exported frame is rendered twice and compared before delivery.
 
-[![Highlights from the intro video (no sound). Click for the full 55-second video with sound.](media/intro.gif?v=2c29173)](media/intro.mp4?v=2c29173)
+[![Highlights from the intro video (no sound). Click for the full 55-second video with sound.](media/intro.gif?v=liquid-v2)](media/intro.mp4?v=liquid-v2)
 
-▶ **[Full intro video, with sound](media/intro.mp4?v=2c29173)** (55 s, rendered by this repo) · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · **Licence: [0BSD](LICENSE)**, no conditions · No build step · No AI-generated images or sound
+▶ **[Full intro video, with sound](media/intro.mp4?v=liquid-v2)** (55 s, rendered by this repo) · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · **Licence: [0BSD](LICENSE)**, no conditions · No build step · No AI-generated images or sound
 
 GitHub does not play video files from a repository inline, so the loop above is a GIF. The gallery plays the real video.
 
@@ -54,15 +54,15 @@ GIF previews remain in the index below.
 
 | Type | Film | Authored length | Format | Preview | Source |
 |---|---|---:|---|---|---|
-| Overview | [Intro](media/intro.mp4?v=2c29173) | 55.2 s | 16:9 | [GIF](media/intro.gif?v=2c29173) · [poster](media/intro.jpg?v=2c29173) | [HTML](video/intro.html) |
+| Overview | [Intro](media/intro.mp4?v=liquid-v2) | 55.2 s | 16:9 | [GIF](media/intro.gif?v=liquid-v2) · [poster](media/intro.jpg?v=liquid-v2) | [HTML](video/intro.html) |
 | Use case | [Social clips](media/reel.mp4) | 12 s | 9:16 | [GIF](media/reel.gif) · [poster](media/reel.jpg) | [HTML](examples/reel.html) |
 | Use case | [Product demos](media/product.mp4) | 7.2 s | 16:9 | [GIF](media/product.gif) · [poster](media/product.jpg) | [HTML](examples/product.html) |
 | Use case | [Infographics](media/infographic.mp4) | 14.4 s | 16:9 | [GIF](media/infographic.gif) · [poster](media/infographic.jpg) | [HTML](examples/infographic.html) |
 | Use case | [Animated backgrounds](media/broll.mp4) | 12 s | 16:9 | [GIF](media/broll.gif) · [poster](media/broll.jpg) | [HTML](examples/broll.html) |
 | Sequence | [One word. Many forms.](media/word-forms.mp4) | 21.6 s | 16:9 | [GIF](media/word-forms.gif) · [poster](media/word-forms.jpg) | [HTML](examples/word-forms.html) |
 | Sequence | [One drop. Many forms.](media/water-forms.mp4) | 21.6 s | 16:9 | [GIF](media/water-forms.gif) · [poster](media/water-forms.jpg) | [HTML](examples/water-forms.html) |
-| Single-effect render | [Overflow](media/fluid-overflow.mp4) | 9.6 s | 16:9 | [GIF](media/fluid-overflow.gif) · [poster](media/fluid-overflow.jpg) | [HTML](examples/fluid-overflow.html) |
-| Single-effect render | [Slow Gold](media/fluid-viscous.mp4) | 9.6 s | 16:9 | [GIF](media/fluid-viscous.gif) · [poster](media/fluid-viscous.jpg) | [HTML](examples/fluid-viscous.html) |
+| Single-effect render | [Overflow](media/fluid-overflow.mp4?v=liquid-v2) | 9.6 s | 16:9 | [GIF](media/fluid-overflow.gif?v=liquid-v2) · [poster](media/fluid-overflow.jpg?v=liquid-v2) | [HTML](examples/fluid-overflow.html?v=liquid-v2) |
+| Single-effect render | [Slow Gold](media/fluid-viscous.mp4?v=liquid-v2) | 9.6 s | 16:9 | [GIF](media/fluid-viscous.gif?v=liquid-v2) · [poster](media/fluid-viscous.jpg?v=liquid-v2) | [HTML](examples/fluid-viscous.html?v=liquid-v2) |
 | Single-effect render | [Find the Form](media/fluid-smoke.mp4) | 9.6 s | 16:9 | [GIF](media/fluid-smoke.gif) · [poster](media/fluid-smoke.jpg) | [HTML](examples/fluid-smoke.html) |
 | Sequence | [One flight. Twenty worlds.](media/style-journey.mp4) | 40.8 s | 16:9 | [GIF](media/style-journey.gif) · [poster](media/style-journey.jpg) | [HTML](examples/style-journey.html) |
 | Sequence | [One scene. Many eras.](media/scene-eras.mp4) | 24 s | 16:9 | [GIF](media/scene-eras.gif) · [poster](media/scene-eras.jpg) | [HTML](examples/scene-eras.html) |
@@ -301,12 +301,14 @@ baked-fluid films below use an optional offline simulation and rendering workflo
 
 ## Offline liquid and smoke films
 
-**[Overflow](media/fluid-overflow.mp4)** · **[Slow Gold](media/fluid-viscous.mp4)** · **[Find the Form](media/fluid-smoke.mp4)**
+**[Overflow](media/fluid-overflow.mp4?v=liquid-v2)** · **[Slow Gold](media/fluid-viscous.mp4?v=liquid-v2)** · **[Find the Form](media/fluid-smoke.mp4)**
 
 These three original scenes add simulated liquid/vessel interaction, a high-viscosity
-flow variant and a volumetric smoke reveal. They are scripted in Blender 5.2 LTS
-and baked with Mantaflow. Overflow uses Cycles for transparent refraction; the other
-scenes use Eevee. Geometry, lights, cameras and materials are defined in source.
+flow variant and a volumetric smoke reveal. Overflow starts partly filled, shows a
+rising water level and lets excess water drain over the rim. Slow Gold uses a moving
+stream over a dark ceramic ring; this is viscous flow, not a paint-adhesion model. They are scripted in Blender 5.2 LTS
+and baked with Mantaflow. The liquid scenes use Cycles for reflection and refraction;
+the smoke scene uses Eevee. Geometry, lights, cameras and materials are defined in source.
 
 The browser replays checked-in 1280×720 frames at fixed times, then adds editable
 film typography, synthesised sound and the normal MP4/GIF delivery checks.

@@ -1,32 +1,33 @@
 {
   "domain": "LIQUID",
-  "resolution": 64,
+  "resolution": 96,
   "width": 1280,
   "height": 720,
   "samples": [
     {
       "frame": 45,
-      "vertices": 3912,
+      "vertices": 5964,
       "insideObstacleBeyondTolerance": 0,
-      "collisionTolerance": 0.11484375223517418
+      "collisionTolerance": 0.05156249925494194
     },
     {
       "frame": 100,
-      "vertices": 9608,
+      "vertices": 11272,
       "insideObstacleBeyondTolerance": 0,
-      "collisionTolerance": 0.11484375223517418
+      "collisionTolerance": 0.05156249925494194
     },
     {
       "frame": 180,
-      "vertices": 14286,
+      "vertices": 29072,
       "insideObstacleBeyondTolerance": 0,
-      "collisionTolerance": 0.11484375223517418
+      "collisionTolerance": 0.05156249925494194
     },
     {
       "frame": 260,
-      "vertices": 23850,
+      "vertices": 34486,
       "insideObstacleBeyondTolerance": 0,
-      "collisionTolerance": 0.11484375223517418
+      "collisionTolerance": 0.05156249925494194
     }
-  ]
+  ],
+  "meshParticleRadius": 1.7000000476837158
 }

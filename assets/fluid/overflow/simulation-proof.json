@@ -1,24 +1,34 @@
 {
   "domain": "LIQUID",
-  "resolution": 80,
+  "resolution": 128,
   "width": 1280,
   "height": 720,
   "samples": [
     {
       "frame": 45,
-      "vertices": 17592
+      "vertices": 82998,
+      "meshVolume": 0.5549378518228941,
+      "poolHeight": 1.1019530296325684
     },
     {
       "frame": 100,
-      "vertices": 31630
+      "vertices": 89184,
+      "meshVolume": 0.5920312285835714,
+      "poolHeight": 1.2083021402359009
     },
     {
       "frame": 180,
-      "vertices": 21904
+      "vertices": 133808,
+      "meshVolume": 0.741099530497138,
+      "poolHeight": 1.235115647315979
     },
     {
       "frame": 260,
-      "vertices": 40662
+      "vertices": 324480,
+      "meshVolume": 1.3452174854780838,
+      "poolHeight": 1.2261581420898438
     }
-  ]
+  ],
+  "meshParticleRadius": 1.7000000476837158,
+  "initialWaterVolume": 0.5544861155798464
 }

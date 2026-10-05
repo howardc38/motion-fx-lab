@@ -9,9 +9,12 @@ if not blender:p.error('Blender 5.2 LTS is required only for rebuilding: install
 output=ROOT/'assets/fluid'/a.recipe
 if output.exists() and not a.replace:p.error('Published frames exist; pass --replace to rebuild them')
 cache=ROOT/'.blender-cache';cache.mkdir(exist_ok=True);work=pathlib.Path(tempfile.mkdtemp(prefix=a.recipe+'-',dir=cache))
-base=[blender,'-b','--factory-startup','--python-exit-code','2','--python',str(ROOT/'tools/blender/scenes.py'),'--','--recipe',a.recipe,'--work',str(work),'--quality','final']
+scene_script='liquid-scenes.py' if a.recipe in ['overflow','viscous'] else 'scenes.py'
+base=[blender,'-b','--factory-startup','--python-exit-code','2','--python',str(ROOT/'tools/blender'/scene_script),'--','--recipe',a.recipe,'--work',str(work),'--quality','final']
 try:
  subprocess.run([*base,'--action','bake'],cwd=ROOT,check=True)
+ if a.recipe in ['overflow','viscous']:
+  subprocess.run([blender,'-b','--factory-startup','--python-exit-code','2','--python',str(ROOT/'tools/blender/finish-mesh.py'),'--',str(work)],cwd=ROOT,check=True)
  subprocess.run([blender,'-b','--factory-startup','--python-exit-code','2','--python',str(ROOT/'tools/blender/inspect-bake.py'),'--',str(work)],cwd=ROOT,check=True)
  subprocess.run([blender,'-b','--factory-startup','--python-exit-code','2','--python',str(ROOT/'tools/blender/render.py'),'--','--recipe',a.recipe,'--work',str(work)],cwd=ROOT,check=True)
  subprocess.run(['python3',str(ROOT/'tools/blender/publish-frames.py'),str(work),str(output),*(['--replace'] if a.replace else [])],cwd=ROOT,check=True)

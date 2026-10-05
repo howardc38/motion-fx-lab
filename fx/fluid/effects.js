@@ -2,17 +2,17 @@ import { FrameSource } from "../studio/frame-source.js";
 export const specs = {
   overflow: {
     title: "OVERFLOW",
-    subtitle: "A vessel. A stream. A liquid escape.",
+    subtitle: "Pour. Rise. Overflow.",
     color: "#8ce8f0",
     hero: 6.2,
-    start: 3.0,
+    start: 3.8,
   },
   viscous: {
     title: "SLOW GOLD",
-    subtitle: "Pour. Coat. Let it fall.",
+    subtitle: "Touch. Trace. Release.",
     color: "#f8b66b",
     hero: 5.2,
-    start: 3.2,
+    start: 2.5,
   },
   smoke: {
     title: "FIND THE FORM",
@@ -25,9 +25,9 @@ export const specs = {
 export async function create(id, { film = false } = {}) {
   const spec = specs[id];
   if (!spec) throw new Error("Unknown baked fluid scene: " + id);
-  const source = await FrameSource.load(
-    new URL("../../assets/fluid/" + id + "/manifest.json", import.meta.url),
-  );
+  const manifest = new URL("../../assets/fluid/" + id + "/manifest.json", import.meta.url);
+  manifest.search = new URL(import.meta.url).search;
+  const source = await FrameSource.load(manifest);
   if (
     source.data.width !== 1280 ||
     source.data.height !== 720 ||

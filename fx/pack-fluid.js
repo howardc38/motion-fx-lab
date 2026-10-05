@@ -12,7 +12,7 @@
         " Edit the Blender recipe to change the simulation; this preview replays the baked result.",
       aspect: "16 / 9",
       period: 4.8,
-      hero: 2.6,
+      hero: s.id === "viscous" ? 3.8 : 2.6,
       build(stage) {
         const ready = FXFluid.create(s.id).then((e) => {
           e.canvas.className = "fill";

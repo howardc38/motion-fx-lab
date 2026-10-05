@@ -1,4 +1,4 @@
-import { create } from "./effects.js";
+import { create } from "./effects.js?v=liquid-v2";
 const config = window.fluidFilm,
   canvas = document.getElementById("film"),
   g = canvas.getContext("2d", { willReadFrequently: true });
