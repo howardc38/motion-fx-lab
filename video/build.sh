@@ -22,8 +22,8 @@ ffmpeg -y -loglevel error -i "$WORK/music.wav" -i "$WORK/sfx.wav" \
   -ar 48000 -c:a pcm_f32le "$WORK/mix.wav"
 
 # The recorder renders every frame twice on different browsers and exits with 3 if any frame
-# differs. The two causes found so far are fixed in engine.js (see README); a mismatch is still rendered
-# again, so a cause not yet met cannot ship a wrong frame. Any other failure stops here. Mismatching
+# differs. Known history-dependent causes are fixed in engine.js (see README). A mismatch
+# is retried; persistent disagreement stops publication. Matching pixels do not prove authored content is correct. Mismatching
 # frames stay in video/mismatch/.
 for attempt in 1 2 3 4 5; do
   status=0

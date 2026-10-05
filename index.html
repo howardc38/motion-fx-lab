@@ -61,6 +61,17 @@
   .uses { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 26px 22px; }
   .uses figure { margin: 0; display: flex; flex-direction: column; gap: 10px; }
   .uses video { width: 100%; aspect-ratio: 16 / 9; object-fit: contain; border-radius: 10px; background: #000; display: block; }
+  .featured-films .uses { grid-template-columns: repeat(auto-fit,minmax(min(100%,300px),1fr)); }
+  #film-index > .note, #film-index > .scroll { margin-top:16px; }
+  #film-index td:first-child { font:600 12px var(--mono); color:var(--accent); }
+  #film-index td:last-child { min-width:150px; }
+  @media(max-width:640px){
+    #film-index table, #film-index tbody, #film-index tr, #film-index td{display:block;width:auto;min-width:0;}
+    #film-index thead{display:none;}
+    #film-index tr{border-bottom:1px solid var(--line);padding:8px 0;}
+    #film-index td{border:0;padding:5px 12px;}
+    #film-index td:last-child{min-width:0;}
+  }
   .film-preview { position: relative; }
   .film-preview img { display:block; width:100%; aspect-ratio:16/9; object-fit:contain; border-radius:10px; background:#000; }
   .film-preview button { position:absolute; left:12px; bottom:12px; box-shadow:0 2px 10px rgba(0,0,0,.25); }
@@ -132,14 +143,14 @@
     <span class="eyebrow">Open source · 0BSD</span>
     <h1>Motion FX Lab</h1>
     <p class="lede">Make social clips, product demos, infographics, animated titles and character sequences as editable web pages, then export them to MP4. Start with a finished example and adapt its copy, data or motion. Write code yourself or work with an AI coding assistant; the shipped visuals and music are made in code.</p>
-    <nav class="legend" aria-label="On this page"><a href="#uses">Everyday videos</a><a href="#material-films">Titles &amp; materials</a><a href="#studio-studies">Characters &amp; styles</a><a href="#new-studies">Compare treatments</a><a href="#make-video">Edit &amp; export</a><a href="#effects">Effect library</a><a href="https://github.com/howardc38/motion-fx-lab">Get the source</a></nav>
-    <p class="note">Watch the 55-second overview, choose a film by purpose below, then explore its component effects. The 16 films include this overview, finished sequences and comparison reels; they are not additional technique registrations.</p>
+    <nav class="legend" aria-label="On this page"><a href="#uses">Use cases</a><a href="#films">Finished films</a><a href="#effects">Single effects</a><a href="#film-index">All films</a><a href="#make-video">Edit &amp; export</a><a href="https://github.com/howardc38/motion-fx-lab">Get the source</a></nav>
+    <p class="note">Watch what you can make, then choose the effects to build it. The use cases and finished sequences below show applications; the single-effect library shows reusable operations.</p>
     <div class="legend" id="legend"></div>
     <video class="intro" data-film-id="intro" controls playsinline preload="metadata" poster="media/intro.jpg?v=2c29173" src="media/intro.mp4?v=2c29173" aria-label="Intro video, 55 seconds, with sound"></video>
   </header>
 
   <section id="uses" class="film-group" aria-labelledby="uses-title">
-    <span class="eyebrow">01 · Everyday video formats</span>
+    <span class="eyebrow">Use-case examples</span>
     <h2 id="uses-title">Start with the video you need</h2>
     <p class="note">Four practical examples with editable copy or data. Social and Product deliberately reuse the same fictional booking app: one is a short campaign, the other isolates the interaction. Click a GIF or “Play with sound” for the complete MP4.</p>
     <div class="uses">
@@ -162,73 +173,47 @@
     </div>
   </section>
 
-  <section id="material-films" class="film-group" aria-labelledby="material-films-title">
-    <span class="eyebrow">02 · Titles and materials</span>
-    <h2 id="material-films-title">Give a word or a material a complete sequence</h2>
-    <p class="note">These films combine several effects around one subject. They demonstrate a finished sequence, not additional effect families. Click a GIF or “Play with sound” for the complete MP4.</p>
+  <section id="films" class="film-group featured-films" aria-labelledby="films-title">
+    <span class="eyebrow">Finished sequences</span>
+    <h2 id="films-title">See effects work together in a film</h2>
+    <p class="note">These three pieces combine motion, timing, visual treatments and sound around one subject. Watch the complete result here; use the linked effects below as building blocks for your own film.</p>
     <div class="uses">
-      <figure id="film-word-forms" data-film-id="word-forms">
+<figure id="film-style-journey" data-film-id="style-journey">
+        <div class="film-preview"><img src="media/style-journey.gif" alt="One flight. Twenty worlds. animated preview" loading="lazy"><button type="button" aria-label="Play One flight. Twenty worlds. video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/style-journey.jpg" src="media/style-journey.mp4" aria-label="One flight. Twenty worlds., 40.8 s · 16:9, with sound"></video></div>
+        <figcaption><b>One flight. Twenty worlds.</b><span class="film-meta">40.8 s · 16:9</span><p>One courier travels through twenty artworks while its flight and cape remain continuous.</p><p><strong>Use for:</strong> Character-led journeys and transitions between visual worlds.</p><p class="film-relation">Flight, cape motion and camera movement stay continuous across changing artwork.</p><p class="film-links"><a href="examples/style-journey.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/examples/style-journey.html">View source</a></p><p class="film-effects">Explore: <a href="#demo-studio-flight">Courier motion</a> · <a href="#demo-studio-portal">Style portal</a></p></figcaption>
+      </figure>
+<figure id="film-word-forms" data-film-id="word-forms">
         <div class="film-preview"><img src="media/word-forms.gif" alt="One word. Many forms. animated preview" loading="lazy"><button type="button" aria-label="Play One word. Many forms. video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/word-forms.jpg" src="media/word-forms.mp4" aria-label="One word. Many forms., 21.6 s · 16:9, with sound"></video></div>
         <figcaption><b>One word. Many forms.</b><span class="film-meta">21.6 s · 16:9</span><p>The same Chinese word becomes solid lettering, particles, coloured contours and signal breakup, then resolves.</p><p><strong>Use for:</strong> Brand names, title cards and chapter openers.</p><p class="film-relation">Text treatments share one outline; supported words can be replaced.</p><p class="film-links"><a href="examples/word-forms.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/examples/word-forms.html">View source</a></p><p class="film-effects">Explore: <a href="#demo-cjk-solid">Solid CJK type</a> · <a href="#demo-organic-contours">Contours</a> · <a href="#demo-frame-glitch">Frame glitch</a></p></figcaption>
       </figure>
-      <figure id="film-water-forms" data-film-id="water-forms">
-        <div class="film-preview"><img src="media/water-forms.gif" alt="One drop. Many forms. animated preview" loading="lazy"><button type="button" aria-label="Play One drop. Many forms. video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/water-forms.jpg" src="media/water-forms.mp4" aria-label="One drop. Many forms., 21.6 s · 16:9, with sound"></video></div>
-        <figcaption><b>One drop. Many forms.</b><span class="film-meta">21.6 s · 16:9</span><p>A falling drop creates a crown and rebound, changes into liquid shapes and leads below the surface.</p><p><strong>Use for:</strong> Material studies, atmospheric reveals and visual transitions.</p><p class="film-relation">Authored 3D surfaces and splashes; not a general fluid simulator.</p><p class="film-links"><a href="examples/water-forms.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/examples/water-forms.html">View source</a></p><p class="film-effects">Explore: <a href="#demo-water-material">Water material</a> · <a href="#demo-water-impact">Drop impact</a> · <a href="#demo-water-morph">Liquid morph</a></p></figcaption>
-      </figure>
-      <figure id="film-fluid-overflow" data-film-id="fluid-overflow">
-        <div class="film-preview"><img src="media/fluid-overflow.gif" alt="Overflow animated preview" loading="lazy"><button type="button" aria-label="Play Overflow video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/fluid-overflow.jpg" src="media/fluid-overflow.mp4" aria-label="Overflow, 9.6 seconds, with sound"></video></div>
-        <figcaption><b>Overflow</b><span class="film-meta">9.6 s · 16:9</span><p>A clear stream hits a sculpted vessel and breaks into curved sheets and airborne drops.</p><p><strong>Use for:</strong> Liquid impact, material reveals and dramatic inserts.</p><p class="film-relation">Fluid motion is simulated in Blender; the browser replays the rendered result.</p><p class="film-links"><a href="examples/fluid-overflow.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/tools/blender/README.md">Rebuild the scene</a></p><p class="film-effects">Explore: <a href="#demo-fluid-overflow">Overflow study</a></p></figcaption>
-      </figure>
-      <figure id="film-fluid-viscous" data-film-id="fluid-viscous">
-        <div class="film-preview"><img src="media/fluid-viscous.gif" alt="Slow Gold animated preview" loading="lazy"><button type="button" aria-label="Play Slow Gold video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/fluid-viscous.jpg" src="media/fluid-viscous.mp4" aria-label="Slow Gold, 9.6 seconds, with sound"></video></div>
-        <figcaption><b>Slow Gold</b><span class="film-meta">9.6 s · 16:9</span><p>A thick golden stream coats a ceramic loop, stretches downward and collects on its pedestal.</p><p><strong>Use for:</strong> Glossy material sequences and product-style close-ups.</p><p class="film-relation">A viscosity variation of liquid flow, with a camera staged to show the coated face.</p><p class="film-links"><a href="examples/fluid-viscous.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/tools/blender/README.md">Rebuild the scene</a></p><p class="film-effects">Explore: <a href="#demo-fluid-viscous">Slow Gold study</a></p></figcaption>
-      </figure>
-      <figure id="film-fluid-smoke" data-film-id="fluid-smoke">
-        <div class="film-preview"><img src="media/fluid-smoke.gif" alt="Find the Form animated preview" loading="lazy"><button type="button" aria-label="Play Find the Form video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/fluid-smoke.jpg" src="media/fluid-smoke.mp4" aria-label="Find the Form, 9.6 seconds, with sound"></video></div>
-        <figcaption><b>Find the Form</b><span class="film-meta">9.6 s · 16:9</span><p>A moving smoke volume passes around solid lettering, dissipates, and leaves a gold title in the light.</p><p><strong>Use for:</strong> Title reveals, atmosphere and character or product entrances.</p><p class="film-relation">The smoke is a baked 3D volume; edit the Blender scene to change its flow.</p><p class="film-links"><a href="examples/fluid-smoke.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/tools/blender/README.md">Rebuild the scene</a></p><p class="film-effects">Explore: <a href="#demo-fluid-smoke">Find the Form study</a></p></figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <section id="studio-studies" class="film-group" aria-labelledby="studio-studies-title">
-    <span class="eyebrow">03 · Character action and art direction</span>
-    <h2 id="studio-studies-title">Keep a character continuous through motion and style</h2>
-    <p class="note">Compare three distinct storytelling tasks: travelling through artwork, restyling a whole room, and choreographing a fight. The style counts describe treatments, not separate effects. Click a GIF or “Play with sound” for the complete MP4.</p>
-    <div class="uses">
-      <figure id="film-style-journey" data-film-id="style-journey">
-        <div class="film-preview"><img src="media/style-journey.gif" alt="One flight. Twenty worlds. animated preview" loading="lazy"><button type="button" aria-label="Play One flight. Twenty worlds. video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/style-journey.jpg" src="media/style-journey.mp4" aria-label="One flight. Twenty worlds., 40.8 s · 16:9, with sound"></video></div>
-        <figcaption><b>One flight. Twenty worlds.</b><span class="film-meta">40.8 s · 16:9</span><p>One courier travels through twenty artworks while its flight and cape remain continuous.</p><p><strong>Use for:</strong> Character-led journeys and transitions between visual worlds.</p><p class="film-relation">A moving subject crosses separate artworks; the room film keeps a fixed layout.</p><p class="film-links"><a href="examples/style-journey.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/examples/style-journey.html">View source</a></p><p class="film-effects">Explore: <a href="#demo-studio-flight">Courier motion</a> · <a href="#demo-studio-portal">Style portal</a></p></figcaption>
-      </figure>
-      <figure id="film-scene-eras" data-film-id="scene-eras">
-        <div class="film-preview"><img src="media/scene-eras.gif" alt="One scene. Many eras. animated preview" loading="lazy"><button type="button" aria-label="Play One scene. Many eras. video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/scene-eras.jpg" src="media/scene-eras.mp4" aria-label="One scene. Many eras., 24 s · 16:9, with sound"></video></div>
-        <figcaption><b>One scene. Many eras.</b><span class="film-meta">24 s · 16:9</span><p>A person lifts a cup while the room, furniture, character and marks change across eight treatments.</p><p><strong>Use for:</strong> Art-direction comparisons and illustrated explainers.</p><p class="film-relation">Shared action and landmarks hold the scene together through each style change.</p><p class="film-links"><a href="examples/scene-eras.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/examples/scene-eras.html">View source</a></p><p class="film-effects">Explore: <a href="#demo-scene-eras">Room treatments</a></p></figcaption>
-      </figure>
-      <figure id="film-dot-battle" data-film-id="dot-battle">
+<figure id="film-dot-battle" data-film-id="dot-battle">
         <div class="film-preview"><img src="media/dot-battle.gif" alt="COUNTERFORM animated preview" loading="lazy"><button type="button" aria-label="Play COUNTERFORM video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/dot-battle.jpg" src="media/dot-battle.mp4" aria-label="COUNTERFORM, 19.2 s · 16:9, with sound"></video></div>
-        <figcaption><b>COUNTERFORM</b><span class="film-meta">19.2 s · 16:9</span><p>Two original illustrated fighters step, dodge, strike and counter with timed contact holds.</p><p><strong>Use for:</strong> Action beats and character choreography.</p><p class="film-relation">The comparison below reuses this choreography to isolate eight treatments.</p><p class="film-links"><a href="examples/dot-battle.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/examples/dot-battle.html">View source</a></p><p class="film-effects">Explore: <a href="#demo-studio-dot-impact">Impact</a> · <a href="#demo-studio-echo">Temporal echoes</a></p></figcaption>
+        <figcaption><b>COUNTERFORM</b><span class="film-meta">19.2 s · 16:9</span><p>Two original illustrated fighters step, dodge, strike and counter with timed contact holds.</p><p><strong>Use for:</strong> Action beats and character choreography.</p><p class="film-relation">The film index links to a separate comparison of eight treatments of this fight.</p><p class="film-links"><a href="examples/dot-battle.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/examples/dot-battle.html">View source</a></p><p class="film-effects">Explore: <a href="#demo-studio-dot-impact">Impact</a> · <a href="#demo-studio-echo">Temporal echoes</a></p></figcaption>
       </figure>
     </div>
   </section>
-
-  <section id="new-studies" class="film-group" aria-labelledby="new-studies-title">
-    <span class="eyebrow">04 · Effect comparisons</span>
-    <h2 id="new-studies-title">Choose the treatment before building your film</h2>
-    <p class="note">These are comparison reels. Each chapter isolates an operation; several intentionally reuse subjects or effects from the complete sequences above. Click a GIF or “Play with sound” for the complete MP4.</p>
-    <div class="uses">
-      <figure id="film-fight-effects" data-film-id="fight-effects">
-        <div class="film-preview"><img src="media/fight-effects.gif" alt="Same fight. Eight treatments. animated preview" loading="lazy"><button type="button" aria-label="Play Same fight. Eight treatments. video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/fight-effects.jpg" src="media/fight-effects.mp4" aria-label="Same fight. Eight treatments., 38.4 s · 16:9, with sound"></video></div>
-        <figcaption><b>Same fight. Eight treatments.</b><span class="film-meta">38.4 s · 16:9</span><p>Compare dots, a frozen 3D orbit, echoes, depth of field, impact, time remapping, relief and skinned points.</p><p><strong>Use for:</strong> Choosing a visual treatment for motion footage or a rigged character.</p><p class="film-relation">Same choreography as COUNTERFORM; real 3D orbit and 2.5D relief are labelled separately.</p><p class="film-links"><a href="examples/fight-effects.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/examples/fight-effects.html">View source</a></p><p class="film-effects">Explore: <a href="#demo-studio-freeze-orbit">Frozen orbit</a> · <a href="#demo-studio-time-remap">Time remapping</a> · <a href="#demo-studio-depth-dots">2.5D relief</a></p></figcaption>
-      </figure>
-      <figure id="film-optical" data-film-id="optical">
-        <div class="film-preview"><img src="media/optical.gif" alt="Six optical treatments animated preview" loading="lazy"><button type="button" aria-label="Play Six optical treatments video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/optical.jpg" src="media/optical.mp4" aria-label="Six optical treatments, 18 s · 16:9, with sound"></video></div>
-        <figcaption><b>Six optical treatments</b><span class="film-meta">18 s · 16:9</span><p>Compare interference, time-sliced type, a folding ribbon, water-like light, foil and contour morphing.</p><p><strong>Use for:</strong> Graphic textures, transitions and surface treatments.</p><p class="film-relation">The water-like light is a procedural pattern, not the 3D water scene.</p><p class="film-links"><a href="examples/optical.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/examples/optical.html">View source</a></p><p class="film-effects">Explore: <a href="#demo-optical-moire">Interference</a> · <a href="#demo-optical-slit">Slit-scan type</a> · <a href="#demo-optical-caustic">Water-like light</a></p></figcaption>
-      </figure>
-      <figure id="film-stacks" data-film-id="stacks">
-        <div class="film-preview"><img src="media/stacks.gif" alt="Image distortion, collisions and particles animated preview" loading="lazy"><button type="button" aria-label="Play Image distortion, collisions and particles video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/stacks.jpg" src="media/stacks.mp4" aria-label="Image distortion, collisions and particles, 24 s · 16:9, with sound"></video></div>
-        <figcaption><b>Image distortion, collisions and particles</b><span class="film-meta">24 s · 16:9</span><p>A flat poster bends, one push topples 48 dominoes, and particles orbit, gather and disperse.</p><p><strong>Use for:</strong> Distorted posters, chain-reaction sequences and abstract particle motion.</p><p class="film-relation">Three separate operations. The poster distortion is 2D; it is not fluid simulation.</p><p class="film-links"><a href="examples/stacks.html">Scrub timeline</a> · <a href="https://github.com/howardc38/motion-fx-lab/blob/main/examples/stacks.html">View source</a></p><p class="film-effects">Explore: <a href="#demo-stack-pixi">Image distortion</a> · <a href="#demo-stack-rapier">Domino chain</a> · <a href="#demo-stack-gpu">Orbital particles</a></p></figcaption>
-      </figure>
-    </div>
-  </section>
+  <details id="film-index">
+    <summary>All 16 films and comparisons</summary>
+    <p class="note">Sequences show how effects work together. Comparisons help you choose a treatment. Single-effect renders are longer exports of one library effect, so they are listed here instead of repeated as featured works. None adds to the effect count.</p>
+    <div class="scroll"><table><thead><tr><th>Type</th><th>Film and purpose</th><th>Watch / edit</th></tr></thead><tbody>
+<tr data-film-index-id="intro"><td>Overview</td><td><b>Intro</b><span class="film-meta">55.2 s</span><p>What the toolkit can make.</p></td><td><a href="media/intro.mp4?v=2c29173">Play MP4</a> · <a href="video/intro.html">Timeline</a> · <a href="media/intro.gif?v=2c29173">GIF</a></td></tr>
+<tr data-film-index-id="reel"><td>Use case</td><td><b>Social clips</b><span class="film-meta">12 s</span><p>Hook, interaction and call to action.</p></td><td><a href="media/reel.mp4">Play MP4</a> · <a href="examples/reel.html">Timeline</a> · <a href="media/reel.gif">GIF</a></td></tr>
+<tr data-film-index-id="product"><td>Use case</td><td><b>Product demos</b><span class="film-meta">7.2 s</span><p>One interface interaction, explained.</p></td><td><a href="media/product.mp4">Play MP4</a> · <a href="examples/product.html">Timeline</a> · <a href="media/product.gif">GIF</a></td></tr>
+<tr data-film-index-id="infographic"><td>Use case</td><td><b>Infographics</b><span class="film-meta">14.4 s</span><p>Turn figures into a data story.</p></td><td><a href="media/infographic.mp4">Play MP4</a> · <a href="examples/infographic.html">Timeline</a> · <a href="media/infographic.gif">GIF</a></td></tr>
+<tr data-film-index-id="broll"><td>Use case</td><td><b>Animated backgrounds</b><span class="film-meta">12 s</span><p>Three reusable background loops.</p></td><td><a href="media/broll.mp4">Play MP4</a> · <a href="examples/broll.html">Timeline</a> · <a href="media/broll.gif">GIF</a></td></tr>
+<tr data-film-index-id="style-journey"><td>Sequence</td><td><b>One flight. Twenty worlds.</b><span class="film-meta">40.8 s</span><p>One character travels through twenty art directions.</p></td><td><a href="media/style-journey.mp4">Play MP4</a> · <a href="examples/style-journey.html">Timeline</a> · <a href="media/style-journey.gif">GIF</a></td></tr>
+<tr data-film-index-id="word-forms"><td>Sequence</td><td><b>One word. Many forms.</b><span class="film-meta">21.6 s</span><p>A word changes form and returns to a readable title.</p></td><td><a href="media/word-forms.mp4">Play MP4</a> · <a href="examples/word-forms.html">Timeline</a> · <a href="media/word-forms.gif">GIF</a></td></tr>
+<tr data-film-index-id="dot-battle"><td>Sequence</td><td><b>COUNTERFORM</b><span class="film-meta">19.2 s</span><p>A complete fight with authored action and contact timing.</p></td><td><a href="media/dot-battle.mp4">Play MP4</a> · <a href="examples/dot-battle.html">Timeline</a> · <a href="media/dot-battle.gif">GIF</a></td></tr>
+<tr id="film-water-forms" data-film-index-id="water-forms"><td>Sequence</td><td><b>One drop. Many forms.</b><span class="film-meta">21.6 s</span><p>Authored drop, splash, morph and underwater chapters.</p></td><td><a href="media/water-forms.mp4">Play MP4</a> · <a href="examples/water-forms.html">Timeline</a> · <a href="media/water-forms.gif">GIF</a> · <a href="#demo-water-material">Effect study</a></td></tr>
+<tr id="film-scene-eras" data-film-index-id="scene-eras"><td>Sequence</td><td><b>One scene. Many eras.</b><span class="film-meta">24 s</span><p>A room changes treatment while its action stays continuous.</p></td><td><a href="media/scene-eras.mp4">Play MP4</a> · <a href="examples/scene-eras.html">Timeline</a> · <a href="media/scene-eras.gif">GIF</a> · <a href="#demo-scene-eras">Effect study</a></td></tr>
+<tr id="film-fight-effects" data-film-index-id="fight-effects"><td>Comparison</td><td><b>Same fight. Eight treatments.</b><span class="film-meta">38.4 s</span><p>Compare eight operations on the same choreography.</p></td><td><a href="media/fight-effects.mp4">Play MP4</a> · <a href="examples/fight-effects.html">Timeline</a> · <a href="media/fight-effects.gif">GIF</a></td></tr>
+<tr id="film-optical" data-film-index-id="optical"><td>Comparison</td><td><b>Six optical treatments</b><span class="film-meta">18 s</span><p>Compare graphic and optical looks.</p></td><td><a href="media/optical.mp4">Play MP4</a> · <a href="examples/optical.html">Timeline</a> · <a href="media/optical.gif">GIF</a></td></tr>
+<tr id="film-stacks" data-film-index-id="stacks"><td>Comparison</td><td><b>Image distortion, collisions and particles</b><span class="film-meta">24 s</span><p>Three independent operations shown in one reel.</p></td><td><a href="media/stacks.mp4">Play MP4</a> · <a href="examples/stacks.html">Timeline</a> · <a href="media/stacks.gif">GIF</a></td></tr>
+<tr id="film-fluid-overflow" data-film-index-id="fluid-overflow"><td>Single-effect render</td><td><b>Overflow</b><span class="film-meta">9.6 s</span><p>An extended rendered example of liquid flow.</p></td><td><a href="media/fluid-overflow.mp4">Play MP4</a> · <a href="examples/fluid-overflow.html">Timeline</a> · <a href="media/fluid-overflow.gif">GIF</a> · <a href="#demo-fluid-overflow">Effect study</a></td></tr>
+<tr id="film-fluid-viscous" data-film-index-id="fluid-viscous"><td>Single-effect render</td><td><b>Slow Gold</b><span class="film-meta">9.6 s</span><p>An extended rendered example of viscous flow.</p></td><td><a href="media/fluid-viscous.mp4">Play MP4</a> · <a href="examples/fluid-viscous.html">Timeline</a> · <a href="media/fluid-viscous.gif">GIF</a> · <a href="#demo-fluid-viscous">Effect study</a></td></tr>
+<tr id="film-fluid-smoke" data-film-index-id="fluid-smoke"><td>Single-effect render</td><td><b>Find the Form</b><span class="film-meta">9.6 s</span><p>An extended rendered example of volumetric smoke.</p></td><td><a href="media/fluid-smoke.mp4">Play MP4</a> · <a href="examples/fluid-smoke.html">Timeline</a> · <a href="media/fluid-smoke.gif">GIF</a> · <a href="#demo-fluid-smoke">Effect study</a></td></tr>
+    </tbody></table></div>
+  </details>
 
   <section id="make-video">
     <span class="eyebrow">Make a video</span>
@@ -240,7 +225,7 @@
 
   <section id="effects" aria-labelledby="effects-title">
     <span class="eyebrow">Reusable effects</span>
-    <h2 id="effects-title">Choose an effect for your film</h2>
+    <h2 id="effects-title">Single effects to reuse</h2>
     <p class="note">These short studies isolate an operation. Browser effects run from code; Blender studies replay baked simulation frames with editable source recipes. Each card represents one effect family; use its selector to compare variants. Every effect family, including characters, uses a 16:9 preview and participates in the filters. Collections below combine techniques and are counted separately. “Seen in” names a visual reference rebuilt with original content. Replace the sample copy with your own.</p>
     <div class="toolbar">
       <div class="group" id="fKind"><span>Kind</span></div>
@@ -256,7 +241,7 @@
   <section id="showcases">
     <span class="eyebrow">Reusable compositions</span>
     <h2>Open a combined scene to adapt it</h2>
-    <p class="note">These five presets expose reusable scene code. The room, underwater scene and gallery journey also appear in the films above; they are not another set of unique effects or new films.</p>
+    <p class="note">These five presets expose reusable scene code. The room, underwater scene and gallery journey also appear in the film index; they are not another set of unique effects or new films.</p>
     <details id="composition-presets"><summary>5 composition presets · expand to preview</summary><div class="gallery" id="showcaseGallery"></div></details>
   </section>
 
@@ -388,6 +373,7 @@
     card.caption.querySelector('.seen').textContent = d.seen ? 'Seen in: ' + d.seen : '';
     card.caption.querySelector('.variant-description').textContent = card.family.entries.length > 1 ? d.purpose : '';
     const link=card.caption.querySelector('.preview-link');link.replaceChildren();
+    if(d.id.startsWith('fluid-')){const a=document.createElement('a');a.href='media/'+d.id+'.mp4';a.textContent='Watch the full 9.6 s render';link.append(a,document.createTextNode(' · '));const b=document.createElement('a');b.href='examples/'+d.id+'.html';b.textContent='Scrub timeline';link.append(b);}
     if(d.id.startsWith('studio-') && FXStudio.previews[d.id.slice(7)]){const a=document.createElement('a');a.href='examples/studio.html?compare=1#'+d.id.slice(7);a.textContent='Open the input / effect comparison';link.append(a);}
   }
   function choose(card, id) {
@@ -415,7 +401,7 @@
       fig.append(preview,caption); host.appendChild(fig); cards.push(card); details(card);
     }
   }
-  document.querySelector('meta[name=description]').content = `${document.querySelectorAll('[data-film-id]').length} editable films for social, product, data, titles and characters. Compare ${stats.techniques} effect families and export verified MP4.`;
+  document.querySelector('meta[name=description]').content = `${document.querySelectorAll('[data-film-index-id]').length} editable films for social, product, data, titles and characters. Compare ${stats.techniques} effect families and export verified MP4.`;
   document.getElementById('legend').innerHTML = `<span><b>${stats.techniques}</b> effect families · ${stats.variants} selectable variants · ${stats.showcases} collections</span><span>Effect previews: 16:9</span>`;
   const mk = (host, key, opts) => {
     for (const [v,label] of opts) {
@@ -493,8 +479,16 @@
     if(card.showcase)document.getElementById('composition-presets').open=true;
     card.fig.scrollIntoView({block:'start'});card.fig.focus({preventScroll:true});
   }
+  function revealLinkedFilm(){
+    const index=document.getElementById('film-index');
+    if(['#material-films','#studio-studies','#new-studies','#film-index'].includes(location.hash)){index.open=true;index.scrollIntoView({block:'start'});return;}
+    const target=document.getElementById(location.hash.slice(1));
+    if(target && index.contains(target)){index.open=true;target.scrollIntoView({block:'start'});}
+  }
+  window.addEventListener('hashchange',revealLinkedFilm);revealLinkedFilm();
   window.addEventListener('hashchange',revealLinkedDemo);
   document.addEventListener('click',event=>{const a=event.target.closest('a[href^="#demo-"]');if(a&&a.hash===location.hash){event.preventDefault();revealLinkedDemo();}});
+  document.addEventListener('click',event=>{const a=event.target.closest('a[href="#film-index"]');if(a&&a.hash===location.hash){event.preventDefault();revealLinkedFilm();}});
   revealLinkedDemo();
   requestAnimationFrame(tick);
 

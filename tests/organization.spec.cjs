@@ -17,7 +17,7 @@ async function open(page) {
   await page.waitForFunction(() => window.galleryAPI);
   await page.evaluate(() => galleryAPI.pause());
 }
-test("all published films have one purpose group before the effect library", async ({
+test("featured sequences stay distinct from the complete film index and single effects", async ({
   page,
 }) => {
   await open(page);
@@ -32,8 +32,8 @@ test("all published films have one purpose group before the effect library", asy
         Node.DOCUMENT_POSITION_FOLLOWING
       ),
     })),
-    ids: [...document.querySelectorAll("[data-film-id]")].map(
-      (f) => f.dataset.filmId,
+    ids: [...document.querySelectorAll("[data-film-index-id]")].map(
+      (f) => f.dataset.filmIndexId,
     ),
     badLinks: [...document.querySelectorAll(".film-effects a")]
       .map((a) => a.hash.slice(6))
@@ -41,15 +41,16 @@ test("all published films have one purpose group before the effect library", asy
   }));
   expect(p.groups.map((g) => g.films)).toEqual([
     ["reel", "product", "infographic", "broll"],
-    ["word-forms", "water-forms", "fluid-overflow", "fluid-viscous", "fluid-smoke"],
-    ["style-journey", "scene-eras", "dot-battle"],
-    ["fight-effects", "optical", "stacks"],
+    ["style-journey", "word-forms", "dot-battle"],
   ]);
   expect(new Set(p.ids).size).toBe(16);
   expect(p.ids).toHaveLength(16);
   expect(p.groups.every((g) => g.beforeEffects)).toBe(true);
   expect(p.badLinks).toEqual([]);
-  await expect(page.locator(".film-preview img")).toHaveCount(15);
+  await expect(page.locator(".film-preview img")).toHaveCount(7);
+  await expect(page.locator("#film-index")).not.toHaveAttribute("open");
+  for (const id of ["fluid-overflow", "fluid-viscous", "fluid-smoke"])
+    await expect(page.locator(`[data-film-index-id="${id}"] td`).first()).toHaveText("Single-effect render");
   await expect(page.locator("#composition-presets")).not.toHaveAttribute(
     "open",
   );
@@ -70,9 +71,29 @@ test("a film link reveals its precise variant and clears incompatible filters", 
   await expect(page.locator("#shown")).toHaveText(
     "69 / 69 effect families shown",
   );
+  await page.locator('#film-index > summary').click();
   await page.locator('#film-scene-eras a[href="#demo-scene-eras"]').click();
   await expect(page.locator("#composition-presets")).toHaveAttribute("open");
   await expect(page.locator("#demo-scene-eras")).toBeVisible();
+});
+test("legacy film links reveal the index and the selected liquid variant links to its own film", async ({ page }) => {
+  await page.goto('/#material-films');
+  await expect(page.locator('#film-index')).toHaveAttribute('open');
+  await page.locator('#film-fluid-viscous a[href="#demo-fluid-viscous"]').click();
+  const card=page.locator('#demo-fluid-overflow');
+  await expect(card.locator('select')).toHaveValue('fluid-viscous');
+  await expect(card.locator('.preview-link a').first()).toHaveAttribute('href', /media\/fluid-viscous\.mp4/);
+  await card.locator('select').selectOption('fluid-overflow');
+  await expect(card.locator('.preview-link a').first()).toHaveAttribute('href', /media\/fluid-overflow\.mp4/);
+});
+test("the All films link reopens the index when its hash is unchanged", async ({ page }) => {
+  await open(page);
+  await page.locator('nav a[href="#film-index"]').click();
+  await expect(page.locator('#film-index')).toHaveAttribute('open');
+  await page.locator('#film-index > summary').click();
+  await expect(page.locator('#film-index')).not.toHaveAttribute('open');
+  await page.locator('nav a[href="#film-index"]').click();
+  await expect(page.locator('#film-index')).toHaveAttribute('open');
 });
 test("fight studies compare real input and output, with separate pose and camera clocks", async ({
   page,

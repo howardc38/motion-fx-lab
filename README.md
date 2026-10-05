@@ -1,6 +1,6 @@
 # Motion FX Lab
 
-**Make editable motion graphics and export them to MP4:** social clips, product demos, infographics, animated titles, backgrounds and character sequences. Start with one of 16 films, then adapt its copy, data or motion. The effect library contains 69 families, 14 selectable variants and 5 combined showcases. Every exported frame is rendered twice and compared before delivery.
+**Make editable motion graphics and export them to MP4:** social clips, product demos, infographics, animated titles, backgrounds and character sequences. Choose a use-case example or finished sequence, then adapt its copy, data or motion. The full index also includes comparison reels and single-effect renders: 16 videos in total. The effect library contains 69 families, 14 selectable variants and 5 combined showcases. Every exported frame is rendered twice and compared before delivery.
 
 [![Highlights from the intro video (no sound). Click for the full 55-second video with sound.](media/intro.gif?v=2c29173)](media/intro.mp4?v=2c29173)
 
@@ -25,91 +25,51 @@ Describe the video to an AI coding assistant, or write it yourself. It becomes a
 
 Plus characters drawn in code and 69 reusable effect techniques. The 55-second intro moves from four uses and character action into three stories: One Flight, Twenty Worlds; One Word, Many Forms; and One Push, Chain Reaction. It closes by changing text, scrubbing the timeline and exporting MP4. Use the viewing guide below to choose a starting point. The four use-case examples keep their editable text or numbers near the top of their HTML files; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
 
-## Choose a film by purpose
+## Finished sequences and single effects
 
-The [website](https://howardc38.github.io/motion-fx-lab/) puts films before the effect
-library. Start with a use case, watch a complete sequence, then compare treatments.
-Every preview links to an MP4 with sound; GIFs are silent excerpts.
+The website has three levels:
 
-| What you want to make | Start here | What the films demonstrate |
-|---|---|---|
-| Social, product and data videos | [Social reel](media/reel.mp4), [Product demo](media/product.mp4), [Infographic](media/infographic.mp4), [B-roll](media/broll.mp4) | Campaign structure, one UI interaction, data-driven graphics and seamless source loops |
-| Titles and material sequences | [One word](media/word-forms.mp4), [One drop](media/water-forms.mp4), [Overflow](media/fluid-overflow.mp4), [Slow Gold](media/fluid-viscous.mp4), [Find the Form](media/fluid-smoke.mp4) | Continuous typography, authored water shapes, simulated liquids and volumetric smoke |
-| Character action and art direction | [One flight](media/style-journey.mp4), [One scene](media/scene-eras.mp4), [COUNTERFORM](media/dot-battle.mp4) | Travel between artworks, preserve a whole room across styles, choreograph a fight |
-| Compare treatments | [Eight fight treatments](media/fight-effects.mp4), [Six optical treatments](media/optical.mp4), [Image distortion, collisions and particles](media/stacks.mp4) | Isolate an operation before selecting it for a film |
+- **Use-case examples:** the four GIFs above show familiar video formats you can adapt.
+- **Finished sequences:** the three featured films below combine motion, visual treatments, editing and sound around one subject.
+- **Single-effect library:** 69 reusable operations, with variants inside their family cards. Use these building blocks in your own films.
 
-**Film count is not effect count.** The intro reuses highlights. Social and Product
-share the same booking-app mock-up but demonstrate different formats and pacing.
-COUNTERFORM and Eight Treatments share choreography: the first is a complete action
-sequence, the second isolates visual and timing operations. The water film uses 3D
-surfaces; the poster in the three-operation comparison uses 2D image distortion.
-One Flight moves a courier between artworks; One Scene preserves a room, props and
-a cup-lifting action while changing their treatment. None of these combinations
-adds an extra unique effect to the 69-family count.
+The collapsed **All films and comparisons** index keeps every MP4, GIF and timeline
+available. A **comparison** shows alternatives to help you choose a treatment;
+a **single-effect render** is a longer export of one effect. Neither needs another
+large featured card, and neither increases the effect count.
 
-The four use-case GIFs are above. The remaining films are grouped below in the same
-order as the website.
+<table><tr>
+<td width="33%"><a href="media/style-journey.mp4"><img src="media/style-journey.gif" alt="One flight. Twenty worlds. animated preview" width="300"></a><br><b>One flight. Twenty worlds.</b><br>One character, continuous motion, twenty art directions.</td>
+<td width="33%"><a href="media/word-forms.mp4"><img src="media/word-forms.gif" alt="One word. Many forms. animated preview" width="300"></a><br><b>One word. Many forms.</b><br>A word changes treatment and returns to a readable title.</td>
+<td width="33%"><a href="media/dot-battle.mp4"><img src="media/dot-battle.gif" alt="COUNTERFORM animated preview" width="300"></a><br><b>COUNTERFORM</b><br>A complete fight with authored action and contact timing.</td>
+</tr></table>
 
-### Titles and materials
-
-<table>
-<tr>
-<td width="50%"><a href="media/word-forms.mp4"><img src="media/word-forms.gif" alt="One word. Many forms. animated preview" width="400"></a><br><b>One word. Many forms.</b><br>Brand names, title cards and chapter openers.</td>
-<td width="50%"><a href="media/water-forms.mp4"><img src="media/water-forms.gif" alt="One drop. Many forms. animated preview" width="400"></a><br><b>One drop. Many forms.</b><br>Material studies, atmospheric reveals and visual transitions.</td>
-</tr>
-<tr>
-<td width="50%"><a href="media/fluid-overflow.mp4"><img src="media/fluid-overflow.gif" alt="Overflow animated preview" width="400"></a><br><b>Overflow</b><br>Liquid impact, material reveals and dramatic inserts.</td>
-<td width="50%"><a href="media/fluid-viscous.mp4"><img src="media/fluid-viscous.gif" alt="Slow Gold animated preview" width="400"></a><br><b>Slow Gold</b><br>Glossy material sequences and product-style close-ups.</td>
-</tr>
-<tr>
-<td width="50%"><a href="media/fluid-smoke.mp4"><img src="media/fluid-smoke.gif" alt="Find the Form animated preview" width="400"></a><br><b>Find the Form</b><br>Title reveals, atmosphere and character or product entrances.</td>
-</tr>
-</table>
-
-### Character action and art direction
-
-<table>
-<tr>
-<td width="50%"><a href="media/style-journey.mp4"><img src="media/style-journey.gif" alt="One flight. Twenty worlds. animated preview" width="400"></a><br><b>One flight. Twenty worlds.</b><br>Character-led journeys and transitions between visual worlds.</td>
-<td width="50%"><a href="media/scene-eras.mp4"><img src="media/scene-eras.gif" alt="One scene. Many eras. animated preview" width="400"></a><br><b>One scene. Many eras.</b><br>Art-direction comparisons and illustrated explainers.</td>
-</tr>
-<tr>
-<td width="50%"><a href="media/dot-battle.mp4"><img src="media/dot-battle.gif" alt="COUNTERFORM animated preview" width="400"></a><br><b>COUNTERFORM</b><br>Action beats and character choreography.</td>
-</tr>
-</table>
-
-### Effect comparisons
-
-<table>
-<tr>
-<td width="50%"><a href="media/fight-effects.mp4"><img src="media/fight-effects.gif" alt="Same fight. Eight treatments. animated preview" width="400"></a><br><b>Same fight. Eight treatments.</b><br>Choosing a visual treatment for motion footage or a rigged character.</td>
-<td width="50%"><a href="media/optical.mp4"><img src="media/optical.gif" alt="Six optical treatments animated preview" width="400"></a><br><b>Six optical treatments</b><br>Graphic textures, transitions and surface treatments.</td>
-</tr>
-<tr>
-<td width="50%"><a href="media/stacks.mp4"><img src="media/stacks.gif" alt="Image distortion, collisions and particles animated preview" width="400"></a><br><b>Image distortion, collisions and particles</b><br>Distorted posters, chain-reaction sequences and abstract particle motion.</td>
-</tr>
-</table>
+Social and Product share a fictional booking app but show different video formats.
+COUNTERFORM and Eight Treatments share choreography: one is a finished action
+sequence, the other compares operations on that action. The three Blender films
+are single-effect renders linked from their effect cards. All 16 films and their
+GIF previews remain in the index below.
 
 ## Published films and previews
 
-| Purpose | Film | Authored length | Format | Preview | Source |
+| Type | Film | Authored length | Format | Preview | Source |
 |---|---|---:|---|---|---|
 | Overview | [Intro](media/intro.mp4?v=2c29173) | 55.2 s | 16:9 | [GIF](media/intro.gif?v=2c29173) · [poster](media/intro.jpg?v=2c29173) | [HTML](video/intro.html) |
-| Everyday video formats | [Social clips](media/reel.mp4) | 12 s | 9:16 | [GIF](media/reel.gif) · [poster](media/reel.jpg) | [HTML](examples/reel.html) |
-| Everyday video formats | [Product demos](media/product.mp4) | 7.2 s | 16:9 | [GIF](media/product.gif) · [poster](media/product.jpg) | [HTML](examples/product.html) |
-| Everyday video formats | [Infographics](media/infographic.mp4) | 14.4 s | 16:9 | [GIF](media/infographic.gif) · [poster](media/infographic.jpg) | [HTML](examples/infographic.html) |
-| Everyday video formats | [Animated backgrounds](media/broll.mp4) | 12 s | 16:9 | [GIF](media/broll.gif) · [poster](media/broll.jpg) | [HTML](examples/broll.html) |
-| Titles and materials | [One word. Many forms.](media/word-forms.mp4) | 21.6 s | 16:9 | [GIF](media/word-forms.gif) · [poster](media/word-forms.jpg) | [HTML](examples/word-forms.html) |
-| Titles and materials | [One drop. Many forms.](media/water-forms.mp4) | 21.6 s | 16:9 | [GIF](media/water-forms.gif) · [poster](media/water-forms.jpg) | [HTML](examples/water-forms.html) |
-| Titles and materials | [Overflow](media/fluid-overflow.mp4) | 9.6 s | 16:9 | [GIF](media/fluid-overflow.gif) · [poster](media/fluid-overflow.jpg) | [HTML](examples/fluid-overflow.html) |
-| Titles and materials | [Slow Gold](media/fluid-viscous.mp4) | 9.6 s | 16:9 | [GIF](media/fluid-viscous.gif) · [poster](media/fluid-viscous.jpg) | [HTML](examples/fluid-viscous.html) |
-| Titles and materials | [Find the Form](media/fluid-smoke.mp4) | 9.6 s | 16:9 | [GIF](media/fluid-smoke.gif) · [poster](media/fluid-smoke.jpg) | [HTML](examples/fluid-smoke.html) |
-| Character action and art direction | [One flight. Twenty worlds.](media/style-journey.mp4) | 40.8 s | 16:9 | [GIF](media/style-journey.gif) · [poster](media/style-journey.jpg) | [HTML](examples/style-journey.html) |
-| Character action and art direction | [One scene. Many eras.](media/scene-eras.mp4) | 24 s | 16:9 | [GIF](media/scene-eras.gif) · [poster](media/scene-eras.jpg) | [HTML](examples/scene-eras.html) |
-| Character action and art direction | [COUNTERFORM](media/dot-battle.mp4) | 19.2 s | 16:9 | [GIF](media/dot-battle.gif) · [poster](media/dot-battle.jpg) | [HTML](examples/dot-battle.html) |
-| Effect comparisons | [Same fight. Eight treatments.](media/fight-effects.mp4) | 38.4 s | 16:9 | [GIF](media/fight-effects.gif) · [poster](media/fight-effects.jpg) | [HTML](examples/fight-effects.html) |
-| Effect comparisons | [Six optical treatments](media/optical.mp4) | 18 s | 16:9 | [GIF](media/optical.gif) · [poster](media/optical.jpg) | [HTML](examples/optical.html) |
-| Effect comparisons | [Image distortion, collisions and particles](media/stacks.mp4) | 24 s | 16:9 | [GIF](media/stacks.gif) · [poster](media/stacks.jpg) | [HTML](examples/stacks.html) |
+| Use case | [Social clips](media/reel.mp4) | 12 s | 9:16 | [GIF](media/reel.gif) · [poster](media/reel.jpg) | [HTML](examples/reel.html) |
+| Use case | [Product demos](media/product.mp4) | 7.2 s | 16:9 | [GIF](media/product.gif) · [poster](media/product.jpg) | [HTML](examples/product.html) |
+| Use case | [Infographics](media/infographic.mp4) | 14.4 s | 16:9 | [GIF](media/infographic.gif) · [poster](media/infographic.jpg) | [HTML](examples/infographic.html) |
+| Use case | [Animated backgrounds](media/broll.mp4) | 12 s | 16:9 | [GIF](media/broll.gif) · [poster](media/broll.jpg) | [HTML](examples/broll.html) |
+| Sequence | [One word. Many forms.](media/word-forms.mp4) | 21.6 s | 16:9 | [GIF](media/word-forms.gif) · [poster](media/word-forms.jpg) | [HTML](examples/word-forms.html) |
+| Sequence | [One drop. Many forms.](media/water-forms.mp4) | 21.6 s | 16:9 | [GIF](media/water-forms.gif) · [poster](media/water-forms.jpg) | [HTML](examples/water-forms.html) |
+| Single-effect render | [Overflow](media/fluid-overflow.mp4) | 9.6 s | 16:9 | [GIF](media/fluid-overflow.gif) · [poster](media/fluid-overflow.jpg) | [HTML](examples/fluid-overflow.html) |
+| Single-effect render | [Slow Gold](media/fluid-viscous.mp4) | 9.6 s | 16:9 | [GIF](media/fluid-viscous.gif) · [poster](media/fluid-viscous.jpg) | [HTML](examples/fluid-viscous.html) |
+| Single-effect render | [Find the Form](media/fluid-smoke.mp4) | 9.6 s | 16:9 | [GIF](media/fluid-smoke.gif) · [poster](media/fluid-smoke.jpg) | [HTML](examples/fluid-smoke.html) |
+| Sequence | [One flight. Twenty worlds.](media/style-journey.mp4) | 40.8 s | 16:9 | [GIF](media/style-journey.gif) · [poster](media/style-journey.jpg) | [HTML](examples/style-journey.html) |
+| Sequence | [One scene. Many eras.](media/scene-eras.mp4) | 24 s | 16:9 | [GIF](media/scene-eras.gif) · [poster](media/scene-eras.jpg) | [HTML](examples/scene-eras.html) |
+| Sequence | [COUNTERFORM](media/dot-battle.mp4) | 19.2 s | 16:9 | [GIF](media/dot-battle.gif) · [poster](media/dot-battle.jpg) | [HTML](examples/dot-battle.html) |
+| Comparison | [Same fight. Eight treatments.](media/fight-effects.mp4) | 38.4 s | 16:9 | [GIF](media/fight-effects.gif) · [poster](media/fight-effects.jpg) | [HTML](examples/fight-effects.html) |
+| Comparison | [Six optical treatments](media/optical.mp4) | 18 s | 16:9 | [GIF](media/optical.gif) · [poster](media/optical.jpg) | [HTML](examples/optical.html) |
+| Comparison | [Image distortion, collisions and particles](media/stacks.mp4) | 24 s | 16:9 | [GIF](media/stacks.gif) · [poster](media/stacks.jpg) | [HTML](examples/stacks.html) |
 
 All sixteen published films have animated GIF previews and still posters. A GIF
 is a silent selection of shots, not the full film. MP4 container durations can be
@@ -462,7 +422,7 @@ Other effects in those videos were already here and were not added twice: liquid
 
 ## It fails closed
 
-A render that cannot be proven correct produces no file:
+Detected rendering discrepancies or failed delivery checks stop publication and preserve the previous bundle. These checks establish repeatability and delivery constraints; visual meaning, motion quality and physical plausibility still need review:
 
 - WebGL must run on ANGLE Metal, or on SwiftShader when you pass `--cpu`. Backends are never mixed in one run, because they do not produce the same pixels.
 - Every WebGL context is checked on every frame.
@@ -486,7 +446,7 @@ Parallel renders used to disagree now and then; about half of the intro renders 
 
 The second was a one-pixel column at the edge of a tile while it scaled in: frame 326 of that intro in 2 renders of 3, then frames 1258 and 1264 of the next intro in 5 renders of 5. Every tile holds a canvas or 3D content, which Chromium draws on a layer of its own. Our first fix, `will-change: transform` on such elements, passed three GPU renders but moved the problem: on SwiftShader the SVG text inside a tile at rest then differed between the two renders (frames 1297 to 1365). Our reading, not confirmed, is that the layer is drawn at a scale that depends on what that browser drew before, as with the SVG text. So the engine no longer scales these elements at all: an element it would scale that holds a canvas, a video or a hosted tile slides and fades in instead. The intro then verified on its first attempt on the GPU, in a second GPU render, and on SwiftShader.
 
-`build.sh` still renders again, up to 5 times, when two renders disagree, so a cause we have not met yet cannot ship a wrong frame; the disagreeing frames stay in `video/mismatch/`. If you hit one, please open an issue with those frames.
+`build.sh` still renders again, up to 5 times, when two renders disagree, and refuses publication if they still disagree. A repeatable authored mistake can pass this comparison; the disagreeing frames stay in `video/mismatch/`. If you hit one, please open an issue with those frames.
 
 ## Limits
 

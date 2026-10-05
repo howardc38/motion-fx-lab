@@ -11,7 +11,7 @@ and [the dot-animation study](https://www.threads.com/@more.yu_/post/DeBkaXOE6y6
 
 ## Effect catalogue
 
-All IDs below remain callable with the `studio-` prefix. The main gallery groups
+The table lists factory IDs: pass these bare IDs to `FXStudio.create()` or `FXStudio.preview()`. Gallery registrations and `data-demo` attributes add the `studio-` prefix; for example, `FXStudio.create("video-dots")` corresponds to `data-demo="studio-video-dots"`. The main gallery groups
 variants inside technique cards and puts collections in a separate showcase
 section; [the catalogue](../../fx/catalog.js) defines that relationship. Twenty art
 directions are presets of `themes`, not twenty additional techniques.

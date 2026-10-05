@@ -26,7 +26,7 @@ This calls `bash video/build.sh examples/stacks.html` and produces
 audio. Every frame is independently rendered twice and compared; the delivery
 pipeline checks codecs, colour tags, frame counts, loudness, peaks and size.
 `npm run record:stacks` remains an alias for the same verified render command.
-`npm run build:showcase` rebuilds all three studio films, this film, the optical film and the main intro.
+`npm run build:showcase` rebuilds 12 bundles: three studio films, three procedural material films, three baked-fluid films, this comparison, the optical comparison and the main intro. It reuses the checked-in fluid frames and does not run Blender.
 
 The recorder starts a loopback HTTP server for local ES modules and closes it
 when done. To preview manually, run `python3 -m http.server 8000` and open
@@ -34,6 +34,20 @@ when done. To preview manually, run `python3 -m http.server 8000` and open
 load from pinned CDNs, so internet access is required. WebGPU needs a real
 supported adapter; these films refuse `--cpu` or a missing WebGPU backend.
 Original WebGL-only films such as `examples/reel.html` still support `--cpu`.
+
+## Apply preview settings to a film
+
+The sliders change only this settings page; they are not saved to the MP4 source.
+In `examples/stacks.html`, replace the existing `effects[i].frame(t - starts[i])`
+call with chosen per-effect options, then run `npm run render:stacks`:
+
+```js
+const frameOptions = [{ strength: 0.45 }, { speed: 1 }, { spin: 1.75 }];
+await effects[i].frame(t - starts[i], frameOptions[i]);
+```
+
+The array follows the film's PixiJS, Rapier, WebGPU order. Review the new pacing
+before changing poster times or GIF excerpts.
 
 ## Use an effect
 
@@ -55,7 +69,7 @@ independent browsers on the same backend; cross-device pixel equality is not
 promised.
 
 `fx/pack-stacks.js` registers `stack-pixi`, `stack-rapier`, and `stack-gpu` using
-`build(stage) -> {ready, frame(t)}`. The gallery uses all three modules; the current intro uses PixiJS and Rapier.
+`build(stage) -> {ready, frame(t)}`. The gallery uses all three modules; the current intro uses Rapier for the chain reaction. PixiJS appears in the comparison film and its own gallery study.
 WebGPU particles remain in the stack film and gallery, so the current intro does
 not require a WebGPU adapter.
 There are no recorded frame atlases in this path. The TSL attribution is in
