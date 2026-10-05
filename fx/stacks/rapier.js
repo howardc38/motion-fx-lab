@@ -172,6 +172,7 @@ export async function create() {
     canvas: renderer.domElement,
     async frame(seconds, options = {}) {
       if (!Number.isFinite(seconds)) throw new Error("Invalid frame time");
+      label.visible = options.labels !== false;
       const desiredSpeed = Math.max(0.25, Math.min(2, options.speed ?? 1));
       if (desiredSpeed !== speed) reset();
       speed = desiredSpeed;

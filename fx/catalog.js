@@ -3,6 +3,9 @@
 // counted as additional techniques merely because they have another demo ID.
 (() => {
   const variants = {
+    'water-morph': 'clay',
+    'cjk-solid': 'lit3d',
+    'frame-glitch': 'glitch',
     dithercards: 'dithercharacter',
     ditherpeek: 'dithercharacter',
     ditheravatar: 'dithercharacter',
@@ -14,8 +17,11 @@
     morph: 'optical-morph',
     'studio-lowpoly': 'tunnel',
   };
-  const collections = new Set(['styles', 'studio-themes', 'studio-gallery']);
+  const collections = new Set(['styles', 'studio-themes', 'studio-gallery', 'water-underwater', 'scene-eras']);
   const names = {
+    clay: "3D shape blending",
+    lit3d: "Solid lettering",
+    glitch: "Signal breakup",
     dithercharacter: 'Dithered character',
     halftone: 'Halftone character',
     'studio-video-dots': 'Footage halftone dots',
@@ -25,6 +31,9 @@
     tunnel: 'Camera flythrough',
   };
   const descriptions = {
+    clay: "Blend implicit 3D forms and split or merge their surfaces. Compare opaque ray-marched clay with a transparent reconstructed mesh.",
+    lit3d: "Extruded lettering with lit faces and depth. Compare Latin samples with bevelled CJK outlines.",
+    glitch: "Displace slices and colour channels. Choose a text-only treatment or a full-frame image effect.",
     dithercharacter: 'Three-ink character rendering. Choose a portrait, card fan, logo ending or narrator composition.',
     halftone: 'A halftone-shaded character, with waving and squash-and-stretch motion variants.',
     'studio-video-dots': 'Sample footage into a dot field. Choose steady ink or beat-driven spacing and palettes.',

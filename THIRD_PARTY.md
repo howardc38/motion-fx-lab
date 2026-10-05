@@ -44,7 +44,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
 The WebGPU film effect's TSL implementation follows the three.js r180 attractor
 example's storage-buffer / compute / sprite pattern. Its MIT notice and upstream
 source are retained in [`examples/stack-lab/NOTICE`](examples/stack-lab/NOTICE).
-No new third-party library binaries are bundled; film frames are rendered from
+No new third-party runtime library binaries are bundled. The CJK outline asset is documented below; film frames are rendered from
 the procedural effects in this repository.
 
 ## Drawn by the operating system
@@ -72,3 +72,14 @@ by `fx/studio/themes.js`. No artwork, character models or motion data from the
 reference posts is bundled. Three.js r180 add-ons used by the asset/film tools
 include GLTFLoader, GLTFExporter, SkeletonUtils and BufferGeometryUtils, under
 the same MIT licence as the existing runtime dependency.
+
+## Noto Sans TC vector outlines
+
+`assets/type/motion-cjk.json` contains 50 glyph outlines derived from Noto Sans TC,
+with its weight axis instantiated at 850. Copyright 2014–2021 Adobe, with Reserved Font Name “Source”, as specified by the upstream notice in
+[`assets/type/OFL.txt`](assets/type/OFL.txt). The outlines remain under SIL OFL 1.1;
+the repository's 0BSD licence does not replace their terms. Source and regeneration
+instructions are in [`assets/type/README.md`](assets/type/README.md).
+
+fontTools 4.60.1 is an optional offline build dependency under MIT. It is not
+loaded by the gallery or needed to render the checked-in films.

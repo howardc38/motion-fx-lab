@@ -121,7 +121,7 @@
     <span class="eyebrow">Open source · 0BSD</span>
     <h1>Motion FX Lab</h1>
     <p class="lede">Make social clips, product demos, infographics and animated backgrounds as editable web pages, then export them to MP4. Write the code yourself or work with an AI coding assistant. The shipped examples use code-drawn visuals and synthesised music.</p>
-    <nav class="legend" aria-label="On this page"><a href="#uses">Watch examples</a><a href="#effects">Browse effects</a><a href="#studio-studies">Showcase films</a><a href="#make-video">Make a video</a><a href="https://github.com/howardc38/motion-fx-lab">Get the source</a></nav>
+    <nav class="legend" aria-label="On this page"><a href="#uses">Watch examples</a><a href="#effects">Browse effects</a><a href="#material-films">Showcase films</a><a href="#make-video">Make a video</a><a href="https://github.com/howardc38/motion-fx-lab">Get the source</a></nav>
     <div class="legend" id="legend"></div>
     <video class="intro" controls playsinline preload="metadata" poster="media/intro.jpg" src="media/intro.mp4" aria-label="Intro video, 55 seconds, with sound"></video>
   </header>
@@ -150,6 +150,18 @@
     </div>
     <div class="gallery" id="gallery"></div>
     <p class="note">The colour-grade technique uses CSS filters and a separate glow; it is not a LUT implementation. The original 3D and shader tiles share one WebGL canvas; the three optical shaders share a second context. Reaction–diffusion draws the same pixels every time on one GPU, but not the same pattern on every GPU.</p>
+  </section>
+
+  <section id="material-films">
+    <span class="eyebrow">Water, words and worlds</span>
+    <h2>One idea. A complete motion story.</h2>
+    <p class="note">A drop becomes a splash and changing liquid shapes; one Chinese word changes form; one room keeps its action across eight art treatments. Each film has sound, an editable timeline and a GIF preview.</p>
+    <div class="uses">
+      <figure><div class="film-preview"><img src="media/water-forms.gif" alt="One drop. Many forms. animated preview" loading="lazy"><button type="button" aria-label="Play One drop. Many forms.">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/water-forms.jpg" src="media/water-forms.mp4" aria-label="One drop. Many forms. 21.6 seconds with sound"></video></div><figcaption><b>One drop. Many forms. · 21.6 s</b>Fall, crown, rebound, liquid shapes and a dive below the surface. Authored water animation. <a href="examples/water-forms.html">Timeline player</a></figcaption></figure>
+      <figure><div class="film-preview"><img src="media/word-forms.gif" alt="One word. Many forms. animated preview" loading="lazy"><button type="button" aria-label="Play One word. Many forms.">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/word-forms.jpg" src="media/word-forms.mp4" aria-label="One word. Many forms. 21.6 seconds with sound"></video></div><figcaption><b>One word. Many forms. · 21.6 s</b>Solid Chinese lettering becomes particles, contours and signal breakup before resolving. <a href="examples/word-forms.html">Timeline player</a></figcaption></figure>
+      <figure><div class="film-preview"><img src="media/scene-eras.gif" alt="One scene. Many eras. animated preview" loading="lazy"><button type="button" aria-label="Play One scene. Many eras.">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="media/scene-eras.jpg" src="media/scene-eras.mp4" aria-label="One scene. Many eras. 24 seconds with sound"></video></div><figcaption><b>One scene. Many eras. · 24 s</b>Eight room treatments share the same cup-lifting action, props and composition. <a href="examples/scene-eras.html">Timeline player</a></figcaption></figure>
+    </div>
+    <p class="note">Water surfaces and splashes are choreographed from time, rather than solved as a fluid volume. Chinese solids use bundled vector outlines. Room treatments are a combined showcase, not eight additional effects.</p>
   </section>
 
   <section id="studio-studies">
@@ -190,7 +202,7 @@
     <h2>Choose an example. Edit it. Export.</h2>
     <p class="note">After <a href="https://github.com/howardc38/motion-fx-lab#quick-start">setting up the repository</a>, edit an example’s words, numbers or timeline and run its build command:</p>
     <pre style="margin:0;padding:16px;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px"><code>bash video/build.sh examples/product.html</code></pre>
-    <p class="note">The build writes an MP4, a high-quality copy, a poster and the declared GIF preview. <a href="https://github.com/howardc38/motion-fx-lab#published-films-and-previews">Browse all ten film sources and rebuild commands</a>. The recorder compares every frame across two independent renders and checks the delivered audio and video.</p>
+    <p class="note">The build writes an MP4, a high-quality copy, a poster and the declared GIF preview. <a href="https://github.com/howardc38/motion-fx-lab#published-films-and-previews">Browse all thirteen film sources and rebuild commands</a>. The recorder compares every frame across two independent renders and checks the delivered audio and video.</p>
   </section>
 
   <section>
@@ -272,11 +284,13 @@
 <script src="fx/pack-stacks.js"></script>
 <script src="fx/studio-effects.js"></script>
 <script src="fx/pack-studio.js"></script>
+<script src="fx/material-effects.js"></script>
+<script src="fx/pack-materials.js"></script>
 <script src="fx/catalog.js"></script>
 <script src="fx/gallery-layout.js"></script>
 <script>
 (() => {
-  document.querySelectorAll('#uses .film-preview').forEach(preview => {
+  document.querySelectorAll('.film-preview').forEach(preview => {
     preview.addEventListener('click', () => {
       preview.querySelector('img').hidden = true;
       preview.querySelector('button').hidden = true;
@@ -424,7 +438,7 @@
     ["3D"],
     ["three.js r128 core", "3D engine for the browser", "Camera, lights, particles, 3D objects", "Line tunnel, particles, 3D type, dust, particle text, characters, 200,000 GPU particles"],
     ["three.js post-processing", "Effects after the render (EffectComposer)", "Bloom and halftone", "UnrealBloomPass bloom; HalftonePass comic dots"],
-    ["TextGeometry + Helvetiker", "3D text and its font", "Extruded Latin and digits", "“6%”, “4.5%”, “social_ops”; the font has no CJK, so Chinese stays flat"],
+    ["TextGeometry + Helvetiker", "3D text and its font", "Extruded Latin and digits", "“6%”, “4.5%”, “social_ops”; the original subset is Latin-only; a separate CJK outline variant provides solid Chinese lettering"],
     ["Custom GLSL", "Small GPU programs that colour each pixel", "What stock materials cannot do", "Smoke (fbm noise), noise dissolve (onBeforeCompile), liquid glass, ray-marched clay, domain repetition, five post styles, GPU particles, reaction–diffusion, the dithered character"],
     ["PBR + PMREM", "Physically based materials", "Chrome needs something to reflect", "The chrome social_ops logo"],
     ["Shadows (SpotLight, soft)", "Lights that cast shadows", "Depth", "The 3D “6%” casting on the floor"],
@@ -434,8 +448,9 @@
     ["Flubber 0.4.2", "Outer-contour interpolation", "Morph concave paths", "Monogram → lightning → heart, sampled directly at t"],
     ["PixiJS 8.22.0", "2D scene graph and filter pipeline", "Compose texture effects", "Liquid poster with displacement, blur and colour grading"],
     ["Rapier 0.21.0", "3D WASM rigid-body physics", "Real collisions", "48 dominoes, fixed 120 Hz, rendered with three.js r180"],
-    ["three.js r180 / WebGPU / TSL", "Modern 3D rendering and GPU compute", "Animated geometry and compute-driven particles", "Counterform skeletons, frozen orbits, skinned points, low-poly flight and 65,536 orbital particles"],
+    ["three.js r180 / WebGPU / TSL", "Modern 3D rendering and GPU compute", "Animated geometry and compute-driven particles", "Water transmission and shape changes, solid CJK type, Counterform skeletons, frozen orbits, low-poly flight and orbital particles"],
     ["GLTFLoader / AnimationMixer / SkeletonUtils", "Animated 3D assets", "Reuse a rig and its authored motion", "Amber and Teal share the fight choreography through separate animation clips"],
+    ["fontTools (optional, offline)", "OpenType outline exporter", "Add supported CJK glyphs", "Build the bundled outline JSON; not needed for normal playback or rendering"],
     ["Sound"],
     ["Python synth (sfx.py)", "Sound effects from maths", "Timed cues for selected actions", "17 sounds: pop, whoosh, stamp, typing…"],
     ["Python synth (music.py)", "Music from maths", "A music bed", "100 BPM, Am–F–C–G, sections declared by the video page"],

@@ -3,7 +3,7 @@ async function open(page){await page.goto('/');await page.waitForFunction(()=>wi
 test('catalogue owns every demo once; variants and showcases do not inflate technique count',async({page})=>{
  await open(page);
  const p=await page.evaluate(()=>({stats:FXCatalog.stats,ids:FX.DEMOS.map(d=>d.id),groups:FXCatalog.families.map(f=>f.entries.map(d=>d.id)),shows:FXCatalog.showcases.map(f=>f.id),built:galleryAPI.cards.reduce((n,c)=>n+c.instances.size,0)}));
- expect(p.stats).toEqual({techniques:64,variants:10,showcases:3,demos:77});
+ expect(p.stats).toEqual({techniques:67,variants:13,showcases:5,demos:85});
  const owned=[...p.groups.flat(),...p.shows];expect(new Set(owned).size).toBe(p.ids.length);expect(owned.sort()).toEqual(p.ids.sort());expect(p.built).toBeLessThan(10);
  await page.getByRole('button',{name:'Characters',exact:true}).click();
  await expect(page.locator('#gallery > figure:visible')).toHaveCount(5);
@@ -14,7 +14,7 @@ test('catalogue owns every demo once; variants and showcases do not inflate tech
  await page.evaluate(()=>galleryAPI.draw('morph',2));
  expect(await page.locator('[data-effect-id="optical-morph"] select').inputValue()).toBe('morph');
 });
-test('all 77 registered demos render in undistorted landscape frames, with distinct family previews',async({page})=>{
+test('all 85 registered demos render in undistorted landscape frames, with distinct family previews',async({page})=>{
  test.setTimeout(240000);const errors=[];page.on('pageerror',e=>errors.push(e.message));await open(page);
  const demos=await page.evaluate(()=>[...FXCatalog.byId.values()].map(d=>({id:d.id,hero:d.hero,period:d.period,role:d.role})));
  const signatures=new Map();

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>One scene. Many eras. — Motion FX Lab</title>
+    <link rel="icon" href="data:," />
+    <style>
+      body {
+        margin: 0;
+        background: #101b2c;
+        color: #edf0de;
+        font: 16px system-ui;
+      }
+      main {
+        max-width: 1280px;
+        margin: auto;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16/9;
+      }
+      nav {
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+        align-items: center;
+      }
+      input {
+        flex: 1;
+        min-width: 30px;
+      }
+      a {
+        color: #edbc91;
+      }
+      button {
+        font: inherit;
+        padding: 8px 16px;
+      }
+      output {
+        min-width: 60px;
+      }
+      #error {
+        color: #ffada1;
+      }
+      body.record nav,
+      body.record #error {
+        display: none;
+      }
+      body.record main {
+        width: 1280px;
+        height: 720px;
+        max-width: none;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <main>
+      <canvas
+        id="film"
+        width="1280"
+        height="720"
+        role="img"
+        aria-label="One scene. Many eras."
+      ></canvas>
+      <nav>
+        <a href="../index.html">Gallery</a><button id="play">Play</button
+        ><input
+          id="seek"
+          type="range"
+          min="0"
+          step="0.033333"
+          value="0"
+          aria-label="Film time"
+        /><output id="clock">0.00 s</output>
+      </nav>
+      <p id="error" role="alert"></p>
+    </main>
+    <script>
+      window.materialFilm = {
+        id: "eras",
+        poster: 10.3,
+        gif: [
+          [0.5, 1.3],
+          [3.5, 4.3],
+          [6.5, 7.3],
+          [9.5, 10.3],
+          [12.5, 13.3],
+          [15.5, 16.3],
+          [18.5, 19.3],
+          [21.5, 22.3],
+        ],
+        text: "流動",
+      };
+    </script>
+    <script type="module" src="../fx/material-player.js"></script>
+  </body>
+</html>

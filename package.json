@@ -22,7 +22,7 @@
     "render": "bash video/build.sh intro.html",
     "test:effects": "playwright test --config playwright.config.cjs",
     "record:stacks": "npm run render:stacks",
-    "build:showcase": "npm run build:studio && npm run render:stacks && bash video/build.sh examples/optical.html && bash video/build.sh video/intro.html",
+    "build:showcase": "npm run build:materials && npm run build:studio && npm run render:stacks && bash video/build.sh examples/optical.html && bash video/build.sh video/intro.html",
     "render:stacks": "bash video/build.sh examples/stacks.html",
     "build:studio-assets": "node tools/build-studio-assets.cjs",
     "render:style-journey": "bash video/build.sh examples/style-journey.html",
@@ -30,7 +30,8 @@
     "build:studio": "npm run render:style-journey && npm run render:dot-battle && npm run render:fight-effects",
     "render:fight-effects": "bash video/build.sh examples/fight-effects.html",
     "build:all": "npm run build:showcase && bash video/build.sh examples/reel.html && bash video/build.sh examples/product.html && bash video/build.sh examples/infographic.html && bash video/build.sh examples/broll.html",
-    "test:media": "playwright test tests/media.spec.cjs"
+    "test:media": "playwright test tests/media.spec.cjs",
+    "build:materials": "bash video/build.sh examples/water-forms.html && bash video/build.sh examples/word-forms.html && bash video/build.sh examples/scene-eras.html"
   },
   "devDependencies": {
     "@playwright/test": "1.59.1"

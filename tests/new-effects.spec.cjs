@@ -87,7 +87,7 @@ test("intro tells three film stories with native frames and reproducible seeks",
   await page.evaluate(async()=>{await __ready;await __record();});
   const result=await page.evaluate(async()=>{
     const samples=[];
-    for(const t of [27,33.1,34,36.6,37.8,40.3,45.3,46.5,48,49.4]){
+    for(const t of [27,33.1,34,36.7,38,40.3,45.3,46.5,48,49.4]){
       await __render(t);samples.push({t,...await introProof()});
     }
     await __render(37.8);const first=document.querySelector('#word-shot canvas').toDataURL();
@@ -96,14 +96,14 @@ test("intro tells three film stories with native frames and reproducible seeks",
   });
   expect(result.gpu).toBe(false);expect(result.repeat).toBe(true);
   expect(result.samples.find(s=>s.t===33.1).worlds).toMatchObject({phase:'overview',count:20});
-  expect(result.samples.find(s=>s.t===36.6).word.phase).toBe('dots');
-  expect(result.samples.find(s=>s.t===37.8).word.phase).toBe('scatter');
+  expect(result.samples.find(s=>s.t===36.7).word.phase).toBe('contours');
+  expect(result.samples.find(s=>s.t===38).word.phase).toBe('glitch');
   expect(result.samples.find(s=>s.t===40.3).word.phase).toBe('resolved');
   expect(result.samples.find(s=>s.t===45.3).chain.fallen).toBe(48);
   expect(result.samples.find(s=>s.t===46.5).edit.word).toBe('WAVE');
   expect(result.samples.find(s=>s.t===48).edit.word).toBe('FLOW');
   expect(result.samples.find(s=>s.t===49.4).edit.exported).toBe(true);
-  await expect(page.locator('#scLib')).toContainText('64 effect techniques');
+  await expect(page.locator('#scLib')).toContainText('67 effect techniques');
   expect(await page.locator('#scStacks').count()).toBe(0);
 });
 

@@ -260,3 +260,21 @@ Module._load=function(name,...rest) {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test('recorder awaits allocation-heavy CJK initialization without a weak promise wrapper',()=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'cjk-ready-'));
+ try{
+  const out=path.join(dir,'cues.json');
+  const result=spawnSync(process.execPath,['video/record.cjs','cues','examples/word-forms.html',out,...backendArgs],{cwd:root,encoding:'utf8',timeout:60000});
+  expect(result.error).toBeUndefined();expect(result.status,result.stderr).toBe(0);
+  const spec=JSON.parse(fs.readFileSync(out,'utf8'));expect(spec.dur).toBeCloseTo(21.6,5);expect(spec.cues).toHaveLength(5);
+ }finally{fs.rmSync(dir,{recursive:true,force:true});}
+});
+test('recorder propagates rejected initialization and preserves the destination',()=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'reject-ready-'));
+ try{
+  const out=path.join(dir,'cues.json');fs.writeFileSync(out,'previous cues');
+  const result=spawnSync(process.execPath,['video/record.cjs','cues','tests/fixtures/rejected-ready.html',out,...backendArgs],{cwd:root,encoding:'utf8',timeout:30000});
+  expect(result.error).toBeUndefined();expect(result.status).toBe(1);expect(result.stderr).toContain('injected initialization failure');expect(fs.readFileSync(out,'utf8')).toBe('previous cues');
+ }finally{fs.rmSync(dir,{recursive:true,force:true});}
+});

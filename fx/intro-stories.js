@@ -18,25 +18,11 @@ export function createWorlds(){
     g.globalAlpha=1;if(u<1){g.save();g.translate(mix(0,1090,u),mix(0,588,u));g.scale(mix(1,120/W,u),mix(1,120/W,u));world(19,t);g.restore();}proof={phase:'overview',count:20,poseTime:t};}
  },proof:()=>proof};
 }
-export function createWordforms(){
- const {canvas,g}=surface(),mask=surface(),m=mask.g;
- m.fillStyle='#fff';m.font='900 260px Arial';m.textAlign='center';m.fillText('FLOW',640,440);
- const pixels=m.getImageData(0,0,W,H).data,points=[];
- for(let y=210;y<470;y+=6)for(let x=150;x<1130;x+=6)if(pixels[(y*W+x)*4+3]>128)points.push({x,y,angle:hash(x+y*W)*Math.PI*2,r:160+hash(x*3+y)*700});
- let proof;
- return {canvas,frame(t){
-  t=Math.max(0,Math.min(7.2,t));const phase=t<1.2?'type':t<2.4?'slices':t<3.6?'dots':t<4.8?'scatter':t<6.4?'assemble':'resolved';
-  const paper=t>=2.4&&t<3.6,bg=paper?'#f0d36a':'#142a39',ink=paper?'#172d3b':'#f1e9d5';g.fillStyle=bg;g.fillRect(0,0,W,H);
-  text(g,'One word. Many forms.',48,76,42,ink);
-  if(phase==='type'||phase==='resolved'){g.globalAlpha=phase==='type'?ease(t/.28):1;g.drawImage(mask.canvas,0,0);g.globalAlpha=1;}
-  else if(phase==='slices'){const u=(t-1.2)/1.2;for(let y=205;y<478;y+=13){const dx=Math.sin(y*.055+u*13)*75*Math.sin(u*Math.PI);g.drawImage(mask.canvas,0,y,W,13,dx,y,W,13);}}
-  else {
-   const amount=phase==='dots'?0:phase==='scatter'?ease((t-3.6)/1.2):1-ease((t-4.8)/1.6);
-   for(const p of points){const spin=amount*1.4;const x=p.x+Math.cos(p.angle+spin)*p.r*amount,y=p.y+Math.sin(p.angle+spin)*p.r*amount*.65;
-    g.fillStyle=amount>.1?(hash(p.x+p.y)<.35?'#f08b65':'#b9dbe1'):ink;g.beginPath();g.arc(x,y,phase==='dots'?2.4:2.2,0,Math.PI*2);g.fill();}
-  }
-  text(g,'Titles. Brands. Transitions.',48,669,23,ink);proof={phase,word:'FLOW',points:points.length};
- },proof:()=>proof};
+export async function createWordforms(){
+ const {createWordFilm}=await import('./material-studies/films.js');
+ const {TIMELINES}=await import('./material-studies/timelines.js');
+ const film=await createWordFilm();
+ return {canvas:film.canvas,frame:t=>film.frame(Math.max(0,Math.min(7.2,t))*TIMELINES.word.duration/7.2),proof:film.proof};
 }
 export function createEditStory(){
  const {canvas,g}=surface();let proof;

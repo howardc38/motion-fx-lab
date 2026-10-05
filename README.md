@@ -1,6 +1,6 @@
 # Motion FX Lab
 
-**Motion graphics as plain web pages, rendered to MP4 you can trust.** 64 effect techniques, 10 selectable variants and 3 combined showcases in HTML, CSS, SVG, Canvas, three.js, GLSL, Matter.js, Flubber, PixiJS, Rapier and WebGPU/TSL, and a recorder that turns any timeline page into an MP4. On our 3D-heavy test video it was 7.5× faster than a default headless browser, while rendering every frame twice and comparing the two before it gives you a file.
+**Motion graphics as plain web pages, rendered to MP4 you can trust.** 67 effect techniques, 13 selectable variants and 5 combined showcases in HTML, CSS, SVG, Canvas, three.js, GLSL, Matter.js, Flubber, PixiJS, Rapier and WebGPU/TSL, and a recorder that turns any timeline page into an MP4. On our 3D-heavy test video it was 7.5× faster than a default headless browser, while rendering every frame twice and comparing the two before it gives you a file.
 
 [![Highlights from the intro video (no sound). Click for the full 55-second video with sound.](media/intro.gif)](media/intro.mp4)
 
@@ -23,7 +23,7 @@ Describe the video to an AI coding assistant, or write it yourself. It becomes a
 </tr>
 </table>
 
-Plus characters drawn in code and 64 reusable effect techniques. The 55-second intro moves from four uses and character action into three stories: One Flight, Twenty Worlds; One Word, Many Forms; and One Push, Chain Reaction. It closes by changing text, scrubbing the timeline and exporting MP4. The example films and effect settings are linked below. Each example is one HTML file with its text or numbers at the top; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
+Plus characters drawn in code and 67 reusable effect techniques. The 55-second intro moves from four uses and character action into three stories: One Flight, Twenty Worlds; One Word, Many Forms; and One Push, Chain Reaction. It closes by changing text, scrubbing the timeline and exporting MP4. The example films and effect settings are linked below. Each example is one HTML file with its text or numbers at the top; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
 
 ## Intro storyboard
 
@@ -32,9 +32,9 @@ Plus characters drawn in code and 64 reusable effect techniques. The 55-second i
 | 0–2.4 s | Motion graphics in plain HTML |
 | 2.4–16.8 s | Social clips, product demos, infographics and B-roll; 3.6 s each |
 | 16.8–21.6 s | A character hands over information; a short fight beat shows action |
-| 21.6–26.4 s | Selected surface, type, image distortion and shape effects |
+| 21.6–26.4 s | Water material, type, drop impact and shape morphing |
 | 26.4–33.6 s | One Flight, Twenty Worlds: six readable styles, then the twenty-style overview |
-| 33.6–40.8 s | One Word, Many Forms: FLOW → slices → dots → scatter → FLOW |
+| 33.6–40.8 s | One Word, Many Forms: 流動 → solid lettering → particles → contour lines → signal breakup → 流動 |
 | 40.8–45.6 s | One Push, Chain Reaction: follow the fall, then reveal all 48 dominoes |
 | 45.6–50.4 s | Scrub time, change WAVE to FLOW and export MP4 |
 | 50.4–55.2 s | Repository and licence CTA |
@@ -59,6 +59,11 @@ Click a preview for its full MP4 with sound. These GIFs are silent highlights.
 <tr>
 <td colspan="2"><a href="media/stacks.mp4"><img src="media/stacks.gif" alt="Filters, collisions and particles animated preview" width="400"></a><br><b>Filters, collisions and particles</b></td>
 </tr>
+<tr>
+<td><a href="media/water-forms.mp4"><img src="media/water-forms.gif" alt="A water drop becomes a crown splash, liquid shapes and an underwater scene" width="400"></a><br><b>One drop. Many forms.</b></td>
+<td><a href="media/word-forms.mp4"><img src="media/word-forms.gif" alt="Chinese lettering changes from solid geometry to particles, contours and signal breakup" width="400"></a><br><b>One word. Many forms.</b></td>
+</tr>
+<tr><td colspan="2"><a href="media/scene-eras.mp4"><img src="media/scene-eras.gif" alt="The same cup-lifting action in eight room treatments" width="400"></a><br><b>One scene. Many eras.</b></td></tr>
 </table>
 
 ## Published films and previews
@@ -75,16 +80,19 @@ Click a preview for its full MP4 with sound. These GIFs are silent highlights.
 | [One Flight, Twenty Worlds](media/style-journey.mp4) | 40.8 s | 16:9 | [GIF](media/style-journey.gif) · [poster](media/style-journey.jpg) | [HTML](examples/style-journey.html) |
 | [COUNTERFORM](media/dot-battle.mp4) | 19.2 s | 16:9 | [GIF](media/dot-battle.gif) · [poster](media/dot-battle.jpg) | [HTML](examples/dot-battle.html) |
 | [Same Fight, Eight Treatments](media/fight-effects.mp4) | 24 s | 16:9 | [GIF](media/fight-effects.gif) · [poster](media/fight-effects.jpg) | [HTML](examples/fight-effects.html) |
+| [One drop. Many forms.](media/water-forms.mp4) | 21.6 s | 16:9 | [GIF](media/water-forms.gif) · [poster](media/water-forms.jpg) | [HTML](examples/water-forms.html) |
+| [One word. Many forms.](media/word-forms.mp4) | 21.6 s | 16:9 | [GIF](media/word-forms.gif) · [poster](media/word-forms.jpg) | [HTML](examples/word-forms.html) |
+| [One scene. Many eras.](media/scene-eras.mp4) | 24 s | 16:9 | [GIF](media/scene-eras.gif) · [poster](media/scene-eras.jpg) | [HTML](examples/scene-eras.html) |
 
-All ten published films have animated GIF previews and still posters. A GIF
+All thirteen published films have animated GIF previews and still posters. A GIF
 is a silent selection of shots, not the full film. MP4 container durations can be
 about 0.1 s longer than the authored timeline because of the final frame and
 encoding timestamps. `assets/studio/fight-source.mp4` is a silent green-screen
 source asset, not another finished film.
 
 ```sh
-npm run build:all       # all ten published film bundles
-npm run build:showcase  # intro, optical, stacks and the three studio films
+npm run build:all       # all thirteen published film bundles
+npm run build:showcase  # intro, optical, stacks, the three studio films and three material films
 npm run test:media      # source dimensions/duration and MP4/poster/GIF bundle checks
 ```
 
@@ -104,19 +112,19 @@ prove a useful or well-directed effect.
 - **Browser capture fails silently.** A lost WebGL context screenshots as a blank frame, with no error. Parallel browsers can disagree too: after a scale animation, one of ours kept laying out SVG labels at 0.6 of their size. A spot check of 8 frames missed that; we only caught it by comparing whole renders.
 - **Colours shift in the browser.** Converting screenshots to video with ffmpeg's defaults uses the BT.601 matrix and writes no colour tags, and browsers read untagged HD video as BT.709. Our pink `#ff90e8` played back as `#ff9fe8`.
 - **The upload comes out quiet, or gets rejected.** Our first mix measured −21 LUFS, far quieter than the −14 LUFS convention, and used AAC at 160 kbps, over Meta's 128 kbps limit for Reels. ffmpeg's `loudnorm` silently switched to dynamic compression when a linear gain would clip.
-- **Chinese, Japanese and Korean text break common effects.** Bundled 3D fonts have no CJK glyphs, and halftone or glitch effects wipe out dense strokes.
+- **Chinese, Japanese and Korean text break common effects.** Small Latin-only 3D fonts cannot render CJK, and halftone or glitch effects can wipe out dense strokes. This repo now includes a separate CJK outline subset for solid type.
 
 ## What you get
 
 | Pain | What this repo does |
 |---|---|
 | Hand-built, un-diffable animation | Every timeline effect is a small function of time in a plain web page. Serve the gallery over localhost; no framework or bundler. |
-| Starting from a blank page | 64 effect techniques you can copy: kinetic type, UI mock-ups, charts, generative patterns, ray-marched and GPU-particle shaders, physics simulations, chrome, and toon, flat and dithered characters. |
+| Starting from a blank page | 67 effect techniques you can copy: kinetic type, UI mock-ups, charts, generative patterns, ray-marched and GPU-particle shaders, physics simulations, chrome, and toon, flat and dithered characters. |
 | Slow 3D in headless Chrome | GPU rendering through ANGLE Metal, lossless CDP screenshots and 4 browsers in parallel: **399.6 s → 52.9 s** for a 56-second, 3D-heavy video, including the second render that verifies it. |
 | Silent wrong frames | The whole video is rendered twice, each frame on a different browser, and every frame is compared. The recorder also stops on a CPU fallback, a lost WebGL context, a page error or a font that did not load. |
 | Colour shifts | Screenshots are converted with the BT.709 matrix and every file is tagged BT.709; the checks refuse an untagged file. |
 | Quiet or rejected uploads | Audio is limited, then brought to −14 LUFS by a linear gain, and its loudness and true peak are measured on the final file. AAC encoding can lift the true peak (by up to 0.7 dB on our videos), so the encoded audio is measured and mastered again lower if it would pass −1 dBTP. Video and audio are checked against Meta's Reels limits. |
-| CJK text | Particle text is drawn on a canvas and sampled, so it works in any script. The halftone and glitch captions say where dense strokes break up. |
+| CJK text | Canvas-sampled particles use available fonts. The solid CJK variant uses bundled vector outlines, also shared by its particle and contour treatments; unsupported glyphs report how to rebuild the subset. |
 | Licence worries | Code under 0BSD: use it for anything, no attribution needed. Music and sound effects are synthesised in code, so there is no sample to license. |
 
 ## Quick start
@@ -203,6 +211,9 @@ Then run `bash video/build.sh video/yours.html`.
 | `fx/demos.js`, `fx/demos.css` | The core effects, each `build(stage)` returning `frame(t, abs)`, their styles, and the helpers the packs share (`window.FX`) |
 | `fx/pack-dither.js`, `fx/pack-2d.js`, `fx/pack-shaders.js`, `fx/pack-sims.js` | Effect packs: the dithered character, 2D motion and generative patterns, GLSL shaders, and the two simulations. Each registers its tiles with `FX.demo` |
 | `fx/optical-effects.js`, `fx/pack-optical.js` | Shared optical renderer and six timeline effects: moiré, slit-scan type, ribbon, caustic light, foil and path morph |
+| `fx/material-effects.js`, `fx/pack-materials.js`, `fx/material-studies/` | Shared water surfaces, CJK solids, contours, frame glitch, room treatments and film choreography |
+| `fx/material-player.js` | Shared pause, seek and export player for the three material films |
+| `assets/type/`, `tools/build-cjk-font.py` | Licensed vector glyph subset and optional offline outline exporter |
 | `fx/font-helvetiker-subset.js` | 14 glyphs of Helvetiker Bold for the extruded 3D text |
 | `video/engine.js` | Timeline engine: scenes, 30-odd `data-fx` animations, wipes, the sound-cue list |
 | `video/record.cjs` | Renders a page to a verified, BT.709 lossless master on the GPU, in parallel |
@@ -220,9 +231,9 @@ Then run `bash video/build.sh video/yours.html`.
 
 ## The effects
 
-**64 technique families, 10 selectable variants and 3 separate showcases.** All 77 original demo IDs remain available to existing films. The gallery uses one 16:9 card per technique, including characters; variants are selected inside that card. Every main card participates in the kind and renderer filters. Renderers initialize when their cards approach the viewport.
+**67 technique families, 13 selectable variants and 5 separate showcases.** All 77 original demo IDs remain available; eight additions bring the callable total to 85. The gallery uses one 16:9 card per technique, including characters; variants are selected inside that card. Every main card participates in the kind and renderer filters. Renderers initialize when their cards approach the viewport.
 
-[fx/catalog.js](fx/catalog.js) owns this classification. Character poses/compositions, dot palettes, shape-morph implementations, particle-text implementations, diagram layouts and flythrough scenes are variants of their respective families. The five-style shader comparison, twenty-art-direction collection and combined gallery journey are showcases, not additional techniques. “Unique” means a distinct demonstrated operation; it does not mean every effect uses an unrelated rendering algorithm.
+[fx/catalog.js](fx/catalog.js) owns this classification. Character poses/compositions, dot palettes, shape-morph implementations, particle-text implementations, diagram layouts and flythrough scenes are variants of their respective families. The five-style shader comparison, twenty-art-direction collection, combined gallery journey, underwater scene and eight-treatment room are showcases, not additional techniques. Transparent liquid morphing belongs to clay; solid CJK type belongs to lit3d; whole-frame signal breakup belongs to glitch. “Unique” means a distinct demonstrated operation; it does not mean every effect uses an unrelated rendering algorithm.
 
 The gallery recomposes older portrait examples into landscape: text and UI are rearranged, charts and flow diagrams use horizontal layouts, Canvas backgrounds expand their drawing area, and 3D cameras use the correct aspect. It does not stretch a portrait image into a wide card. Films retain their authored output format; the social reel remains a deliberately labelled 9:16 example.
 
@@ -235,6 +246,46 @@ The gallery recomposes older portrait examples into landscape: text and UI are r
 - **Type:** whip-in letters with motion blur, an RGB-split glitch, halftone dots on a word, character pops, highlighter, counting numbers, typewriter, a red flash with a shake and a stamp, a 3-second headline hook, word-synced captions, sticker labels, variable-font kinetic type, slit-scan typography.
 
 The first 36 effects were built for short promo videos about an Instagram DM assistant for insurance agents in Hong Kong, which is why the sample text talks about DMs, drafts and savings plans. Swap in your own words.
+
+## Water, lettering and scene treatments
+
+Three films share the same factories as their gallery previews. They use the existing
+Three.js r180 and Canvas renderers; no new runtime engine is needed.
+
+| Gallery ID | Demonstrated operation | Catalogue role |
+|---|---|---|
+| `water-material` | Transmission, thickness and environment reflections on 3D geometry | Technique |
+| `water-morph` | Transparent sphere, block, torus and separated droplets via an implicit surface | Variant of `clay` |
+| `water-impact` | Authored drop, crown, rebound and travelling surface waves | Technique |
+| `water-underwater` | Dive, bubbles, refracting surface and projected light lines | Showcase |
+| `cjk-solid` | Bevelled, extruded Chinese outlines; editable supported text | Variant of `lit3d` |
+| `organic-contours` | Animated nested closed curves | Technique |
+| `frame-glitch` | Image-wide block displacement, channel offsets and scan tears | Variant of `glitch` |
+| `scene-eras` | Eight room treatments sharing one cup-lifting action and layout | Showcase |
+
+The water is **authored surface animation**, not a fluid-volume solver. The crown,
+ballistic droplets and waves are functions of time. Underwater light lines are
+procedural approximations, not traced caustics. Rapier is not used for liquid dynamics.
+The room's architecture, silhouettes, marks and palettes are drawn in code; no artwork
+or footage from the reference posts is included. Eight treatments do not mean eight
+extra effect families.
+
+```sh
+npm run build:materials  # three MP4s with sound, GIFs and posters
+```
+
+The sources `examples/water-forms.html`, `examples/word-forms.html` and
+`examples/scene-eras.html` declare text and preview selections;
+`fx/material-studies/timelines.js` owns chapter durations and cut cues, while
+`films.js` draws the shots. Edit `materialFilm.text` in the word film to replace 流動 with
+another supported word, such as 光影. See [the module guide](fx/material-studies/README.md)
+for factories, options and the three storyboards. The intro reuses the word film at
+three times its source clock, preserving its 7.2-second chapter.
+
+The checked-in CJK outlines require no Python package to render. Adding glyphs uses
+an optional fontTools build step; see [the font asset guide](assets/type/README.md).
+Blender is not a dependency of these films. A future physically simulated fluid
+workflow would require its own baking and asset-import implementation.
 
 ## Art-direction and dot-animation films
 
@@ -274,7 +325,7 @@ No Blender, AE, image generator or depth model is required to reproduce the
 shipped demos. Source paths, frame APIs, presets and limitations are documented
 in [the studio guide](assets/studio/README.md).
 
-## Nine new film effects
+## Optical and simulation films
 
 **[Optical film](media/optical.mp4)** · **[Optical player](examples/optical.html)** · **[PixiJS / Rapier / WebGPU film](media/stacks.mp4)** · **[Three-effect timeline](examples/stacks.html)** · **[Effect settings](examples/stack-lab/)**
 
@@ -306,7 +357,7 @@ npm run render:stacks
 npm run build:showcase
 ```
 
-The last command renders all three studio films, the three-effect film, optical film and intro, each
+The last command renders the three material films, all three studio films, the three-effect film, optical film and intro, each
 with audio, every-frame comparison, delivery checks, posters and GIFs. The
 recorder automatically serves repository pages over loopback HTTP for ES modules.
 Pinned CDN dependencies require internet access. The WebGPU film needs
@@ -317,7 +368,7 @@ an ordinary MP4.
 Run `REQUIRE_WEBGPU=1 npm run test:effects` on a supported GPU to require actual
 compute-buffer checks. Tests cover optical seeks and audio, all three new frame
 APIs, backward simulation seeks, gallery registration, native intro rendering,
-asynchronous screenshot ordering, rejection cleanup, all fourteen studio demos, source-frame indexing, alpha, stable point identities and independent pose/camera clocks. Gallery checks render all 77 IDs, verify undistorted 16:9 frames, filter characters and enforce the technique/variant/showcase mapping. Failure tests preserve existing films and asset bundles; the rebuilt battle is checked for independent instances and repeatable attack frames. Python 3, ffmpeg and
+asynchronous screenshot ordering, rejection cleanup, all fourteen studio demos, source-frame indexing, alpha, stable point identities and independent pose/camera clocks. Gallery checks render all 85 IDs, verify undistorted 16:9 frames, filter characters and enforce the technique/variant/showcase mapping. Failure tests preserve existing films and asset bundles; the rebuilt battle is checked for independent instances and repeatable attack frames. Python 3, ffmpeg and
 Chromium are needed. There is no CI yet.
 
 ## Effects we learnt from other people's videos
@@ -363,10 +414,10 @@ The second was a one-pixel column at the edge of a tile while it scaled in: fram
 
 - The GPU path is verified on macOS only. In our benchmarks, one of 8 parallel SwiftShader browsers lost its WebGL context and returned blank frames without an error, which is why the recorder checks every context on every frame.
 - Emoji and a few symbols (✓, ★) are drawn with the operating system's fonts. On macOS these are Apple Color Emoji, Lucida Grande and PingFang, so a render on Linux or Windows looks slightly different.
-- The main gallery uses three.js r128; the three additional film modules pin r180. The gallery retains r128, which still ships the single-file UMD build and `examples/js` (removed in r161 and r148). Upgrading means re-tuning every colour, light and shader.
-- The 3D font has no CJK glyphs, so Chinese text stays flat.
+- The main gallery uses three.js r128; the newer studio, material and compute modules pin r180. The gallery retains r128, which still ships the single-file UMD build and `examples/js` (removed in r161 and r148). Upgrading means re-tuning every colour, light and shader.
+- The original Helvetiker subset is Latin-only. Solid CJK lettering uses 50 bundled outline glyphs; adding other characters requires rebuilding that asset.
 - The reaction–diffusion tile gives the same pixels every time on one GPU, but we saw a different pattern on SwiftShader than on Metal. It runs 900 steps a second on half-float textures, so small rounding differences between the two backends are the likely cause. The recorder never mixes the two in one run.
-- Automated browser regressions cover effect contracts, editable chart data, gallery framing, asynchronous recording, publication rollback, intro playback and all ten published media bundles. There is no CI yet; complete video builds and visual review are performed locally. Bundle metadata checks do not prove visual freshness by themselves.
+- Automated browser regressions cover effect contracts, editable chart data, gallery framing, asynchronous recording, publication rollback, intro playback and all thirteen published media bundles. There is no CI yet; complete video builds and visual review are performed locally. Bundle metadata checks do not prove visual freshness by themselves.
 
 ## Help wanted
 

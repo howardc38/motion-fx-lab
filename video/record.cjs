@@ -82,7 +82,11 @@ async function open(file, gpu) {
   await page.addInitScript(watchContexts);
   await page.goto(url(file), { waitUntil: "load" });
   // Wait for module/GPU initialization and fonts before recording or seeking.
-  await page.evaluate(() => (window.__ready ? window.__ready.then(() => true) : true));
+  // Await the page-owned promise through a handle. Returning a derived promise
+  // by value lets V8 collect Playwright's serialization wrapper during geometry
+  // allocation (CDP "Promise was collected", surfaced as a navigation error).
+  const readyHandle = await page.evaluateHandle(() => window.__ready);
+  await readyHandle.dispose();
   const requiresGPU = await page.evaluate(() => !!window.__REQUIRES_WEBGPU);
   if (requiresGPU && !gpu) throw new Error("This film requires WebGPU; --cpu cannot render it");
   await page.evaluate(() => window.__record());
