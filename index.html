@@ -146,10 +146,10 @@
     <span class="eyebrow">Open source · 0BSD</span>
     <h1>Motion FX Lab</h1>
     <p class="lede">Make social clips, product demos, infographics, animated titles and character sequences as editable web pages, then export them to MP4. Start with a finished example and adapt its copy, data or motion. Write code yourself or work with an AI coding assistant; the shipped visuals and music are made in code.</p>
-    <nav class="legend" aria-label="On this page"><a href="#uses">Use cases</a><a href="#films">Finished films</a><a href="#effects">Single effects</a><a href="#film-index">All films</a><a href="#make-video">Edit &amp; export</a><a href="https://github.com/howardc38/motion-fx-lab">Get the source</a></nav>
+    <nav class="legend" aria-label="On this page"><a href="#uses">Use cases</a><a href="#films">Finished films</a><a href="#effects">Single effects</a><a href="#film-index">Film shortlist</a><a href="#make-video">Edit &amp; export</a><a href="https://github.com/howardc38/motion-fx-lab">Get the source</a></nav>
     <p class="note">Watch what you can make, then choose the effects to build it. The use cases and finished sequences below show applications; the single-effect library shows reusable operations.</p>
     <div class="legend" id="legend"></div>
-    <video class="intro" data-film-id="intro" controls playsinline preload="metadata" poster="media/intro.jpg?v=curation-1" src="media/intro.mp4?v=curation-1" aria-label="Intro video, 55 seconds, with sound"></video>
+    <video id="film-intro" class="intro" data-film-id="intro" controls playsinline preload="metadata" poster="media/intro.jpg?v=curation-1" src="media/intro.mp4?v=curation-1" aria-label="Intro video, 55 seconds, with sound"></video>
   </header>
 
   <section id="uses" class="film-group" aria-labelledby="uses-title">
@@ -196,16 +196,15 @@
     </div>
   </section>
   <details id="film-index">
-    <summary>Browse all 19 videos by purpose</summary>
-    <p class="note">6 sequences · 4 use-case templates · 4 comparisons and samplers · 4 single-effect studies · 1 overview. This is a viewing index, not 19 extra effects or 19 unrelated combinations. Related-effect links point to reusable operations; some films author their own versions in the source.</p>
-    <section class="film-index-group" data-film-kind="sequences"><h3>Finished sequences · 6</h3><p class="note">Complete subjects with a beginning, development and closing beat. Effects and motion are reused across these films.</p>
+    <summary>Choose from 12 selected films</summary>
+    <p class="note">5 sequences · 4 use-case templates · 1 comparison · 2 single-effect films. The intro is at the top of this page. More focused studies are linked from their related effect cards. Related-effect links show reusable operations; some films author their own versions in the source.</p>
+    <section class="film-index-group" data-film-kind="sequences"><h3>Finished sequences · 5</h3><p class="note">Complete subjects with a beginning, development and closing beat. Effects and motion are reused across these films.</p>
     <div class="scroll"><table><thead><tr><th>Type</th><th>Film and purpose</th><th>Watch / edit</th></tr></thead><tbody>
 <tr data-film-index-id="style-journey"><td>Sequence</td><td><b>One flight. Twenty worlds.</b><span class="film-meta">40.8 s</span><p>One character travels through twenty art directions.</p><p class="film-effects">Related: <a href="#demo-studio-flight">Courier motion</a> · <a href="#demo-studio-portal">Style portal</a></p></td><td><a href="media/style-journey.mp4">Play MP4</a> · <a href="examples/style-journey.html">Timeline</a> · <a href="media/style-journey.gif">GIF</a></td></tr>
 <tr data-film-index-id="dot-story"><td>Sequence</td><td><b>One dot. Many roles.</b><span class="film-meta">19.2 s</span><p>One orange dot becomes a switch, a letter, a spring trace and a reveal before returning to the start.</p><p class="film-effects">Related: <a href="#demo-design-letter-flow">Letter reflow</a> · <a href="#demo-design-spring-response">Spring</a> · <a href="#demo-design-type-orbit">Spatial type</a> · <a href="#demo-design-dot-reveal">Dot reveal</a></p></td><td><a href="media/dot-story.mp4">Play MP4</a> · <a href="examples/dot-story.html">Timeline</a> · <a href="media/dot-story.gif">GIF</a></td></tr>
 <tr data-film-index-id="water-forms"><td>Sequence</td><td><b>One drop. Many forms.</b><span class="film-meta">21.6 s</span><p>Authored drop, splash, morph and underwater chapters.</p><p class="film-effects">Related: <a href="#demo-water-impact">Splash</a> · <a href="#demo-water-morph">Shape blending</a> · <a href="#demo-water-material">Transmission</a> · <a href="#demo-water-underwater">Underwater scene</a></p></td><td><a href="media/water-forms.mp4">Play MP4</a> · <a href="examples/water-forms.html">Timeline</a> · <a href="media/water-forms.gif">GIF</a></td></tr>
 <tr id="film-word-forms" data-film-index-id="word-forms"><td>Sequence</td><td><b>One word. Many forms.</b><span class="film-meta">21.6 s</span><p>A word changes form and returns to a readable title.</p><p class="film-effects">Related: <a href="#demo-cjk-solid">Solid type</a> · <a href="#demo-particles">Particle type</a> · <a href="#demo-organic-contours">Contours</a> · <a href="#demo-frame-glitch">Glitch</a></p></td><td><a href="media/word-forms.mp4">Play MP4</a> · <a href="examples/word-forms.html">Timeline</a> · <a href="media/word-forms.gif">GIF</a></td></tr>
 <tr id="film-dot-battle" data-film-index-id="dot-battle"><td>Sequence</td><td><b>COUNTERFORM</b><span class="film-meta">19.2 s</span><p>A complete fight with authored action and contact timing.</p><p class="film-effects">Related: <a href="#demo-studio-dot-impact">Impact</a> · <a href="#demo-studio-echo">Echoes</a> · <a href="#demo-studio-time-remap">Time control</a></p></td><td><a href="media/dot-battle.mp4">Play MP4</a> · <a href="examples/dot-battle.html">Timeline</a> · <a href="media/dot-battle.gif">GIF</a></td></tr>
-<tr id="film-ink-city" data-film-index-id="ink-city"><td>Sequence</td><td><b>One block. A drawn city.</b><span class="film-meta">19.2 s</span><p>A shaded block takes on ink; a city grows around it and the camera travels between its buildings.</p><p class="film-effects">Related: <a href="#demo-design-surface-ink">Surface ink</a> · <a href="#demo-tunnel">Camera travel</a></p></td><td><a href="media/ink-city.mp4">Play MP4</a> · <a href="examples/ink-city.html">Timeline</a> · <a href="media/ink-city.gif">GIF</a></td></tr>
     </tbody></table></div></section>
     <section class="film-index-group" data-film-kind="uses"><h3>Use-case templates · 4</h3><p class="note">Start here for a social ad, interface walkthrough, data story or reusable background.</p>
     <div class="scroll"><table><thead><tr><th>Type</th><th>Film and purpose</th><th>Watch / edit</th></tr></thead><tbody>
@@ -214,23 +213,14 @@
 <tr data-film-index-id="infographic"><td>Use case</td><td><b>Infographics</b><span class="film-meta">14.4 s</span><p>Turn figures into a data story.</p><p class="film-effects">Related: <a href="#demo-count">Counters</a> · <a href="#demo-datachart">Chart drawing</a> · <a href="#demo-ring">Progress ring</a></p></td><td><a href="media/infographic.mp4">Play MP4</a> · <a href="examples/infographic.html">Timeline</a> · <a href="media/infographic.gif">GIF</a></td></tr>
 <tr data-film-index-id="broll"><td>Use case</td><td><b>Animated backgrounds</b><span class="film-meta">12 s</span><p>Three reusable background loops.</p><p class="film-effects">Related: <a href="#demo-orbs">Colour fields</a> · <a href="#demo-ridgelines">Ridgelines</a></p></td><td><a href="media/broll.mp4">Play MP4</a> · <a href="examples/broll.html">Timeline</a> · <a href="media/broll.gif">GIF</a></td></tr>
     </tbody></table></div></section>
-    <section class="film-index-group" data-film-kind="comparisons"><h3>Comparisons and samplers · 4</h3><p class="note">Choose a treatment or compare capabilities. These are demonstrations rather than one continuous story.</p>
+    <section class="film-index-group" data-film-kind="comparisons"><h3>Effect comparison · 1</h3><p class="note">Compare eight operations against the same choreography.</p>
     <div class="scroll"><table><thead><tr><th>Type</th><th>Film and purpose</th><th>Watch / edit</th></tr></thead><tbody>
 <tr id="film-fight-effects" data-film-index-id="fight-effects"><td>Comparison</td><td><b>Same fight. Eight treatments.</b><span class="film-meta">38.4 s</span><p>Compare eight operations on the same choreography.</p><p class="film-effects">Related: <a href="#demo-studio-video-dots">Dots</a> · <a href="#demo-studio-freeze-orbit">Frozen orbit</a> · <a href="#demo-studio-particle-lens">Depth scatter</a></p></td><td><a href="media/fight-effects.mp4">Play MP4</a> · <a href="examples/fight-effects.html">Timeline</a> · <a href="media/fight-effects.gif">GIF</a></td></tr>
-<tr id="film-scene-eras" data-film-index-id="scene-eras"><td>Comparison</td><td><b>One scene. Many eras.</b><span class="film-meta">24 s</span><p>Compare eight art treatments using the same room, action and composition.</p><p class="film-effects">Related: <a href="#demo-scene-eras">Eight scene treatments</a></p></td><td><a href="media/scene-eras.mp4">Play MP4</a> · <a href="examples/scene-eras.html">Timeline</a> · <a href="media/scene-eras.gif">GIF</a></td></tr>
-<tr id="film-optical" data-film-index-id="optical"><td>Comparison</td><td><b>Six optical treatments</b><span class="film-meta">18 s</span><p>Compare graphic and optical looks.</p><p class="film-effects">Related: <a href="#demo-optical-moire">Moiré</a> · <a href="#demo-optical-slit">Slit scan</a> · <a href="#demo-optical-foil">Foil</a></p></td><td><a href="media/optical.mp4">Play MP4</a> · <a href="examples/optical.html">Timeline</a> · <a href="media/optical.gif">GIF</a></td></tr>
-<tr id="film-stacks" data-film-index-id="stacks"><td>Comparison</td><td><b>Image distortion, collisions and particles</b><span class="film-meta">24 s</span><p>Three independent operations shown in one reel.</p><p class="film-effects">Related: <a href="#demo-stack-pixi">Image distortion</a> · <a href="#demo-stack-rapier">Collisions</a> · <a href="#demo-stack-gpu">Particles</a></p></td><td><a href="media/stacks.mp4">Play MP4</a> · <a href="examples/stacks.html">Timeline</a> · <a href="media/stacks.gif">GIF</a></td></tr>
     </tbody></table></div></section>
-    <section class="film-index-group" data-film-kind="studies"><h3>Single-effect studies · 4</h3><p class="note">Longer exports for inspecting a specific material, lighting or simulation behaviour.</p>
+    <section class="film-index-group" data-film-kind="studies"><h3>Single-effect films · 2</h3><p class="note">Longer exports for inspecting a specific material, lighting or simulation behaviour.</p>
     <div class="scroll"><table><thead><tr><th>Type</th><th>Film and purpose</th><th>Watch / edit</th></tr></thead><tbody>
 <tr id="film-fluid-smoke" data-film-index-id="fluid-smoke"><td>Single-effect render</td><td><b>Find the Form</b><span class="film-meta">9.6 s</span><p>An extended rendered example of volumetric smoke.</p><p class="film-effects">Related: <a href="#demo-fluid-smoke">Volumetric smoke</a></p></td><td><a href="media/fluid-smoke.mp4">Play MP4</a> · <a href="examples/fluid-smoke.html">Timeline</a> · <a href="media/fluid-smoke.gif">GIF</a></td></tr>
-<tr data-film-index-id="shadow-lab"><td>Single-effect render</td><td><b>One light. Different edges.</b><span class="film-meta">9.6 s</span><p>Change the source width, then raise the object and watch the penumbra change.</p><p class="film-effects">Related: <a href="#demo-design-soft-shadow">Soft shadows</a></p></td><td><a href="media/shadow-lab.mp4">Play MP4</a> · <a href="examples/shadow-lab.html">Timeline</a> · <a href="media/shadow-lab.gif">GIF</a></td></tr>
 <tr id="film-fluid-overflow" data-film-index-id="fluid-overflow"><td>Single-effect render</td><td><b>Overflow</b><span class="film-meta">9.6 s</span><p>Partly filled bowl → rising water → overflow → settling.</p><p class="film-effects">Related: <a href="#demo-fluid-overflow">Liquid flow</a></p></td><td><a href="media/fluid-overflow.mp4?v=liquid-v2">Play MP4</a> · <a href="examples/fluid-overflow.html?v=liquid-v2">Timeline</a> · <a href="media/fluid-overflow.gif?v=liquid-v2">GIF</a></td></tr>
-<tr id="film-fluid-viscous" data-film-index-id="fluid-viscous"><td>Single-effect render</td><td><b>Slow Gold</b><span class="film-meta">9.6 s</span><p>Gold-coloured flow → ceramic contact → stretching sheet → drainage.</p><p class="film-effects">Related: <a href="#demo-fluid-viscous">Viscous-flow variant</a></p></td><td><a href="media/fluid-viscous.mp4?v=liquid-v2">Play MP4</a> · <a href="examples/fluid-viscous.html?v=liquid-v2">Timeline</a> · <a href="media/fluid-viscous.gif?v=liquid-v2">GIF</a></td></tr>
-    </tbody></table></div></section>
-    <section class="film-index-group" data-film-kind="overview"><h3>Toolkit overview · 1</h3><p class="note">The introduction repeats selected uses and techniques to explain the toolkit.</p>
-    <div class="scroll"><table><thead><tr><th>Type</th><th>Film and purpose</th><th>Watch / edit</th></tr></thead><tbody>
-<tr data-film-index-id="intro"><td>Overview</td><td><b>Intro</b><span class="film-meta">55.2 s</span><p>What the toolkit can make.</p></td><td><a href="media/intro.mp4?v=curation-1">Play MP4</a> · <a href="video/intro.html">Timeline</a> · <a href="media/intro.gif?v=curation-1">GIF</a></td></tr>
     </tbody></table></div></section>
   </details>
 
@@ -239,7 +229,7 @@
     <h2>Choose an example. Edit it. Export.</h2>
     <p class="note">After <a href="https://github.com/howardc38/motion-fx-lab#quick-start">setting up the repository</a>, edit an example’s words, numbers or timeline and run its build command:</p>
     <pre style="margin:0;padding:16px;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px"><code>bash video/build.sh examples/product.html</code></pre>
-    <p class="note">The build writes an MP4, a high-quality copy, a poster and the declared GIF preview. <a href="https://github.com/howardc38/motion-fx-lab#published-films-and-previews">Browse all nineteen film sources and rebuild commands</a>. The recorder compares every frame across two independent renders and checks the delivered audio and video.</p>
+    <p class="note">The build writes an MP4, a high-quality copy, a poster and the declared GIF preview. <a href="https://github.com/howardc38/motion-fx-lab#published-films-and-previews">Selected films, supporting source archive and rebuild commands</a>. The recorder compares every frame across two independent renders and checks the delivered audio and video.</p>
   </section>
 
   <section id="effects" aria-labelledby="effects-title">
@@ -261,7 +251,7 @@
   <section id="showcases">
     <span class="eyebrow">Reusable compositions</span>
     <h2>Open a combined scene to adapt it</h2>
-    <p class="note">These five presets expose reusable scene code. The room, underwater scene and gallery journey also appear in the film index; they are not another set of unique effects or new films.</p>
+    <p class="note">These five presets expose reusable scene code. The room preset links to its eight-treatment film. The underwater scene and gallery journey support the featured films; these presets do not add more unique effects.</p>
     <details id="composition-presets"><summary>5 composition presets · expand to preview</summary><div class="gallery" id="showcaseGallery"></div></details>
   </section>
 
@@ -408,6 +398,16 @@
   let playing = !reduce, clock = 0, last = performance.now(), lastDraw = 0;
   const state = { kind: "all", stack: "all" };
   const entryMatches = d => (state.kind === "all" || d.kind === state.kind) && (state.stack === "all" || d.stacks.includes(state.stack));
+  function appendFilmLinks(host, id, label, version='') {
+    for (const [i, [href, text]] of [
+      ['media/'+id+'.mp4'+version, label],
+      ['examples/'+id+'.html'+version, 'Scrub timeline'],
+      ['media/'+id+'.gif'+version, 'GIF preview'],
+    ].entries()) {
+      if(i) host.append(document.createTextNode(' · '));
+      const a=document.createElement('a'); a.href=href; a.textContent=text; host.append(a);
+    }
+  }
   function details(card) {
     const d = byId.get(card.selected);
     card.caption.querySelector('.pills').innerHTML = `<span class="pill kind">${card.showcase ? 'Collection' : KINDS[d.kind]}</span><span class="grade" title="${NEEDS[d.grade][1]}">${NEEDS[d.grade][0]}</span>`;
@@ -416,8 +416,11 @@
     card.caption.querySelector('.variant-description').textContent = card.family.entries.length > 1 ? d.purpose : '';
     const link=card.caption.querySelector('.preview-link');link.replaceChildren();
     const designFilm={'design-type-orbit':'dot-story','design-letter-flow':'dot-story','design-spring-response':'dot-story','design-dot-reveal':'dot-story','design-surface-ink':'ink-city','design-soft-shadow':'shadow-lab'}[d.id];
-    if(designFilm){const a=document.createElement('a');a.href='media/'+designFilm+'.mp4';a.textContent='Watch the finished film';link.append(a,document.createTextNode(' · '));const b=document.createElement('a');b.href='examples/'+designFilm+'.html';b.textContent='Scrub timeline';link.append(b);}
-    if(d.id.startsWith('fluid-')){const a=document.createElement('a');a.href='media/'+d.id+'.mp4?v=liquid-v2';a.textContent='Watch the full 9.6 s render';link.append(a,document.createTextNode(' · '));const b=document.createElement('a');b.href='examples/'+d.id+'.html?v=liquid-v2';b.textContent='Scrub timeline';link.append(b);}
+    if(designFilm) appendFilmLinks(link,designFilm,['ink-city','shadow-lab'].includes(designFilm)?'Watch the related study':'Watch the finished film');
+    if(d.id.startsWith('fluid-')) appendFilmLinks(link,d.id,d.id==='fluid-viscous'?'Watch the archived material study':'Watch the full 9.6 s render','?v=liquid-v2');
+    if(['optical-moire','optical-slit','optical-ribbon','optical-caustic','optical-foil','optical-morph'].includes(card.family.id)) appendFilmLinks(link,'optical','Compare six optical treatments');
+    if(['stack-pixi','stack-rapier','stack-gpu'].includes(d.id)) appendFilmLinks(link,'stacks','Watch the three-operation sampler');
+    if(d.id==='scene-eras') appendFilmLinks(link,'scene-eras','Compare eight room treatments');
     if(d.id.startsWith('studio-') && FXStudio.previews[d.id.slice(7)]){const a=document.createElement('a');a.href='examples/studio.html?compare=1#'+d.id.slice(7);a.textContent='Open the input / effect comparison';link.append(a);}
   }
   function choose(card, id) {
@@ -445,7 +448,7 @@
       fig.append(preview,caption); host.appendChild(fig); cards.push(card); if(card.select) card.select.value=card.selected; details(card);
     }
   }
-  document.querySelector('meta[name=description]').content = `${document.querySelectorAll('[data-film-index-id]').length} editable films for social, product, data, titles and characters. Compare ${stats.techniques} effect families and export verified MP4.`;
+  document.querySelector('meta[name=description]').content = `${document.querySelectorAll('[data-film-index-id]').length} selected films for social, product, data, titles and characters. Compare ${stats.techniques} effect families and export verified MP4.`;
   document.getElementById('legend').innerHTML = `<span><b>${stats.techniques}</b> effect families · ${stats.variants} selectable variants · ${stats.showcases} collections</span><span>Effect previews: 16:9 · Order: visual impact</span>`;
   const mk = (host, key, opts) => {
     for (const [v,label] of opts) {
@@ -523,7 +526,15 @@
     if(card.showcase)document.getElementById('composition-presets').open=true;
     card.fig.scrollIntoView({block:'start'});card.fig.focus({preventScroll:true});
   }
+  const filmEffectLinks={
+    'film-ink-city':'design-surface-ink', 'film-shadow-lab':'design-soft-shadow',
+    'film-optical':'optical-foil', 'film-stacks':'stack-pixi',
+    'film-scene-eras':'scene-eras', 'film-fluid-viscous':'fluid-viscous',
+  };
   function revealLinkedFilm(){
+    const effect=filmEffectLinks[location.hash.slice(1)];
+    if(effect){history.replaceState(null,'','#demo-'+effect);revealLinkedDemo();return;}
+
     const index=document.getElementById('film-index');
     if(['#material-films','#studio-studies','#new-studies','#film-index'].includes(location.hash)){index.open=true;index.scrollIntoView({block:'start'});return;}
     const target=document.getElementById(location.hash.slice(1));

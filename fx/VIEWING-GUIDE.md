@@ -1,7 +1,7 @@
 # Choosing effects and films
 
 The collection contains **69 effect families, 20 selectable variants and five
-combined showcases**: 94 callable demo IDs. The film index contains **19 videos**.
+combined showcases**: 94 callable demo IDs. The main film shortlist contains **12 videos**; the repository retains **19 video bundles**, including the separate intro and six supporting studies.
 These are different counts: a film can reuse several families, several films can
 reuse one family, and a study can export only one effect.
 
@@ -46,7 +46,7 @@ uniqueness; grouping also requires looking at motion and its controls.
 
 ## Which films are worth watching?
 
-All 19 are kept as editable examples. They are not all portfolio centrepieces.
+The main shortlist contains five sequences, four use-case templates, one comparison and two single-effect films. All 19 bundles are kept as editable examples; the intro stays above the shortlist and six supporting studies are linked from the related effects.
 The three featured sequences cover art direction, connected graphic motion and
 materials. Newness and technical complexity do not determine prominence.
 
@@ -57,24 +57,24 @@ materials. Newness and technical complexity do not determine prominence.
 | One drop. Many forms. | A material-led journey from a splash through changing forms to an underwater view | Featured sequence; authored surfaces, not a fluid solver |
 | One word. Many forms. | A replaceable CJK title passes through solid, particle, contour and signal treatments | Sequence index |
 | COUNTERFORM | Original action choreography, contact holds and framing | Sequence index; related fight studies share its action |
-| One block. A drawn city. | Surface hatching, staged construction and camera travel in one scene | Sequence index; less visual variety than the featured pieces |
+| One block. A drawn city. | Surface hatching, staged construction and camera travel in one scene | Surface-hatching effect card; outside the shortlist |
 | Social clips | Hook → interaction → closing action in a vertical ad | Use-case template |
 | Product demos | One interface interaction explained closely | Use-case template; intentionally shares the social example's app |
 | Infographics | Counting figures become bars, a ring and a trend | Use-case template |
 | Animated backgrounds | Three reusable loops plus an example title overlay | Use-case template; its own source includes the network loop |
 | Same fight. Eight treatments. | A common source makes eight different operations comparable | Comparison |
-| One scene. Many eras. | The same room/action under eight art treatments | Comparison, not eight additional effects or a new narrative |
-| Six optical treatments | Six independent looks for choosing a treatment | Sampler |
-| Image distortion, collisions and particles | Three unrelated operations with separate settings | Sampler, not one connected motion story |
+| One scene. Many eras. | The same room/action under eight art treatments | Combined-scene preset; outside the shortlist |
+| Six optical treatments | Six independent looks for choosing a treatment | Related optical effect cards; outside the shortlist |
+| Image distortion, collisions and particles | Three unrelated operations with separate settings | Distortion, collision and particle effect cards; outside the shortlist |
 | Find the Form | Inspect baked volumetric smoke around lettering | Single-effect study |
-| One light. Different edges. | Inspect source size and object height against the shadow | Single-effect study; useful explanation rather than a showreel lead |
+| One light. Different edges. | Inspect source size and object height against the shadow | Soft-shadow effect card; outside the shortlist |
 | Overflow | Inspect filling, spill and drainage of a partly filled bowl | Single-effect study |
-| Slow Gold | Inspect liquid contact, stretching and drainage over a ring | Single-effect study and a variation of liquid flow |
-| Intro | A guided overview that deliberately repeats selected uses and techniques | Overview |
+| Slow Gold | Inspect liquid contact, stretching and drainage over a ring | Archived material study; liquid-flow selector and source archive |
+| Intro | A guided overview that deliberately repeats selected uses and techniques | Page header; outside the shortlist |
 
 The index links each film to related effects. This does not assert that every
 film imports those exact factories: some author their own versions of the same
-operation. MP4, timeline, GIF and source links remain available in the index.
+operation. MP4, timeline and GIF links for the selected films remain in the shortlist. The six supporting studies keep those links on their effect cards, and the README source archive retains all seven excluded bundles including the intro. No video files are removed or stitched into another sampler.
 
 ## Ordering by visual impact
 

@@ -1,6 +1,6 @@
 # Motion FX Lab
 
-**Make editable motion graphics and export them to MP4:** social clips, product demos, infographics, animated titles, backgrounds and character sequences. Choose a use-case example or finished sequence, then adapt its copy, data or motion. The full index also includes comparison reels and single-effect renders: 19 videos in total. The effect library contains 69 families, 20 selectable variants and 5 combined showcases. Every exported frame is rendered twice and compared before delivery.
+**Make editable motion graphics and export them to MP4:** social clips, product demos, infographics, animated titles, backgrounds and character sequences. Choose a use-case example or finished sequence, then adapt its copy, data or motion. Start with the 12 selected films; the intro and six supporting studies remain available separately. The effect library contains 69 families, 20 selectable variants and 5 combined showcases. Every exported frame is rendered twice and compared before delivery.
 
 [![Highlights from the intro video (no sound). Click for the full 55-second video with sound.](media/intro.gif?v=curation-1)](media/intro.mp4?v=curation-1)
 
@@ -33,13 +33,12 @@ The website starts with three levels:
 - **Finished sequences:** the three featured films below combine motion, visual treatments, editing and sound around one subject.
 - **Single-effect library:** 69 reusable operations, with variants inside their family cards. Use these building blocks in your own films.
 
-The collapsed **Browse all 19 videos by purpose** index groups six sequences,
-four use-case templates, four comparisons/samplers, four single-effect studies and
-one overview. Every MP4, GIF and timeline remains available. A **comparison** shows alternatives to help you choose a treatment;
-a **single-effect render** is a longer export of one effect. Neither needs another
-large featured card, and neither increases the effect count. The three featured
-choices cover art direction, connected graphic motion and materials; newer studies
-are not automatically promoted. See the [viewing and effect-family guide](fx/VIEWING-GUIDE.md).
+The **Choose from 12 selected films** shortlist groups five sequences, four
+use-case templates, one comparison and two single-effect films. The intro stays
+at the top of the page. Six supporting studies are reached through related effect
+cards or the source archive below, rather than repeated in the main film list.
+The three featured choices cover art direction, connected graphic motion and
+materials. See the [viewing and effect-family guide](fx/VIEWING-GUIDE.md).
 
 <table><tr>
 <td width="33%"><a href="media/style-journey.mp4"><img src="media/style-journey.gif" alt="One flight. Twenty worlds. animated preview" width="300"></a><br><b>One flight. Twenty worlds.</b><br>One character, continuous motion, twenty art directions.</td>
@@ -50,14 +49,14 @@ are not automatically promoted. See the [viewing and effect-family guide](fx/VIE
 Social and Product share a fictional booking app but show different video formats.
 COUNTERFORM and Eight Treatments share choreography: one is a finished action
 sequence, the other compares operations on that action. The three Blender films
-are single-effect renders linked from their effect cards. All 19 films and their
-GIF previews remain in the index below.
+are single-effect renders linked from their effect cards. All 19 video bundles and their GIF previews remain in the repository. The
+shortlist below contains 12; its collapsed source archive contains the other seven.
 
 Three effect families cover **3D spatial type, source-size soft shadows and light-responsive surface hatching**. Letter reflow, a spring-response graph and a radial dot reveal are variants of existing type, timing and wipe families. The dot and city sequences combine these operations; the shadow film isolates one. They reuse Three.js, Canvas and GLSL—no new runtime dependency. See the [design-film editing guide](fx/design/README.md).
 
 ## Published films and previews
 
-### Finished sequences · 6
+### Finished sequences · 5
 
 Complete subjects with a beginning, development and closing beat. Effects and motion are reused across these films.
 
@@ -68,7 +67,6 @@ Complete subjects with a beginning, development and closing beat. Effects and mo
 | Sequence | [One drop. Many forms.](media/water-forms.mp4) | 21.6 s | 16:9 | [GIF](media/water-forms.gif) · [poster](media/water-forms.jpg) | [HTML](examples/water-forms.html) |
 | Sequence | [One word. Many forms.](media/word-forms.mp4) | 21.6 s | 16:9 | [GIF](media/word-forms.gif) · [poster](media/word-forms.jpg) | [HTML](examples/word-forms.html) |
 | Sequence | [COUNTERFORM](media/dot-battle.mp4) | 19.2 s | 16:9 | [GIF](media/dot-battle.gif) · [poster](media/dot-battle.jpg) | [HTML](examples/dot-battle.html) |
-| Sequence | [One block. A drawn city.](media/ink-city.mp4) | 19.2 s | 16:9 | [GIF](media/ink-city.gif) · [poster](media/ink-city.jpg) | [HTML](examples/ink-city.html) |
 
 ### Use-case templates · 4
 
@@ -81,44 +79,51 @@ Start here for a social ad, interface walkthrough, data story or reusable backgr
 | Use case | [Infographics](media/infographic.mp4) | 14.4 s | 16:9 | [GIF](media/infographic.gif) · [poster](media/infographic.jpg) | [HTML](examples/infographic.html) |
 | Use case | [Animated backgrounds](media/broll.mp4) | 12 s | 16:9 | [GIF](media/broll.gif) · [poster](media/broll.jpg) | [HTML](examples/broll.html) |
 
-### Comparisons and samplers · 4
+### Effect comparison · 1
 
-Choose a treatment or compare capabilities. These are demonstrations rather than one continuous story.
+Compare eight operations against the same choreography.
 
 | Type | Film | Authored length | Format | Preview | Source |
 |---|---|---:|---|---|---|
 | Comparison | [Same fight. Eight treatments.](media/fight-effects.mp4) | 38.4 s | 16:9 | [GIF](media/fight-effects.gif) · [poster](media/fight-effects.jpg) | [HTML](examples/fight-effects.html) |
-| Comparison | [One scene. Many eras.](media/scene-eras.mp4) | 24 s | 16:9 | [GIF](media/scene-eras.gif) · [poster](media/scene-eras.jpg) | [HTML](examples/scene-eras.html) |
-| Comparison | [Six optical treatments](media/optical.mp4) | 18 s | 16:9 | [GIF](media/optical.gif) · [poster](media/optical.jpg) | [HTML](examples/optical.html) |
-| Comparison | [Image distortion, collisions and particles](media/stacks.mp4) | 24 s | 16:9 | [GIF](media/stacks.gif) · [poster](media/stacks.jpg) | [HTML](examples/stacks.html) |
 
-### Single-effect studies · 4
+### Single-effect films · 2
 
 Longer exports for inspecting a specific material, lighting or simulation behaviour.
 
 | Type | Film | Authored length | Format | Preview | Source |
 |---|---|---:|---|---|---|
 | Single-effect render | [Find the Form](media/fluid-smoke.mp4) | 9.6 s | 16:9 | [GIF](media/fluid-smoke.gif) · [poster](media/fluid-smoke.jpg) | [HTML](examples/fluid-smoke.html) |
-| Single-effect render | [One light. Different edges.](media/shadow-lab.mp4) | 9.6 s | 16:9 | [GIF](media/shadow-lab.gif) · [poster](media/shadow-lab.jpg) | [HTML](examples/shadow-lab.html) |
 | Single-effect render | [Overflow](media/fluid-overflow.mp4?v=liquid-v2) | 9.6 s | 16:9 | [GIF](media/fluid-overflow.gif?v=liquid-v2) · [poster](media/fluid-overflow.jpg?v=liquid-v2) | [HTML](examples/fluid-overflow.html?v=liquid-v2) |
-| Single-effect render | [Slow Gold](media/fluid-viscous.mp4?v=liquid-v2) | 9.6 s | 16:9 | [GIF](media/fluid-viscous.gif?v=liquid-v2) · [poster](media/fluid-viscous.jpg?v=liquid-v2) | [HTML](examples/fluid-viscous.html?v=liquid-v2) |
 
-### Toolkit overview · 1
+<details>
+<summary>Supporting studies and intro — source archive (7 bundles)</summary>
 
-The introduction repeats selected uses and techniques to explain the toolkit.
+The intro is already shown above. Ink City and Shadow Lab are linked from surface
+hatching and soft shadows. The optical and three-operation samplers belong to
+related effect cards; the room comparison belongs to its combined-scene preset.
+Slow Gold is retained as an archived material study pending visual refinement.
 
 | Type | Film | Authored length | Format | Preview | Source |
 |---|---|---:|---|---|---|
 | Overview | [Intro](media/intro.mp4?v=curation-1) | 55.2 s | 16:9 | [GIF](media/intro.gif?v=curation-1) · [poster](media/intro.jpg?v=curation-1) | [HTML](video/intro.html) |
+| Sequence | [One block. A drawn city.](media/ink-city.mp4) | 19.2 s | 16:9 | [GIF](media/ink-city.gif) · [poster](media/ink-city.jpg) | [HTML](examples/ink-city.html) |
+| Single-effect render | [One light. Different edges.](media/shadow-lab.mp4) | 9.6 s | 16:9 | [GIF](media/shadow-lab.gif) · [poster](media/shadow-lab.jpg) | [HTML](examples/shadow-lab.html) |
+| Comparison | [Six optical treatments](media/optical.mp4) | 18 s | 16:9 | [GIF](media/optical.gif) · [poster](media/optical.jpg) | [HTML](examples/optical.html) |
+| Comparison | [Image distortion, collisions and particles](media/stacks.mp4) | 24 s | 16:9 | [GIF](media/stacks.gif) · [poster](media/stacks.jpg) | [HTML](examples/stacks.html) |
+| Comparison | [One scene. Many eras.](media/scene-eras.mp4) | 24 s | 16:9 | [GIF](media/scene-eras.gif) · [poster](media/scene-eras.jpg) | [HTML](examples/scene-eras.html) |
+| Single-effect render | [Slow Gold](media/fluid-viscous.mp4?v=liquid-v2) | 9.6 s | 16:9 | [GIF](media/fluid-viscous.gif?v=liquid-v2) · [poster](media/fluid-viscous.jpg?v=liquid-v2) | [HTML](examples/fluid-viscous.html?v=liquid-v2) |
 
-All nineteen published films have animated GIF previews and still posters. A GIF
+</details>
+
+All 19 retained video bundles have animated GIF previews and still posters. A GIF
 is a silent selection of shots, not the full film. MP4 container durations can be
 about 0.1 s longer than the authored timeline because of the final frame and
 encoding timestamps. `assets/studio/fight-source.mp4` is a silent green-screen
 source asset, not another finished film.
 
 ```sh
-npm run build:all       # all nineteen published film bundles
+npm run build:all       # all 19 retained video bundles
 npm run build:showcase  # intro, optical, stacks, studio, material, design and baked-fluid films
 npm run render:design-films # dot story, ink city and soft-shadow study
 npm run test:media      # source dimensions/duration and MP4/poster/GIF bundle checks
