@@ -1,6 +1,6 @@
 const {test,expect}=require('@playwright/test');
 const fs=require('node:fs'),path=require('node:path'),{execFileSync}=require('node:child_process');
-const films=['intro','reel','product','infographic','broll','optical','stacks','style-journey','dot-battle','fight-effects','water-forms','word-forms','scene-eras','fluid-overflow','fluid-viscous','fluid-smoke'];
+const films=['intro','reel','product','infographic','broll','optical','stacks','style-journey','dot-battle','fight-effects','water-forms','word-forms','scene-eras','fluid-overflow','fluid-viscous','fluid-smoke','dot-story','ink-city','shadow-lab'];
 const probe=(file,count=false)=>JSON.parse(execFileSync('ffprobe',['-v','error',...(count?['-count_frames']:[]),'-show_streams','-show_format','-of','json',file],{encoding:'utf8',timeout:30000}));
 for(const name of films)test(`published ${name} bundle agrees with its authoring metadata`,async({page})=>{
  await page.goto(`/${name==='intro'?'video':'examples'}/${name}.html`);

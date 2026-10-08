@@ -1,10 +1,10 @@
 # Motion FX Lab
 
-**Make editable motion graphics and export them to MP4:** social clips, product demos, infographics, animated titles, backgrounds and character sequences. Choose a use-case example or finished sequence, then adapt its copy, data or motion. The full index also includes comparison reels and single-effect renders: 16 videos in total. The effect library contains 69 families, 14 selectable variants and 5 combined showcases. Every exported frame is rendered twice and compared before delivery.
+**Make editable motion graphics and export them to MP4:** social clips, product demos, infographics, animated titles, backgrounds and character sequences. Choose a use-case example or finished sequence, then adapt its copy, data or motion. The full index also includes comparison reels and single-effect renders: 19 videos in total. The effect library contains 72 families, 17 selectable variants and 5 combined showcases. Every exported frame is rendered twice and compared before delivery.
 
-[![Highlights from the intro video (no sound). Click for the full 55-second video with sound.](media/intro.gif?v=liquid-v2)](media/intro.mp4?v=liquid-v2)
+[![Highlights from the intro video (no sound). Click for the full 55-second video with sound.](media/intro.gif?v=design-1)](media/intro.mp4?v=design-1)
 
-▶ **[Full intro video, with sound](media/intro.mp4?v=liquid-v2)** (55 s, rendered by this repo) · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · **Licence: [0BSD](LICENSE)**, no conditions · No build step · No AI-generated images or sound
+▶ **[Full intro video, with sound](media/intro.mp4?v=design-1)** (55 s, rendered by this repo) · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · **Licence: [0BSD](LICENSE)**, no conditions · No build step · No AI-generated images or sound
 
 GitHub does not play video files from a repository inline, so the loop above is a GIF. The gallery plays the real video.
 
@@ -23,7 +23,7 @@ Describe the video to an AI coding assistant, or write it yourself. It becomes a
 </tr>
 </table>
 
-Plus characters drawn in code and 69 reusable effect techniques. The 55-second intro moves from four uses and character action into three stories: One Flight, Twenty Worlds; One Word, Many Forms; and One Push, Chain Reaction. It closes by changing text, scrubbing the timeline and exporting MP4. Use the viewing guide below to choose a starting point. The four use-case examples keep their editable text or numbers near the top of their HTML files; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
+Plus characters drawn in code and 72 reusable effect techniques. The 55-second intro moves from four uses and character action into three stories: One Flight, Twenty Worlds; One Word, Many Forms; and One Push, Chain Reaction. It closes by changing text, scrubbing the timeline and exporting MP4. Use the viewing guide below to choose a starting point. The four use-case examples keep their editable text or numbers near the top of their HTML files; change them and run `bash video/build.sh examples/reel.html` for a new MP4. The studio and the shop are fictional, and the numbers are sample data.
 
 ## Finished sequences and single effects
 
@@ -31,7 +31,7 @@ The website has three levels:
 
 - **Use-case examples:** the four GIFs above show familiar video formats you can adapt.
 - **Finished sequences:** the three featured films below combine motion, visual treatments, editing and sound around one subject.
-- **Single-effect library:** 69 reusable operations, with variants inside their family cards. Use these building blocks in your own films.
+- **Single-effect library:** 72 reusable operations, with variants inside their family cards. Use these building blocks in your own films.
 
 The collapsed **All films and comparisons** index keeps every MP4, GIF and timeline
 available. A **comparison** shows alternatives to help you choose a treatment;
@@ -40,25 +40,30 @@ large featured card, and neither increases the effect count.
 
 <table><tr>
 <td width="33%"><a href="media/style-journey.mp4"><img src="media/style-journey.gif" alt="One flight. Twenty worlds. animated preview" width="300"></a><br><b>One flight. Twenty worlds.</b><br>One character, continuous motion, twenty art directions.</td>
-<td width="33%"><a href="media/word-forms.mp4"><img src="media/word-forms.gif" alt="One word. Many forms. animated preview" width="300"></a><br><b>One word. Many forms.</b><br>A word changes treatment and returns to a readable title.</td>
-<td width="33%"><a href="media/dot-battle.mp4"><img src="media/dot-battle.gif" alt="COUNTERFORM animated preview" width="300"></a><br><b>COUNTERFORM</b><br>A complete fight with authored action and contact timing.</td>
+<td width="33%"><a href="media/dot-story.mp4"><img src="media/dot-story.gif" alt="One dot. Many roles. animated preview" width="300"></a><br><b>One dot. Many roles.</b><br>One orange dot becomes a switch, a letter, a spring trace and a reveal before returning to the start.</td>
+<td width="33%"><a href="media/ink-city.mp4"><img src="media/ink-city.gif" alt="One block. A drawn city. animated preview" width="300"></a><br><b>One block. A drawn city.</b><br>A shaded block takes on ink; a city grows around it and the camera travels between its buildings.</td>
 </tr></table>
 
 Social and Product share a fictional booking app but show different video formats.
 COUNTERFORM and Eight Treatments share choreography: one is a finished action
 sequence, the other compares operations on that action. The three Blender films
-are single-effect renders linked from their effect cards. All 16 films and their
+are single-effect renders linked from their effect cards. All 19 films and their
 GIF previews remain in the index below.
+
+Three new effect families cover **3D spatial type, source-size soft shadows and light-responsive surface hatching**. Letter reflow, a spring-response graph and a radial dot reveal are variants of existing type, timing and wipe families. The two new sequences combine these operations; the shadow film isolates one. They reuse Three.js, Canvas and GLSL—no new runtime dependency. See the [design-film editing guide](fx/design/README.md).
 
 ## Published films and previews
 
 | Type | Film | Authored length | Format | Preview | Source |
 |---|---|---:|---|---|---|
-| Overview | [Intro](media/intro.mp4?v=liquid-v2) | 55.2 s | 16:9 | [GIF](media/intro.gif?v=liquid-v2) · [poster](media/intro.jpg?v=liquid-v2) | [HTML](video/intro.html) |
+| Overview | [Intro](media/intro.mp4?v=design-1) | 55.2 s | 16:9 | [GIF](media/intro.gif?v=design-1) · [poster](media/intro.jpg?v=design-1) | [HTML](video/intro.html) |
 | Use case | [Social clips](media/reel.mp4) | 12 s | 9:16 | [GIF](media/reel.gif) · [poster](media/reel.jpg) | [HTML](examples/reel.html) |
 | Use case | [Product demos](media/product.mp4) | 7.2 s | 16:9 | [GIF](media/product.gif) · [poster](media/product.jpg) | [HTML](examples/product.html) |
 | Use case | [Infographics](media/infographic.mp4) | 14.4 s | 16:9 | [GIF](media/infographic.gif) · [poster](media/infographic.jpg) | [HTML](examples/infographic.html) |
 | Use case | [Animated backgrounds](media/broll.mp4) | 12 s | 16:9 | [GIF](media/broll.gif) · [poster](media/broll.jpg) | [HTML](examples/broll.html) |
+| Sequence | [One dot. Many roles.](media/dot-story.mp4) | 19.2 s | 16:9 | [GIF](media/dot-story.gif) · [poster](media/dot-story.jpg) | [HTML](examples/dot-story.html) |
+| Sequence | [One block. A drawn city.](media/ink-city.mp4) | 19.2 s | 16:9 | [GIF](media/ink-city.gif) · [poster](media/ink-city.jpg) | [HTML](examples/ink-city.html) |
+| Single-effect render | [One light. Different edges.](media/shadow-lab.mp4) | 9.6 s | 16:9 | [GIF](media/shadow-lab.gif) · [poster](media/shadow-lab.jpg) | [HTML](examples/shadow-lab.html) |
 | Sequence | [One word. Many forms.](media/word-forms.mp4) | 21.6 s | 16:9 | [GIF](media/word-forms.gif) · [poster](media/word-forms.jpg) | [HTML](examples/word-forms.html) |
 | Sequence | [One drop. Many forms.](media/water-forms.mp4) | 21.6 s | 16:9 | [GIF](media/water-forms.gif) · [poster](media/water-forms.jpg) | [HTML](examples/water-forms.html) |
 | Single-effect render | [Overflow](media/fluid-overflow.mp4?v=liquid-v2) | 9.6 s | 16:9 | [GIF](media/fluid-overflow.gif?v=liquid-v2) · [poster](media/fluid-overflow.jpg?v=liquid-v2) | [HTML](examples/fluid-overflow.html?v=liquid-v2) |
@@ -71,15 +76,16 @@ GIF previews remain in the index below.
 | Comparison | [Six optical treatments](media/optical.mp4) | 18 s | 16:9 | [GIF](media/optical.gif) · [poster](media/optical.jpg) | [HTML](examples/optical.html) |
 | Comparison | [Image distortion, collisions and particles](media/stacks.mp4) | 24 s | 16:9 | [GIF](media/stacks.gif) · [poster](media/stacks.jpg) | [HTML](examples/stacks.html) |
 
-All sixteen published films have animated GIF previews and still posters. A GIF
+All nineteen published films have animated GIF previews and still posters. A GIF
 is a silent selection of shots, not the full film. MP4 container durations can be
 about 0.1 s longer than the authored timeline because of the final frame and
 encoding timestamps. `assets/studio/fight-source.mp4` is a silent green-screen
 source asset, not another finished film.
 
 ```sh
-npm run build:all       # all sixteen published film bundles
-npm run build:showcase  # intro, optical, stacks, studio films, material films and three baked-fluid films
+npm run build:all       # all nineteen published film bundles
+npm run build:showcase  # intro, optical, stacks, studio, material, design and baked-fluid films
+npm run render:design-films # dot story, ink city and soft-shadow study
 npm run test:media      # source dimensions/duration and MP4/poster/GIF bundle checks
 ```
 
@@ -98,7 +104,7 @@ prove a useful or well-directed effect.
 | 0–2.4 s | Motion graphics in plain HTML |
 | 2.4–16.8 s | Social clips, product demos, infographics and B-roll; 3.6 s each |
 | 16.8–21.6 s | A character hands over information; a short fight beat shows action |
-| 21.6–26.4 s | Baked liquid motion, type, volumetric smoke and shape morphing |
+| 21.6–26.4 s | Baked liquid motion, spatial type, surface hatching and source-size shadows |
 | 26.4–33.6 s | One Flight, Twenty Worlds: six readable styles, then the twenty-style overview |
 | 33.6–40.8 s | One Word, Many Forms: 流動 → solid lettering → particles → contour lines → signal breakup → 流動 |
 | 40.8–45.6 s | One Push, Chain Reaction: follow the fall, then reveal all 48 dominoes |
@@ -124,7 +130,7 @@ new effect registrations. Source: [intro.html](video/intro.html) and
 | Pain | What this repo does |
 |---|---|
 | Hand-built, un-diffable animation | Every timeline effect is a small function of time in a plain web page. Serve the gallery over localhost; no framework or bundler. |
-| Starting from a blank page | 69 effect techniques you can copy: kinetic type, UI mock-ups, charts, generative patterns, ray-marched and GPU-particle shaders, physics simulations, chrome, and toon, flat and dithered characters. |
+| Starting from a blank page | 72 effect techniques you can copy: kinetic type, UI mock-ups, charts, generative patterns, ray-marched and GPU-particle shaders, physics simulations, chrome, and toon, flat and dithered characters. |
 | Slow 3D in headless Chrome | GPU rendering through ANGLE Metal, lossless CDP screenshots and 4 browsers in parallel: **399.6 s → 52.9 s** for a 56-second, 3D-heavy video, including the second render that verifies it. |
 | Silent wrong frames | The whole video is rendered twice, each frame on a different browser, and every frame is compared. The recorder also stops on a CPU fallback, a lost WebGL context, a page error or a font that did not load. |
 | Colour shifts | Screenshots are converted with the BT.709 matrix and every file is tagged BT.709; the checks refuse an untagged file. |
@@ -227,7 +233,7 @@ Then run `bash video/build.sh video/yours.html`.
 | `video/deliver.py` | Loudness mastering and the final MP4 files, each checked before it is delivered |
 | `video/gif.py` | The GIF preview, cut from the clips the page declares |
 | `video/intro.html`, `fx/intro-stories.js` | Intro storyboard and the continuous flight, typography and edit/export sequences |
-| `examples/` | Fifteen example films, timeline players and effect settings; the overview intro is in `video/` |
+| `examples/` | Eighteen example films, timeline players and effect settings; the overview intro is in `video/` |
 | `fx/stack-effects.js`, `fx/pack-stacks.js`, `fx/stacks/` | Reusable PixiJS, Rapier and WebGPU timeline effects and gallery adapters |
 | `fx/studio/`, `fx/studio-effects.js`, `fx/pack-studio.js` | Fourteen film effects, twenty art directions, fixed-frame footage, skeletal points and time controls |
 | `assets/studio/` | Original animated GLB, source clip, transparent frame sequence and technique guide |
@@ -243,7 +249,7 @@ Open a study at full size to compare source clocks, a fixed versus moving camera
 solid versus sampled geometry, or a local contact before and after deformation.
 Drawing tools and implementation chips are expandable details.
 
-**69 technique families, 14 selectable variants and 5 separate showcases.** All 77 original demo IDs remain available; eleven additions bring the callable total to 88. The gallery uses one 16:9 card per technique, including characters; variants are selected inside that card. Every main card participates in the kind and renderer filters. Renderers initialize when their cards approach the viewport.
+**72 technique families, 17 selectable variants and 5 separate showcases.** All 77 original demo IDs remain available; seventeen additions bring the callable total to 94. The gallery uses one 16:9 card per technique, including characters; variants are selected inside that card. Every main card participates in the kind and renderer filters. Renderers initialize when their cards approach the viewport.
 
 [fx/catalog.js](fx/catalog.js) owns this classification. Character poses/compositions, dot palettes, shape-morph implementations, particle-text implementations, diagram layouts and flythrough scenes are variants of their respective families. The five-style shader comparison, twenty-art-direction collection, combined gallery journey, underwater scene and eight-treatment room are showcases, not additional techniques. Transparent liquid morphing belongs to clay; solid CJK type belongs to lit3d; whole-frame signal breakup belongs to glitch. “Unique” means a distinct demonstrated operation; it does not mean every effect uses an unrelated rendering algorithm.
 
@@ -408,7 +414,7 @@ an ordinary MP4.
 Run `REQUIRE_WEBGPU=1 npm run test:effects` on a supported GPU to require actual
 compute-buffer checks. Tests cover optical seeks and audio, all three new frame
 APIs, backward simulation seeks, gallery registration, native intro rendering,
-asynchronous screenshot ordering, rejection cleanup, all fourteen studio demos, source-frame indexing, alpha, stable point identities and independent pose/camera clocks. Gallery checks render all 88 IDs, verify undistorted 16:9 frames, filter characters and enforce the technique/variant/showcase mapping. Failure tests preserve existing films and asset bundles; the rebuilt battle is checked for independent instances and repeatable attack frames. Python 3, ffmpeg and
+asynchronous screenshot ordering, rejection cleanup, all fourteen studio demos, source-frame indexing, alpha, stable point identities and independent pose/camera clocks. Gallery checks render all 94 IDs, verify undistorted 16:9 frames, filter characters and enforce the technique/variant/showcase mapping. Failure tests preserve existing films and asset bundles; the rebuilt battle is checked for independent instances and repeatable attack frames. Python 3, ffmpeg and
 Chromium are needed. There is no CI yet.
 
 ## Effects we learnt from other people's videos
@@ -457,7 +463,7 @@ The second was a one-pixel column at the edge of a tile while it scaled in: fram
 - The main gallery uses three.js r128; the newer studio, material and compute modules pin r180. The gallery retains r128, which still ships the single-file UMD build and `examples/js` (removed in r161 and r148). Upgrading means re-tuning every colour, light and shader.
 - The original Helvetiker subset is Latin-only. Solid CJK lettering uses 50 bundled outline glyphs; adding other characters requires rebuilding that asset.
 - The reaction–diffusion tile gives the same pixels every time on one GPU, but we saw a different pattern on SwiftShader than on Metal. It runs 900 steps a second on half-float textures, so small rounding differences between the two backends are the likely cause. The recorder never mixes the two in one run.
-- Automated browser regressions cover effect contracts, editable chart data, gallery framing, asynchronous recording, publication rollback, intro playback and all sixteen published media bundles. There is no CI yet; complete video builds and visual review are performed locally. Bundle metadata checks do not prove visual freshness by themselves.
+- Automated browser regressions cover effect contracts, editable chart data, gallery framing, asynchronous recording, publication rollback, intro playback and all nineteen published media bundles. There is no CI yet; complete video builds and visual review are performed locally. Bundle metadata checks do not prove visual freshness by themselves.
 
 ## Help wanted
 

@@ -8,7 +8,7 @@ test("updated pages bypass a cached pre-fluid catalog", async ({ page }) => {
     await page.goto(url);
     await page.waitForFunction(() => window.FXCatalog);
     expect(await page.evaluate(() => FXCatalog.stats)).toEqual({
-      techniques: 69, variants: 14, showcases: 5, demos: 88,
+      techniques: 72, variants: 17, showcases: 5, demos: 94,
     });
   }
 });
@@ -41,10 +41,10 @@ test("featured sequences stay distinct from the complete film index and single e
   }));
   expect(p.groups.map((g) => g.films)).toEqual([
     ["reel", "product", "infographic", "broll"],
-    ["style-journey", "word-forms", "dot-battle"],
+    ["style-journey", "dot-story", "ink-city"],
   ]);
-  expect(new Set(p.ids).size).toBe(16);
-  expect(p.ids).toHaveLength(16);
+  expect(new Set(p.ids).size).toBe(19);
+  expect(p.ids).toHaveLength(19);
   expect(p.groups.every((g) => g.beforeEffects)).toBe(true);
   expect(p.badLinks).toEqual([]);
   await expect(page.locator(".film-preview img")).toHaveCount(7);
@@ -60,6 +60,7 @@ test("a film link reveals its precise variant and clears incompatible filters", 
 }) => {
   await open(page);
   await page.getByRole("button", { name: "Characters", exact: true }).click();
+  await page.locator('#film-index > summary').click();
   await page.locator('#film-word-forms a[href="#demo-cjk-solid"]').click();
   await expect(page.locator('[data-effect-id="lit3d"] select')).toHaveValue(
     "cjk-solid",
@@ -69,9 +70,8 @@ test("a film link reveals its precise variant and clears incompatible filters", 
     "true",
   );
   await expect(page.locator("#shown")).toHaveText(
-    "69 / 69 effect families shown",
+    "72 / 72 effect families shown",
   );
-  await page.locator('#film-index > summary').click();
   await page.locator('#film-scene-eras a[href="#demo-scene-eras"]').click();
   await expect(page.locator("#composition-presets")).toHaveAttribute("open");
   await expect(page.locator("#demo-scene-eras")).toBeVisible();

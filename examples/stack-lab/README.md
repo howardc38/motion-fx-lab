@@ -1,6 +1,6 @@
 # Film effect settings
 
-PixiJS, Rapier and WebGPU/TSL are three of the gallery's **69 effect techniques**.
+PixiJS, Rapier and WebGPU/TSL are three of the gallery's **72 effect techniques**.
 Use this page to preview parameters and scrub the timeline. Their production
 implementations live in `fx/stacks/` and all expose an asynchronous `frame(t)`.
 The frame recorder awaits completion before capturing each frame.
@@ -26,7 +26,7 @@ This calls `bash video/build.sh examples/stacks.html` and produces
 audio. Every frame is independently rendered twice and compared; the delivery
 pipeline checks codecs, colour tags, frame counts, loudness, peaks and size.
 `npm run record:stacks` remains an alias for the same verified render command.
-`npm run build:showcase` rebuilds 12 bundles: three studio films, three procedural material films, three baked-fluid films, this comparison, the optical comparison and the main intro. It reuses the checked-in fluid frames and does not run Blender.
+`npm run build:showcase` rebuilds 15 bundles: three design films, three studio films, three procedural material films, three baked-fluid films, this comparison, the optical comparison and the main intro. It reuses the checked-in fluid frames and does not run Blender.
 
 The recorder starts a loopback HTTP server for local ES modules and closes it
 when done. To preview manually, run `python3 -m http.server 8000` and open

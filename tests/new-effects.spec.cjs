@@ -103,7 +103,7 @@ test("intro tells three film stories with native frames and reproducible seeks",
   expect(result.samples.find(s=>s.t===46.5).edit.word).toBe('WAVE');
   expect(result.samples.find(s=>s.t===48).edit.word).toBe('FLOW');
   expect(result.samples.find(s=>s.t===49.4).edit.exported).toBe(true);
-  await expect(page.locator('#scLib')).toContainText('69 effect techniques');
+  await expect(page.locator('#scLib')).toContainText('72 effect techniques');
   expect(await page.locator('#scStacks').count()).toBe(0);
 });
 

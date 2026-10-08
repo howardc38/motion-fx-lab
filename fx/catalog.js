@@ -3,6 +3,9 @@
 // counted as additional techniques merely because they have another demo ID.
 (() => {
   const variants = {
+    'design-letter-flow': 'chars',
+    'design-spring-response': 'timing',
+    'design-dot-reveal': 'wipe',
     'fluid-viscous': 'fluid-overflow',
     'water-morph': 'clay',
     'cjk-solid': 'lit3d',

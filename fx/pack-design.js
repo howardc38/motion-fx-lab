@@ -1,0 +1,3 @@
+(() => {
+ for(const s of FXDesign.studies)FX.demo({id:'design-'+s.id,name:s.name,kind:s.kind,stacks:s.stacks,grade:s.stacks.includes('glsl')?'B':'A',chips:s.id==='surface-ink'?['object-space coordinates','light-driven ink density']:s.id==='soft-shadow'?['64 area-light samples','analytic sphere intersection']:['deterministic frame(t)'],purpose:s.description,aspect:'16 / 9',period:s.period,hero:s.hero,build(stage){const ready=FXDesign.create(s.id).then(e=>{e.canvas.className='fill';Object.assign(e.canvas.style,{width:'100%',height:'100%',display:'block'});stage.append(e.canvas);return e;});return{ready,frame:async t=>(await ready).frame(t,{labels:false})};}});
+})();
