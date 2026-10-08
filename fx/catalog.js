@@ -3,6 +3,9 @@
 // counted as additional techniques merely because they have another demo ID.
 (() => {
   const variants = {
+    'stack-pixi': 'liquid',
+    halftonetype: 'studio-video-dots',
+    orbs: 'gradient',
     'design-letter-flow': 'chars',
     'design-spring-response': 'timing',
     'design-dot-reveal': 'wipe',
@@ -23,24 +26,39 @@
   };
   const collections = new Set(['styles', 'studio-themes', 'studio-gallery', 'water-underwater', 'scene-eras']);
   const names = {
+    liquid: 'Image displacement',
+    gradient: 'Soft colour fields',
+    ring: 'Countdown ring',
+    chars: 'Staggered letter animation',
     clay: "3D shape blending",
     lit3d: "Solid lettering",
     glitch: "Signal breakup",
     dithercharacter: 'Dithered character',
     halftone: 'Halftone character',
-    'studio-video-dots': 'Footage to halftone dots',
+    'studio-video-dots': 'Image and footage halftone dots',
     datachart: 'Stroke reveal and diagrams',
     gpuparticles: 'Particle flow into type',
     'optical-morph': 'Shape morphing',
     tunnel: 'Camera flythrough',
   };
   const descriptions = {
+    liquid: 'Warp a flat image with a moving displacement field. Choose glass-like distortion or the filtered poster variation.',
+    gradient: 'Animate soft fields of colour behind readable text. Choose a low-contrast wash or drifting glow orbs.',
+    ring: 'A radial progress stroke and numeric countdown show time remaining.',
+    chars: 'Stagger letter entry and settle into a readable word. Choose a pop or a curved reflow.',
+    dissolve: 'Noise erodes a lit text surface; a bright edge travels across it before it disappears.',
+    rigid: 'Simulated gravity, collisions and stacking, followed by a tilting floor.',
+    reaction: 'A seeded reaction–diffusion field grows organic patterns out of lettering.',
+    sticker: 'Labels enter with staggered scale and rotation, outlined borders and shadows.',
+    mark: 'A moving highlight draws attention to a chosen line of text.',
+    scan: 'A scan line moves over a list and reveals each item’s check state.',
+    stamp: 'Combine a flash, shake and stamped label for a short impact beat.',
     clay: "Blend implicit 3D forms and split or merge their surfaces. Compare opaque ray-marched clay with a transparent reconstructed mesh.",
     lit3d: "Extruded lettering with lit faces and depth. Compare Latin samples with bevelled CJK outlines.",
     glitch: "Displace slices and colour channels. Choose a text-only treatment or a full-frame image effect.",
     dithercharacter: 'Three-ink character rendering. Choose a portrait, card fan, logo ending or narrator composition.',
     halftone: 'A halftone-shaded character, with waving and squash-and-stretch motion variants.',
-    'studio-video-dots': 'Compare the original footage with its dot treatment. Choose steady ink or beat-driven spacing and palettes.',
+    'studio-video-dots': 'Sample an image into a screen-space dot field. Compare footage, rhythmic palettes or letter shapes; changing the source does not add a new family.',
     datachart: 'Progressive stroke reveals, shown as a data chart, annotated diagram or process flow.',
     gpuparticles: 'Particles flow into sampled lettering. Compare the dense curl-field version with the lighter point animation.',
     'optical-morph': 'Interpolate shape contours. Compare arbitrary concave paths with a spring-driven polar morph.',

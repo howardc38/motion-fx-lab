@@ -8,7 +8,7 @@ test("updated pages bypass a cached pre-fluid catalog", async ({ page }) => {
     await page.goto(url);
     await page.waitForFunction(() => window.FXCatalog);
     expect(await page.evaluate(() => FXCatalog.stats)).toEqual({
-      techniques: 72, variants: 17, showcases: 5, demos: 94,
+      techniques: 69, variants: 20, showcases: 5, demos: 94,
     });
   }
 });
@@ -41,7 +41,7 @@ test("featured sequences stay distinct from the complete film index and single e
   }));
   expect(p.groups.map((g) => g.films)).toEqual([
     ["reel", "product", "infographic", "broll"],
-    ["style-journey", "dot-story", "ink-city"],
+    ["style-journey", "dot-story", "water-forms"],
   ]);
   expect(new Set(p.ids).size).toBe(19);
   expect(p.ids).toHaveLength(19);
@@ -70,7 +70,7 @@ test("a film link reveals its precise variant and clears incompatible filters", 
     "true",
   );
   await expect(page.locator("#shown")).toHaveText(
-    "72 / 72 effect families shown",
+    "69 / 69 effect families shown",
   );
   await page.locator('#film-scene-eras a[href="#demo-scene-eras"]').click();
   await expect(page.locator("#composition-presets")).toHaveAttribute("open");
@@ -245,4 +245,22 @@ test("switching presentation during an unfinished seek renders the newly selecte
   await page.evaluate(() => window.releaseFrame());
   await page.waitForFunction(() => window.comparisonRenders > 0);
   await expect(page.locator("#clock")).toHaveText("0.00 s");
+});
+
+test('the film index groups every video by viewing purpose',async({page})=>{
+ await open(page);
+ const groups=await page.locator('#film-index .film-index-group').evaluateAll(nodes=>Object.fromEntries(nodes.map(n=>[n.dataset.filmKind,[...n.querySelectorAll('[data-film-index-id]')].map(r=>r.dataset.filmIndexId)])));
+ expect(Object.fromEntries(Object.entries(groups).map(([k,v])=>[k,v.length]))).toEqual({sequences:6,uses:4,comparisons:4,studies:4,overview:1});
+ expect(groups.comparisons).toContain('scene-eras');expect(groups.studies).toContain('shadow-lab');expect(new Set(Object.values(groups).flat()).size).toBe(19);
+});
+test('source and renderer variations keep working through their family links and filters',async({page})=>{
+ await open(page);
+ for(const [id,parent,kind,stack] of [['stack-pixi','liquid','shader','pixi'],['halftonetype','studio-video-dots','type','canvas'],['orbs','gradient','backdrop','css']]){
+  await page.evaluate(({kind,stack})=>galleryAPI.filter(kind,stack),{kind,stack});
+  const card=page.locator('[data-effect-id="'+parent+'"]');await expect(card).toBeVisible();
+  await page.evaluate(async id=>{await galleryAPI.draw(id,1.4)},id);
+  await expect(card.locator('select')).toHaveValue(id);await expect(card.locator('.oops')).toHaveCount(0);
+  await page.goto('/#demo-'+id);await page.waitForFunction(()=>window.galleryAPI);
+  await expect(page.locator('[data-effect-id="'+parent+'"] select')).toHaveValue(id);
+ }
 });
