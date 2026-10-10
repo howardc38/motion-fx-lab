@@ -149,7 +149,7 @@
     <nav class="legend" aria-label="On this page"><a href="#uses">Use cases</a><a href="#films">Finished films</a><a href="#effects">Single effects</a><a href="#film-index">Film shortlist</a><a href="#make-video">Edit &amp; export</a><a href="https://github.com/howardc38/motion-fx-lab">Get the source</a></nav>
     <p class="note">Watch what you can make, then choose the effects to build it. The use cases and finished sequences below show applications; the single-effect library shows reusable operations.</p>
     <div class="legend" id="legend"></div>
-    <video id="film-intro" class="intro" data-film-id="intro" controls playsinline preload="metadata" poster="media/intro.jpg?v=curation-1" src="media/intro.mp4?v=curation-1" aria-label="Intro video, 55 seconds, with sound"></video>
+    <video id="film-intro" class="intro" data-film-id="intro" controls playsinline preload="metadata" poster="media/intro.jpg?v=signal-1" src="media/intro.mp4?v=signal-1" aria-label="Intro video, 55 seconds, with sound"></video>
   </header>
 
   <section id="uses" class="film-group" aria-labelledby="uses-title">
@@ -341,7 +341,9 @@
 <script src="fx/pack-fluid.js?v=liquid-v2"></script>
 <script src="fx/design-effects.js?v=design-1"></script>
 <script src="fx/pack-design.js?v=design-1"></script>
-<script src="fx/catalog.js?v=curation-1"></script>
+<script src="fx/signal-effects.js?v=signal-1"></script>
+<script src="fx/pack-signals.js?v=signal-1"></script>
+<script src="fx/catalog.js?v=signal-1"></script>
 <script src="fx/gallery-layout.js"></script>
 <script>
 (() => {
@@ -359,19 +361,19 @@
   const KINDS = { shader: "Materials & image treatments", sim: "Physics & growth", character: "Characters", motion: "Motion & timing", backdrop: "Backgrounds", ui: "UI & data", type: "Type" };
   // Curated by visual impact and contrast between neighbouring looks. New families follow this list.
   const ORDER = [
-    "gpuparticles", "domainrep", "optical-foil",
+    "signal-motion-fragments", "gpuparticles", "domainrep", "optical-foil",
     "fluid-smoke", "liquid", "organic-contours",
-    "design-type-orbit", "water-material", "optical-ribbon",
+    "studio-depth-dots", "studio-freeze-orbit", "design-type-orbit", "water-material", "optical-ribbon",
     "reaction", "stack-gpu", "clay",
     "optical-moire", "optical-caustic", "dithercharacter",
     "stack-rapier", "lit3d", "toon",
     "studio-portal", "tunnel", "studio-flight",
     "vartype", "rhythm", "cardflip",
     "water-impact", "design-surface-ink", "optical-slit",
-    "optical-morph", "studio-freeze-orbit", "studio-particle-lens",
+    "optical-morph", "studio-particle-lens",
     "rays", "ridgelines", "chrome",
     "studio-echo", "studio-dot-impact", "studio-skin-cloud",
-    "studio-video-dots", "studio-depth-dots", "fluid-overflow",
+    "studio-video-dots", "fluid-overflow",
     "rigid", "smoke", "halftone",
     "flat", "glitch", "dissolve",
     "studio-time-remap", "design-soft-shadow", "uifly",
@@ -383,7 +385,7 @@
     "type", "mark", "scan",
     "wipe", "lut", "grain",
   ];
-  const PREVIEW_DEFAULT = {lit3d:'cjk-solid',tunnel:'studio-lowpoly'};
+  const PREVIEW_DEFAULT = {lit3d:'cjk-solid',tunnel:'studio-lowpoly','studio-depth-dots':'signal-audio-relief','studio-freeze-orbit':'signal-freeze-orbit'};
   const PREVIEW_HERO = {gpuparticles:1.5}; // Show the flowing form when motion is paused.
   // What a tile needs beyond the page itself.
   const NEEDS = { "A": ["Base stack only", "Needs nothing beyond HTML, CSS, SVG, Canvas and the existing three.js core"],
@@ -415,6 +417,8 @@
     card.caption.querySelector('.seen').textContent = d.seen ? 'Seen in: ' + d.seen : '';
     card.caption.querySelector('.variant-description').textContent = card.family.entries.length > 1 ? d.purpose : '';
     const link=card.caption.querySelector('.preview-link');link.replaceChildren();
+    const signalFilm={'signal-audio-relief':'audio-relief','signal-motion-fragments':'motion-fragments','signal-freeze-orbit':'impact-orbit'}[d.id];
+    if(signalFilm) appendFilmLinks(link,signalFilm,'Watch the 12 s study with sound');
     const designFilm={'design-type-orbit':'dot-story','design-letter-flow':'dot-story','design-spring-response':'dot-story','design-dot-reveal':'dot-story','design-surface-ink':'ink-city','design-soft-shadow':'shadow-lab'}[d.id];
     if(designFilm) appendFilmLinks(link,designFilm,['ink-city','shadow-lab'].includes(designFilm)?'Watch the related study':'Watch the finished film');
     if(d.id.startsWith('fluid-')) appendFilmLinks(link,d.id,d.id==='fluid-viscous'?'Watch the archived material study':'Watch the full 9.6 s render','?v=liquid-v2');

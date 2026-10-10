@@ -1,6 +1,6 @@
 # Film effect settings
 
-PixiJS, Rapier and WebGPU/TSL power three film demonstrations in the gallery's **69 effect families**. The PixiJS poster is a variation of Image displacement; the domino chain and orbital particles have their own family cards.
+PixiJS, Rapier and WebGPU/TSL power three film demonstrations in the gallery's **70 effect families**. The PixiJS poster is a variation of Image displacement; the domino chain and orbital particles have their own family cards.
 Use this page to preview parameters and scrub the timeline. Their production
 implementations live in `fx/stacks/` and all expose an asynchronous `frame(t)`.
 The frame recorder awaits completion before capturing each frame.
@@ -26,7 +26,7 @@ This calls `bash video/build.sh examples/stacks.html` and produces
 audio. Every frame is independently rendered twice and compared; the delivery
 pipeline checks codecs, colour tags, frame counts, loudness, peaks and size.
 `npm run record:stacks` remains an alias for the same verified render command.
-`npm run build:showcase` rebuilds 15 bundles: three design films, three studio films, three procedural material films, three baked-fluid films, this comparison, the optical comparison and the main intro. It reuses the checked-in fluid frames and does not run Blender.
+`npm run build:showcase` rebuilds 18 bundles: three signal-driven films, three design films, three studio films, three procedural material films, three baked-fluid films, this comparison, the optical comparison and the main intro. It reuses the checked-in fluid frames and does not run Blender.
 
 The recorder starts a loopback HTTP server for local ES modules and closes it
 when done. To preview manually, run `python3 -m http.server 8000` and open

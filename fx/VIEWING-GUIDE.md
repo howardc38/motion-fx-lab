@@ -1,7 +1,7 @@
 # Choosing effects and films
 
-The collection contains **69 effect families, 20 selectable variants and five
-combined showcases**: 94 callable demo IDs. The main film shortlist contains **12 videos**; the repository retains **19 video bundles**, including the separate intro and six supporting studies.
+The collection contains **70 effect families, 22 selectable variants and five
+combined showcases**: 97 callable demo IDs. The main film shortlist contains **12 videos**; the repository retains **22 video bundles**, including the separate intro and nine supporting studies.
 These are different counts: a film can reuse several families, several films can
 reuse one family, and a study can export only one effect.
 
@@ -10,7 +10,7 @@ reuse one family, and a study can export only one effect.
 A family demonstrates a distinct visible operation or material response with a
 useful editing control. A new source, palette, composition or rendering library
 alone does not earn another family. This is an editorial classification, not a
-claim of 69 unrelated algorithms or 69 equally spectacular results.
+claim of 70 unrelated algorithms or 70 equally spectacular results.
 
 | Shared operation | Family | Variations kept in its selector |
 |---|---|---|
@@ -18,7 +18,7 @@ claim of 69 unrelated algorithms or 69 equally spectacular results.
 | Sample an image into screen-space dots | `studio-video-dots` — Image and footage halftone dots | Footage; rhythmic dot palettes; halftone lettering (`halftonetype`) |
 | Move soft fields of colour | `gradient` — Soft colour fields | Quiet colour wash; glowing orbs (`orbs`) |
 
-These three consolidations changed the displayed count from 72 to 69. Every
+These three consolidations changed the displayed count from 72 to 69. The later motion-driven fragment family brings the current total to 70; audio relief and impact orbit are variations. Every
 previous demo ID and deep link remains usable. The category and renderer filters
 can select a matching variant even if its parent uses another renderer.
 
@@ -46,7 +46,7 @@ uniqueness; grouping also requires looking at motion and its controls.
 
 ## Which films are worth watching?
 
-The main shortlist contains five sequences, four use-case templates, one comparison and two single-effect films. All 19 bundles are kept as editable examples; the intro stays above the shortlist and six supporting studies are linked from the related effects.
+The main shortlist contains five sequences, four use-case templates, one comparison and two single-effect films. All 22 bundles are kept as editable examples; the intro stays above the shortlist and nine supporting studies are linked from the related effects.
 The three featured sequences cover art direction, connected graphic motion and
 materials. Newness and technical complexity do not determine prominence.
 
@@ -70,15 +70,18 @@ materials. Newness and technical complexity do not determine prominence.
 | One light. Different edges. | Inspect source size and object height against the shadow | Soft-shadow effect card; outside the shortlist |
 | Overflow | Inspect filling, spill and drainage of a partly filled bowl | Single-effect study |
 | Slow Gold | Inspect liquid contact, stretching and drainage over a ring | Archived material study; liquid-flow selector and source archive |
+| Pulse / Form | Measured audio changes solid image-cell depth | Image-relief variation; effect card |
+| Motion / Release | Measured image movement emits and directs fragments | New motion family; effect card |
+| Impact / Orbit | A measured score attack cues an authored held 3D pose and animated lighting | Freeze-orbit variation; effect card |
 | Intro | A guided overview that deliberately repeats selected uses and techniques | Page header; outside the shortlist |
 
 The index links each film to related effects. This does not assert that every
 film imports those exact factories: some author their own versions of the same
-operation. MP4, timeline and GIF links for the selected films remain in the shortlist. The six supporting studies keep those links on their effect cards, and the README source archive retains all seven excluded bundles including the intro. No video files are removed or stitched into another sampler.
+operation. MP4, timeline and GIF links for the selected films remain in the shortlist. The nine supporting studies keep those links on their effect cards, and the README source archive retains all ten excluded bundles including the intro. No video files are removed or stitched into another sampler.
 
 ## Ordering by visual impact
 
-The default effect gallery leads with dense particle motion, repeated depth,
+The default effect gallery leads with motion-driven fragments, dense particle motion, repeated depth,
 spectral material, volumetric smoke, image displacement and flowing contours.
 Materials, colour, depth and changes in form come before restrained lighting
 explanations and small UI/text utilities. Filters preserve that curated order.

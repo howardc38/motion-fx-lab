@@ -93,3 +93,11 @@ scene recipes, primitive geometry, lighting and animation authored here are orig
 Blender's built-in Bfont supplies the rendered FORM lettering; no font file is copied
 into this repository. The cached frames are rendered scene outputs, not downloaded
 footage. Cycles denoising is part of rendering; no generative-image model is used.
+
+## Offline audio and motion measurements
+
+The signal-study preprocessing optionally installs NumPy 2.2.6 (BSD-3-Clause) and
+OpenCV-Python headless 4.12.0.88 (Apache-2.0 for OpenCV; package dependencies keep
+their notices). These tools are not loaded by the website. Versions are pinned in
+`tools/signals/requirements.txt`. The score, source image sequence and GLB are
+original repository assets; no reference-post footage or audio is bundled.

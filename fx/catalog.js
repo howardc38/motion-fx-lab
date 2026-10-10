@@ -3,6 +3,8 @@
 // counted as additional techniques merely because they have another demo ID.
 (() => {
   const variants = {
+    'signal-audio-relief': 'studio-depth-dots',
+    'signal-freeze-orbit': 'studio-freeze-orbit',
     'stack-pixi': 'liquid',
     halftonetype: 'studio-video-dots',
     orbs: 'gradient',
@@ -26,6 +28,8 @@
   };
   const collections = new Set(['styles', 'studio-themes', 'studio-gallery', 'water-underwater', 'scene-eras']);
   const names = {
+    'studio-depth-dots': 'Image relief',
+    'studio-freeze-orbit': 'Freeze frame and camera orbit',
     liquid: 'Image displacement',
     gradient: 'Soft colour fields',
     ring: 'Countdown ring',
@@ -42,6 +46,8 @@
     tunnel: 'Camera flythrough',
   };
   const descriptions = {
+    'studio-depth-dots': 'Turn image samples into shallow depth. Compare a dot surface with solid cells driven by measured sound energy.',
+    'studio-freeze-orbit': 'Hold a real 3D pose while the camera moves. Choose a direct comparison or an impact sequence with changing lights and surface treatment.',
     liquid: 'Warp a flat image with a moving displacement field. Choose glass-like distortion or the filtered poster variation.',
     gradient: 'Animate soft fields of colour behind readable text. Choose a low-contrast wash or drifting glow orbs.',
     ring: 'A radial progress stroke and numeric countdown show time remaining.',

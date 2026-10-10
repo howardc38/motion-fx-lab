@@ -22,7 +22,7 @@
     "render": "bash video/build.sh intro.html",
     "test:effects": "playwright test --config playwright.config.cjs",
     "record:stacks": "npm run render:stacks",
-    "build:showcase": "npm run render:fluid-films && npm run build:materials && npm run build:studio && npm run render:design-films && npm run render:stacks && bash video/build.sh examples/optical.html && bash video/build.sh video/intro.html",
+    "build:showcase": "npm run render:fluid-films && npm run build:materials && npm run build:studio && npm run render:signal-films && npm run render:design-films && npm run render:stacks && bash video/build.sh examples/optical.html && bash video/build.sh video/intro.html",
     "render:stacks": "bash video/build.sh examples/stacks.html",
     "build:studio-assets": "node tools/build-studio-assets.cjs",
     "render:style-journey": "bash video/build.sh examples/style-journey.html",
@@ -34,7 +34,8 @@
     "build:materials": "bash video/build.sh examples/water-forms.html && bash video/build.sh examples/word-forms.html && bash video/build.sh examples/scene-eras.html",
     "build:fluid-assets": "python3 tools/blender/build.py",
     "render:fluid-films": "bash video/build.sh examples/fluid-overflow.html && bash video/build.sh examples/fluid-viscous.html && bash video/build.sh examples/fluid-smoke.html",
-    "render:design-films": "bash video/build.sh examples/dot-story.html && bash video/build.sh examples/ink-city.html && bash video/build.sh examples/shadow-lab.html"
+    "render:design-films": "bash video/build.sh examples/dot-story.html && bash video/build.sh examples/ink-city.html && bash video/build.sh examples/shadow-lab.html",
+    "render:signal-films": "bash video/build.sh examples/audio-relief.html && bash video/build.sh examples/motion-fragments.html && bash video/build.sh examples/impact-orbit.html"
   },
   "devDependencies": {
     "@playwright/test": "1.59.1"

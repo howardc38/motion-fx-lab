@@ -15,11 +15,7 @@ WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
 
 node record.cjs cues "$PAGE" "$WORK/cues.json" ${RECORD_ARGS:-}
-python3 sfx.py "$WORK/cues.json" "$WORK/sfx.wav"
-python3 music.py "$WORK/cues.json" "$WORK/music.wav"
-ffmpeg -y -loglevel error -i "$WORK/music.wav" -i "$WORK/sfx.wav" \
-  -filter_complex "[0][1]amix=inputs=2:normalize=0,alimiter=limit=0.95:level=false:latency=true" \
-  -ar 48000 -c:a pcm_f32le "$WORK/mix.wav"
+python3 prepare-audio.py "$WORK/cues.json" "$PAGE" "$WORK/mix.wav"
 
 # The recorder renders every frame twice on different browsers and exits with 3 if any frame
 # differs. Known history-dependent causes are fixed in engine.js (see README). A mismatch

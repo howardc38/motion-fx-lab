@@ -1,0 +1,3 @@
+(() => {
+  for(const s of FXSignal.studies)FX.demo({id:'signal-'+s.id,name:s.name,kind:s.kind,grade:'B',stacks:['canvas','three','glsl'],chips:s.id==='motion-fragments'?['measured optical flow','solid fragments']:s.id==='audio-relief'?['measured RMS / frequency bands','2.5D solid relief']:['held GLB pose','independent camera / lighting'],purpose:s.description,aspect:'16 / 9',period:s.period,hero:s.hero,build(stage){const ready=FXSignal.create(s.id).then(e=>{e.canvas.className='fill';Object.assign(e.canvas.style,{display:'block',width:'100%',height:'100%'});stage.append(e.canvas);return e;});return{ready,frame:async t=>(await ready).frame(t,{labels:false})};}});
+})();

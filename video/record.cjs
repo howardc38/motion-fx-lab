@@ -306,7 +306,7 @@ async function video(file, out, fps, n, gpu, verify) {
       fs.writeFileSync(path.join(dir, `t${t.toFixed(2).padStart(6, "0")}.png`), await shot(w, t));
     }
   } else if (mode === "cues") {
-    const cues = await w.page.evaluate(() => ({ dur: window.__DUR, cues: window.__cues(), music: window.__music || null, gif: window.__gif || null, poster: window.__poster ?? null }));
+    const cues = await w.page.evaluate(() => ({ dur: window.__DUR, cues: window.__cues(), music: window.__music || null, gif: window.__gif || null, poster: window.__poster ?? null, audio: window.__audio ?? null }));
     fs.writeFileSync(rest[0], JSON.stringify(cues, null, 1));
     console.error(`${cues.cues.length} cues`);
   } else if (mode === "measure") {

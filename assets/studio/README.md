@@ -1,4 +1,4 @@
-# Original studio assets and fourteen film demos
+# Original studio assets and effect factories
 
 The courier artwork, twenty poster treatments, Amber/Teal fighter geometry and 4.8-second
 skeletal fight excerpt are original procedural assets. No reference-post images,
@@ -42,7 +42,7 @@ transfer for arbitrary photographs.
 
 The dot conversion, temporal echoes, impact, time remapping and relief sample the
 same newly rendered fight excerpt. The skin, orbit and lens demos use the actual
-3D Amber/Teal geometry. An orbit holds the block at 0.6 s; lens particles leave
+3D Amber/Teal geometry. The original orbit comparison holds the block at 0.6 s; lens particles leave
 the kick contact while most of the figure remains intact. Every effect keeps its
 own operation instead of replaying the finished fight film.
 
@@ -154,3 +154,17 @@ It excludes the dot-rhythm variant and demonstrates ramp/hold in the time-remap
 chapter; the short study also cycles through normal, reverse and stepped playback.
 It deliberately reuses COUNTERFORM choreography. COUNTERFORM itself remains the
 19.2-second authored fight film, rather than a catalogue of processing methods.
+
+## Signal-driven studies
+
+The additional [signal studies](../../fx/signals/README.md) reuse these assets.
+`audio-relief` and `motion-fragments` measure the indexed RGBA footage; the cinematic
+`freeze-orbit` variation holds the real rig at a kick (3.2 s) and block (0.6 s),
+with camera and lighting on independent clocks. The original studio factory and
+its input/effect comparison remain available.
+
+After regenerating the fight footage, rebuild `assets/signals` with
+`tools/signals/build.py --replace` in the documented analysis environment, then
+run `npm run render:signal-films` and rebuild the intro. The measured cache is a
+self-contained snapshot of its recorded source; it does not silently follow later
+changes to the original frames.
