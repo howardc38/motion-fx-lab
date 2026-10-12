@@ -1,7 +1,7 @@
 # Choosing effects and films
 
-The collection contains **70 effect families, 22 selectable variants and five
-combined showcases**: 97 callable demo IDs. The main film shortlist contains **12 videos**; the repository retains **22 video bundles**, including the separate intro and nine supporting studies.
+The collection contains **71 effect families, 22 selectable variants and five
+combined showcases**: 98 callable demo IDs. The main film shortlist contains **13 videos**; the repository retains **24 video bundles**, including the separate intro and ten supporting studies.
 These are different counts: a film can reuse several families, several films can
 reuse one family, and a study can export only one effect.
 
@@ -10,7 +10,7 @@ reuse one family, and a study can export only one effect.
 A family demonstrates a distinct visible operation or material response with a
 useful editing control. A new source, palette, composition or rendering library
 alone does not earn another family. This is an editorial classification, not a
-claim of 70 unrelated algorithms or 70 equally spectacular results.
+claim of 71 unrelated algorithms or 71 equally spectacular results.
 
 | Shared operation | Family | Variations kept in its selector |
 |---|---|---|
@@ -18,7 +18,7 @@ claim of 70 unrelated algorithms or 70 equally spectacular results.
 | Sample an image into screen-space dots | `studio-video-dots` — Image and footage halftone dots | Footage; rhythmic dot palettes; halftone lettering (`halftonetype`) |
 | Move soft fields of colour | `gradient` — Soft colour fields | Quiet colour wash; glowing orbs (`orbs`) |
 
-These three consolidations changed the displayed count from 72 to 69. The later motion-driven fragment family brings the current total to 70; audio relief and impact orbit are variations. Every
+These three consolidations changed the displayed count from 72 to 69. The later motion-driven fragment family brings the total to 70; speech mouth animation brings it to 71; audio relief and impact orbit are variations. Every
 previous demo ID and deep link remains usable. The category and renderer filters
 can select a matching variant even if its parent uses another renderer.
 
@@ -46,14 +46,16 @@ uniqueness; grouping also requires looking at motion and its controls.
 
 ## Which films are worth watching?
 
-The main shortlist contains five sequences, four use-case templates, one comparison and two single-effect films. All 22 bundles are kept as editable examples; the intro stays above the shortlist and nine supporting studies are linked from the related effects.
-The three featured sequences cover art direction, connected graphic motion and
+The main shortlist contains six sequences, four use-case templates, one comparison and two single-effect films. All 24 bundles are kept as editable examples; the intro stays above the shortlist and ten supporting studies are linked from the related effects.
+The three featured sequences cover art direction, voiced character performance and
 materials. Newness and technical complexity do not determine prominence.
 
 | Film | Role and reason to keep it | Placement |
 |---|---|---|
 | One flight. Twenty worlds. | A continuous character journey through contrasting art directions | Featured sequence |
-| One dot. Many roles. | A visual cue connects type, timing, depth and a reveal; closes its loop | Featured sequence |
+| The Final Final | A voiced two-character story with gestures, reaction holds and camera cuts | Featured sequence |
+| Say it. Mean it. | Speech mouth shapes and facial performance in close-up | Speech effect card; outside the shortlist |
+| One dot. Many roles. | A visual cue connects type, timing, depth and a reveal; closes its loop | Sequence index |
 | One drop. Many forms. | A material-led journey from a splash through changing forms to an underwater view | Featured sequence; authored surfaces, not a fluid solver |
 | One word. Many forms. | A replaceable CJK title passes through solid, particle, contour and signal treatments | Sequence index |
 | COUNTERFORM | Original action choreography, contact holds and framing | Sequence index; related fight studies share its action |
@@ -77,11 +79,11 @@ materials. Newness and technical complexity do not determine prominence.
 
 The index links each film to related effects. This does not assert that every
 film imports those exact factories: some author their own versions of the same
-operation. MP4, timeline and GIF links for the selected films remain in the shortlist. The nine supporting studies keep those links on their effect cards, and the README source archive retains all ten excluded bundles including the intro. No video files are removed or stitched into another sampler.
+operation. MP4, timeline and GIF links for the selected films remain in the shortlist. The ten supporting studies keep those links on their effect cards, and the README source archive retains all eleven excluded bundles including the intro. No video files are removed or stitched into another sampler.
 
 ## Ordering by visual impact
 
-The default effect gallery leads with motion-driven fragments, dense particle motion, repeated depth,
+The default effect gallery leads with motion-driven fragments, expressive speech, dense particle motion, repeated depth,
 spectral material, volumetric smoke, image displacement and flowing contours.
 Materials, colour, depth and changes in form come before restrained lighting
 explanations and small UI/text utilities. Filters preserve that curated order.

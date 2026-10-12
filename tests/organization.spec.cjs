@@ -8,7 +8,7 @@ test("updated pages bypass a cached pre-fluid catalog", async ({ page }) => {
     await page.goto(url);
     await page.waitForFunction(() => window.FXCatalog);
     expect(await page.evaluate(() => FXCatalog.stats)).toEqual({
-      techniques: 70, variants: 22, showcases: 5, demos: 97,
+      techniques: 71, variants: 22, showcases: 5, demos: 98,
     });
   }
 });
@@ -41,10 +41,10 @@ test("featured sequences stay distinct from the film shortlist and single effect
   }));
   expect(p.groups.map((g) => g.films)).toEqual([
     ["reel", "product", "infographic", "broll"],
-    ["style-journey", "dot-story", "water-forms"],
+    ["style-journey", "character-dialogue", "water-forms"],
   ]);
-  expect(new Set(p.ids).size).toBe(12);
-  expect(p.ids).toHaveLength(12);
+  expect(new Set(p.ids).size).toBe(13);
+  expect(p.ids).toHaveLength(13);
   expect(p.groups.every((g) => g.beforeEffects)).toBe(true);
   expect(p.badLinks).toEqual([]);
   await expect(page.locator(".film-preview img")).toHaveCount(7);
@@ -70,7 +70,7 @@ test("a film link reveals its precise variant and clears incompatible filters", 
     "true",
   );
   await expect(page.locator("#shown")).toHaveText(
-    "70 / 70 effect families shown",
+    "71 / 71 effect families shown",
   );
   await page.goto('/#film-scene-eras');
   await expect(page.locator("#composition-presets")).toHaveAttribute("open");
@@ -247,11 +247,11 @@ test("switching presentation during an unfinished seek renders the newly selecte
   await expect(page.locator("#clock")).toHaveText("0.00 s");
 });
 
-test('the film shortlist contains exactly the twelve selected videos',async({page})=>{
+test('the film shortlist contains exactly the thirteen selected videos',async({page})=>{
  await open(page);
  const groups=await page.locator('#film-index .film-index-group').evaluateAll(nodes=>Object.fromEntries(nodes.map(n=>[n.dataset.filmKind,[...n.querySelectorAll('[data-film-index-id]')].map(r=>r.dataset.filmIndexId)])));
- expect(Object.fromEntries(Object.entries(groups).map(([k,v])=>[k,v.length]))).toEqual({sequences:5,uses:4,comparisons:1,studies:2});
- expect(Object.values(groups).flat().sort()).toEqual(['style-journey','dot-story','water-forms','word-forms','dot-battle','reel','product','infographic','broll','fight-effects','fluid-smoke','fluid-overflow'].sort());
+ expect(Object.fromEntries(Object.entries(groups).map(([k,v])=>[k,v.length]))).toEqual({sequences:6,uses:4,comparisons:1,studies:2});
+ expect(Object.values(groups).flat().sort()).toEqual(['character-dialogue','style-journey','dot-story','water-forms','word-forms','dot-battle','reel','product','infographic','broll','fight-effects','fluid-smoke','fluid-overflow'].sort());
 });
 test('source and renderer variations keep working through their family links and filters',async({page})=>{
  await open(page);

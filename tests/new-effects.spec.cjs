@@ -86,7 +86,7 @@ test("intro tells three film stories with native frames and reproducible seeks",
   await page.goto("/video/intro.html");
   await page.evaluate(async()=>{await __ready;await __record();});
   const result=await page.evaluate(async()=>{
-    await __render(20.4);const host=document.querySelector('#battle-shot').getBoundingClientRect(),canvas=document.querySelector('#battle-shot canvas').getBoundingClientRect();const actionFill=[canvas.width/host.width,canvas.height/host.height];
+    await __render(20.4);const host=document.querySelector('#dialogue-shot').getBoundingClientRect(),canvas=document.querySelector('#dialogue-shot canvas').getBoundingClientRect();const actionFill=[canvas.width/host.width,canvas.height/host.height];
     const samples=[];
     for(const t of [27,33.1,34,36.7,38,40.3,45.3,46.5,48,49.4]){
       await __render(t);samples.push({t,...await introProof()});
@@ -104,7 +104,7 @@ test("intro tells three film stories with native frames and reproducible seeks",
   expect(result.samples.find(s=>s.t===46.5).edit.word).toBe('WAVE');
   expect(result.samples.find(s=>s.t===48).edit.word).toBe('FLOW');
   expect(result.samples.find(s=>s.t===49.4).edit.exported).toBe(true);
-  await expect(page.locator('#scLib')).toContainText('70 effect techniques');
+  await expect(page.locator('#scLib')).toContainText('71 effect techniques');
   expect(await page.locator('#scStacks').count()).toBe(0);
 });
 

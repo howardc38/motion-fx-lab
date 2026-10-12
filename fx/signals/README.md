@@ -11,8 +11,7 @@ bundling its footage, artwork or music.
 | [Motion / Release](../../examples/motion-fragments.html) | Measured optical-flow direction/speed emits and directs solid fragments; audio adds depth | `signal-motion-fragments`: one new motion family |
 | [Impact / Orbit](../../examples/impact-orbit.html) | Measured music attacks cue authored impact poses; camera, lights and surface treatment keep moving | `signal-freeze-orbit`: variant of `studio-freeze-orbit` |
 
-These are linked from effect cards and the README source archive. The main film
-shortlist stays at 12. The existing dot-relief and simple freeze comparisons remain
+These are linked from effect cards and the README source archive, outside the main film shortlist. The existing dot-relief and simple freeze comparisons remain
 selectable. Intro excerpts demonstrate the cached source studies under the intro's
 own soundtrack; each full study plays the score used for its measurements.
 

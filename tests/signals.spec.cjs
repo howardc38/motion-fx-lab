@@ -29,5 +29,5 @@ test('catalogue keeps two signal variants and one new motion family, linked to t
  const p=await page.evaluate(()=>['signal-audio-relief','signal-motion-fragments','signal-freeze-orbit'].map(id=>{const d=FXCatalog.byId.get(id);return{id,role:d.role,parent:d.familyId};}));
  expect(p).toEqual([{id:'signal-audio-relief',role:'variant',parent:'studio-depth-dots'},{id:'signal-motion-fragments',role:'technique',parent:'signal-motion-fragments'},{id:'signal-freeze-orbit',role:'variant',parent:'studio-freeze-orbit'}]);
  for(const [demo,parent,film] of [['signal-audio-relief','studio-depth-dots','audio-relief'],['signal-motion-fragments','signal-motion-fragments','motion-fragments'],['signal-freeze-orbit','studio-freeze-orbit','impact-orbit']]){await page.evaluate(id=>galleryAPI.selectVariant(id),demo);await expect(page.locator('[data-effect-id="'+parent+'"] .preview-link a').first()).toHaveAttribute('href','media/'+film+'.mp4');}
- await expect(page.locator('[data-film-index-id]')).toHaveCount(12);
+ await expect(page.locator('[data-film-index-id]')).toHaveCount(13);
 });

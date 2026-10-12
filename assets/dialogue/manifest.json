@@ -1,0 +1,941 @@
+{
+  "version": 1,
+  "generator": "Kokoro 1.0 / kokoro-onnx 0.5.0; Rhubarb 1.14.0",
+  "films": {
+    "character-dialogue": {
+      "duration": 22.5,
+      "turns": [
+        {
+          "speaker": "mira",
+          "text": "Pip. Is the launch video ready?",
+          "gesture": "ask",
+          "start": 0.45,
+          "end": 2.41196,
+          "mouth": [
+            {
+              "start": 0.0,
+              "end": 0.03,
+              "value": "A"
+            },
+            {
+              "start": 0.03,
+              "end": 0.17,
+              "value": "B"
+            },
+            {
+              "start": 0.17,
+              "end": 0.52,
+              "value": "A"
+            },
+            {
+              "start": 0.52,
+              "end": 0.66,
+              "value": "B"
+            },
+            {
+              "start": 0.66,
+              "end": 0.73,
+              "value": "C"
+            },
+            {
+              "start": 0.73,
+              "end": 0.94,
+              "value": "E"
+            },
+            {
+              "start": 0.94,
+              "end": 1.01,
+              "value": "C"
+            },
+            {
+              "start": 1.01,
+              "end": 1.08,
+              "value": "B"
+            },
+            {
+              "start": 1.08,
+              "end": 1.15,
+              "value": "G"
+            },
+            {
+              "start": 1.15,
+              "end": 1.29,
+              "value": "B"
+            },
+            {
+              "start": 1.29,
+              "end": 1.36,
+              "value": "E"
+            },
+            {
+              "start": 1.36,
+              "end": 1.43,
+              "value": "F"
+            },
+            {
+              "start": 1.43,
+              "end": 1.5,
+              "value": "B"
+            },
+            {
+              "start": 1.5,
+              "end": 1.57,
+              "value": "C"
+            },
+            {
+              "start": 1.57,
+              "end": 1.85,
+              "value": "B"
+            },
+            {
+              "start": 1.85,
+              "end": 1.96,
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "speaker": "pip",
+          "text": "Yes. I made it more dramatic.",
+          "gesture": "proud",
+          "start": 2.96196,
+          "end": 5.06388,
+          "mouth": [
+            {
+              "start": 0.0,
+              "end": 0.04,
+              "value": "X"
+            },
+            {
+              "start": 0.04,
+              "end": 0.28,
+              "value": "C"
+            },
+            {
+              "start": 0.28,
+              "end": 0.54,
+              "value": "B"
+            },
+            {
+              "start": 0.54,
+              "end": 0.61,
+              "value": "C"
+            },
+            {
+              "start": 0.61,
+              "end": 0.67,
+              "value": "B"
+            },
+            {
+              "start": 0.67,
+              "end": 0.75,
+              "value": "A"
+            },
+            {
+              "start": 0.75,
+              "end": 0.82,
+              "value": "C"
+            },
+            {
+              "start": 0.82,
+              "end": 0.96,
+              "value": "B"
+            },
+            {
+              "start": 0.96,
+              "end": 1.04,
+              "value": "A"
+            },
+            {
+              "start": 1.04,
+              "end": 1.2,
+              "value": "E"
+            },
+            {
+              "start": 1.2,
+              "end": 1.41,
+              "value": "B"
+            },
+            {
+              "start": 1.41,
+              "end": 1.49,
+              "value": "A"
+            },
+            {
+              "start": 1.49,
+              "end": 1.54,
+              "value": "C"
+            },
+            {
+              "start": 1.54,
+              "end": 2.01,
+              "value": "B"
+            },
+            {
+              "start": 2.01,
+              "end": 2.1,
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "speaker": "mira",
+          "text": "How dramatic?",
+          "gesture": "doubt",
+          "start": 5.51388,
+          "end": 6.57792,
+          "mouth": [
+            {
+              "start": 0.0,
+              "end": 0.03,
+              "value": "X"
+            },
+            {
+              "start": 0.03,
+              "end": 0.2,
+              "value": "C"
+            },
+            {
+              "start": 0.2,
+              "end": 0.41,
+              "value": "B"
+            },
+            {
+              "start": 0.41,
+              "end": 0.49,
+              "value": "A"
+            },
+            {
+              "start": 0.49,
+              "end": 0.55,
+              "value": "C"
+            },
+            {
+              "start": 0.55,
+              "end": 0.96,
+              "value": "B"
+            },
+            {
+              "start": 0.96,
+              "end": 1.06,
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "speaker": "pip",
+          "text": "The progress bar has a cliffhanger.",
+          "gesture": "explain",
+          "start": 6.92792,
+          "end": 9.42392,
+          "mouth": [
+            {
+              "start": 0.0,
+              "end": 0.01,
+              "value": "X"
+            },
+            {
+              "start": 0.01,
+              "end": 0.07,
+              "value": "B"
+            },
+            {
+              "start": 0.07,
+              "end": 0.12,
+              "value": "A"
+            },
+            {
+              "start": 0.12,
+              "end": 0.33,
+              "value": "E"
+            },
+            {
+              "start": 0.33,
+              "end": 0.4,
+              "value": "C"
+            },
+            {
+              "start": 0.4,
+              "end": 0.47,
+              "value": "B"
+            },
+            {
+              "start": 0.47,
+              "end": 0.54,
+              "value": "C"
+            },
+            {
+              "start": 0.54,
+              "end": 0.62,
+              "value": "A"
+            },
+            {
+              "start": 0.62,
+              "end": 0.77,
+              "value": "B"
+            },
+            {
+              "start": 0.77,
+              "end": 0.98,
+              "value": "E"
+            },
+            {
+              "start": 0.98,
+              "end": 1.33,
+              "value": "B"
+            },
+            {
+              "start": 1.33,
+              "end": 1.48,
+              "value": "C"
+            },
+            {
+              "start": 1.48,
+              "end": 1.83,
+              "value": "B"
+            },
+            {
+              "start": 1.83,
+              "end": 1.9,
+              "value": "G"
+            },
+            {
+              "start": 1.9,
+              "end": 2.04,
+              "value": "C"
+            },
+            {
+              "start": 2.04,
+              "end": 2.39,
+              "value": "E"
+            },
+            {
+              "start": 2.39,
+              "end": 2.49,
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "speaker": "mira",
+          "text": "Please tell me you kept the original.",
+          "gesture": "plead",
+          "start": 10.27392,
+          "end": 12.30888,
+          "mouth": [
+            {
+              "start": 0.0,
+              "end": 0.03,
+              "value": "A"
+            },
+            {
+              "start": 0.03,
+              "end": 0.4,
+              "value": "B"
+            },
+            {
+              "start": 0.4,
+              "end": 0.54,
+              "value": "C"
+            },
+            {
+              "start": 0.54,
+              "end": 0.61,
+              "value": "H"
+            },
+            {
+              "start": 0.61,
+              "end": 0.69,
+              "value": "A"
+            },
+            {
+              "start": 0.69,
+              "end": 0.86,
+              "value": "B"
+            },
+            {
+              "start": 0.86,
+              "end": 0.92,
+              "value": "F"
+            },
+            {
+              "start": 0.92,
+              "end": 1.05,
+              "value": "C"
+            },
+            {
+              "start": 1.05,
+              "end": 1.13,
+              "value": "A"
+            },
+            {
+              "start": 1.13,
+              "end": 1.38,
+              "value": "B"
+            },
+            {
+              "start": 1.38,
+              "end": 1.52,
+              "value": "E"
+            },
+            {
+              "start": 1.52,
+              "end": 1.66,
+              "value": "B"
+            },
+            {
+              "start": 1.66,
+              "end": 1.8,
+              "value": "C"
+            },
+            {
+              "start": 1.8,
+              "end": 1.94,
+              "value": "H"
+            },
+            {
+              "start": 1.94,
+              "end": 2.03,
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "speaker": "pip",
+          "text": "Of course. Final. Final. Actually final.",
+          "gesture": "count",
+          "start": 12.85888,
+          "end": 16.08021,
+          "mouth": [
+            {
+              "start": 0.0,
+              "end": 0.03,
+              "value": "X"
+            },
+            {
+              "start": 0.03,
+              "end": 0.08,
+              "value": "B"
+            },
+            {
+              "start": 0.08,
+              "end": 0.12,
+              "value": "G"
+            },
+            {
+              "start": 0.12,
+              "end": 0.54,
+              "value": "E"
+            },
+            {
+              "start": 0.54,
+              "end": 0.68,
+              "value": "B"
+            },
+            {
+              "start": 0.68,
+              "end": 0.89,
+              "value": "G"
+            },
+            {
+              "start": 0.89,
+              "end": 1.1,
+              "value": "C"
+            },
+            {
+              "start": 1.1,
+              "end": 1.24,
+              "value": "H"
+            },
+            {
+              "start": 1.24,
+              "end": 1.47,
+              "value": "B"
+            },
+            {
+              "start": 1.47,
+              "end": 1.54,
+              "value": "G"
+            },
+            {
+              "start": 1.54,
+              "end": 1.61,
+              "value": "C"
+            },
+            {
+              "start": 1.61,
+              "end": 1.68,
+              "value": "B"
+            },
+            {
+              "start": 1.68,
+              "end": 1.82,
+              "value": "C"
+            },
+            {
+              "start": 1.82,
+              "end": 1.96,
+              "value": "H"
+            },
+            {
+              "start": 1.96,
+              "end": 2.14,
+              "value": "B"
+            },
+            {
+              "start": 2.14,
+              "end": 2.19,
+              "value": "C"
+            },
+            {
+              "start": 2.19,
+              "end": 2.59,
+              "value": "B"
+            },
+            {
+              "start": 2.59,
+              "end": 2.66,
+              "value": "G"
+            },
+            {
+              "start": 2.66,
+              "end": 2.73,
+              "value": "C"
+            },
+            {
+              "start": 2.73,
+              "end": 2.8,
+              "value": "B"
+            },
+            {
+              "start": 2.8,
+              "end": 2.94,
+              "value": "C"
+            },
+            {
+              "start": 2.94,
+              "end": 3.08,
+              "value": "H"
+            },
+            {
+              "start": 3.08,
+              "end": 3.22,
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "speaker": "mira",
+          "text": "Which one is it?",
+          "gesture": "question",
+          "start": 16.93021,
+          "end": 18.04517,
+          "mouth": [
+            {
+              "start": 0.0,
+              "end": 0.04,
+              "value": "X"
+            },
+            {
+              "start": 0.04,
+              "end": 0.12,
+              "value": "F"
+            },
+            {
+              "start": 0.12,
+              "end": 0.33,
+              "value": "B"
+            },
+            {
+              "start": 0.33,
+              "end": 0.4,
+              "value": "F"
+            },
+            {
+              "start": 0.4,
+              "end": 0.47,
+              "value": "C"
+            },
+            {
+              "start": 0.47,
+              "end": 1.03,
+              "value": "B"
+            },
+            {
+              "start": 1.03,
+              "end": 1.11,
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "speaker": "pip",
+          "text": "That's the cliffhanger.",
+          "gesture": "reveal",
+          "start": 19.09517,
+          "end": 20.54246,
+          "mouth": [
+            {
+              "start": 0.0,
+              "end": 0.04,
+              "value": "X"
+            },
+            {
+              "start": 0.04,
+              "end": 0.1,
+              "value": "B"
+            },
+            {
+              "start": 0.1,
+              "end": 0.15,
+              "value": "C"
+            },
+            {
+              "start": 0.15,
+              "end": 0.43,
+              "value": "B"
+            },
+            {
+              "start": 0.43,
+              "end": 0.5,
+              "value": "C"
+            },
+            {
+              "start": 0.5,
+              "end": 0.78,
+              "value": "B"
+            },
+            {
+              "start": 0.78,
+              "end": 0.85,
+              "value": "G"
+            },
+            {
+              "start": 0.85,
+              "end": 1.13,
+              "value": "C"
+            },
+            {
+              "start": 1.13,
+              "end": 1.27,
+              "value": "B"
+            },
+            {
+              "start": 1.27,
+              "end": 1.44,
+              "value": "X"
+            }
+          ]
+        }
+      ],
+      "audio": {
+        "file": "character-dialogue.wav",
+        "sha256": "cd76a6c76b070b56c2eb6b2eacfa698a99ec1a1507b83b6fef2129f95a1f25a7"
+      },
+      "title": "The Final Final"
+    },
+    "character-lipsync": {
+      "duration": 9.6,
+      "turns": [
+        {
+          "speaker": "mira",
+          "text": "Big plans. Small buttons. One very brave robot. Ready? Let's make some noise!",
+          "gesture": "perform",
+          "start": 0.45,
+          "end": 5.97458,
+          "mouth": [
+            {
+              "start": 0.0,
+              "end": 0.03,
+              "value": "A"
+            },
+            {
+              "start": 0.03,
+              "end": 0.12,
+              "value": "B"
+            },
+            {
+              "start": 0.12,
+              "end": 0.2,
+              "value": "A"
+            },
+            {
+              "start": 0.2,
+              "end": 0.35,
+              "value": "H"
+            },
+            {
+              "start": 0.35,
+              "end": 0.63,
+              "value": "C"
+            },
+            {
+              "start": 0.63,
+              "end": 0.91,
+              "value": "B"
+            },
+            {
+              "start": 0.91,
+              "end": 0.99,
+              "value": "A"
+            },
+            {
+              "start": 0.99,
+              "end": 1.08,
+              "value": "E"
+            },
+            {
+              "start": 1.08,
+              "end": 1.16,
+              "value": "A"
+            },
+            {
+              "start": 1.16,
+              "end": 1.32,
+              "value": "C"
+            },
+            {
+              "start": 1.32,
+              "end": 1.39,
+              "value": "B"
+            },
+            {
+              "start": 1.39,
+              "end": 1.6,
+              "value": "C"
+            },
+            {
+              "start": 1.6,
+              "end": 1.99,
+              "value": "B"
+            },
+            {
+              "start": 1.99,
+              "end": 2.06,
+              "value": "F"
+            },
+            {
+              "start": 2.06,
+              "end": 2.2,
+              "value": "C"
+            },
+            {
+              "start": 2.2,
+              "end": 2.27,
+              "value": "G"
+            },
+            {
+              "start": 2.27,
+              "end": 2.34,
+              "value": "C"
+            },
+            {
+              "start": 2.34,
+              "end": 2.48,
+              "value": "B"
+            },
+            {
+              "start": 2.48,
+              "end": 2.59,
+              "value": "A"
+            },
+            {
+              "start": 2.59,
+              "end": 2.64,
+              "value": "B"
+            },
+            {
+              "start": 2.64,
+              "end": 2.69,
+              "value": "C"
+            },
+            {
+              "start": 2.69,
+              "end": 2.76,
+              "value": "B"
+            },
+            {
+              "start": 2.76,
+              "end": 2.9,
+              "value": "G"
+            },
+            {
+              "start": 2.9,
+              "end": 2.97,
+              "value": "E"
+            },
+            {
+              "start": 2.97,
+              "end": 3.05,
+              "value": "A"
+            },
+            {
+              "start": 3.05,
+              "end": 3.2,
+              "value": "D"
+            },
+            {
+              "start": 3.2,
+              "end": 3.24,
+              "value": "C"
+            },
+            {
+              "start": 3.24,
+              "end": 3.43,
+              "value": "B"
+            },
+            {
+              "start": 3.43,
+              "end": 3.7,
+              "value": "X"
+            },
+            {
+              "start": 3.7,
+              "end": 3.74,
+              "value": "B"
+            },
+            {
+              "start": 3.74,
+              "end": 3.78,
+              "value": "C"
+            },
+            {
+              "start": 3.78,
+              "end": 4.34,
+              "value": "B"
+            },
+            {
+              "start": 4.34,
+              "end": 4.38,
+              "value": "H"
+            },
+            {
+              "start": 4.38,
+              "end": 4.42,
+              "value": "C"
+            },
+            {
+              "start": 4.42,
+              "end": 4.56,
+              "value": "B"
+            },
+            {
+              "start": 4.56,
+              "end": 4.64,
+              "value": "A"
+            },
+            {
+              "start": 4.64,
+              "end": 4.72,
+              "value": "C"
+            },
+            {
+              "start": 4.72,
+              "end": 4.86,
+              "value": "B"
+            },
+            {
+              "start": 4.86,
+              "end": 4.94,
+              "value": "A"
+            },
+            {
+              "start": 4.94,
+              "end": 5.0,
+              "value": "C"
+            },
+            {
+              "start": 5.0,
+              "end": 5.19,
+              "value": "E"
+            },
+            {
+              "start": 5.19,
+              "end": 5.47,
+              "value": "B"
+            },
+            {
+              "start": 5.47,
+              "end": 5.52,
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "speaker": "mira",
+          "text": "Oh. You meant quiet.",
+          "gesture": "doubt",
+          "start": 6.52458,
+          "end": 7.82954,
+          "mouth": [
+            {
+              "start": 0.0,
+              "end": 0.03,
+              "value": "X"
+            },
+            {
+              "start": 0.03,
+              "end": 0.22,
+              "value": "E"
+            },
+            {
+              "start": 0.22,
+              "end": 0.43,
+              "value": "F"
+            },
+            {
+              "start": 0.43,
+              "end": 0.51,
+              "value": "A"
+            },
+            {
+              "start": 0.51,
+              "end": 0.58,
+              "value": "C"
+            },
+            {
+              "start": 0.58,
+              "end": 0.71,
+              "value": "B"
+            },
+            {
+              "start": 0.71,
+              "end": 0.78,
+              "value": "F"
+            },
+            {
+              "start": 0.78,
+              "end": 0.85,
+              "value": "C"
+            },
+            {
+              "start": 0.85,
+              "end": 0.92,
+              "value": "B"
+            },
+            {
+              "start": 0.92,
+              "end": 0.99,
+              "value": "C"
+            },
+            {
+              "start": 0.99,
+              "end": 1.2,
+              "value": "B"
+            },
+            {
+              "start": 1.2,
+              "end": 1.3,
+              "value": "X"
+            }
+          ]
+        }
+      ],
+      "audio": {
+        "file": "character-lipsync.wav",
+        "sha256": "47719ffed3705bbf10b178db6ecbe35995bd675ae89c27ae383eb74bdb906dfa"
+      },
+      "title": "Say it. Mean it."
+    }
+  }
+}
