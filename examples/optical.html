@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Optical studies — Motion FX Lab</title>
+    <title>Optical effects — Motion FX Lab</title>
     <link rel="icon" href="data:," />
     <style>
       * {
@@ -110,7 +110,7 @@
   <body>
     <main>
       <header>
-        <h1>Six optical studies</h1>
+        <h1>Six optical effects</h1>
         <a href="../index.html">Back to gallery</a>
       </header>
       <nav aria-label="Choose effect"></nav>
@@ -147,28 +147,50 @@
       <p id="error" role="alert"></p>
       <p class="note">
         Canvas / GLSL / Flubber 0.4.2. Pause and scrub freely. The recorder
-        plays all six effects over 18 seconds.
+        plays each effect's own build, hit and aftermath in turn, one segment
+        per effect, 31.6 seconds in all.
       </p>
     </main>
     <script>
       (() => {
-        const modes = ["moire", "slit", "ribbon", "caustic", "foil", "morph"],
+        const modes = ["foil", "slit", "moire", "ribbon", "caustic", "morph"],
           names = [
-            "Moiré",
+            "Holographic foil",
             "Slit-scan type",
+            "Moiré",
             "Paper ribbon",
             "Caustic light",
-            "Holographic foil",
             "Path morph",
           ];
         const notes = [
-          "Two interfering wave fields.",
-          "Horizontal slices sample different phases of moving type.",
-          "Projected geometry; not cloth physics.",
+          "A trading card flicks in the hand; a full-spectrum band and glitter follow the reflection angle. Art-directed diffraction, not thin-film optics.",
+          "Column x shows the spinning banner at time t − (x / W) · Δ; Δ returns to zero and the word snaps back.",
+          "A second grating slides over the first; a word hidden in it shows only while the layers move.",
+          "Seven creases fold a printed strip into a loop. Kinematic folds, not cloth physics.",
           "Procedural approximation; not ray tracing.",
-          "Art-directed spectral highlights; not physical thin-film optics.",
           "Flubber interpolates outer contours; holes are not supported.",
         ];
+        // The film is a sampler: one segment per effect, each playing that effect's own
+        // local time range [from, to). Film times are cumulative.
+        const SEGMENTS = [
+          { mode: "foil", from: -0.8, to: 5.2 },
+          { mode: "slit", from: 0.4, to: 6.9 },
+          { mode: "moire", from: 0.4, to: 6.9 },
+          { mode: "ribbon", from: 0, to: 5.6 },
+          { mode: "caustic", from: 0, to: 3 },
+          { mode: "morph", from: 0.4, to: 4.4 },
+        ];
+        let start = 0;
+        for (const seg of SEGMENTS) {
+          seg.start = +start.toFixed(3);
+          start += seg.to - seg.from;
+          seg.end = +start.toFixed(3);
+        }
+        const DURATION = SEGMENTS.at(-1).end;
+        const at = (mode, local) => {
+          const seg = SEGMENTS.find((s) => s.mode === mode);
+          return +(seg.start + local - seg.from).toFixed(3);
+        };
         const canvas = document.querySelector("canvas"),
           time = document.getElementById("time"),
           strength = document.getElementById("strength"),
@@ -179,6 +201,7 @@
           recording = false,
           last = 0;
         const frames = modes.map((m) => FXOptical.create(canvas, m));
+        const period = (i) => FXOptical.periods[modes[i]];
         function draw() {
           try {
             frames[selected](t, Number(strength.value));
@@ -194,6 +217,8 @@
         }
         function choose(i) {
           selected = i;
+          time.max = period(i);
+          t = Math.min(t, period(i) - 0.01);
           document
             .querySelectorAll("nav button")
             .forEach((b, j) => b.setAttribute("aria-pressed", String(i === j)));
@@ -220,24 +245,27 @@
         });
         strength.addEventListener("input", draw);
         window.__SIZE = { w: 1280, h: 720 };
-        window.__DUR = 18;
+        window.__DUR = DURATION;
         window.__ready = Promise.resolve();
-        window.__poster = 14;
+        // Poster: the foil's full-spectrum sweep. The delivered MP4's video starts two frames
+        // late (start_time 0.0667 s), so aim slightly after the 1.2 s centre of the sweep.
+        window.__poster = at("foil", 1.26);
         // The full build synthesises and masters audio, not just video frames.
         window.__music = [
-          [0, "intro"],
+          [0, "build"],
           [2.4, "drop"],
-          [9.6, "lift"],
-          [14.4, "final"],
-          [16.8, "tail"],
+          [12, "break"],
+          [14.4, "lift"],
+          [19.2, "final"],
+          [29.4, "tail"],
         ];
         window.__gif = [
-          [0.5, 1.7],
-          [3.5, 4.7],
-          [6.5, 7.7],
-          [9.5, 10.7],
-          [12.5, 13.7],
-          [15.5, 16.7],
+          [at("foil", 0.85), at("foil", 2.05)],
+          [at("slit", 2.4), at("slit", 3.6)],
+          [at("moire", 1.0), at("moire", 2.2)],
+          [at("ribbon", 0.5), at("ribbon", 1.7)],
+          [at("caustic", 0.4), at("caustic", 1.6)],
+          [at("morph", 1.2), at("morph", 2.4)],
         ];
         window.__record = () => {
           recording = true;
@@ -245,18 +273,37 @@
           document.body.classList.add("recording");
         };
         window.__render = (seconds) => {
-          selected = Math.min(5, Math.max(0, Math.floor(seconds / 3)));
-          t = Math.max(0, seconds - selected * 3);
+          const clamped = Math.min(Math.max(seconds, 0), DURATION);
+          let seg = SEGMENTS.find((s) => clamped < s.end);
+          if (!seg) seg = SEGMENTS.at(-1);
+          selected = modes.indexOf(seg.mode);
+          t = seg.from + clamped - seg.start;
           strength.value = 1;
           draw();
         };
-        window.__cues = () =>
-          [3, 6, 9, 12, 15].map((t) => ({ t, name: "whoosh" }));
+        window.__cues = () => [
+          { t: at("foil", 0.78), name: "whoosh" },
+          { t: at("foil", 1.12), name: "chime" },
+          { t: at("foil", 4.3), name: "whoosh" },
+          { t: at("slit", 1.0), name: "riser" },
+          { t: at("slit", 2.88), name: "impact" },
+          { t: at("slit", 5.82), name: "thump" },
+          { t: at("moire", 0.9), name: "whoosh" },
+          { t: at("moire", 1.45), name: "impact" },
+          { t: at("moire", 6.0), name: "tap" },
+          { t: at("ribbon", 0.1), name: "whoosh" },
+          { t: at("ribbon", 0.78), name: "pop" },
+          { t: at("ribbon", 1.4), name: "thump" },
+          { t: at("caustic", 0), name: "whoosh" },
+          { t: at("morph", 2.3), name: "pop" },
+        ];
         window.opticalDemo = {
           modes,
           frames,
           canvas,
           choose,
+          // Effect id -> [start, end] seconds in the recorded film.
+          segments: SEGMENTS.map((s) => ({ id: "optical-" + s.mode, start: s.start, end: s.end, from: s.from, to: s.to })),
           pause: () => {
             playing = false;
             play.textContent = "Play";
@@ -265,7 +312,7 @@
         choose(0);
         function tick(now) {
           if (last && playing && !recording) {
-            t = (t + Math.min((now - last) / 1000, 0.1)) % 8;
+            t = (t + Math.min((now - last) / 1000, 0.1)) % period(selected);
             draw();
           }
           last = now;
