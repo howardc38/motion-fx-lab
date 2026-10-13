@@ -19,43 +19,40 @@ export function timeline(chapters, extraCues = []) {
   });
 }
 export const TIMELINES = Object.freeze({
-  water: timeline(
-    [
-      {
-        id: "impact",
-        duration: 5.4,
-        index: 0,
-        offset: 0,
-        title: "One drop.",
-        sub: "A SMALL EVENT. A WHOLE WORLD OF MOTION.",
-      },
-      {
-        id: "morph",
-        duration: 8,
-        index: 1,
-        offset: 0,
-        title: "Many forms.",
-        sub: "SPHERE / BLOCK / RING / DROPLETS",
-      },
-      {
-        id: "material",
-        duration: 2.8,
-        index: 2,
-        offset: 1,
-        title: "Light gives it depth.",
-        sub: "A SURFACE YOU CAN LOOK THROUGH.",
-      },
-      {
-        id: "underwater",
-        duration: 5.4,
-        index: 3,
-        offset: 1.2,
-        title: "And another world below.",
-        sub: "ONE DROP. MANY FORMS.",
-      },
-    ],
-    [1.35],
-  ),
+  // "Clear" drinks advert. Chapters stay under 3.5 s; `effect` names the library study.
+  water: Object.freeze({
+    ...timeline([
+      { id: "drop", duration: 0.8, effect: "water-impact" },
+      { id: "crown", duration: 1.2, effect: "water-impact" },
+      { id: "form", duration: 2.5, effect: "water-morph" },
+      { id: "glass", duration: 3, effect: "water-material" },
+      { id: "dive", duration: 3, effect: "water-underwater" },
+      { id: "rise", duration: 2, effect: "water-underwater" },
+      { id: "endcard", duration: 2.5 },
+    ]),
+    // Sound design on the action, not on every chapter boundary.
+    cues: Object.freeze([
+      { t: 0.74, name: "pop", gain: 1.1 },
+      { t: 0.8, name: "impact", gain: 0.32 },
+      { t: 0.82, name: "whoosh", gain: 0.55 },
+      { t: 3.25, name: "riser", gain: 0.9 },
+      { t: 4.46, name: "ping", gain: 0.9 },
+      { t: 4.9, name: "scan", gain: 1 },
+      { t: 7.72, name: "whoosh", gain: 0.9 },
+      { t: 7.84, name: "impact", gain: 0.42 },
+      { t: 11.32, name: "whoosh", gain: 0.8 },
+      { t: 11.4, name: "pop", gain: 0.7 },
+      { t: 13.15, name: "pop", gain: 1 },
+      { t: 13.2, name: "chime", gain: 1 },
+    ]),
+    music: Object.freeze([
+      [0, "intro"],
+      [2.4, "drop"],
+      [7.2, "break"],
+      [10.8, "final"],
+      [13.2, "tail"],
+    ]),
+  }),
   word: timeline([
     { id: "solid", duration: 5.4 },
     { id: "particles", duration: 3.6 },

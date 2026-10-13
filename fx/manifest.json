@@ -128,10 +128,10 @@
       "cacheTag": null,
       "readme": "fx/material-studies/README.md",
       "sources": {
-        "water-material": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/water.js"],
-        "water-morph": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/water.js"],
-        "water-impact": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/water.js"],
-        "water-underwater": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/water.js"],
+        "water-material": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/water.js", "fx/material-studies/water-kit.js"],
+        "water-morph": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/water.js", "fx/material-studies/water-kit.js"],
+        "water-impact": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/water.js", "fx/material-studies/water-kit.js"],
+        "water-underwater": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/water.js", "fx/material-studies/water-kit.js"],
         "cjk-solid": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/type.js"],
         "organic-contours": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/contours.js"],
         "frame-glitch": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/glitch.js"],
@@ -184,7 +184,6 @@
         "design-soft-shadow": ["fx/design-effects.js", "fx/pack-design.js", "fx/design/lighting.js", "fx/design/math.js", "fx/design/common.js", "fx/design/README.md"],
         "design-surface-ink": ["fx/design-effects.js", "fx/pack-design.js", "fx/design/ink.js", "fx/design/math.js", "fx/design/common.js", "fx/design/README.md"],
         "design-letter-flow": ["fx/design-effects.js", "fx/pack-design.js", "fx/design/flat.js", "fx/design/math.js", "fx/design/README.md"],
-        "design-spring-response": ["fx/design-effects.js", "fx/pack-design.js", "fx/design/flat.js", "fx/design/math.js", "fx/design/README.md"],
         "design-dot-reveal": ["fx/design-effects.js", "fx/pack-design.js", "fx/design/flat.js", "fx/design/math.js", "fx/design/README.md"]
       }
     },
