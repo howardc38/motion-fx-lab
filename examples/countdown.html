@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Motion FX Lab use case: event countdown</title>
+<script>
+// ─── Edit here. The event, its details and colours. Open Kiln and its launch are fictional. ─────────────
+// FORMAT is "wide" (1920 × 1080) or "vertical" (1080 × 1920); ?format=vertical previews the other one.
+// LOGO is built in 3D from assets/type/motion-cjk.json: capitals A–Z, digits, full stops and spaces,
+// plus the CJK characters listed in assets/type/README.md.
+const FORMAT = "wide";
+const EVENT = {
+  logo: "OPEN KILN",
+  kicker: "LIVE IN",
+  from: 10,                                   // the first number shown; one number every two beats
+  title: ["Spring", "collection", "launch"],
+  chips: [["DATE", "Thu 12 March"], ["TIME", "7 pm CET · live"], ["HOSTS", "Ines Duarte & Rafa Ono"]],
+  where: "openkiln.example/live",
+  cta: "Set a reminder →",
+  colors: { bg: "#140f1c", ink: "#fbf4ea", accent: "#ff6b3d", glow: "#7d5cff", soft: "#2a2236" },
+};
+</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  :root { --lat: "Archivo", "Helvetica Neue", Arial, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+  html, body { height: 100%; }
+  body { margin: 0; background: #111110; display: grid; place-items: center; }
+  #frame { position: relative; overflow: hidden; background: var(--bg); }
+  #stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; font-family: var(--lat); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  body.record { display: block; }
+  body.record #frame { position: fixed; left: 0; top: 0; }
+  body.record #stage { transform: none !important; }
+  .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; background: var(--bg); }
+  .a { position: absolute; }
+  .glow { position: absolute; border-radius: 50%; background: radial-gradient(circle, var(--glow) 0%, transparent 65%); opacity: .45; }
+  .num { position: absolute; display: grid; place-items: center; font: 900 430px/1 var(--lat); font-stretch: 112%; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+  .kick { font: 700 46px var(--mono); letter-spacing: .3em; color: var(--accent); text-align: center; }
+  .chip { display: flex; flex-direction: column; gap: 6px; padding: 18px 26px; border-radius: 22px; background: var(--soft); border: 2px solid rgba(251,244,234,.18); }
+  .chip span { font: 700 26px var(--mono); letter-spacing: .14em; color: var(--accent); }
+  .chip b { font: 800 36px var(--lat); white-space: nowrap; }
+  .chip.row { flex-direction: row; align-items: baseline; gap: 16px; padding: 9px 20px; border-radius: 16px; }
+  .chip.row b { font-size: 30px; }
+  .chip.row span { font-size: 24px; }
+  .title { font: 900 92px/.95 var(--lat); letter-spacing: -.03em; }
+  .flash { inset: 0; background: rgba(255,255,255,.3); opacity: 0; pointer-events: none; }
+  .flash.full { background: #fff; }
+  .shade { left: 0; right: 0; background: linear-gradient(180deg, transparent, rgba(10,7,14,.78) 30%, rgba(10,7,14,.78) 70%, transparent); }
+  #gl, #dust, #grain { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+  #grain { mix-blend-mode: overlay; opacity: .07; pointer-events: none; z-index: 5; }
+  .info { text-align: center; left: 0; right: 0; font-size: 64px; }
+  .info b { display: block; font: 900 1em var(--lat); letter-spacing: -.02em; }
+  .info span { display: block; margin-top: 12px; font: 700 .53em var(--mono); color: rgba(251,244,234,.85); }
+  .sticker { position: absolute; padding: 22px 40px; border-radius: 24px; border: 6px solid #fff; background: var(--accent); color: #fff; box-shadow: 0 10px 0 rgba(0,0,0,.25), 0 24px 50px rgba(0,0,0,.35); font: 900 56px var(--lat); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="frame">
+<div id="stage" data-dur="15">
+  <section class="scene" data-start="0" id="s1"></section>
+  <section class="scene" data-start="12" data-trans="cut" id="s2"><canvas id="gl"></canvas></section>
+  <canvas id="grain" data-effect="grain"></canvas>
+</div>
+</div>
+<script>
+(() => {
+  const V = (new URLSearchParams(location.search).get("format") || FORMAT) === "vertical";
+  const W = V ? 1080 : 1920, H = V ? 1920 : 1080;
+  const stage = document.getElementById("stage");
+  Object.assign(stage.dataset, { w: W, h: H });
+  stage.style.width = `${W}px`; stage.style.height = `${H}px`;
+  const C = EVENT.colors;
+  for (const [k, v] of Object.entries(C)) document.documentElement.style.setProperty(`--${k}`, v);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  // 100 BPM, as video/music.py plays it. A number lands every two beats; 3, 2, 1 hit harder; the logo lands on
+  // the bar at 12 s, where the music drops.
+  const BEAT = 0.6, REVEAL = 12, STEP = 2 * BEAT;
+  const from = Math.max(1, Math.min(10, EVENT.from));
+  const numAt = (n) => REVEAL - n * STEP;
+
+  // Layout per format. Vertical keeps words inside the area Reels, TikTok and Shorts leave clear.
+  const L = V ? { cx: 500, cy: 690, r: 290, numSize: 330, kickY: 482, chips: "below", chipY: 1062, chipGap: 62, titleY: 300, logoX: 504, logoY: 560, logoW: 0.68, infoY: 740, ctaY: 1040, infoSide: [120, 192] }
+              : { cx: 960, cy: 520, r: 330, numSize: 430, kickY: 285, chips: "left", chipX: 110, chipY: 300, chipGap: 170, titleX: 1375, titleY: 340, logoX: 960, logoY: 380, logoW: 0.62, infoY: 610, ctaY: 845, infoSide: [0, 0] };
+  window.__layout = { W, H, ...L };
+
+  const ringSize = L.r * 2 + 80, rx = L.cx - ringSize / 2, ry = L.cy - ringSize / 2, RC = 2 * Math.PI * L.r;
+  const ticks = Array.from({ length: 60 }, (_, i) => { const a = (i / 60) * Math.PI * 2, r0 = L.r + 26, r1 = L.r + (i % 5 ? 34 : 44);
+    return `<line x1="${ringSize / 2 + r0 * Math.sin(a)}" y1="${ringSize / 2 - r0 * Math.cos(a)}" x2="${ringSize / 2 + r1 * Math.sin(a)}" y2="${ringSize / 2 - r1 * Math.cos(a)}"/>`; }).join("");
+  const nums = Array.from({ length: from }, (_, k) => from - k);
+  document.getElementById("s1").innerHTML =
+    `<div class="glow" id="glow" style="left:${L.cx - 700}px;top:${L.cy - 700}px;width:1400px;height:1400px"></div>` +
+    `<div class="a" id="shake" style="inset:0" data-effect="stamp">` +
+      `<svg class="a" id="ring" data-effect="ring" style="left:${rx}px;top:${ry}px" width="${ringSize}" height="${ringSize}" aria-hidden="true">` +
+        `<circle cx="${ringSize / 2}" cy="${ringSize / 2}" r="${L.r}" fill="none" stroke="${C.soft}" stroke-width="22"/>` +
+        `<circle id="arc" cx="${ringSize / 2}" cy="${ringSize / 2}" r="${L.r}" fill="none" stroke="${C.ink}" stroke-width="22" stroke-linecap="round" stroke-dasharray="${RC} ${RC}" transform="rotate(-90 ${ringSize / 2} ${ringSize / 2})"/>` +
+        `<g id="ticks" stroke="${C.ink}" stroke-width="4" stroke-linecap="round" opacity=".35">${ticks}</g></svg>` +
+      `<div class="a kick" style="left:${L.cx - 300}px;width:600px;top:${L.kickY}px" data-fx="fade" data-at="0.05" data-out="${numAt(1) + 0.4}">${esc(EVENT.kicker)}</div>` +
+      nums.map((n) => `<div class="num" data-effect="count beat" style="left:${L.cx - 400}px;top:${L.cy - 270}px;width:800px;height:560px;font-size:${L.numSize}px${n <= 3 ? `;color:${C.accent}` : ""}" data-fx="slam" data-at="${Math.max(0, numAt(n)).toFixed(2)}" data-dur="${n <= 3 ? 0.4 : 0.32}" data-out="${(numAt(n) + STEP - (n === 1 ? 0.6 : 0.12)).toFixed(2)}" data-sfx="${n <= 3 ? "impact" : "tick"}">${n}</div>`).join("") +
+    `</div>` +
+    (L.chips === "left"
+      ? EVENT.chips.map(([k, v], i) => `<div class="a chip" style="left:${L.chipX}px;top:${L.chipY + i * L.chipGap}px" data-effect="whip" data-fx="whip" data-dx="-420" data-at="${(1.8 + i * 1.8).toFixed(1)}" data-out="8.2" data-sfx="whoosh"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join("") +
+        EVENT.title.map((w, i) => `<div class="a title" style="left:${L.titleX}px;top:${L.titleY + i * 100}px" data-fx="up" data-at="${0.3 + i * 0.12}" data-out="8.2">${esc(w)}</div>`).join("")
+      : EVENT.chips.map(([k, v], i) => `<div class="a chip row" style="left:120px;top:${L.chipY + i * L.chipGap}px" data-effect="whip" data-fx="whip" data-dx="-420" data-at="${(1.8 + i * 1.8).toFixed(1)}" data-out="8.2" data-sfx="whoosh"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join("") +
+        `<div class="a title" style="left:120px;top:${L.titleY}px;font-size:56px;width:768px" data-fx="up" data-at="0.3" data-out="8.2">${esc(EVENT.title.join(" "))}</div>`) +
+    `<canvas id="dust" data-effect="particles"></canvas>` +
+    nums.filter((n) => n <= 3).map((n) => `<div class="a flash" data-fx="flash" data-at="${numAt(n).toFixed(2)}" data-dur="0.25"></div>`).join("");
+
+  document.getElementById("s2").insertAdjacentHTML("beforeend",
+    `<div class="a flash full" data-fx="flash" data-at="0" data-dur="0.45"></div>` +
+    `<div class="a shade" style="top:${L.infoY - 60}px;height:${L.ctaY - L.infoY + 230}px" data-fx="fade" data-at="0.6"></div>` +
+    `<div class="a info" style="top:${L.infoY}px;left:${L.infoSide[0]}px;right:${L.infoSide[1]}px${V ? ";font-size:50px" : ""}" data-fx="up" data-at="0.75"><b>${esc(EVENT.title.join(" "))}</b><span>${esc(EVENT.chips[0][1])} · ${esc(EVENT.chips[1][1])}</span><span>${esc(EVENT.where)}</span></div>` +
+    `<div class="sticker" data-effect="sticker" style="left:${V ? 450 : W / 2}px;top:${L.ctaY}px;transform:translateX(-50%) rotate(-3deg)" data-fx="pop" data-at="1.15" data-base="translateX(-50%) rotate(-3deg)" data-sfx="ding">${esc(EVENT.cta)}</div>`);
+
+  window.__poster = 13.4;   // the chrome logo in its rays, with the reminder
+  window.__music = [[0, "intro"], [4.8, "build"], [12, "drop"], [14.4, "tail"]];
+  window.__effects = [
+    { id: "count", at: [0, 11.4] }, { id: "ring", at: [0, 12] }, { id: "beat", at: [0, 12] },
+    { id: "whip", at: [1.8, 5.85] }, { id: "stamp", at: [8.4, 11.2] }, { id: "particles", at: [11.0, 12.0] },
+    { id: "chrome", at: [12, 15] }, { id: "rays", at: [12, 15] }, { id: "particles", at: [12, 13.6] },
+    { id: "sticker", at: [13.15, 13.6] }, { id: "grain", at: [0, 15] },
+  ];
+
+  const clamp = (v) => Math.max(0, Math.min(1, v));
+  const arc = document.getElementById("arc"), tickG = document.getElementById("ticks"), glow = document.getElementById("glow"), shake = document.getElementById("shake");
+  const numEls = [...document.querySelectorAll("#s1 .num")];
+  // grain: fresh noise every third frame, from a seed per step, so any frame can be drawn alone.
+  const grain = document.getElementById("grain"), GW = W / 6, GH = H / 6;
+  grain.width = GW; grain.height = GH;
+  const gg = grain.getContext("2d"), noise = gg.createImageData(GW, GH);
+  let lastStep = -1;
+  window.__renderHooks = window.__renderHooks || [];
+  window.__renderHooks.push(async (t) => {
+    // ring: the whole countdown drains the ring; the last three numbers turn it to the accent.
+    const left = 1 - clamp(t / REVEAL);
+    arc.setAttribute("stroke-dashoffset", (RC * (1 - left)).toFixed(2));
+    arc.setAttribute("stroke", t >= numAt(3) ? C.accent : C.ink);
+    // beat: ticks and glow kick on every beat; the number breathes on the beat between changes.
+    const ph = (((t % BEAT) + BEAT) % BEAT), kick = Math.exp(-ph * 8);
+    tickG.setAttribute("opacity", (0.25 + 0.6 * kick).toFixed(3));
+    glow.style.transform = `scale(${(1 + 0.06 * kick).toFixed(4)})`;
+    // stamp: 3, 2 and 1 shake the frame as they land.
+    let sx = 0, sy = 0;
+    for (const n of [3, 2, 1]) { const d = t - numAt(n); if (d >= 0 && d < 0.45) { const a = 18 * (1 - d / 0.45); sx += a * Math.sin(d * 95); sy += a * Math.cos(d * 73); } }
+    shake.style.transform = `translate(${sx.toFixed(2)}px, ${sy.toFixed(2)}px)`;
+    const step = Math.floor(t * 10);
+    if (step !== lastStep) {
+      let s = (step * 2654435761) >>> 0;
+      for (let i = 0; i < noise.data.length; i += 4) { s = (s * 1664525 + 1013904223) >>> 0; const v = s >>> 24; noise.data[i] = noise.data[i + 1] = noise.data[i + 2] = v; noise.data[i + 3] = 255; }
+      gg.putImageData(noise, 0, 0); lastStep = step;
+    }
+    if (window.__countdownGL) (await window.__countdownGL).frame(t);
+  });
+  window.__ready = Promise.all([document.fonts.ready, new Promise((resolve, reject) => { window.__countdownGLDone = resolve; window.__countdownGLFail = reject; })]);
+})();
+</script>
+<script src="../video/engine.js"></script>
+<script type="module">
+// The reveal: particles flow into the logo's outline (2D, over the countdown), then at 12 s the logo lands as
+// extruded chrome (PBR metal reflecting a painted studio), with light rays, bloom and a burst of particles.
+import * as THREE from "three";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { SVGLoader } from "three/addons/loaders/SVGLoader.js";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
+import { font } from "../fx/material-studies/type.js";
+
+const ready = (async () => {
+  const { W, H, logoX, logoY, logoW } = window.__layout, REVEAL = 12, C = EVENT.colors;
+  const data = await font();
+  const clamp = (v) => Math.max(0, Math.min(1, v)), smooth = (x) => { x = clamp(x); return x * x * (3 - 2 * x); };
+  const back = (x) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+  const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+
+  // The logo's outlines, in font units (y up). Spaces advance; unknown characters fail loudly.
+  const letters = [];
+  let advance = 0;
+  for (const ch of Array.from(EVENT.logo)) {
+    if (ch === " ") { advance += 320; continue; }
+    const g = data.glyphs[ch];
+    if (!g) throw new Error(`The logo font has no outline for "${ch}"; see assets/type/README.md`);
+    letters.push({ path: g.path, x: advance }); advance += g.advance;
+  }
+
+  const canvas = document.getElementById("gl");
+  canvas.width = W; canvas.height = H;
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1); renderer.setSize(W, H, false);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(C.bg);
+  const camera = new THREE.PerspectiveCamera(32, W / H, 0.1, 200);
+  camera.position.set(0, 0, 30);
+  const vh = 2 * 30 * Math.tan(THREE.MathUtils.degToRad(16)), vw = vh * (W / H);
+
+  // chrome: a studio painted on a canvas, turned into a reflection map (as the library's chrome effect does).
+  const paint = document.createElement("canvas"); paint.width = 1024; paint.height = 512;
+  const p = paint.getContext("2d");
+  const sky = p.createLinearGradient(0, 0, 0, 512); sky.addColorStop(0, "#2a2034"); sky.addColorStop(0.5, "#0b0910"); sky.addColorStop(1, "#24140f");
+  p.fillStyle = sky; p.fillRect(0, 0, 1024, 512);
+  p.filter = "blur(10px)";
+  p.fillStyle = "#ffffff"; p.fillRect(60, 70, 380, 130); p.fillRect(600, 30, 400, 110); p.fillRect(0, 232, 1024, 30);
+  p.fillStyle = C.accent; p.fillRect(380, 300, 340, 120); p.fillRect(30, 330, 180, 80);
+  p.fillStyle = C.glow; p.fillRect(820, 250, 190, 180);
+  const env = new THREE.CanvasTexture(paint); env.mapping = THREE.EquirectangularReflectionMapping; env.colorSpace = THREE.SRGBColorSpace;
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromEquirectangular(env).texture; pmrem.dispose();
+
+  const geoms = letters.map(({ path, x }) => {
+    const shapes = new SVGLoader().parse(`<svg xmlns="http://www.w3.org/2000/svg"><path d="${path}"/></svg>`).paths.flatMap((sp) => SVGLoader.createShapes(sp));
+    const geo = new THREE.ExtrudeGeometry(shapes, { depth: 150, bevelEnabled: true, bevelSegments: 4, bevelSize: 9, bevelThickness: 12, curveSegments: 10 });
+    geo.translate(x, 0, 0);
+    return geo;
+  });
+  const geo = mergeGeometries(geoms);
+  geo.computeBoundingBox();
+  const box = geo.boundingBox.clone(), size = box.getSize(new THREE.Vector3()), mid = box.getCenter(new THREE.Vector3());
+  geo.translate(-mid.x, -mid.y, -mid.z);
+  const chrome = new THREE.MeshStandardMaterial({ color: "#fff4ec", metalness: 1, roughness: 0.08, envMapIntensity: 2.2 });
+  const logo = new THREE.Mesh(geo, chrome);
+  const scale = (vw * logoW) / size.x;
+  const logoWorldY = (0.5 - logoY / H) * vh, logoWorldX = (logoX / W - 0.5) * vw;
+  const group = new THREE.Group(); group.add(logo); group.position.set(logoWorldX, logoWorldY, 0); scene.add(group);
+  const key = new THREE.PointLight("#ffffff", 400, 60, 2); scene.add(key);
+
+  // rays: additive planes fanned behind the logo, with a soft canvas gradient (the library's rays technique).
+  const rc = document.createElement("canvas"); rc.width = 64; rc.height = 512;
+  const r2 = rc.getContext("2d");
+  // Bright partway along each ray and dark where they cross, so the fan has no hot spot behind the logo.
+  const gy = r2.createLinearGradient(0, 0, 0, 512);
+  [[0, 0], [0.22, 1], [0.42, 0.25], [0.5, 0], [0.58, 0.25], [0.78, 1], [1, 0]].forEach(([o, a]) => gy.addColorStop(o, `rgba(255,255,255,${a})`));
+  r2.fillStyle = gy; r2.fillRect(0, 0, 64, 512);
+  const gx = r2.createLinearGradient(0, 0, 64, 0); gx.addColorStop(0, "rgba(0,0,0,1)"); gx.addColorStop(0.5, "rgba(0,0,0,0)"); gx.addColorStop(1, "rgba(0,0,0,1)");
+  r2.globalCompositeOperation = "destination-out"; r2.fillStyle = gx; r2.fillRect(0, 0, 64, 512);
+  const rayTex = new THREE.CanvasTexture(rc);
+  const rays = new THREE.Group(); rays.position.set(logoWorldX, logoWorldY, -6); scene.add(rays);
+  const rayMats = [];
+  for (let i = 0; i < 22; i++) {
+    const m = new THREE.MeshBasicMaterial({ map: rayTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, color: i % 3 ? C.accent : "#ffe9d6", opacity: 0 });
+    rayMats.push(m);
+    const ray = new THREE.Mesh(new THREE.PlaneGeometry(0.7 + hash(i) * 0.9, 40 + hash(i + 9) * 26), m);
+    ray.rotation.z = (i / 22) * Math.PI * 2 + hash(i + 3) * 0.2; rays.add(ray);
+  }
+
+  // A burst of particles from the logo, flying outward with drag (position is a closed form of time).
+  const N = 2600, origin = new Float32Array(N * 3), vel = new Float32Array(N * 3), pos = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++) {
+    const a = hash(i) * Math.PI * 2, b = (hash(i + 0.5) - 0.5) * Math.PI, sp = 6 + hash(i + 0.25) * 22;
+    origin[i * 3] = logoWorldX + (hash(i + 0.7) - 0.5) * size.x * scale; origin[i * 3 + 1] = logoWorldY + (hash(i + 0.9) - 0.5) * size.y * scale; origin[i * 3 + 2] = 1;
+    vel[i * 3] = Math.cos(a) * Math.cos(b) * sp; vel[i * 3 + 1] = Math.sin(b) * sp * 0.8; vel[i * 3 + 2] = Math.sin(a) * Math.cos(b) * sp * 0.6;
+  }
+  const pg = new THREE.BufferGeometry(); pg.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  canvas.dataset.effect = "chrome rays particles";
+  const pmat = new THREE.PointsMaterial({ color: "#ffd8b8", size: 0.16, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+  scene.add(new THREE.Points(pg, pmat));
+
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(W, H), 0.7, 0.5, 0.84));
+  composer.addPass(new OutputPass());
+
+  // particles (2D): points sampled from the logo's outline, drawn where the 3D logo will land.
+  const dust = document.getElementById("dust"); dust.width = W; dust.height = H;
+  const dg = dust.getContext("2d");
+  const screenW = W * logoW, pxPerUnit = screenW / size.x;
+  const mask = document.createElement("canvas"); mask.width = W; mask.height = H;
+  const mg = mask.getContext("2d");
+  mg.translate(logoX - (size.x / 2) * pxPerUnit, logoY + (size.y / 2) * pxPerUnit);
+  mg.scale(pxPerUnit, -pxPerUnit); mg.translate(-box.min.x, -box.min.y);
+  mg.fillStyle = "#fff";
+  for (const { path, x } of letters) { mg.save(); mg.translate(x, 0); mg.fill(new Path2D(path)); mg.restore(); }
+  const md = mg.getImageData(0, 0, W, H).data, targets = [];
+  for (let y = 0; y < H; y += 6) for (let x = 0; x < W; x += 6) if (md[(y * W + x) * 4 + 3] > 120) targets.push([x, y]);
+  const pts = targets.map(([x, y], i) => { const a = hash(i * 3.1) * Math.PI * 2, r = Math.max(W, H) * (0.55 + hash(i * 7.7) * 0.5); return { x, y, sx: logoX + Math.cos(a) * r, sy: logoY + Math.sin(a) * r, d: hash(i * 1.3) * 0.35 }; });
+  dust.dataset.points = pts.length;
+
+  window.countdownProof = () => ({ letters: letters.length, logoRect: [Math.round(logoX - screenW / 2), Math.round(logoY - (size.y / 2) * pxPerUnit), Math.round(logoX + screenW / 2), Math.round(logoY + (size.y / 2) * pxPerUnit)], particles: pts.length, burst: N });
+  return {
+    frame(t) {
+      // particles into type, 11.0–12.0 s
+      dg.clearRect(0, 0, W, H);
+      if (t >= 11 && t < REVEAL) {
+        dg.globalCompositeOperation = "lighter";
+        for (const q of pts) {
+          const k = smooth((t - 11 - q.d) / 0.6), x = q.sx + (q.x - q.sx) * k, y = q.sy + (q.y - q.sy) * k;
+          dg.fillStyle = k > 0.98 ? "rgba(255,226,200,.9)" : "rgba(255,140,90,.55)";
+          dg.fillRect(x - 1.6, y - 1.6, 3.2, 3.2);
+        }
+        dg.globalCompositeOperation = "source-over";
+      }
+      if (t < REVEAL) return;
+      const l = t - REVEAL;
+      // chrome logo lands with an overshoot, then turns slowly while the studio reflection sweeps across it.
+      const land = clamp(l / 0.4), s = scale * (1.5 - 0.5 * (land >= 1 ? 1 : back(land)));
+      logo.scale.setScalar(s);
+      logo.rotation.set(0.12 * (1 - land) + 0.04 * Math.sin(l * 0.9), -0.32 * (1 - land) + 0.16 * Math.sin(l * 0.7), 0);
+      scene.environmentRotation.set(0, -1.2 + l * 0.9, 0);
+      key.position.set(-14 + l * 9, logoWorldY + 4, 8);
+      // rays open and keep turning
+      const open = smooth(l / 0.6);
+      rays.rotation.z = l * 0.12; rays.scale.setScalar(0.3 + 0.7 * open + 0.04 * Math.sin(l * 2.2));
+      rayMats.forEach((m, i) => { m.opacity = open * (0.13 + 0.07 * Math.sin(l * 1.7 + i)); });
+      // burst
+      const drag = 2.2, f = (1 - Math.exp(-drag * l)) / drag;
+      for (let i = 0; i < N * 3; i++) pos[i] = origin[i] + vel[i] * f;
+      pg.attributes.position.needsUpdate = true;
+      pmat.opacity = l < 0.05 ? 0 : Math.max(0, 1 - l / 1.6);
+      composer.render(0);
+      if (renderer.getContext().isContextLost()) throw new Error("Countdown renderer lost its WebGL context");
+    },
+  };
+})();
+window.__countdownGL = ready;
+ready.then(() => window.__countdownGLDone(), (e) => { console.error(e); window.__countdownGLFail(e); });
+</script>
+</body>
+</html>

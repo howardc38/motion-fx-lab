@@ -2,90 +2,269 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Motion FX Lab example: product demo</title>
+<title>Motion FX Lab use case: feature launch in 15 seconds</title>
+<script>
+// ─── Edit here. Product, copy, numbers and colours for the whole film. ───────────────────────────────
+// Relay is a fictional product; every name, message and figure below is invented for the demo.
+// FILM.format picks the frame: "wide" (1920 × 1080) or "square" (1080 × 1080). ?format=square previews it.
+const FILM = {
+  format: "wide",
+  product: "Relay",
+  feature: "Smart reply",
+  badge: "NEW",
+  url: "relay.example/smart-reply",
+  colors: { bg: "#0f1222", accent: "#ff6a3d", ok: "#2fbf71", paper: "#f7f4ee", ink: "#14161f", violet: "#7b6cff" },
+  hook: { unread: 47, label: "unread requests", time: "MONDAY · 9:04 AM" },
+  toasts: [["Mara L.", "I was charged twice…"], ["Theo O.", "Can I add a second seat?"], ["Priya R.", "CSV export fails"], ["Jonas W.", "New invoice address"]],
+  inbox: [["Mara Lindqvist", "Charged twice for #4471", "9:02"], ["Theo Okafor", "Add a second seat?", "8:58"], ["Priya Raman", "CSV export fails", "8:51"],
+    ["Jonas Weber", "New invoice address", "8:40"], ["Ana Sousa", "Is there an API?", "8:33"], ["Kai Morgan", "Reset two-step login", "8:21"]],
+  customer: { name: "Mara Lindqvist", email: "mara@northfield.example",
+    message: "Hi! I was charged twice for order #4471 this morning. Can you fix it?" },
+  reply: ["Hi Mara, sorry about that!", "I've refunded the duplicate charge on #4471.", "It will be back on your card in 3–5 business days."],
+  source: "Source: Refund policy",
+  headlines: [["Meet", "Smart reply."], ["One click.", "A full draft."]],
+  subs: ["Answers drafted from your help center.", "Grounded in your own docs."],
+  cleared: "Every request answered before lunch.",
+  result: { label: "AVERAGE FIRST REPLY", before: "2 h 10 min", after: "4 min", note: "Pilot teams · first six weeks" },
+  end: { line: "Smart reply is now in beta.", cta: "Try it free →", note: "Fictional product · made with Motion FX Lab" },
+};
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
-  :root { --ink: #0e0d12; --paper: #f4f3ee; --pink: #ff90e8; --sun: #ffd400; --muted: #8f8a9c;
-    --lat: "Archivo", "Helvetica Neue", Arial, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+  :root { --lat: "Archivo", "Helvetica Neue", Arial, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace; }
   html, body { height: 100%; }
   body { margin: 0; background: #111110; display: grid; place-items: center; }
-  #frame { position: relative; overflow: hidden; background: var(--paper); }
-  #stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; font-family: var(--lat); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  #frame { position: relative; overflow: hidden; background: var(--bg); }
+  #stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; font-family: var(--lat); color: var(--paper); -webkit-font-smoothing: antialiased; }
   body.record { display: block; }
   body.record #frame { position: fixed; left: 0; top: 0; }
   body.record #stage { transform: none !important; }
-  .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; background: var(--paper);
-    background-image: radial-gradient(rgba(14,13,18,.12) 1.6px, transparent 2px); background-size: 40px 40px; }
+  .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; background: var(--bg); }
+  .edge { position: absolute; top: 0; bottom: 0; width: 26px; margin-left: -1px; background: var(--accent); opacity: 0; }
   .a { position: absolute; }
-  .wide { font-weight: 900; font-stretch: 125%; letter-spacing: -.02em; line-height: .95; }
-  .chip { font: 700 20px var(--mono); letter-spacing: .12em; padding: 9px 16px; border: 2px solid currentColor; border-radius: 999px; }
-  .win { left: 760px; top: 250px; width: 1000px; height: 640px; border-radius: 22px; background: #fff; box-shadow: 0 40px 90px rgba(14,13,18,.22); overflow: hidden; transform-origin: 88% 20%; }
-  .win .bar { height: 56px; background: #ebe9e2; display: flex; align-items: center; gap: 10px; padding: 0 22px; }
-  .win .bar i { width: 14px; height: 14px; border-radius: 50%; background: #c9c6bd; }
-  .win .bar b { margin-left: 16px; font: 700 18px var(--mono); color: #5c5868; }
-  .row { position: absolute; left: 40px; right: 40px; height: 120px; border-radius: 20px; background: #f6f5f0; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; }
-  .row b { font: 900 38px var(--lat); }
-  .row em { font: 700 22px var(--mono); font-style: normal; color: #5c5868; margin-left: 18px; }
-  .row em .n2 { display: none; }
-  .row em.on .n1 { display: none; }
-  .row em.on .n2 { display: inline; color: #1e9e5a; }
-  .btn { font: 800 28px var(--lat); padding: 16px 28px; border-radius: 999px; background: var(--ink); color: #fff; white-space: nowrap; }
-  .btn .bOn { display: none; }
-  .btn.on { background: #1e9e5a; }
-  .btn.on .bOff { display: none; }
-  .btn.on .bOn { display: inline; }
-  .ring { width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; border: 8px solid var(--pink); }
-  .sticker { position: absolute; padding: 20px 34px; border-radius: 20px; border: 6px solid #fff; box-shadow: 0 8px 0 rgba(0,0,0,.14), 0 16px 34px rgba(0,0,0,.18); font: 900 44px var(--lat); white-space: nowrap; }
+  .glowbg { position: absolute; width: 1400px; height: 1400px; margin: -700px 0 0 -700px; border-radius: 50%; opacity: .55; }
+  .mono { font-family: var(--mono); font-weight: 700; letter-spacing: .08em; }
+  .chip { font: 700 28px var(--mono); letter-spacing: .1em; padding: 10px 18px; border: 2px solid currentColor; border-radius: 999px; white-space: nowrap; }
+  .big { font-weight: 900; font-stretch: 112%; letter-spacing: -.03em; line-height: .9; font-variant-numeric: tabular-nums; }
+  .head { font-weight: 900; letter-spacing: -.02em; line-height: 1; }
+  .sub { font-weight: 600; color: rgba(247,244,238,.78); line-height: 1.25; }
+  .toast { width: 640px; height: 120px; border-radius: 26px; background: #fff; color: var(--ink); display: flex; align-items: center; gap: 22px; padding: 0 28px; box-sizing: border-box; box-shadow: 0 10px 0 rgba(0,0,0,.12), 0 24px 50px rgba(0,0,0,.35); }
+  .toast i { flex: none; width: 64px; height: 64px; border-radius: 18px; background: var(--accent); display: grid; place-items: center; color: #fff; font: 900 30px var(--lat); font-style: normal; }
+  .toast b { display: block; font: 800 30px var(--lat); }
+  .toast span { display: block; font: 500 28px var(--lat); color: #5b5e6b; white-space: nowrap; }
+  .toast em { margin-left: auto; font: 700 28px var(--mono); font-style: normal; color: var(--accent); }
+  /* The product window. Sizes are for the window at scale 1; it never shows text below 28 px on screen. */
+  .flyer { position: absolute; inset: 0; perspective: 2000px; }
+  #win { position: absolute; left: 0; top: 0; width: 1100px; height: 780px; border-radius: 26px; background: #fff; color: var(--ink); overflow: hidden; box-shadow: 0 50px 120px rgba(0,0,0,.5); transform-origin: 100% 88%; }
+  #win .bar { position: absolute; left: 0; right: 0; top: 0; height: 72px; background: #eeebe4; display: flex; align-items: center; gap: 12px; padding: 0 26px; }
+  #win .bar i { width: 16px; height: 16px; border-radius: 50%; background: #cfcac0; }
+  #win .bar b { margin-left: 14px; font: 800 30px var(--lat); }
+  #win .bar span { margin-left: auto; font: 700 28px var(--mono); background: var(--accent); color: #fff; padding: 6px 16px; border-radius: 999px; font-variant-numeric: tabular-nums; }
+  #win .list { position: absolute; left: 0; top: 72px; width: 470px; bottom: 0; border-right: 2px solid #ece9e2; }
+  #win .row { position: absolute; left: 0; right: 0; height: 118px; display: flex; align-items: center; gap: 18px; padding: 0 22px; box-sizing: border-box; border-bottom: 2px solid #f1eee8; }
+  #win .row.sel { background: #fff3ee; }
+  #win .row i { flex: none; width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; font: 800 28px var(--lat); font-style: normal; color: #fff; }
+  #win .row .t { min-width: 0; flex: 1; }
+  #win .row b { display: block; font: 800 30px var(--lat); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #win .row span { display: block; font: 500 28px var(--lat); color: #5b5e6b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #win .row em { position: absolute; right: 18px; top: 14px; font: 700 28px var(--mono); font-style: normal; color: #8a8d99; }
+  #win .row .sent { position: absolute; right: 14px; top: 12px; font: 800 28px var(--lat); color: #fff; background: var(--ok); padding: 2px 14px; border-radius: 999px; }
+  #win .scanbar { position: absolute; left: 0; right: 0; height: 90px; margin-top: -84px; background: linear-gradient(180deg, rgba(255,106,61,0), rgba(255,106,61,.28) 88%, var(--accent) 94%, rgba(255,106,61,0)); opacity: 0; }
+  #win .convo { position: absolute; left: 470px; right: 0; top: 72px; bottom: 0; padding: 30px 36px; box-sizing: border-box; }
+  #win .who b { display: block; font: 800 34px var(--lat); }
+  #win .who span { font: 500 28px var(--lat); color: #5b5e6b; }
+  #win .msg { margin-top: 20px; background: #f3f1ec; border-radius: 24px 24px 24px 6px; padding: 20px 24px; font: 500 30px/1.32 var(--lat); }
+  #win .composer { position: absolute; left: 30px; right: 30px; bottom: 26px; height: 380px; border: 3px solid #e4e0d8; border-radius: 24px; padding: 16px 22px; box-sizing: border-box; }
+  #win .tools { display: flex; align-items: center; gap: 16px; }
+  .smart { position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 12px; font: 800 30px var(--lat); padding: 10px 20px; border-radius: 16px; background: var(--ink); color: #fff; }
+  .smart u { text-decoration: none; font: 800 28px var(--mono); color: var(--ink); background: var(--accent); padding: 0 10px; border-radius: 8px; }
+  .smart.on { background: var(--accent); }
+  .smart.on u { background: #fff; }
+  .shine { position: absolute; top: -30%; bottom: -30%; left: 0; width: 45%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.85), transparent); opacity: 0; pointer-events: none; }
+  #win .draft { margin-top: 16px; font: 500 30px/1.36 var(--lat); min-height: 200px; }
+  .hl { background: linear-gradient(rgba(255,106,61,.38), rgba(255,106,61,.38)) no-repeat 0 92%; background-size: 0% 42%; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .caret::after { content: ""; display: inline-block; width: 3px; height: 1em; margin-left: 3px; background: var(--accent); vertical-align: -.14em; }
+  #win .foot { position: absolute; left: 22px; right: 22px; bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+  #win .src { font: 700 28px var(--mono); color: #6a5bd6; letter-spacing: .02em; }
+  #win .send { font: 800 30px var(--lat); padding: 10px 26px; border-radius: 999px; background: var(--ink); color: #fff; }
+  #win .send .b { display: none; }
+  #win .send.on { background: var(--ok); }
+  #win .send.on .a1 { display: none; }
+  #win .send.on .b { display: inline; }
+  .cursor { width: 46px; height: 56px; }
+  .tap { width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%; border: 8px solid var(--accent); }
+  .card { position: absolute; border-radius: 40px; background: rgba(255,255,255,.13); border: 2px solid rgba(255,255,255,.4);
+    -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); box-shadow: 0 40px 90px rgba(0,0,0,.35); }
+  .strike { position: absolute; left: -8px; right: -8px; top: 52%; height: 10px; border-radius: 6px; background: var(--accent); transform-origin: left center; }
+  .sticker { position: absolute; padding: 22px 40px; border-radius: 24px; border: 6px solid #fff; box-shadow: 0 10px 0 rgba(0,0,0,.16), 0 20px 40px rgba(0,0,0,.25); font: 900 64px var(--lat); white-space: nowrap; }
+  .head.z, .sub.z { z-index: 3; }
 </style>
 </head>
 <body>
 <div id="frame">
-<div id="stage" data-w="1920" data-h="1080" data-dur="7.2">
-
-  <!-- one scene: the window turns to the camera, a tap books a class, the camera moves in -->
-  <section class="scene" data-start="0">
-    <div class="a chip" style="left:150px;top:120px;color:#c2267f" data-fx="fade" data-at="0.1" data-out="3.1">DEMO · FICTIONAL STUDIO</div>
-    <div class="a wide" style="left:150px;top:330px;font-size:84px;width:560px" data-fx="up" data-at="0.2" data-out="3.1">Book a class</div>
-    <div class="a wide" style="left:150px;top:510px;font-size:84px;width:560px;color:#c2267f" data-fx="up" data-at="0.4" data-out="3.1">in one tap.</div>
-    <div class="a" style="left:0;top:0;width:1920px;height:1080px;perspective:1800px">
-      <div class="a win" id="win">
-        <div class="bar"><i></i><i></i><i></i><b>sample-studio.app / tonight</b></div>
-        <div class="row" style="top:96px"><div><b>Vinyasa</b><em data-on="2.05"><span class="n1">7:00 pm · 3 spots</span><span class="n2">7:00 pm · 2 spots left</span></em></div><div class="btn" data-on="2.05"><span class="bOff">Book</span><span class="bOn">Booked ✓</span></div></div>
-        <div class="row" style="top:236px"><div><b>Yin</b><em>8:15 pm · full</em></div><div class="btn" style="background:#e3e1da;color:#5c5868">Waitlist</div></div>
-        <div class="row" style="top:376px"><div><b>Pilates</b><em>9:00 pm · 5 spots</em></div><div class="btn">Book</div></div>
-        <div class="row" style="top:516px"><div><b>Barre</b><em>9:45 pm · 8 spots</em></div><div class="btn">Book</div></div>
-      </div>
-    </div>
-    <div class="a ring" style="left:1611px;top:437px" data-fx="ring" data-at="1.95" data-sfx="tap"></div>
-    <svg class="a" style="width:44px;height:54px" data-fx="move" data-x0="1500" data-y0="930" data-x1="1600" data-y1="425" data-at="1.2" data-dur="0.7" data-out="3.0" viewBox="0 0 44 54" aria-hidden="true"><path d="M4 3 L4 44 L15 34 L23 51 L31 47 L23 31 L38 31 Z" fill="#0e0d12" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>
-    <svg class="a" style="left:0;top:0" width="1920" height="1080" aria-hidden="true"><path id="callout" d="M1300 960 L1470 960 L1560 470" fill="none" stroke="#c2267f" stroke-width="5" stroke-linecap="round"/></svg>
-    <div class="a" style="left:1010px;top:935px;font:800 36px var(--lat);color:#c2267f" data-fx="fade" data-at="2.6" data-out="3.0">One tap to book</div>
-    <div class="sticker" style="left:1270px;top:900px;background:var(--pink);transform:rotate(-4deg)" data-fx="slam" data-at="5.0" data-base="rotate(-4deg)" data-sfx="stamp">Sample Studio app</div>
-  </section>
-
+<div id="stage" data-dur="15">
+  <section class="scene" data-start="0" id="s1"></section>
+  <section class="scene" data-start="10" data-trans="cut" id="s2"></section>
+  <section class="scene" data-start="12.5" id="s3"><div class="edge"></div></section>
 </div>
 </div>
 <script>
 (() => {
-  window.__gif = [[0.6, 3.3], [4.8, 6.2]];
-  window.__poster = 5.8;   // the poster frame, in seconds
-  window.__music = [[0, "build"], [2.4, "drop"], [6.0, "tail"]];
-  const win = document.getElementById("win"), callout = document.getElementById("callout"), CL = callout.getTotalLength();
-  callout.setAttribute("stroke-dasharray", `${CL} ${CL}`);
-  const clamp = (v) => Math.max(0, Math.min(1, v)), eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  const q = new URLSearchParams(location.search);
+  const fmt = q.get("format") || FILM.format;
+  const SQ = fmt === "square";
+  const W = SQ ? 1080 : 1920, H = 1080;
+  const stage = document.getElementById("stage");
+  Object.assign(stage.dataset, { w: W, h: H });
+  stage.style.width = `${W}px`; stage.style.height = `${H}px`;
+  const C = FILM.colors;
+  for (const [k, v] of Object.entries(C)) document.documentElement.style.setProperty(`--${k}`, v);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const initials = (n) => n.split(" ").map((p) => p[0]).join("").slice(0, 2);
+
+  // Where things sit in each format. The window is 1100 × 780 at scale 1.
+  const L = SQ ? {
+    hookX: 80, hookY: 150, hookSize: 260, labelY: 420, chipY: 70,
+    toastX: 360, toastY: 560, toastGap: 118,
+    winX: 67, winY: 345, winS: 0.86, zoom: 1.07, shift: 0,
+    headX: 70, headY: 66, headW: 940, headSize: 76, subSize: 36, headBreak: false,
+    cardX: 90, cardY: 210, cardW: 900, cardH: 660,
+  } : {
+    hookX: 150, hookY: 250, hookSize: 300, labelY: 570, chipY: 170,
+    toastX: 1110, toastY: 210, toastGap: 150,
+    winX: 700, winY: 150, winS: 1, zoom: 1.12,
+    headX: 110, headY: 300, headW: 480, headSize: 76, subSize: 36, headBreak: true, shift: 70,
+    cardX: 210, cardY: 250, cardW: 1500, cardH: 580,
+  };
+
+  const glow = (x, y, col) => `<div class="glowbg" style="left:${x}px;top:${y}px;background:radial-gradient(circle, ${col} 0%, transparent 62%)"></div>`;
+  const headline = (i, at, out) => {
+    const [a, b] = FILM.headlines[i];
+    const lines = L.headBreak ? [a, b] : [`${a} ${b}`];
+    return lines.map((l, k) => `<div class="a head z" style="left:${L.headX}px;top:${L.headY + k * L.headSize * 1.02}px;font-size:${L.headSize}px;white-space:nowrap${k === lines.length - 1 ? `;color:${C.accent}` : ""}" data-fx="whip" data-dx="-260" data-at="${at + k * 0.12}" data-out="${out}">${esc(l)}</div>`).join("") +
+      `<div class="a sub z" style="left:${L.headX}px;top:${L.headY + lines.length * L.headSize * 1.02 + 26}px;width:${L.headW}px;font-size:${L.subSize}px" data-fx="up" data-at="${at + 0.35}" data-out="${out}">${esc(FILM.subs[i])}</div>`;
+  };
+
+  // ── Scene 1 (0–10 s): the inbox piles up, the window flies in, one click drafts a reply, the queue empties.
+  document.getElementById("s1").innerHTML =
+    `<div data-effect="orbs">${glow(SQ ? 900 : 1600, 120, "rgba(123,108,255,.55)")}${glow(SQ ? 100 : 300, 980, "rgba(255,106,61,.35)")}</div>` +
+    `<div class="a chip" style="left:${L.hookX + 6}px;top:${L.chipY}px;color:${C.accent}" data-fx="fade" data-at="0.05" data-out="1.45">${esc(FILM.hook.time)}</div>` +
+    `<div class="a big" id="hookNum" style="left:${L.hookX - 10}px;top:${L.hookY}px;font-size:${L.hookSize}px" data-effect="count" data-fx="count" data-to="${FILM.hook.unread}" data-at="0.05" data-dur="1.0" data-out="1.45">0</div>` +
+    `<div class="a head" style="left:${L.hookX}px;top:${L.labelY}px;font-size:60px" data-fx="up" data-at="0.3" data-out="1.45">${esc(FILM.hook.label)}</div>` +
+    FILM.toasts.map(([n, m], i) => `<div class="a toast" data-effect="sticker" style="left:${L.toastX + [0, 34, 8, 42][i]}px;top:${L.toastY + i * L.toastGap}px" data-fx="pop" data-at="${0.12 + i * 0.24}" data-out="1.45" data-sfx="ping" data-sfx-gain="0.8"><i>${esc(initials(n))}</i><div><b>${esc(n)}</b><span>${esc(m)}</span></div><em>now</em></div>`).join("") +
+    `<div class="flyer"><div id="win" data-effect="uifly">
+      <div class="bar"><i></i><i></i><i></i><b>${esc(FILM.product)} · Support inbox</b><span id="inboxCount">${FILM.hook.unread}</span></div>
+      <div class="list">${FILM.inbox.map(([n, s, tm], i) => `<div class="row${i === 0 ? " sel" : ""}" style="top:${i * 118}px"><i style="background:${["#ff6a3d", "#7b6cff", "#2a9d8f", "#e9a23b", "#d1495b", "#3d5a80"][i % 6]}">${esc(initials(n))}</i><div class="t"><b>${esc(n)}</b><span>${esc(s)}</span></div><em${i < 3 ? ` data-out="${(8.05 + i * 0.45).toFixed(2)}"` : ""}>${esc(tm)}</em>${i < 3 ? `<div class="sent" data-fx="pop" data-at="${(8.05 + i * 0.45).toFixed(2)}" data-sfx="tick">✓ Sent</div>` : ""}</div>`).join("")}
+        <div class="scanbar" id="scanbar" data-effect="scan"></div></div>
+      <div class="convo"><div class="who"><b>${esc(FILM.customer.name)}</b><span>${esc(FILM.customer.email)}</span></div>
+        <div class="msg">${esc(FILM.customer.message)}</div>
+        <div class="composer">
+          <div class="tools"><div class="smart" id="smart" data-on="3.95"><span>✦ ${esc(FILM.feature)}</span><u>${esc(FILM.badge)}</u><i class="shine" data-effect="sweep" data-fx="sweep" data-at="3.0" data-dur="0.8"></i></div></div>
+          <div class="draft"><span data-effect="type" data-fx="type" data-at="4.25" data-dur="0.55" data-sfx="type">${esc(FILM.reply[0])}</span> <span class="hl" data-effect="mark" data-fx="mark" data-at="6.25" data-dur="0.5" data-mark-h="42"><span data-fx="type" data-at="4.85" data-dur="0.8" data-sfx="type">${esc(FILM.reply[1])}</span></span> <span data-fx="type" data-at="5.7" data-dur="0.75" data-sfx="type">${esc(FILM.reply[2])}</span></div>
+          <div class="foot"><span class="src" data-fx="fade" data-at="6.55">${esc(FILM.source)}</span><span class="send" data-on="7.05" data-sfx="send" data-sfx-at="7.05"><span class="a1">Send</span><span class="b">Sent ✓</span></span></div>
+        </div></div>
+    </div></div>` +
+    `<svg class="a cursor" id="cursor" viewBox="0 0 44 54" aria-hidden="true"><path d="M4 3 L4 44 L15 34 L23 51 L31 47 L23 31 L38 31 Z" fill="#14161f" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>` +
+    `<div class="a tap" id="tap" data-fx="ring" data-at="3.9" data-sfx="tap"></div>` +
+    headline(0, 1.9, 4.0) + headline(1, 4.2, 7.15) +
+    `<div class="a big" id="clearNum" data-effect="count" style="left:${L.headX - 6}px;top:${SQ ? 40 : 250}px;font-size:${SQ ? 170 : 260}px;color:${C.accent}${SQ ? ";width:300px;text-align:right" : ""}" data-fx="fade" data-at="7.35" data-dur="0.3">${FILM.hook.unread}</div>` +
+    `<div class="a head" style="left:${SQ ? L.headX + 330 : L.headX}px;top:${SQ ? 70 : 510}px;font-size:${SQ ? 54 : 60}px" data-fx="up" data-at="7.45">${esc(FILM.hook.label)}</div>` +
+    `<div class="a sub" style="left:${SQ ? L.headX + 330 : L.headX}px;top:${SQ ? 140 : 600}px;width:${SQ ? 600 : L.headW}px;font-size:${L.subSize}px" data-fx="up" data-at="9.0">${esc(FILM.cleared)}</div>`;
+
+  // ── Scene 2 (10–12.5 s): the result, on frosted glass over moving colour.
+  const R = FILM.result;
+  document.getElementById("s2").insertAdjacentHTML("beforeend",
+    `<div id="blobs">${glow(0, 0, "rgba(255,106,61,.95)")}${glow(0, 0, "rgba(123,108,255,.95)")}${glow(0, 0, "rgba(47,191,113,.8)")}</div>` +
+    `<div class="card" data-effect="glass" style="left:${L.cardX}px;top:${L.cardY}px;width:${L.cardW}px;height:${L.cardH}px" data-fx="up" data-at="0.15"></div>` +
+    `<div class="a mono" style="left:${L.cardX + 70}px;top:${L.cardY + 60}px;font-size:32px;color:#fff" data-fx="fade" data-at="0.3">${esc(R.label)}</div>` +
+    `<div class="a" style="left:${L.cardX + 70}px;top:${L.cardY + (SQ ? 150 : 190)}px" data-fx="left" data-at="0.45"><div class="big" style="position:relative;font-size:${SQ ? 120 : 110}px;color:rgba(255,255,255,.7)">${esc(R.before)}<div class="strike" data-fx="grow" data-at="0.95" data-dur="0.3"></div></div></div>` +
+    `<div class="a head" style="left:${SQ ? L.cardX + 70 : L.cardX + 740}px;top:${SQ ? L.cardY + 300 : L.cardY + 170}px;font-size:${SQ ? 64 : 130}px;color:#fff" data-fx="fade" data-at="1.15">${SQ ? "↓" : "→"}</div>` +
+    `<div class="a big" style="left:${SQ ? L.cardX + 160 : L.cardX + 920}px;top:${SQ ? L.cardY + 300 : L.cardY + 150}px;font-size:${SQ ? 220 : 190}px;color:#fff" data-effect="stamp" data-fx="slam" data-at="1.25" data-sfx="stamp">${esc(R.after)}</div>` +
+    `<div class="a sub" style="left:${L.cardX + 70}px;top:${L.cardY + L.cardH - 100}px;font-size:32px;color:#fff" data-fx="fade" data-at="1.5">${esc(R.note)}</div>`);
+
+  // ── Scene 3 (12.5–15 s): logo, line, address and the call to action.
+  const cx = W / 2;
+  document.getElementById("s3").style.background = C.accent;
+  document.getElementById("s3").insertAdjacentHTML("beforeend",
+    `<div class="a" id="lockup" style="left:0;width:${W}px;top:${SQ ? 250 : 210}px;display:flex;justify-content:center;align-items:center;gap:36px" data-fx="zoom" data-at="0.1">
+       <div style="position:relative;overflow:hidden;width:170px;height:170px;border-radius:44px;background:${C.ink}">
+         <svg width="170" height="170" viewBox="0 0 170 170" aria-hidden="true"><path d="M44 62 h62 l-16 -16 M126 108 h-62 l16 16" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+         <i class="shine" data-fx="sweep" data-at="0.45" data-dur="0.8"></i></div>
+       <div class="big" style="font-size:190px;color:${C.ink}">${esc(FILM.product)}</div></div>` +
+    `<div class="a head" style="left:0;width:${W}px;text-align:center;top:${SQ ? 470 : 440}px;font-size:${SQ ? 56 : 66}px;color:${C.ink}" data-fx="up" data-at="0.35">${esc(FILM.end.line)}</div>` +
+    `<div class="a mono" style="left:0;width:${W}px;text-align:center;top:${SQ ? 560 : 540}px;font-size:36px;color:${C.ink};letter-spacing:.02em" data-fx="up" data-at="0.55">${esc(FILM.url)}</div>` +
+    `<div class="sticker" data-effect="sticker" style="left:${cx}px;top:${SQ ? 680 : 650}px;background:#fff;color:${C.ink};transform:translateX(-50%) rotate(-3deg)" data-fx="pop" data-at="0.85" data-base="translateX(-50%) rotate(-3deg)" data-sfx="ding">${esc(FILM.end.cta)}</div>` +
+    `<div class="a mono" style="left:${SQ ? 60 : 80}px;top:${H - 90}px;font-size:28px;color:rgba(20,22,31,.75);letter-spacing:.04em" data-fx="fade" data-at="1.1">${esc(FILM.end.note)}</div>`);
+
+  window.__gif = [[4.2, 6.9]];   // a short silent preview; the MP4 is the film
+  window.__poster = 6.9;   // the drafted reply with its highlight: the film's hero frame
+  window.__music = [[0, "build"], [2.4, "drop"], [7.2, "lift"], [12, "tail"]];
+  // Library effects this film uses, with the seconds they are on screen (for the film list).
+  window.__effects = [
+    { id: "count", at: [0.05, 1.05] }, { id: "sticker", at: [0.12, 1.45] }, { id: "uifly", at: [1.4, 2.8] },
+    { id: "sweep", at: [3.0, 3.8] }, { id: "type", at: [4.25, 6.45] }, { id: "mark", at: [6.25, 6.75] },
+    { id: "scan", at: [7.9, 9.3] }, { id: "count", at: [7.6, 9.6] }, { id: "glass", at: [10.15, 12.5] },
+    { id: "stamp", at: [11.25, 11.65] }, { id: "sticker", at: [13.35, 13.8] },
+  ];
+
+  const clamp = (v) => Math.max(0, Math.min(1, v));
+  const eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  const eo = (x) => 1 - Math.pow(1 - x, 3);
+  const win = document.getElementById("win"), cursor = document.getElementById("cursor"), tap = document.getElementById("tap");
+  const scanbar = document.getElementById("scanbar"), inboxCount = document.getElementById("inboxCount"), clearNum = document.getElementById("clearNum");
+  const glows = [...document.querySelectorAll("#s1 .glowbg")], blobs = [...document.querySelectorAll("#blobs .glowbg")];
+  const smart = document.getElementById("smart");
+  // The button's place inside the window, read once fonts have settled (layout, not transforms).
+  let btn = null;
+  const measure = () => {
+    let x = smart.offsetWidth / 2, y = smart.offsetHeight / 2;
+    for (let el = smart; el && el !== win; el = el.offsetParent) { x += el.offsetLeft; y += el.offsetTop; }
+    btn = { x: L.winX + x * L.winS, y: L.winY + y * L.winS };
+    tap.style.left = `${btn.x}px`; tap.style.top = `${btn.y}px`;
+  };
   window.__renderHooks = window.__renderHooks || [];
   window.__renderHooks.push((t) => {
-    // The turn is a 3D transform; once it ends the window only scales, as a plain 2D transform.
-    const turn = eio(clamp((t - 0.2) / 1.0)), zoom = eio(clamp((t - 3.3) / 1.2));
-    win.style.transform = turn < 1
-      ? `rotateY(${(-26 * (1 - turn)).toFixed(2)}deg) rotateX(${(8 * (1 - turn)).toFixed(2)}deg) scale(${(0.92 + 0.08 * turn).toFixed(4)})`
-      : `scale(${(1 + 0.22 * zoom).toFixed(4)})`;
-    callout.setAttribute("stroke-dashoffset", String((1 - eio(clamp((t - 2.3) / 0.5))) * CL));
-    callout.style.opacity = String(1 - clamp((t - 3.0) / 0.3));
+    if (!btn) measure();
+    // uifly: the window turns in from deep perspective, pushes in on the composer, then pulls back to the list.
+    const fly = eio(clamp((t - 1.4) / 1.4));
+    const push = eio(clamp((t - 4.0) / 0.8)) * (1 - eio(clamp((t - 7.15) / 0.7)));
+    // A slow, continuous camera drift keeps the window alive between beats (no dead holds).
+    const drift = 1 + 0.035 * clamp((t - 2.8) / 7.2);
+    const s = L.winS * (1 + (L.zoom - 1) * push) * drift;
+    win.style.opacity = clamp((t - 1.4) / 0.25);
+    // The window turns and zooms about a point near its composer (CSS transform-origin 100% 88%), so the
+    // translation puts the scaled window's top-left corner at (winX, winY).
+    const tx = L.winX + 1100 * (L.winS - 1), ty = L.winY + 686.4 * (L.winS - 1);
+    win.style.transform = fly < 1
+      ? `translate(${tx}px, ${ty}px) translateZ(${(-900 * (1 - fly)).toFixed(1)}px) rotateX(${(48 * (1 - fly)).toFixed(2)}deg) rotateY(${(-34 * (1 - fly)).toFixed(2)}deg) rotateZ(${(8 * (1 - fly)).toFixed(2)}deg) scale(${L.winS})`
+      : `translate(${(tx + L.shift * push).toFixed(1)}px, ${ty}px) scale(${s.toFixed(4)})`;
+    // The cursor glides to the button, clicks at 3.9 s and leaves.
+    const m = eio(clamp((t - 2.9) / 0.85));
+    const from = { x: W * (SQ ? 0.8 : 0.82), y: H + 40 };
+    cursor.style.left = `${(from.x + (btn.x - from.x) * m - 4).toFixed(1)}px`;
+    cursor.style.top = `${(from.y + (btn.y - from.y) * m - 4).toFixed(1)}px`;
+    cursor.style.opacity = t < 2.9 ? 0 : 1 - clamp((t - 4.1) / 0.3);
+    cursor.style.transform = t > 3.85 && t < 4.0 ? "scale(.88)" : "none";
+    // scan: a line runs down the first three conversations; each gets its tick as the line passes.
+    const sp = clamp((t - 7.9) / 1.4);
+    scanbar.style.top = `${(sp * 360).toFixed(1)}px`;
+    scanbar.style.opacity = t > 7.85 && t < 9.4 ? 1 : 0;
+    // count: the queue empties from FILM.hook.unread to zero.
+    const left = Math.round(FILM.hook.unread * (1 - eo(clamp((t - 7.6) / 2.0))));
+    inboxCount.textContent = t < 7.6 ? FILM.hook.unread : left;
+    clearNum.textContent = left;
+    // Drifting glows behind the opening and under the glass card.
+    const u = t * 0.35;
+    glows.forEach((g, i) => { g.style.transform = `translate(${(Math.sin(u + i * 2) * 90).toFixed(1)}px, ${(Math.cos(u * 0.8 + i) * 70).toFixed(1)}px)`; });
+    const v = (t - 10) * 0.9;
+    blobs.forEach((b, i) => {
+      b.style.left = `${(W / 2 + Math.cos(v + i * 2.1) * W * 0.3).toFixed(1)}px`;
+      b.style.top = `${(H / 2 + Math.sin(v * 1.3 + i * 1.7) * H * 0.3).toFixed(1)}px`;
+    });
   });
-  window.__ready = document.fonts.ready;
+  window.__ready = document.fonts.ready.then(measure);
 })();
 </script>
 <script src="../video/engine.js"></script>

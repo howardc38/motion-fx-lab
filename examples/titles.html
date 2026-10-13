@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Motion FX Lab use case: titles and logo stings</title>
+<script>
+// ─── Edit here. Type a name, pick a preset, render a 6-second opener. The brands below are fictional. ────
+// PRESET: "solid", "particles", "contours", or "all" (the three back to back, 18 s, as on the website).
+// FORMAT: "wide" (1920 × 1080) or "vertical" (1080 × 1920). ?preset=particles&format=vertical previews.
+// Words use the outlines in assets/type/motion-cjk.json: up to 4 of 流動光影文字世界水形態設計, or up to
+// 12 capitals, digits, full stops and spaces (assets/type/README.md explains how to add glyphs).
+const PRESET = "all";
+const FORMAT = "wide";
+const STINGS = {
+  solid:     { word: "光影設計", tagline: "LIGHT & SHADOW DESIGN STUDIO", colors: { bg: "#120b07", metal: "#f3c47e", rim: "#ff7a3d", ray: "#ffd9a0" } },
+  particles: { word: "SLOW SIGNAL", tagline: "A podcast about building quietly", colors: { bg: "#05060d", a: "#7fe7ff", b: "#b48cff", fill: "#d9f6ff" } },
+  contours:  { word: "文字世界", tagline: "THE LETTERING CHANNEL · EP 07", colors: { bg: "#10132b", line: "#ffffff" } },
+};
+</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  :root { --lat: "Archivo", "Helvetica Neue", Arial, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+  html, body { height: 100%; }
+  body { margin: 0; background: #111110; display: grid; place-items: center; }
+  #frame { position: relative; overflow: hidden; background: #000; }
+  #stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; font-family: var(--lat); color: #fff; -webkit-font-smoothing: antialiased; }
+  body.record { display: block; }
+  body.record #frame { position: fixed; left: 0; top: 0; }
+  body.record #stage { transform: none !important; }
+  #gl, #flat { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+  .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; }
+  .a { position: absolute; }
+  .tag { left: 0; right: 0; text-align: center; font: 700 40px var(--mono); letter-spacing: .22em; text-transform: uppercase; }
+  .tag.sans { font: 600 46px var(--lat); letter-spacing: .01em; text-transform: none; }
+  .tag.v { left: 120px; right: 192px; font-size: 30px; letter-spacing: .12em; line-height: 1.3; }
+  .tag.sans.v { font-size: 38px; letter-spacing: 0; }
+  .flash { inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+  .preset { left: 60px; top: 50px; font: 700 24px var(--mono); letter-spacing: .14em; color: rgba(255,255,255,.7); border: 2px solid rgba(255,255,255,.35); border-radius: 999px; padding: 8px 16px; }
+</style>
+</head>
+<body>
+<div id="frame">
+<div id="stage">
+  <canvas id="gl"></canvas>
+  <canvas id="flat"></canvas>
+</div>
+</div>
+<script>
+(() => {
+  const q = new URLSearchParams(location.search);
+  const preset = q.get("preset") || PRESET, V = (q.get("format") || FORMAT) === "vertical";
+  const order = preset === "all" ? ["solid", "particles", "contours"] : [preset];
+  for (const id of order) if (!STINGS[id]) throw new Error(`unknown preset "${id}"; use solid, particles, contours or all`);
+  const W = V ? 1080 : 1920, H = V ? 1920 : 1080, SPAN = 6;
+  const stage = document.getElementById("stage");
+  Object.assign(stage.dataset, { w: W, h: H, dur: SPAN * order.length });
+  stage.style.width = `${W}px`; stage.style.height = `${H}px`;
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  // Where the word sits: centred, inside the area Reels, TikTok and Shorts leave clear when vertical.
+  window.__titles = { W, H, V, order, SPAN, word: V ? { cx: 504, cy: 600, w: 760, h: 250 } : { cx: 960, cy: 470, w: 1300, h: 270 } };
+  const names = { solid: "SOLID TYPE + RAYS", particles: "PARTICLES INTO TYPE", contours: "CONTOURS + GLITCH" };
+  // Each preset: hook within 0.5 s, the word builds to 2.4 s, impact on the drop, then a readable hold.
+  order.forEach((id, i) => {
+    const s = STINGS[id], scene = document.createElement("section");
+    scene.className = "scene"; scene.dataset.start = i * SPAN; scene.dataset.trans = "cut"; scene.id = `p-${id}`;
+    scene.innerHTML =
+      (order.length > 1 ? `<div class="a preset" style="${V ? "left:120px;top:300px" : ""}" data-fx="fade" data-at="0.1" data-out="5.7">PRESET ${i + 1} / 3 · ${names[id]}</div>` : "") +
+      `<div class="a" data-sfx="riser" data-sfx-at="0.3"></div>` +
+      `<div class="a flash" style="background:${id === "contours" ? "transparent" : id === "particles" ? "rgba(225,245,255,.6)" : "rgba(255,240,220,.8)"}" data-fx="flash" data-at="2.4" data-dur="0.5" data-sfx="impact"></div>` +
+      `<div class="a tag${id === "particles" ? " sans" : ""}${V ? " v" : ""}" id="tag-${id}" style="color:${id === "solid" ? s.colors.metal : id === "particles" ? s.colors.fill : "#fff"}" data-fx="up" data-at="3.0" data-dur="0.6"${order.length > 1 ? ` data-out="5.75"` : ""} data-sfx="chime" data-sfx-at="3.05">${esc(s.tagline)}</div>`;
+    stage.appendChild(scene);
+  });
+  window.__poster = 3.6;   // the first preset's word, just after its impact
+  window.__music = preset === "all"
+    ? [[0, "build"], [2.4, "drop"], [4.8, "break"], [6, "build"], [8.4, "drop"], [10.8, "break"], [12, "build"], [14.4, "drop"], [16.8, "tail"]]
+    : [[0, "build"], [2.4, "drop"], [4.8, "tail"]];
+  const at = (id, a, b) => [order.indexOf(id) * SPAN + a, order.indexOf(id) * SPAN + b];
+  window.__effects = [
+    order.includes("solid") && { id: "cjk-solid", at: at("solid", 0.35, 6) }, order.includes("solid") && { id: "rays", at: at("solid", 0.4, 6) },
+    order.includes("particles") && { id: "particles", at: at("particles", 0, 6) },
+    order.includes("contours") && { id: "organic-contours", at: at("contours", 0, 6) }, order.includes("contours") && { id: "frame-glitch", at: at("contours", 2.4, 3.2) },
+  ].filter(Boolean);
+  document.getElementById("gl").dataset.effect = "cjk-solid rays particles";
+  document.getElementById("flat").dataset.effect = "organic-contours frame-glitch";
+  window.__ready = Promise.all([document.fonts.ready, new Promise((resolve, reject) => { window.__titlesDone = resolve; window.__titlesFail = reject; })]);
+  window.__renderHooks = window.__renderHooks || [];
+  window.__renderHooks.push(async (t) => { if (window.__titlesGL) (await window.__titlesGL).frame(t); });
+})();
+</script>
+<script src="../video/engine.js"></script>
+<script type="module">
+import * as THREE from "three";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { SVGLoader } from "three/addons/loaders/SVGLoader.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+// Library effects: the CJK outline asset behind cjk-solid, the organic-contours drawing and frame-glitch.
+import { font } from "../fx/material-studies/type.js";
+import { drawContours } from "../fx/material-studies/contours.js";
+import { create as createGlitch } from "../fx/material-studies/glitch.js";
+
+const { W, H, V, order, SPAN, word: WORD } = window.__titles;
+const clamp = (v) => Math.max(0, Math.min(1, v)), smooth = (x) => { x = clamp(x); return x * x * (3 - 2 * x); };
+const eo = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const back = (x) => { const c1 = 1.70158, c3 = c1 + 1; x = clamp(x); return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const IMPACT = 2.4;
+
+// ── The word, laid out from the outline asset: each letter's path, its advance and its outline's box.
+function letters(data, text) {
+  const chars = Array.from(text);
+  if (!chars.length || chars.length > 12) throw new Error("Use 1–12 characters");
+  const out = [];
+  let x = 0;
+  for (const ch of chars) {
+    if (ch === " ") { x += 320; continue; }
+    const g = data.glyphs[ch];
+    if (!g) throw new Error(`No outline for "${ch}"; see assets/type/README.md`);
+    const n = g.path.match(/-?\d+(\.\d+)?/g).map(Number);
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    for (let i = 0; i + 1 < n.length; i += 2) { x0 = Math.min(x0, n[i]); x1 = Math.max(x1, n[i]); y0 = Math.min(y0, n[i + 1]); y1 = Math.max(y1, n[i + 1]); }
+    out.push({ ch, path: g.path, x, box: [x + x0, y0, x + x1, y1] });
+    x += g.advance;
+  }
+  const box = out.reduce((b, l) => [Math.min(b[0], l.box[0]), Math.min(b[1], l.box[1]), Math.max(b[2], l.box[2]), Math.max(b[3], l.box[3])], [Infinity, Infinity, -Infinity, -Infinity]);
+  return { list: out, box };
+}
+// Fit the word into a box centred at (cx, cy): font units → pixels, y up.
+function fit({ box }, cx, cy, w, h) {
+  const s = Math.min(w / (box[2] - box[0]), h / (box[3] - box[1]));
+  return { s, ox: cx - ((box[0] + box[2]) / 2) * s, oy: cy + ((box[1] + box[3]) / 2) * s, w: (box[2] - box[0]) * s, h: (box[3] - box[1]) * s };
+}
+function maskCanvas(word, f, cw, ch) {
+  const c = document.createElement("canvas"); c.width = cw; c.height = ch;
+  const g = c.getContext("2d");
+  g.fillStyle = "#fff";
+  for (const l of word.list) { g.save(); g.translate(f.ox + l.x * f.s, f.oy); g.scale(f.s, -f.s); g.fill(new Path2D(l.path)); g.restore(); }
+  return c;
+}
+function rayTexture() {
+  const c = document.createElement("canvas"); c.width = 64; c.height = 512;
+  const g = c.getContext("2d"), gy = g.createLinearGradient(0, 0, 0, 512);
+  [[0, 0], [0.2, 1], [0.42, 0.3], [0.5, 0], [0.58, 0.3], [0.8, 1], [1, 0]].forEach(([o, a]) => gy.addColorStop(o, `rgba(255,255,255,${a})`));
+  g.fillStyle = gy; g.fillRect(0, 0, 64, 512);
+  const gx = g.createLinearGradient(0, 0, 64, 0); gx.addColorStop(0, "rgba(0,0,0,1)"); gx.addColorStop(0.5, "rgba(0,0,0,0)"); gx.addColorStop(1, "rgba(0,0,0,1)");
+  g.globalCompositeOperation = "destination-out"; g.fillStyle = gx; g.fillRect(0, 0, 64, 512);
+  return new THREE.CanvasTexture(c);
+}
+
+const ready = (async () => {
+  const data = await font();
+  const gl = document.getElementById("gl"), flat = document.getElementById("flat");
+  gl.width = W; gl.height = H; flat.width = W; flat.height = H;
+  const renderer = new THREE.WebGLRenderer({ canvas: gl, antialias: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1); renderer.setSize(W, H, false);
+  renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  const pmrem = new THREE.PMREMGenerator(renderer), room = new RoomEnvironment();
+  const roomEnv = pmrem.fromScene(room, 0.04).texture; room.dispose(); pmrem.dispose();
+  const DIST = 30, FOV = 32, vh = 2 * DIST * Math.tan(THREE.MathUtils.degToRad(FOV / 2)), vw = vh * (W / H), upp = vw / W;
+  const toWorld = (px, py) => [(px - W / 2) * upp, (H / 2 - py) * upp];
+  const composerFor = (scene, camera, bloom) => {
+    const c = new EffectComposer(renderer); c.addPass(new RenderPass(scene, camera));
+    c.addPass(new UnrealBloomPass(new THREE.Vector2(W, H), ...bloom)); c.addPass(new OutputPass()); return c;
+  };
+  const builders = {
+    // ① cjk-solid + rays: extruded letters rise one by one, light rays build behind them, impact, readable hold.
+    solid(S) {
+      const word = letters(data, S.word), f = fit(word, WORD.cx, WORD.cy, WORD.w, WORD.h);
+      const scene = new THREE.Scene(); scene.background = new THREE.Color(S.colors.bg); scene.environment = roomEnv; scene.environmentIntensity = 0.55;
+      const camera = new THREE.PerspectiveCamera(FOV, W / H, 0.1, 200);
+      const metal = new THREE.MeshStandardMaterial({ color: S.colors.metal, metalness: 0.9, roughness: 0.26 });
+      const side = new THREE.MeshStandardMaterial({ color: "#7a4a22", metalness: 0.75, roughness: 0.4 });
+      const meshes = word.list.map((l) => {
+        const shapes = new SVGLoader().parse(`<svg xmlns="http://www.w3.org/2000/svg"><path d="${l.path}"/></svg>`).paths.flatMap((p) => SVGLoader.createShapes(p));
+        const geo = new THREE.ExtrudeGeometry(shapes, { depth: 170, bevelEnabled: true, bevelSegments: 3, bevelSize: 7, bevelThickness: 9, curveSegments: 8 });
+        const cx = (l.box[0] + l.box[2]) / 2 - l.x, cy = (l.box[1] + l.box[3]) / 2;
+        geo.translate(-cx, -cy, -85);
+        const m = new THREE.Mesh(geo, [metal, side]);
+        const [wx, wy] = toWorld(f.ox + (l.x + cx) * f.s, f.oy - cy * f.s);
+        m.userData.home = new THREE.Vector3(wx, wy, 0); m.scale.setScalar(f.s * upp);
+        scene.add(m); return m;
+      });
+      const key = new THREE.DirectionalLight("#fff3e0", 2.4); key.position.set(-6, 8, 12); scene.add(key);
+      const rim = new THREE.DirectionalLight(S.colors.rim, 3.2); rim.position.set(8, 3, -6); scene.add(rim);
+      const [, wy0] = toWorld(0, WORD.cy);
+      const rays = new THREE.Group(); rays.position.set(0, wy0, -8); scene.add(rays);
+      const tex = rayTexture(), mats = [];
+      for (let i = 0; i < 16; i++) {
+        const m = new THREE.MeshBasicMaterial({ map: tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, color: i % 4 ? S.colors.ray : S.colors.rim, opacity: 0 });
+        mats.push(m);
+        const r = new THREE.Mesh(new THREE.PlaneGeometry(0.8 + hash(i) * 1.1, 26 + hash(i + 4) * 16), m); r.rotation.z = (i / 16) * Math.PI * 2 + hash(i + 2) * 0.25; rays.add(r);
+      }
+      const DN = 500, dpos = new Float32Array(DN * 3);
+      for (let i = 0; i < DN; i++) { dpos[i * 3] = (hash(i) - 0.5) * vw * 1.2; dpos[i * 3 + 1] = (hash(i + 0.3) - 0.5) * vh * 1.2; dpos[i * 3 + 2] = -2 - hash(i + 0.6) * 10; }
+      const dgeo = new THREE.BufferGeometry(); dgeo.setAttribute("position", new THREE.BufferAttribute(dpos.slice(), 3));
+      const dust = new THREE.Points(dgeo, new THREE.PointsMaterial({ color: S.colors.ray, size: 0.06, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false })); scene.add(dust);
+      const composer = composerFor(scene, camera, [0.6, 0.5, 0.86]);
+      return {
+        three: true,
+        frame(t) {
+          meshes.forEach((m, i) => {
+            const k = eo((t - 0.3 - i * 0.22) / 0.9), h = m.userData.home;
+            m.position.set(h.x, h.y - 3.2 * (1 - k), h.z - 4 * (1 - k));
+            m.rotation.set(1.3 * (1 - k), -0.5 * (1 - k), 0);
+            m.visible = t > 0.3 + i * 0.22;
+          });
+          const kick = t >= IMPACT ? Math.exp(-(t - IMPACT) * 9) : 0;
+          camera.position.set(1.2 * (1 - eo(t / IMPACT)) + 0.25 * kick * Math.sin(t * 90), -1.4 * (1 - eo(t / IMPACT)), DIST - 6 * (1 - eo(t / IMPACT)) + 1.2 * kick - 0.9 * smooth((t - 3) / 3));
+          camera.lookAt(0, 0, 0);
+          const build = smooth((t - 0.2) / 2.2), burst = t >= IMPACT ? Math.exp(-(t - IMPACT) * 3) : 0;
+          rays.rotation.z = t * 0.09; rays.scale.setScalar(0.55 + 0.35 * build + 0.4 * burst);
+          mats.forEach((m, i) => { m.opacity = (0.11 * build + 0.22 * burst) * (0.75 + 0.25 * Math.sin(t * 1.6 + i)); });
+          // The studio reflection turns across the metal: a light sweep without a hot spot.
+          scene.environmentRotation.set(0, -0.9 + 1.4 * smooth((t - 2.6) / 3.2), 0);
+          const p = dgeo.attributes.position;
+          for (let i = 0; i < DN; i++) p.array[i * 3 + 1] = ((dpos[i * 3 + 1] + t * 0.25 + vh * 0.6) % (vh * 1.2)) - vh * 0.6;   // dust drifts up and wraps
+          p.needsUpdate = true;
+          composer.render(0);
+        },
+      };
+    },
+    // ② particles into type: a swirling cloud is drawn into the word, snaps on the impact, then glints.
+    particles(S) {
+      const word = letters(data, S.word), f = fit(word, WORD.cx, WORD.cy, WORD.w, WORD.h);
+      const mask = maskCanvas(word, f, W, H), md = mask.getContext("2d").getImageData(0, 0, W, H).data;
+      const targets = [];
+      for (let y = 0; y < H; y += 4) for (let x = (y / 4) % 2 ? 2 : 0; x < W; x += 4) if (md[(y * W + x) * 4 + 3] > 128) targets.push([x, y]);
+      const N = targets.length, pos = new Float32Array(N * 3), col = new Float32Array(N * 3), seeds = [];
+      const ca = new THREE.Color(S.colors.a), cb = new THREE.Color(S.colors.b);
+      targets.forEach(([x, y], i) => {
+        const [tx, ty] = toWorld(x, y), r = 4 + hash(i * 1.7) * vw * 0.45, a = hash(i * 2.9) * Math.PI * 2;
+        seeds.push({ tx, ty, r, a, z: (hash(i * 5.3) - 0.5) * 8, d: (Math.abs(x - WORD.cx) / WORD.w) * 0.5 + hash(i * 0.7) * 0.35, sp: 0.4 + hash(i * 3.1) * 0.6 });
+        const c = ca.clone().lerp(cb, hash(i * 9.1)); col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
+      });
+      const scene = new THREE.Scene(); scene.background = new THREE.Color(S.colors.bg);
+      const camera = new THREE.PerspectiveCamera(FOV, W / H, 0.1, 200); camera.position.set(0, 0, DIST);
+      const geo = new THREE.BufferGeometry(); geo.setAttribute("position", new THREE.BufferAttribute(pos, 3)); geo.setAttribute("color", new THREE.BufferAttribute(col.slice(), 3));
+      const pts = new THREE.Points(geo, new THREE.PointsMaterial({ size: 0.085, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+      scene.add(pts);
+      const tint = maskCanvas(word, f, W, H), tg = tint.getContext("2d");
+      tg.globalCompositeOperation = "source-in"; tg.fillStyle = S.colors.fill; tg.fillRect(0, 0, W, H);
+      const ftex = new THREE.CanvasTexture(tint); ftex.colorSpace = THREE.SRGBColorSpace;
+      const fill = new THREE.Mesh(new THREE.PlaneGeometry(vw, vh), new THREE.MeshBasicMaterial({ map: ftex, transparent: true, opacity: 0, depthWrite: false }));
+      fill.position.z = -0.05; scene.add(fill);
+      const composer = composerFor(scene, camera, [0.8, 0.45, 0.5]);
+      window.titlesParticles = N;
+      return {
+        three: true,
+        frame(t) {
+          const kick = t >= IMPACT ? Math.exp(-(t - IMPACT) * 6) : 0, c = geo.attributes.color.array;
+          for (let i = 0; i < N; i++) {
+            const s = seeds[i], k = smooth((t - 0.45 - s.d) / 1.15);
+            const a = s.a + (t + 2) * s.sp * 0.9, rr = s.r * (1 - 0.15 * Math.sin(t * 2 + i));
+            const ox = Math.cos(a) * rr, oy = Math.sin(a) * rr * 0.55, oz = s.z;
+            const jx = (hash(i + 0.11) - 0.5) * 0.9 * kick, jy = (hash(i + 0.37) - 0.5) * 0.9 * kick;
+            pos[i * 3] = ox + (s.tx - ox) * k + jx; pos[i * 3 + 1] = oy + (s.ty - oy) * k + jy; pos[i * 3 + 2] = oz * (1 - k);
+            const glint = t > 3 ? 1 + 1.4 * Math.max(0, Math.sin(t * 3 + s.tx * 0.9 - s.ty * 0.4) - 0.92) * 12 : 1;
+            c[i * 3] = col[i * 3] * glint; c[i * 3 + 1] = col[i * 3 + 1] * glint; c[i * 3 + 2] = col[i * 3 + 2] * glint;
+          }
+          geo.attributes.position.needsUpdate = true; geo.attributes.color.needsUpdate = true;
+          fill.material.opacity = 0.6 * smooth((t - IMPACT) / 0.5);
+          camera.position.set(0, 0, DIST + 4 * (1 - eo(t / IMPACT)) - 0.8 * smooth((t - 3) / 3));
+          composer.render(0);
+        },
+      };
+    },
+    // ③ organic-contours + frame-glitch, drawn on the library's 1280 × 720 canvas and scaled into the frame.
+    contours(S) {
+      const k = W / 1280, bandTop = V ? WORD.cy - 360 * k : 0;
+      const wy = (WORD.cy - bandTop) / k, word = letters(data, S.word), f = fit(word, 640, wy, WORD.w / k, WORD.h / k);
+      const mask = maskCanvas(word, f, 1280, 720);
+      const mk = () => { const c = document.createElement("canvas"); c.width = 1280; c.height = 720; return [c, c.getContext("2d")]; };
+      const [field, fg] = mk(), [inner, ig] = mk(), [work, wg] = mk();
+      const glitch = createGlitch();
+      const out = flat.getContext("2d");
+      return {
+        three: false,
+        frame(t) {
+          fg.clearRect(0, 0, 1280, 720);
+          drawContours(fg, t * 1.4, { background: false, strength: 0.9 + 0.3 * Math.sin(t) });
+          ig.globalCompositeOperation = "source-over"; ig.clearRect(0, 0, 1280, 720); ig.drawImage(field, 0, 0);
+          ig.globalCompositeOperation = "destination-in"; ig.drawImage(mask, 0, 0);
+          wg.globalCompositeOperation = "source-over"; wg.globalAlpha = 1; wg.fillStyle = S.colors.bg; wg.fillRect(0, 0, 1280, 720);
+          // The field opens from the centre, then drains away everywhere but the letters.
+          const r = 40 + 330 * smooth(t / 1.0), outside = 0.5 * (1 - smooth((t - 0.9) / 1.4));
+          if (outside > 0) { wg.save(); wg.beginPath(); wg.arc(640, wy, r, 0, Math.PI * 2); wg.clip(); wg.globalAlpha = outside; wg.drawImage(field, 0, 0); wg.restore(); }
+          wg.globalAlpha = 0.25 + 0.75 * smooth((t - 0.5) / 1.6); wg.drawImage(inner, 0, 0); wg.globalAlpha = 1;
+          if (t > IMPACT) {
+            wg.save(); wg.strokeStyle = S.colors.line; wg.lineWidth = 2 / f.s; wg.globalAlpha = smooth((t - IMPACT) / 0.4);
+            for (const l of word.list) { wg.save(); wg.translate(f.ox + l.x * f.s, f.oy); wg.scale(f.s, -f.s); wg.lineWidth = 2.2 / f.s; wg.stroke(new Path2D(l.path)); wg.restore(); }
+            wg.restore();
+          }
+          // frame-glitch: a burst on the impact, and one short blip in the hold.
+          const burst = t >= IMPACT && t < IMPACT + 0.8 ? (1 - (t - IMPACT) / 0.8) * (0.6 + 0.4 * Math.abs(Math.sin(t * 40))) : 0;
+          const blip = t > 4.6 && t < 4.75 ? 0.45 : 0, strength = Math.max(burst, blip);
+          let src = work;
+          if (strength > 0) { glitch.frame(t, { source: work, strength, labels: false }); src = glitch.canvas; }
+          out.fillStyle = S.colors.bg; out.fillRect(0, 0, W, H);
+          out.drawImage(src, 0, bandTop, 1280 * k, 720 * k);
+        },
+      };
+    },
+  };
+  const stings = order.map((id) => builders[id](STINGS[id]));
+  // Taglines sit under each word.
+  order.forEach((id) => { const el = document.getElementById(`tag-${id}`); el.style.top = `${WORD.cy + WORD.h / 2 + (window.__titles.V ? 54 : 60)}px`; });
+  let proof = null;
+  window.titlesProof = () => proof;
+  return {
+    frame(t) {
+      const i = Math.min(order.length - 1, Math.floor(t / SPAN)), local = t - i * SPAN, s = stings[i];
+      gl.style.visibility = s.three ? "visible" : "hidden";
+      flat.style.visibility = s.three ? "hidden" : "visible";
+      s.frame(local);
+      if (renderer.getContext().isContextLost()) throw new Error("Titles renderer lost its WebGL context");
+      proof = { preset: order[i], local };
+    },
+  };
+})();
+window.__titlesGL = ready;
+ready.then(() => window.__titlesDone(), (e) => { console.error(e); window.__titlesFail(e); });
+</script>
+</body>
+</html>

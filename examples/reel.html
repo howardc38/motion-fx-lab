@@ -2,104 +2,324 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Motion FX Lab example: vertical reel</title>
+<title>Motion FX Lab use case: weekend promo reel</title>
+<script>
+// ─── Edit here. One entry per shop; every promo reads its words, numbers and colours from this block. ──
+// The shops are fictional. SHOP picks the one to render; ?shop=bakery previews another without editing.
+// Important words stay inside the area that Instagram, TikTok and Shorts leave uncovered (see SAFE below).
+const SHOP = "tea";
+const SHOPS = {
+  tea: {
+    name: ["Brindle", "Tea Bar"], handle: "@brindleteabar", tag: "THIS WEEKEND ONLY",
+    colors: { bg: "#183b2f", ink: "#fff8ec", accent: "#f2b84b", pop: "#ff7a59", deep: "#0f2a21", soft: "#2b5545" },
+    hook: ["Too", "hot", "for", "hot", "tea?"],
+    art: "icedtea", product: "Iced brown sugar oat latte",
+    offer: "2 for $9", offerNote: "Any two iced teas",
+    points: ["Oat milk at no extra cost", "Fresh pearls every hour", "Ready in three minutes"],
+    rating: 4.9, reviews: 1240, quote: ["Best", "iced", "tea", "on", "Mill", "Street."], quoteBy: "Jess K., regular since 2023",
+    daysLeft: 2, ends: "Ends Sunday 6 pm", cta: "Order ahead ↗",
+  },
+  bakery: {
+    name: ["Oven", "& Ivy"], handle: "@ovenandivy", tag: "SATURDAY + SUNDAY",
+    colors: { bg: "#f6e7cf", ink: "#2b1a10", accent: "#c8501e", pop: "#2f6b4f", deep: "#e9d2ad", soft: "#efdcbc" },
+    hook: ["Saturday", "smells", "like", "butter."],
+    art: "croissant", product: "Three-day butter croissant",
+    offer: "6 for $18", offerNote: "Usually $24 a box",
+    points: ["Laminated over three days", "Out of the oven at 7 am", "Pre-order and skip the line"],
+    rating: 4.8, reviews: 860, quote: ["The", "flakiest", "thing", "in", "town."], quoteBy: "Sam R., Saturday regular",
+    daysLeft: 2, ends: "Weekend boxes only", cta: "Pre-order ↗",
+  },
+  yoga: {
+    name: ["Saltgrass", "Yoga"], handle: "@saltgrassyoga", tag: "NEW STUDENTS",
+    colors: { bg: "#2d2a6e", ink: "#fbf7ff", accent: "#9ee6c9", pop: "#ff9fb6", deep: "#1f1c52", soft: "#403c8c" },
+    hook: ["Your", "first", "class", "is", "on", "us."],
+    art: "mat", product: "Morning flow, all levels",
+    offer: "First class free", offerNote: "Then 5 classes for $60",
+    points: ["Beginner classes every day", "Mats and towels included", "Ten minutes from the station"],
+    rating: 4.9, reviews: 412, quote: ["I", "finally", "stuck", "with", "it."], quoteBy: "Priya N., member since spring",
+    daysLeft: 2, ends: "Sign up by Sunday", cta: "Book a class ↗",
+  },
+};
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
-  :root { --ink: #0e0d12; --paper: #f4f3ee; --pink: #ff90e8; --sun: #ffd400; --blue: #3b5bff; --muted: #8f8a9c;
-    --lat: "Archivo", "Helvetica Neue", Arial, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+  :root { --lat: "Archivo", "Helvetica Neue", Arial, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace; }
   html, body { height: 100%; }
   body { margin: 0; background: #111110; display: grid; place-items: center; }
-  #frame { position: relative; overflow: hidden; background: var(--ink); }
+  #frame { position: relative; overflow: hidden; background: var(--bg); }
   #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; font-family: var(--lat); color: var(--ink); -webkit-font-smoothing: antialiased; }
   body.record { display: block; }
   body.record #frame { position: fixed; left: 0; top: 0; }
   body.record #stage { transform: none !important; }
-  .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; }
-  .edge { position: absolute; top: 0; bottom: 0; width: 26px; margin-left: -1px; background: var(--sun); opacity: 0; }
+  .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; background: var(--bg); }
+  .edge { position: absolute; top: 0; bottom: 0; width: 30px; margin-left: -1px; background: var(--accent); opacity: 0; }
   .a { position: absolute; }
-  .ink { background: var(--ink); color: var(--paper); }
-  .paper { background: var(--paper); }
-  .sun { background: var(--sun); }
-  .pinkbg { background: var(--pink); }
-  .dots { background-image: radial-gradient(rgba(255,255,255,.12) 1.6px, transparent 2px); background-size: 40px 40px; }
-  .wide { font-weight: 900; font-stretch: 125%; letter-spacing: -.02em; line-height: .95; }
-  .mono { font-family: var(--mono); }
-  .chip { font: 700 22px var(--mono); letter-spacing: .12em; padding: 10px 18px; border: 2px solid currentColor; border-radius: 999px; }
-  .phone { left: 150px; top: 430px; width: 780px; height: 1110px; border-radius: 70px; background: #fff; border: 14px solid var(--ink); box-shadow: 0 30px 80px rgba(14,13,18,.25); overflow: hidden; }
-  .phone .bar { height: 150px; display: flex; align-items: end; justify-content: space-between; padding: 0 50px 26px; border-bottom: 2px solid #eee; }
-  .phone .bar b { font: 900 44px var(--lat); }
-  .phone .bar span { font: 700 24px var(--mono); color: #5c5868; }
-  .cls { position: absolute; left: 40px; right: 40px; height: 190px; border-radius: 30px; background: #f6f5f0; display: flex; align-items: center; justify-content: space-between; padding: 0 36px; }
-  .cls b { display: block; font: 900 46px var(--lat); }
-  .cls span { font: 700 26px var(--mono); color: #5c5868; }
-  .btn { font: 800 34px var(--lat); padding: 22px 34px; border-radius: 999px; background: var(--ink); color: #fff; white-space: nowrap; }
-  .btn.alt { background: #e3e1da; color: #5c5868; }
-  .cls .btn span { font: inherit; color: inherit; }
-  .btn .b2 { display: none; }
-  .btn.on { background: #1e9e5a; }
-  .btn.on .b1 { display: none; }
-  .btn.on .b2 { display: inline; }
-  .ring { width: 170px; height: 170px; margin: -85px 0 0 -85px; border-radius: 50%; border: 8px solid var(--pink); }
-  .sticker { position: absolute; padding: 22px 38px; border-radius: 24px; border: 7px solid #fff; box-shadow: 0 10px 0 rgba(0,0,0,.14), 0 18px 40px rgba(0,0,0,.2); font: 900 56px var(--lat); white-space: nowrap; }
-  .check { position: absolute; left: 110px; font: 800 64px/1.1 var(--lat); display: flex; gap: 34px; align-items: center; }
-  .check i { font-style: normal; flex: none; width: 92px; height: 92px; border-radius: 50%; background: var(--ink); color: var(--pink); display: grid; place-items: center; font-size: 50px; }
+  .tag { left: 120px; top: 300px; font: 700 30px var(--mono); letter-spacing: .12em; color: var(--accent); white-space: nowrap; }
+  .hookw { left: 120px; top: 400px; width: 680px; font-weight: 900; line-height: 1.02; letter-spacing: -.02em; }
+  .hookw .w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .02em .06em; margin-right: .2em; }
+  .hookw .w > span { display: inline-block; }
+  .hookw .w.now > span { color: var(--accent); }
+  .bars { left: 120px; top: 1110px; width: 640px; height: 120px; display: flex; align-items: center; gap: 12px; }
+  .bars i { flex: 1; border-radius: 12px; background: var(--accent); }
+  .art { left: 90px; top: 640px; width: 900px; height: 1200px; }
+  .deco { position: absolute; }
+  .deco svg { width: 100%; height: 100%; display: block; }
+  .art svg { width: 100%; height: 100%; display: block; }
+  .halo { left: 540px; top: 1140px; width: 980px; height: 980px; margin: -490px 0 0 -490px; border-radius: 50%; background: radial-gradient(circle, var(--soft) 0 58%, transparent 59%); }
+  .price { left: 120px; top: 330px; padding: 20px 40px 26px; border-radius: 28px; background: var(--pop); color: #fff; border: 8px solid #fff; box-shadow: 0 12px 0 rgba(0,0,0,.18), 0 26px 50px rgba(0,0,0,.28); font: 900 118px/1 var(--lat); letter-spacing: -.03em; white-space: nowrap; transform-origin: 30% 50%; }
+  .note { left: 128px; font: 800 48px var(--lat); white-space: nowrap; }
+  .pname { left: 120px; top: 600px; max-width: 640px; padding: 16px 26px; border-radius: 20px; background: var(--deep); color: var(--ink); font: 800 42px/1.15 var(--lat); }
+  .flash { inset: 0; background: #fff; opacity: 0; }
+  .pt { left: 120px; width: 660px; display: flex; align-items: center; gap: 30px; }
+  .pt i { flex: none; width: 112px; height: 112px; border-radius: 50%; background: var(--accent); color: var(--bg); display: grid; place-items: center; font: 900 64px var(--lat); font-style: normal; }
+  .pt b { font: 900 62px/1.02 var(--lat); letter-spacing: -.02em; }
+  .score { left: 120px; top: 330px; font: 900 300px/1 var(--lat); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+  .stars { left: 128px; top: 650px; display: flex; gap: 14px; }
+  .stars svg { width: 104px; height: 104px; }
+  .revs { left: 128px; top: 790px; font: 800 60px var(--lat); font-variant-numeric: tabular-nums; }
+  .quote { left: 120px; top: 930px; width: 600px; padding: 34px 40px; border-radius: 34px; background: var(--deep); }
+  .quote .k { font: 900 64px/1.08 var(--lat); letter-spacing: -.02em; }
+  .quote .k span { opacity: .3; }
+  .quote .k span.on { opacity: 1; color: var(--accent); }
+  .quote .k span.past { opacity: 1; }
+  .quote .by { margin-top: 18px; font: 600 34px var(--lat); opacity: .8; }
+  .shop { left: 120px; top: 330px; white-space: nowrap; font: 900 150px/.92 var(--lat); font-stretch: 112%; letter-spacing: -.035em; }
+  .cta { left: 120px; top: 690px; padding: 22px 38px; border-radius: 26px; background: var(--ink); color: var(--bg); border: 7px solid var(--accent); font: 900 64px var(--lat); white-space: nowrap; box-shadow: 0 12px 0 rgba(0,0,0,.2); }
+  .ring { left: 120px; top: 880px; width: 340px; height: 340px; }
+  .ringtxt { left: 120px; top: 880px; width: 340px; height: 340px; display: grid; place-content: center; text-align: center; }
+  .ringtxt b { font: 900 150px/0.9 var(--lat); font-variant-numeric: tabular-nums; }
+  .ringtxt span { font: 800 36px var(--lat); }
+  .ends { left: 500px; top: 960px; width: 280px; font: 800 50px/1.08 var(--lat); }
+  .handle { left: 500px; top: 1150px; font: 700 30px var(--mono); color: var(--accent); white-space: nowrap; }
 </style>
 </head>
 <body>
 <div id="frame">
 <div id="stage" data-w="1080" data-h="1920" data-dur="12">
-
-  <!-- 01 hook -->
-  <section class="scene ink dots" data-start="0">
-    <div class="a chip" style="left:110px;top:170px;color:var(--sun)" data-fx="fade" data-at="0.1">DEMO · FICTIONAL STUDIO</div>
-    <div class="a wide" style="left:100px;top:600px;font-size:160px;white-space:nowrap" data-fx="chars" data-at="0.2" data-stagger="0.04" data-sfx="pop" data-sfx-repeat="3" data-sfx-every="0.12">Still</div>
-    <div class="a wide" style="left:100px;top:780px;font-size:160px;white-space:nowrap" data-fx="chars" data-at="0.5" data-stagger="0.04">booking</div>
-    <div class="a wide" style="left:100px;top:960px;font-size:160px;white-space:nowrap;color:var(--pink)" data-fx="slam" data-at="1.0" data-sfx="impact">by DM?</div>
-  </section>
-
-  <!-- 02 the product, tapped -->
-  <section class="scene paper" data-start="2.4">
-    <div class="edge"></div>
-    <div class="a wide" style="left:110px;top:170px;font-size:110px;white-space:nowrap" data-fx="left" data-at="0.1">Book in</div>
-    <div class="a wide" style="left:110px;top:280px;font-size:110px;white-space:nowrap;color:#c2267f" data-fx="left" data-at="0.2">one tap.</div>
-    <div class="a phone" data-fx="up" data-at="0.3" data-dur="0.6">
-      <div class="bar"><b>Sample Studio</b><span>TONIGHT</span></div>
-      <div class="cls" style="top:200px" data-fx="left" data-at="0.6"><div><b>Vinyasa</b><span>7:00 pm · 3 spots left</span></div><div class="btn" data-on="1.75"><span class="b1">Book</span><span class="b2">Booked ✓</span></div></div>
-      <div class="cls" style="top:420px" data-fx="left" data-at="0.75"><div><b>Yin</b><span>8:15 pm · full</span></div><div class="btn alt">Waitlist</div></div>
-      <div class="cls" style="top:640px" data-fx="left" data-at="0.9"><div><b>Pilates</b><span>9:00 pm · 5 spots left</span></div><div class="btn">Book</div></div>
-      <div class="cls" style="top:860px" data-fx="left" data-at="1.05"><div><b>Barre</b><span>9:45 pm · 8 spots left</span></div><div class="btn">Book</div></div>
-    </div>
-    <div class="a ring" style="left:820px;top:733px" data-fx="ring" data-at="1.6" data-sfx="tap"></div>
-    <div class="sticker" style="left:520px;top:1620px;background:var(--pink);transform:rotate(-4deg)" data-fx="slam" data-at="2.0" data-base="rotate(-4deg)" data-sfx="ding">Booked ✓</div>
-  </section>
-
-  <!-- 03 why -->
-  <section class="scene pinkbg" data-start="6">
-    <div class="edge"></div>
-    <div class="a wide" style="left:110px;top:260px;font-size:120px" data-fx="up" data-at="0.1">No more</div>
-    <div class="a wide" style="left:110px;top:380px;font-size:120px" data-fx="up" data-at="0.2">back-and-forth.</div>
-    <div class="check" style="top:760px" data-fx="pop" data-at="0.6" data-sfx="tick"><i>✓</i>Book in one tap</div>
-    <div class="check" style="top:950px" data-fx="pop" data-at="0.95" data-sfx="tick"><i>✓</i>The waitlist<br>fills itself</div>
-    <div class="check" style="top:1210px" data-fx="pop" data-at="1.3" data-sfx="tick"><i>✓</i>Reminders go<br>out for you</div>
-  </section>
-
-  <!-- 04 call to action -->
-  <section class="scene sun" data-start="9.6">
-    <div class="edge"></div>
-    <div class="a wide" style="left:0;right:0;top:640px;text-align:center;font-size:150px" data-fx="slam" data-at="0.15" data-sfx="impact">Sample<br>Studio</div>
-    <div class="sticker" style="left:300px;top:1090px;background:#fff;transform:rotate(3deg)" data-fx="pop" data-at="0.7" data-base="rotate(3deg)" data-sfx="pop">Link in bio ↗</div>
-    <div class="a mono" style="left:0;right:0;top:1780px;text-align:center;font-size:26px;color:#5c4b00" data-fx="fade" data-at="1.0">Every frame of this video is code · Motion FX Lab</div>
-  </section>
-
+  <section class="scene" data-start="0" id="s1"></section>
+  <section class="scene" data-start="1.8" id="s2"><div class="edge"></div></section>
+  <section class="scene" data-start="4.2" id="s3"><div class="edge"></div></section>
+  <section class="scene" data-start="7.2" id="s4"><div class="edge"></div></section>
+  <section class="scene" data-start="9.6" id="s5"><div class="edge"></div></section>
 </div>
 </div>
 <script>
-  window.__gif = [[0.7, 2.2], [3.8, 5], [7.7, 8.6], [10.2, 11.4]];
-  window.__poster = 4.7;   // the poster frame, in seconds
-  window.__music = [[0, "build"], [2.4, "drop"], [7.2, "final"], [9.6, "tail"]];
-  window.__ready = document.fonts.ready;
+// Original product drawings, made of SVG shapes so a template needs no photo. Replace ART[...] with an <image>.
+// Each drawing ends with shine(...): a band of light clipped to the product's outline (the sweep).
+var shine = (outline, hero) => !hero ? "" : `<clipPath id="sil">${outline}</clipPath><linearGradient id="band" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <g clip-path="url(#sil)"><rect id="artshine" data-effect="sweep" x="-260" y="-100" width="220" height="1000" fill="url(#band)" transform="skewX(-18)" opacity="0"/></g>`;
+var ART = {
+  icedtea: (C, hero) => `<svg viewBox="0 0 600 800" aria-hidden="true">
+    <defs>
+      <linearGradient id="tea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3e2c6"/><stop offset=".55" stop-color="#d9b083"/><stop offset="1" stop-color="#9c6438"/></linearGradient>
+      <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".18" stop-color="#fff" stop-opacity=".08"/><stop offset=".8" stop-color="#fff" stop-opacity=".04"/><stop offset="1" stop-color="#fff" stop-opacity=".4"/></linearGradient>
+      <radialGradient id="pearl" cx=".35" cy=".3" r=".7"><stop offset="0" stop-color="#7a4a2c"/><stop offset="1" stop-color="#1e0f07"/></radialGradient>
+      <clipPath id="cup"><path d="M150 230 L450 230 L412 708 Q408 742 372 742 L228 742 Q192 742 188 708 Z"/></clipPath>
+    </defs>
+    <ellipse cx="300" cy="768" rx="190" ry="22" fill="#000" opacity=".25"/>
+    <rect x="318" y="20" width="44" height="420" rx="18" transform="rotate(9 340 230)" fill="${C.pop}"/>
+    <g clip-path="url(#cup)">
+      <rect x="140" y="270" width="330" height="480" fill="url(#tea)"/>
+      <path d="M150 300 C220 330 250 410 210 520 C190 580 230 640 210 742 L188 742 L150 300 Z" fill="#6b3a1c" opacity=".75"/>
+      <path d="M450 330 C380 380 420 470 380 560 C350 630 400 690 390 742 L420 742 Z" fill="#6b3a1c" opacity=".7"/>
+      <path d="M300 300 C330 380 280 450 310 540 C330 600 300 660 320 742" stroke="#7d4521" stroke-width="26" fill="none" opacity=".55" stroke-linecap="round"/>
+      ${[[215, 700], [262, 712], [312, 704], [360, 714], [238, 668], [290, 676], [340, 670], [385, 682], [200, 648], [268, 640], [318, 636], [368, 646], [228, 610], [300, 604], [352, 612]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="24" fill="url(#pearl)"/><circle cx="${x - 8}" cy="${y - 9}" r="6" fill="#fff" opacity=".35"/>`).join("")}
+      ${[[200, 250, -12], [300, 238, 8], [380, 262, -4], [250, 318, 14]].map(([x, y, r]) => `<rect x="${x - 46}" y="${y - 42}" width="92" height="84" rx="16" transform="rotate(${r} ${x} ${y})" fill="#fff" opacity=".42"/>`).join("")}
+      <rect x="140" y="230" width="330" height="520" fill="url(#glass)"/>
+    </g>
+    <path d="M150 230 L450 230 L412 708 Q408 742 372 742 L228 742 Q192 742 188 708 Z" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="6"/>
+    <path d="M136 230 Q300 120 464 230 Z" fill="#fff" opacity=".3" stroke="#fff" stroke-opacity=".8" stroke-width="6"/>
+    <rect x="128" y="222" width="344" height="22" rx="11" fill="#fff" opacity=".85"/>
+    <path d="M182 290 L172 420" stroke="#fff" stroke-width="14" stroke-linecap="round" opacity=".55"/>
+    ${[[200, 470, 7], [420, 420, 6], [404, 560, 8], [230, 600, 5], [384, 650, 6]].map(([x, y, r]) => `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * 1.4}" fill="#fff" opacity=".55"/>`).join("")}
+    <circle cx="300" cy="470" r="74" fill="${C.bg}"/><circle cx="300" cy="470" r="64" fill="none" stroke="${C.accent}" stroke-width="5"/>
+    <text x="300" y="492" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="900" font-size="62" fill="${C.accent}">B</text>
+    ${shine(`<path d="M150 230 L450 230 L412 708 Q408 742 372 742 L228 742 Q192 742 188 708 Z"/><path d="M136 230 Q300 120 464 230 Z"/>`, hero)}
+  </svg>`,
+  croissant: (C, hero) => `<svg viewBox="0 0 600 800" aria-hidden="true">
+    <defs>
+      <linearGradient id="crust" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c46a"/><stop offset=".55" stop-color="#d9862f"/><stop offset="1" stop-color="#9a4a14"/></linearGradient>
+      <linearGradient id="box" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8b285"/><stop offset="1" stop-color="#b98c5c"/></linearGradient>
+    </defs>
+    <ellipse cx="300" cy="752" rx="250" ry="26" fill="#5a3a1c" opacity=".22"/>
+    <path d="M80 420 L520 420 L500 740 L100 740 Z" fill="url(#box)"/>
+    <path d="M80 420 L140 230 L460 230 L520 420 Z" fill="#c99d6c"/>
+    <path d="M140 230 L460 230 L520 420 L80 420 Z" fill="#000" opacity=".06"/>
+    <rect x="80" y="520" width="440" height="80" fill="${C.pop}"/>
+    <text x="300" y="578" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="900" font-size="46" fill="#fff" letter-spacing="2">OVEN &amp; IVY</text>
+    ${[[300, 420, 1.15, 0], [170, 400, 0.9, -14], [430, 400, 0.9, 14]].map(([x, y, s, r]) => `<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})">
+      <path d="M-170 30 C-190 -10 -150 -40 -120 -30 C-110 -60 -60 -70 -40 -52 C-20 -84 20 -84 40 -52 C60 -70 110 -60 120 -30 C150 -40 190 -10 170 30 C140 60 80 56 40 48 C10 60 -10 60 -40 48 C-80 56 -140 60 -170 30 Z" fill="url(#crust)"/>
+      <path d="M-120 -30 C-100 0 -96 30 -110 50 M-40 -52 C-30 -10 -30 30 -40 48 M40 -52 C30 -10 30 30 40 48 M120 -30 C100 0 96 30 110 50" stroke="#8a3f10" stroke-width="7" fill="none" opacity=".55" stroke-linecap="round"/>
+      <path d="M-30 -60 C0 -72 20 -70 34 -58" stroke="#fff3cf" stroke-width="10" fill="none" opacity=".55" stroke-linecap="round"/>
+    </g>`).join("")}
+    ${shine(`<path d="M80 420 L140 230 L460 230 L520 420 L500 740 L100 740 Z"/><rect x="0" y="300" width="600" height="190"/>`, hero)}
+  </svg>`,
+  mat: (C, hero) => `<svg viewBox="0 0 600 800" aria-hidden="true">
+    <defs>
+      <linearGradient id="roll" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.accent}"/><stop offset=".5" stop-color="#5fbf9c"/><stop offset="1" stop-color="#2f7f68"/></linearGradient>
+      <linearGradient id="bottle" x1="0" x2="1"><stop offset="0" stop-color="#ffd2dc"/><stop offset=".5" stop-color="${C.pop}"/><stop offset="1" stop-color="#d6607c"/></linearGradient>
+    </defs>
+    <ellipse cx="300" cy="756" rx="240" ry="24" fill="#000" opacity=".25"/>
+    <rect x="380" y="300" width="120" height="430" rx="46" fill="url(#bottle)"/>
+    <rect x="404" y="244" width="72" height="74" rx="18" fill="#fbf7ff"/>
+    <rect x="398" y="350" width="14" height="300" rx="7" fill="#fff" opacity=".45"/>
+    <path d="M150 560 C110 470 130 380 190 330 C170 420 190 500 220 560 Z" fill="#5fbf9c"/>
+    <path d="M180 560 C200 450 260 400 320 380 C270 450 250 510 240 560 Z" fill="#3f9a7f"/>
+    <path d="M120 560 L330 560 L310 700 L140 700 Z" fill="#fbf7ff"/>
+    <rect x="40" y="610" width="420" height="140" rx="70" fill="url(#roll)"/>
+    <circle cx="460" cy="680" r="70" fill="#9fe8cc"/>
+    ${[56, 42, 28, 14].map((r, i) => `<circle cx="460" cy="680" r="${r}" fill="none" stroke="#2f7f68" stroke-width="5" opacity="${0.4 + i * 0.12}"/>`).join("")}
+    <rect x="150" y="608" width="34" height="144" fill="${C.deep}"/><rect x="300" y="608" width="34" height="144" fill="${C.deep}"/>
+    <rect x="60" y="626" width="380" height="18" rx="9" fill="#fff" opacity=".3"/>
+    ${shine(`<rect x="380" y="244" width="120" height="486" rx="46"/><rect x="40" y="610" width="490" height="140" rx="70"/><path d="M120 560 L330 560 L310 700 L140 700 Z"/>`, hero)}
+  </svg>`,
+};
+</script>
+<script>
+(() => {
+  const key = new URLSearchParams(location.search).get("shop") || SHOP;
+  const S = SHOPS[key];
+  if (!S) throw new Error(`unknown shop "${key}"; known: ${Object.keys(SHOPS).join(", ")}`);
+  const C = S.colors;
+  for (const [k, v] of Object.entries(C)) document.documentElement.style.setProperty(`--${k}`, v);
+  document.title = `${S.name.join(" ")}: weekend promo`;
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  // 100 BPM, as video/music.py plays it: every pop below lands on this grid.
+  const BEAT = 0.6;
+  // Where the apps draw their own buttons and captions on a 1080 × 1920 frame (the union of Reels, TikTok and
+  // Shorts): nothing important goes in these bands, nor in TikTok's right-hand column below y = 840.
+  window.__safe = { top: 288, bottom: 672, left: 120, right: 192, column: { x: 780, y: 840 } };
+
+  // Each copy of the drawing gets its own SVG ids. Clip paths resolve by id, and one inside a scene that is
+  // hidden would clip every later copy to nothing.
+  let copies = 0;
+  const drawing = (hero = false) => {
+    const p = `art${copies++}`;
+    return ART[S.art](C, hero).replace(/id="(?!artshine")([^"]+)"/g, `id="${p}-$1"`).replace(/url\(#([^)]+)\)/g, `url(#${p}-$1)`);
+  };
+
+  // ── 1 · hook (0–1.8 s): the question is revealed word by word and each word lights as it lands (karaoke).
+  const hookAt = (i) => 0.12 + i * 0.27;
+  document.getElementById("s1").innerHTML =
+    `<div class="a tag" data-fx="fade" data-at="0.05">${esc(S.handle)} · ${esc(S.tag)}</div>` +
+    `<div class="a hookw" id="hook" data-effect="hook karaoke">${S.hook.map((w) => `<span class="w"><span>${esc(w)}</span></span>`).join("")}</div>` +
+    `<div class="deco" style="left:300px;top:1260px;width:480px;height:640px" data-fx="up" data-at="0.5" data-dur="0.6">${drawing()}</div>` +
+    `<div class="a bars" id="bars" data-effect="beat">${Array.from({ length: 16 }, () => "<i></i>").join("")}</div>`;
+
+  // ── 2 · product and price (1.8–4.2 s): the drawing rises, light sweeps across it, the price slams on the drop.
+  document.getElementById("s2").insertAdjacentHTML("beforeend",
+    `<div class="a halo" id="halo"></div>` +
+    `<div class="a" id="shaker" style="inset:0" data-effect="stamp" data-fx="shake" data-at="0.6" data-dur="0.45" data-amp="16">` +
+    `<div class="a art" id="art" data-fx="up" data-at="0.05" data-dur="0.5">${drawing(true)}</div>` +
+    `<div class="a pname" data-fx="left" data-at="0.9">${esc(S.product)}</div></div>` +
+    `<div class="a price" data-effect="sticker" style="transform:rotate(-4deg)" data-fx="slam" data-at="0.6" data-base="rotate(-4deg)" data-sfx="stamp">${esc(S.offer)}</div>` +
+    `<div class="a note" style="top:520px" data-fx="up" data-at="0.95">${esc(S.offerNote)}</div>` +
+    `<div class="a flash" data-fx="flash" data-at="0.6" data-dur="0.3"></div>`);
+
+  // ── 3 · three reasons (4.2–7.2 s): each whips in and lands on a beat.
+  const lands = [4.8, 5.4, 6.0];
+  document.getElementById("s3").insertAdjacentHTML("beforeend",
+    `<div class="a halo" style="opacity:.6"></div>` +
+    `<div class="deco" style="left:520px;top:1180px;width:560px;height:747px" data-fx="up" data-at="0.1" data-dur="0.6">${drawing()}</div>` +
+    S.points.map((p, i) => `<div class="a pt" style="top:${320 + i * 250}px" data-effect="whip beat" data-fx="whip" data-dx="640" data-at="${(lands[i] - 4.2 - 0.45).toFixed(2)}" data-sfx="pop" data-sfx-at="${(lands[i] - 4.2).toFixed(2)}"><i class="tick">✓</i><b>${esc(p)}</b></div>`).join(""));
+
+  // ── 4 · proof (7.2–9.6 s): the rating and review count count up; a review is read out word by word.
+  const quoteAt = (i) => 8.2 + i * 0.18;
+  document.getElementById("s4").insertAdjacentHTML("beforeend",
+    `<div class="deco" style="left:560px;top:1200px;width:560px;height:747px" data-fx="up" data-at="0.1" data-dur="0.6">${drawing()}</div>` +
+    `<div class="a score" data-effect="count"><span id="score">0.0</span></div>` +
+    `<div class="a stars" id="stars">${Array.from({ length: 5 }, (_, i) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17l-5.9 3.3 1.3-6.6L2.5 9.1l6.6-.8z" fill="${C.accent}" data-fx="pop" data-at="${(0.35 + i * 0.12).toFixed(2)}" data-sfx="tick" data-sfx-gain="0.6"/></svg>`).join("")}</div>` +
+    `<div class="a revs" data-fx="up" data-at="0.3"><span data-fx="count" data-to="${S.reviews}" data-at="0.3" data-dur="1.1" data-sfx="riser">0</span> reviews</div>` +
+    `<div class="a quote" data-fx="up" data-at="0.85"><div class="k" id="quote" data-effect="karaoke">${S.quote.map((w) => `<span>${esc(w)}</span>`).join(" ")}</div><div class="by">${esc(S.quoteBy)}</div></div>`);
+
+  // ── 5 · call to action (9.6–12 s): shop name, link, and a ring counting down the days left.
+  document.getElementById("s5").style.background = C.deep;
+  document.getElementById("s5").insertAdjacentHTML("beforeend",
+    `<div class="deco" style="left:330px;top:1220px;width:560px;height:747px" data-fx="up" data-at="0.2" data-dur="0.6">${drawing()}</div>` +
+    `<div class="a shop" data-fx="chars" data-at="0.05" data-stagger="0.035">${esc(S.name[0])}</div>` +
+    `<div class="a shop" style="top:470px;color:${C.accent}" data-fx="chars" data-at="0.25" data-stagger="0.035">${esc(S.name[1])}</div>` +
+    `<div class="a cta" data-effect="sticker" style="transform:rotate(-3deg)" data-fx="pop" data-at="0.55" data-base="rotate(-3deg)" data-sfx="ding">${esc(S.cta)}</div>` +
+    `<svg class="a ring" viewBox="0 0 340 340" data-effect="ring count" data-fx="fade" data-at="0.7" aria-hidden="true"><circle cx="170" cy="170" r="150" fill="none" stroke="${C.soft}" stroke-width="26"/><circle id="arc" cx="170" cy="170" r="150" fill="none" stroke="${C.pop}" stroke-width="26" stroke-linecap="round" transform="rotate(-90 170 170)"/></svg>` +
+    `<div class="a ringtxt" data-fx="fade" data-at="0.7"><b id="days">7</b><span>days left</span></div>` +
+    `<div class="a ends" data-fx="up" data-at="0.9">${esc(S.ends)}</div>` +
+    `<div class="a handle" data-fx="up" data-at="1.05">${esc(S.handle)}</div>`);
+
+  window.__gif = [[2.1, 3.5], [4.5, 6.1]];   // a short silent preview; the MP4 is the film
+  window.__poster = 3.0;   // the price on the product: the reel's hero frame
+  window.__music = [[0, "build"], [2.4, "drop"], [7.2, "lift"], [9.6, "tail"]];
+  window.__effects = [
+    { id: "hook", at: [0.12, 1.6] }, { id: "karaoke", at: [0.12, 1.8] }, { id: "beat", at: [0, 1.8] },
+    { id: "sweep", at: [2.15, 3.05] }, { id: "sticker", at: [2.4, 2.8] }, { id: "stamp", at: [2.4, 2.85] },
+    { id: "whip", at: [4.35, 6.45] }, { id: "beat", at: [4.8, 7.2] }, { id: "count", at: [7.4, 8.6] },
+    { id: "karaoke", at: [8.2, 9.3] }, { id: "sticker", at: [10.15, 10.6] }, { id: "ring", at: [10.3, 12] },
+  ];
+
+  const clamp = (v) => Math.max(0, Math.min(1, v));
+  const eo = (x) => 1 - Math.pow(1 - x, 3);
+  const eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  const hookWords = [...document.querySelectorAll("#hook .w")];
+  const bars = [...document.querySelectorAll("#bars i")];
+  const quoteWords = [...document.querySelectorAll("#quote span")];
+  const ticks = [...document.querySelectorAll("#s3 .tick")], points = [...document.querySelectorAll("#s3 .pt")], decos = [...document.querySelectorAll(".deco")];
+  const art = document.getElementById("art"), artShine = document.getElementById("artshine"), halo = [...document.querySelectorAll(".halo")];
+  const score = document.getElementById("score"), arc = document.getElementById("arc"), days = document.getElementById("days");
+  const RING = 2 * Math.PI * 150;
+  arc.setAttribute("stroke-dasharray", `${RING} ${RING}`);
+  const pulse = (t) => { const p = ((t % BEAT) + BEAT) % BEAT; return Math.exp(-p * 9); };   // 1 on each beat, decaying
+  window.__renderHooks = window.__renderHooks || [];
+  window.__renderHooks.push((t) => {
+    // hook + karaoke: a word rises out of its mask at its time, holds the accent until the next word lands.
+    hookWords.forEach((w, i) => {
+      const k = eo(clamp((t - hookAt(i)) / 0.26));
+      w.firstChild.style.transform = `translateY(${((1 - k) * 105).toFixed(1)}%)`;
+      w.classList.toggle("now", t >= hookAt(i) && t < hookAt(i + 1) + 0.1);
+    });
+    // beat: the bars and the halo kick on every beat.
+    const b = pulse(t);
+    bars.forEach((el, i) => {
+      const v = 0.25 + 0.75 * Math.abs(Math.sin(i * 1.7 + Math.floor(t / BEAT) * 2.3));
+      el.style.height = `${(16 + 104 * v * (0.35 + 0.65 * b) * clamp(t / 0.3)).toFixed(1)}px`;
+    });
+    halo.forEach((h) => { h.style.transform = `scale(${(1 + 0.035 * b).toFixed(4)})`; });
+    ticks.forEach((el, i) => { const d = t - lands[i]; el.style.transform = `scale(${(1 + (d >= 0 ? 0.28 * Math.exp(-d * 8) : 0)).toFixed(3)})`; });
+    art.style.translate = `0 ${(10 * Math.sin(t * 2.2)).toFixed(1)}px`;
+    // The decorative drawings float, and the list of reasons bounces on every beat once it is complete.
+    decos.forEach((d, i) => { d.style.translate = `0 ${(16 * Math.sin(t * 2.2 + i)).toFixed(1)}px`; });
+    const listKick = t >= lands[2] + BEAT - 0.01 ? b : 0;
+    points.forEach((p, i) => { p.style.translate = `0 ${(-14 * listKick * (i % 2 ? -1 : 1)).toFixed(1)}px`; });
+    // sweep: one band of light crosses the product just before the price lands.
+    const sw = (t - 2.15) / 0.9;
+    artShine.setAttribute("opacity", sw > 0 && sw < 1 ? 1 : 0);
+    artShine.setAttribute("x", (-260 + 1000 * eo(clamp(sw))).toFixed(1));
+    // count: the rating climbs to its value with one decimal.
+    score.textContent = (S.rating * eo(clamp((t - 7.4) / 1.0))).toFixed(1);
+    // karaoke: the review lights word by word.
+    quoteWords.forEach((w, i) => {
+      w.classList.toggle("on", t >= quoteAt(i) && t < quoteAt(i + 1));
+      w.classList.toggle("past", t >= quoteAt(i + 1));
+    });
+    // ring: the week empties down to the days that are left.
+    const r = eio(clamp((t - 10.3) / 1.5));
+    const left = 7 - (7 - S.daysLeft) * r;
+    arc.setAttribute("stroke-dashoffset", (RING * (1 - left / 7)).toFixed(2));
+    days.textContent = Math.round(left);
+  });
+  // Fit long words to the safe area: the hook's longest word, the price and the shop name shrink until they fit.
+  window.__ready = document.fonts.ready.then(() => {
+    const hook = document.getElementById("hook");
+    for (let size = 170; size >= 80; size -= 4) {
+      hook.style.fontSize = `${size}px`;
+      if (Math.max(...hookWords.map((w) => w.offsetWidth)) <= 660 && hook.offsetHeight <= 700) break;
+    }
+    const price = document.querySelector(".price");
+    for (let size = 118; size > 60 && price.offsetWidth > 730; size -= 4) price.style.fontSize = `${size}px`;
+    const names = [...document.querySelectorAll(".shop")];
+    for (let size = 150; size > 70 && Math.max(...names.map((n) => n.offsetWidth)) > 760; size -= 4) names.forEach((n) => { n.style.fontSize = `${size}px`; });
+    names[1].style.top = `${330 + names[0].offsetHeight}px`;
+  });
+})();
 </script>
 <script src="../video/engine.js"></script>
 </body>
