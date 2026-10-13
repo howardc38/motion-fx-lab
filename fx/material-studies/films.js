@@ -1,34 +1,10 @@
 import { TIMELINES, chapterAt } from "./timelines.js";
 import { surface, label, smooth, hash, clamp, time } from "./common.js";
-import { create as water } from "./water.js";
+import { createClearFilm } from "./clear.js";
 import { create as solid, font, mask } from "./type.js";
 import { drawContours } from "./contours.js";
 import { create as glitch } from "./glitch.js";
 import { create as room } from "./eras.js";
-export function createWaterFilm() {
-  const { canvas, g } = surface(),
-    effects = ["impact", "morph", "material", "underwater"].map(water);
-  const spec = TIMELINES.water,
-    shots = spec.chapters;
-  const heads = shots.map((s) => {
-    const v = surface();
-    label(v.g, s.title, s.sub);
-    return v.canvas;
-  });
-  let proof;
-  return {
-    canvas,
-    frame(seconds) {
-      const { chapter: s, index: k, local: elapsed } = chapterAt(spec, seconds),
-        local = elapsed + s.offset;
-      effects[s.index].frame(local, { labels: false });
-      g.drawImage(effects[s.index].canvas, 0, 0);
-      g.drawImage(heads[k], 0, 0);
-      proof = { shot: k, sourceTime: local, ...effects[s.index].proof() };
-    },
-    proof: () => proof,
-  };
-}
 export async function createWordFilm({ text = "流動" } = {}) {
   const data = await font(),
     type = await solid(),
@@ -106,7 +82,7 @@ export async function createWordFilm({ text = "流動" } = {}) {
   };
 }
 export async function create(id, options) {
-  if (id === "water") return createWaterFilm();
+  if (id === "water") return createClearFilm(options);
   if (id === "word") return createWordFilm(options);
   if (id === "eras") return room();
   throw new Error("Unknown film: " + id);

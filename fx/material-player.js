@@ -7,26 +7,34 @@ const config = { ...window.materialFilm, ...TIMELINES[window.materialFilm.id] },
   play = document.querySelector("#play"),
   clock = document.querySelector("#clock");
 window.materialTimeline = TIMELINES[config.id];
-window.__SIZE = { w: 1280, h: 720 };
+const size = config.format === "9:16" ? { w: 720, h: 1280 } : { w: 1280, h: 720 };
+canvas.width = size.w;
+canvas.height = size.h;
+window.__SIZE = size;
 window.__DUR = config.duration;
 window.__poster = config.poster;
 window.__gif = config.gif;
-window.__music = [
-  [0, "intro"],
-  [2.4, "drop"],
-  [9.6, "lift"],
-  [14.4, "final"],
-  [config.duration - 2.4, "tail"],
-];
+// A timeline may author its own sound; otherwise use the shared bed and cut whooshes.
+window.__music = config.music
+  ? config.music.map((x) => [...x])
+  : [
+      [0, "intro"],
+      [2.4, "drop"],
+      [9.6, "lift"],
+      [14.4, "final"],
+      [config.duration - 2.4, "tail"],
+    ];
 window.__cues = () =>
-  config.cuts.map((t) => ({ t, name: "whoosh", gain: 0.45 }));
+  config.cues
+    ? config.cues.map((c) => ({ ...c }))
+    : config.cuts.map((t) => ({ t, name: "whoosh", gain: 0.45 }));
 let effect,
   recording = false,
   playing = false,
   at = 0,
   last = 0,
   pending = Promise.resolve();
-window.__ready = create(config.id, { text: config.text }).then((e) => {
+window.__ready = create(config.id, { text: config.text, format: config.format }).then((e) => {
   effect = e;
   window.filmEffect = e;
 });

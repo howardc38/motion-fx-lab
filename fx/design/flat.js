@@ -2,11 +2,17 @@ import {W,H,C,TAU,surface,text,title,disc,clamp,mix,phase,spring,time} from './m
 export function letterLayout(word,size=150){const c=document.createElement('canvas'),g=c.getContext('2d');g.font=`900 ${size}px Arial`;const widths=[...word].map(c=>g.measureText(c).width),total=widths.reduce((a,b)=>a+b,0);let x=(W-total)/2;return [...word].map((char,i)=>{const p={char,x:x+widths[i]/2,width:widths[i]};x+=widths[i];return p;});}
 const letters=letterLayout('Motion');
 export const letterDot={x:letters[3].x,y:281};
-export function drawLetters(g,p,{y=420,color=C.ink}={}){
- p=clamp(p);
- for(let i=0;i<letters.length;i++){const l=letters[i],u=phase(p,i*.04,.72+i*.04),x=mix(110+i*176,l.x,u),yy=y+Math.sin(i*.9+p*TAU)*(1-u)*100;g.save();g.translate(x,yy);g.rotate((1-u)*Math.sin(i+1)*.8);text(g,l.char==='i'?'ı':l.char,0,0,150,color,'center',900);g.restore();}
- if(p<.8){g.save();g.globalAlpha=1-phase(p,.15,.7);text(g,'MAKE',640,210-130*phase(p,0,.8),60,color,'center',900);g.restore();}
- return {...letterDot,y:y-139};
+// A ripple that runs along the settled word; letter 3 carries the dot.
+export function waveOffset(i,w){return -22*Math.sin(Math.PI*clamp((w-i*.1)/.5));}
+export function drawLetters(g,p,{y=420,color=C.ink,exit=0,wave=0}={}){
+ p=clamp(p);exit=clamp(exit);let dot={...letterDot,y:y-139};
+ for(let i=0;i<letters.length;i++){const l=letters[i],u=phase(p,i*.04,.72+i*.04),x=mix(110+i*176,l.x,u),yy=y+Math.sin(i*.9+p*TAU)*(1-u)*100;
+  // exit: letters lift off in turn, curling away upwards
+  const e=phase(exit,i*.07,.5+i*.07),ex=(i-2.5)*46*e+Math.sin(e*Math.PI)*24*(i%2?1:-1),ey=-560*e*e+36*Math.sin(e*Math.PI)+(wave?waveOffset(i,wave):0),er=(i%2?1:-1)*1.3*e;
+  if(i===3)dot={x:x+ex,y:yy+ey-139};
+  g.save();g.translate(x+ex,yy+ey);g.rotate((1-u)*Math.sin(i+1)*.8+er);text(g,l.char==='i'?'ı':l.char,0,0,150,color,'center',900);g.restore();}
+ if(p<.8){g.save();g.globalAlpha*=1-phase(p,.15,.7);text(g,'MAKE',640,210-130*phase(p,0,.8),60,color,'center',900);g.restore();}
+ return dot;
 }
 export function springPoint(elapsed,{damping=.43,frequency=8,x0=215,x1=1065,y0=535,target=310,duration=3.2}={}){
  const at=clamp(elapsed/duration),value=spring(Math.min(duration,Math.max(0,elapsed)),{damping,frequency});return{x:mix(x0,x1,at),y:mix(y0,target,value),value};
@@ -25,14 +31,37 @@ export function revealMask(mask,p,center={x:640,y:360}){
  if(p>=1)g.fillRect(0,0,W,H);
 }
 export function masked(g,a,b,mask,p,center){g.drawImage(a,0,0);revealMask(mask,p,center);const layer=mask._layer||(mask._layer=surface());layer.g.globalCompositeOperation='source-over';layer.g.clearRect(0,0,W,H);layer.g.drawImage(b,0,0);layer.g.globalCompositeOperation='destination-in';layer.g.drawImage(mask,0,0);layer.g.globalCompositeOperation='source-over';g.drawImage(layer.canvas,0,0);}
+// Two pictures with the same layout and opposite palettes: the reveal reads as day <-> night.
+const hashN=n=>{const x=Math.sin(n*91.7+3.1)*43758.5453;return x-Math.floor(x);};
+function landscape(g,day){
+ const sky=g.createLinearGradient(0,0,0,H);
+ if(day){sky.addColorStop(0,'#ff8a4c');sky.addColorStop(.55,'#ffc76a');sky.addColorStop(1,'#ffe3a3');}else{sky.addColorStop(0,'#081631');sky.addColorStop(.6,'#1b2d58');sky.addColorStop(1,'#2a3f6e');}
+ g.fillStyle=sky;g.fillRect(0,0,W,H);
+ if(!day)for(let i=0;i<140;i++){const x=hashN(i)*W,y=hashN(i+300)*H*.6,r=.6+hashN(i+600)*1.6;disc(g,x,y,r,'rgba(242,238,229,'+(.35+hashN(i+900)*.6).toFixed(2)+')');}
+ disc(g,930,200,day?104:86,day?'#fff6dc':'#f2eee5');
+ if(!day)disc(g,962,182,78,'#1b2d58');
+ const layers=day?['#f06a4f','#c84a45','#2f7f86']:['#16264a','#101c38','#0a1226'];
+ layers.forEach((c,k)=>{g.fillStyle=c;g.beginPath();g.moveTo(0,H);for(let x=0;x<=W;x+=16){const y=330+k*95+60*Math.sin(x*.006+k*1.7)+28*Math.sin(x*.017+k*3.1)+14*Math.sin(x*.041+k);g.lineTo(x,y);}g.lineTo(W,H);g.closePath();g.fill();});
+ // a small cabin keeps the eye anchored across the swap
+ g.fillStyle=day?'#fff3e2':'#0d1730';g.fillRect(236,540,120,82);g.beginPath();g.moveTo(222,546);g.lineTo(296,488);g.lineTo(370,546);g.closePath();g.fillStyle=day?'#7a2f2a':'#060c1b';g.fill();
+ g.fillStyle=day?'#2f7f86':'#ffc14d';g.fillRect(262,566,30,30);g.fillRect(304,566,30,30);
+ text(g,day?'DAY':'NIGHT',W-48,H-40,30,day?'rgba(23,35,41,.75)':'rgba(242,238,229,.8)','right',900);
+}
 export function create(mode){
  const {canvas,g}=surface(),mask=surface().canvas,a=surface(),b=surface();let proof;
- a.g.fillStyle=C.ink;a.g.fillRect(0,0,W,H);text(a.g,'BEFORE',640,420,130,C.paper,'center',900);
- b.g.fillStyle=C.paper;b.g.fillRect(0,0,W,H);text(b.g,'AFTER',640,420,130,C.ink,'center',900);
+ if(mode==='reveal'){landscape(a.g,false);landscape(b.g,true);}
  return{canvas,proof:()=>proof,frame(t,options={}){t=time(t);g.globalAlpha=1;g.fillStyle=C.paper;g.fillRect(0,0,W,H);
-  if(mode==='letters'){const p=phase(t%4.8,.25,2.5),dot=drawLetters(g,p);disc(g,dot.x,dot.y,15);if(options.labels!==false)title(g,'Letters find their places.','Curve-guided letter reflow');proof={mode,progress:p};}
-  else if(mode==='spring'){const d=options.damping??.43,at=Math.min(3.2,t%4.8);const point=drawSpring(g,at,{damping:d,labels:options.labels!==false});disc(g,point.x,point.y,17);if(options.labels!==false)title(g,'Motion draws its own curve.','Closed-form spring response');proof={mode,sourceTime:at,damping:d,value:point.value,dot:point};}
-  else if(mode==='reveal'){const p=options.progress??phase(t%4.8,.4,3.7);masked(g,options.from||a.canvas,options.to||b.canvas,mask,p,options.center);if(options.labels!==false)title(g,'One field reveals another frame.','Radial dot mask',p<.3?C.paper:C.ink);proof={mode,progress:p};}
+  if(mode==='letters'){
+   // in (0.15-1.8 s), a short read (under 1 s), out (2.3-4.75 s), then the next entry
+   const q=t%4.8,p=phase(q,.15,1.8),exit=phase(q,2.3,4.75);g.save();g.globalAlpha=phase(q,0,.3);const dot=drawLetters(g,p,{exit});disc(g,dot.x,dot.y,15);g.restore();
+   if(options.labels!==false)title(g,'Letters find their places.','Curve-guided letter reflow');proof={mode,progress:p,exit};}
+  else if(mode==='reveal'){
+   // night -> day from the centre, then day -> night from the sun
+   const q=t%4.8,forward=q<2.4,manual=options.progress!=null;
+   const p=manual?options.progress:forward?phase(q,.3,2.1):phase(q,2.7,4.5);
+   const from=options.from||(forward?a.canvas:b.canvas),to=options.to||(forward?b.canvas:a.canvas);
+   const center=options.center??(manual||forward?undefined:{x:930,y:200});
+   masked(g,from,to,mask,p,center);if(options.labels!==false)title(g,'One field reveals another frame.','Radial dot mask',C.paper);proof={mode,progress:p,direction:forward?'night-to-day':'day-to-night'};}
   else throw new Error('Unknown flat study: '+mode);
  }};
 }

@@ -7,21 +7,23 @@ runtime library, external artwork, video or model is needed.
 
 | Film | Timeline | Story |
 |---|---:|---|
-| [One dot. Many roles.](../../examples/dot-story.html) | 19.2 s | Toggle → letter → spring trace → shape → spatial type → dot reveal → title → return to toggle. |
-| [One block. A drawn city.](../../examples/ink-city.html) | 19.2 s | Shaded block → surface ink → growing city → camera flight → wide closing view. |
+| [One dot. Many roles.](../../examples/dot-story.html) | 14.1 s | Toggle → letter (with a ripple) → a 1.2 s spring trace → shape → spatial type → dot reveal → title held 1.5 s → return to toggle. |
+| [One block. A drawn city.](../../examples/ink-city.html) | 12 s | The city grows from the first second → drop to street level → fly the street with sky above and road below → bank round the far corner → wide view. |
 | [One light. Different edges.](../../examples/shadow-lab.html) | 9.6 s | Enlarge the emitter, then raise the occluder; compare shadow edge width. |
 
 The first two are composed sequences. The third is a single-effect render.
-None is an extra technique. The catalogue adds three families and three variants:
+None is an extra technique. The catalogue adds three families and two variants:
 
 | Family / variant | Module | Editable controls |
 |---|---|---|
-| Spatial type (`design-type-orbit`) | `orbit.js` | `wrap`, `spin`, `scale`, `dot`, `labels`. Edit `message` for the ring lettering. Glyph spacing comes from measured advance widths. |
-| Soft-shadow study (`design-soft-shadow`) | `lighting.js` | `lightSize` .02–4, `height` .59–2, `lightHeight` 3–8, `labels`. |
-| Surface hatching (`design-surface-ink`) | `ink.js` | `objectAngle`, `cameraAngle`, `lightAngle`, `strength`, `frequency`, `labels`. |
-| Letter reflow (variant of `chars`) | `flat.js` | Edit `letterLayout` and `drawLetters` for the word and its entry paths. The supplied dotless-i treatment is authored for “Motion”. |
-| Spring response (variant of `timing`) | `flat.js`, `math.js` | `damping` in (0,1]. `springPoint` owns the dot/curve sampling; `drawSpring` also accepts frequency, bounds and duration. |
-| Radial dot reveal (variant of `wipe`) | `flat.js` | `progress`, `from`, `to`, `center`, `labels`; `from` and `to` are canvas-compatible image sources. |
+| Spatial type (`design-type-orbit`) | `orbit.js` | `wrap`, `spin`, `scale`, `dot`, `fly`, `labels`; `create({message})` sets the ring lettering (default `MAKE IT MOVE`). The gallery camera flies through the ring's centre; `fly: false` keeps the fixed film view. Edge rim light; the far side of the ring is hazed and blurred. |
+| Soft-shadow study (`design-soft-shadow`) | `lighting.js` | `lightSize` .02–4 (a bare spotlight at the small end, a four-pane window at the large end), `height` .59–2 for the floating ball, `lightHeight` 3–8, `labels`. |
+| Surface hatching (`design-surface-ink`) | `ink.js` | `objectAngle`, `cameraAngle`, `lightAngle` (moves the visible lamp), `strength`, `frequency`, `debugPattern` (fixed density, lamp hidden), `labels`. The subject is a turned vase with an ink outline. |
+| Letter reflow (variant of `chars`) | `flat.js` | Edit `letterLayout` and `drawLetters` for the word, its entry paths, `exit` (letters lift away in turn) and `wave`. The supplied dotless-i treatment is authored for “Motion”. |
+| Radial dot reveal (variant of `wipe`) | `flat.js` | `progress`, `from`, `to`, `center`, `labels`; `from` and `to` are canvas-compatible image sources. The gallery loop turns a night landscape into day and back. |
+
+The spring-response variant was retired from the gallery. `springPoint` and
+`drawSpring` stay in `flat.js` because the dot film still draws its curve with them.
 
 ## Editing and rendering
 
@@ -54,14 +56,15 @@ independent browser passes and compared before delivery.
 
 ## What the shaders actually do
 
-- **Type:** flat glyph planes occupy a three-dimensional ring. Perspective and
-  front/back depth shading provide the spatial treatment; letters are not
-  extruded solids.
-- **Shadow:** 64 fixed samples on a horizontal rectangular emitter test analytic
-  ray–sphere intersections at each ground pixel. Source size and separation
-  change visibility and penumbra. This is a geometry-based shadow study, not a
-  general lighting solver: only the sphere occludes the ground; sphere shading
-  uses a point-light approximation. Finite sample bands may appear at close range.
+- **Type:** flat glyph planes occupy a three-dimensional ring. Perspective,
+  a rim light sampled from the glyph's own edge, and haze plus mip blur on the far
+  side provide the spatial treatment; letters are not extruded solids.
+- **Shadow:** 100 stratified samples on a horizontal rectangular emitter test analytic
+  ray–sphere intersections at each ground pixel; a fixed per-pixel offset inside each
+  cell turns sample bands into fine grain. Source size and separation change
+  visibility and penumbra (edge about 1 px for the spotlight, over 60 px for the
+  window). This is a geometry-based shadow study, not a general lighting solver: only
+  the sphere occludes the ground; sphere shading uses a point-light approximation.
 - **Ink:** triplanar object coordinates attach the marks to surfaces. Transformed
   normals and light direction vary mark density. It is separate from the repo's
   screen-space halftone/ASCII/poster filters. It does not add global illumination

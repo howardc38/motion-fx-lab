@@ -66,6 +66,7 @@ export function stage3D() {
     camera,
     canvas,
     g,
+    renderer: shared.renderer,
     render() {
       const r = shared.renderer;
       if (r.getContext().isContextLost())

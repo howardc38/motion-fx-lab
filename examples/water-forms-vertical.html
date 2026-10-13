@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Clear: a 15-second drinks advert, 9:16 — Motion FX Lab</title>
+    <link rel="icon" href="data:," />
+    <style>
+      body {
+        margin: 0;
+        background: #101b2c;
+        color: #edf0de;
+        font: 16px system-ui;
+      }
+      main {
+        max-width: 480px;
+        margin: auto;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        aspect-ratio: 9/16;
+      }
+      nav {
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+        align-items: center;
+      }
+      input {
+        flex: 1;
+        min-width: 30px;
+      }
+      a {
+        color: #edbc91;
+      }
+      button {
+        font: inherit;
+        padding: 8px 16px;
+      }
+      output {
+        min-width: 60px;
+      }
+      #error {
+        color: #ffada1;
+      }
+      .note {
+        padding: 0 16px 16px;
+        color: #b9c8c6;
+        line-height: 1.5;
+      }
+      code {
+        color: #edbc91;
+      }
+      body.record nav,
+      body.record .note,
+      body.record #error {
+        display: none;
+      }
+      body.record main {
+        width: 720px;
+        height: 1280px;
+        max-width: none;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <main>
+      <canvas
+        id="film"
+        width="720"
+        height="1280"
+        role="img"
+        aria-label="Clear: a 15-second drinks advert"
+      ></canvas>
+      <nav>
+        <a href="../index.html">Gallery</a><button id="play">Play</button
+        ><input
+          id="seek"
+          type="range"
+          min="0"
+          step="0.033333"
+          value="0"
+          aria-label="Film time"
+        /><output id="clock">0.00 s</output>
+      </nav>
+      <p id="error" role="alert"></p>
+      <p class="note">
+        A fictional brand. One drop becomes a crown, the crown pulls itself into a
+        bottle, the glass bends the brand behind it, and the bottle dives and comes
+        back up for the end card. Edit <code>BRAND</code> at the top of
+        <a href="https://github.com/howardc38/motion-fx-lab/blob/main/fx/material-studies/clear.js">fx/material-studies/clear.js</a>
+        to change every word. <a href="water-forms.html">16:9 version</a>.
+        This preview is silent; the MP4 has sound.
+      </p>
+    </main>
+    <script>
+      window.materialFilm = {
+        id: "water",
+        format: "9:16",
+        poster: 13.9,
+        // No GIF for the 9:16 cut: an 800 px-wide portrait GIF is too heavy.
+        gif: [],
+      };
+    </script>
+    <script type="module" src="../fx/material-player.js"></script>
+  </body>
+</html>

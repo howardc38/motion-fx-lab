@@ -9,7 +9,6 @@
     halftonetype: 'studio-video-dots',
     orbs: 'gradient',
     'design-letter-flow': 'chars',
-    'design-spring-response': 'timing',
     'design-dot-reveal': 'wipe',
     'character-motion': 'character-rig',
     'fluid-viscous': 'fluid-overflow',

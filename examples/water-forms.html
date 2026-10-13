@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>One drop. Many forms. — Motion FX Lab</title>
+    <title>Clear: a 15-second drinks advert — Motion FX Lab</title>
     <link rel="icon" href="data:," />
     <style>
       body {
@@ -44,7 +44,16 @@
       #error {
         color: #ffada1;
       }
+      .note {
+        padding: 0 16px 16px;
+        color: #b9c8c6;
+        line-height: 1.5;
+      }
+      code {
+        color: #edbc91;
+      }
       body.record nav,
+      body.record .note,
       body.record #error {
         display: none;
       }
@@ -70,7 +79,7 @@
         width="1280"
         height="720"
         role="img"
-        aria-label="One drop. Many forms."
+        aria-label="Clear: a 15-second drinks advert"
       ></canvas>
       <nav>
         <a href="../index.html">Gallery</a><button id="play">Play</button
@@ -84,18 +93,26 @@
         /><output id="clock">0.00 s</output>
       </nav>
       <p id="error" role="alert"></p>
+      <p class="note">
+        A fictional brand. One drop becomes a crown, the crown pulls itself into a
+        bottle, the glass bends the brand behind it, and the bottle dives and comes
+        back up for the end card. Edit <code>BRAND</code> at the top of
+        <a href="https://github.com/howardc38/motion-fx-lab/blob/main/fx/material-studies/clear.js">fx/material-studies/clear.js</a>
+        to change every word. <a href="water-forms-vertical.html">9:16 version</a>.
+        This preview is silent; the MP4 has sound.
+      </p>
     </main>
     <script>
       window.materialFilm = {
         id: "water",
-        poster: 9.4,
+        format: "16:9",
+        poster: 13.9,
         gif: [
-          [0.5, 2.6],
-          [7, 8.4],
-          [10, 11.4],
-          [18.5, 20],
+          [0.7, 1.9],
+          [3.0, 4.4],
+          [5.2, 6.4],
+          [12.4, 13.8],
         ],
-        text: "流動",
       };
     </script>
     <script type="module" src="../fx/material-player.js"></script>
