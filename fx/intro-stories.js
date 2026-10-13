@@ -7,7 +7,11 @@ function surface(){const canvas=document.createElement('canvas');canvas.width=W;
 function text(g,str,x,y,size,color='#f4ecd8',align='left'){g.fillStyle=color;g.font=`900 ${size}px Arial`;g.textAlign=align;g.fillText(str,x,y);g.textAlign='left';}
 export function createWorlds(){
  const {canvas,g}=surface(),picked=[7,3,12,13,16,19];let proof;
- function world(id,t){const th=themes[id];g.fillStyle=th.bg;g.fillRect(0,0,W,H);g.globalAlpha=.58;g.drawImage(poster(id),0,85,420,360,0,0,W,H);g.globalAlpha=1;g.drawImage(flyer(id,t),155,132+Math.sin(t*2)*12,970,546);text(g,'One flight. Twenty worlds.',48,76,42,th.ink);text(g,th.name.toUpperCase(),48,672,23,th.ink);}
+ // The backdrop is the middle band of each world's poster (y 128-420), clear of the poster's own
+ // headline and footer words, and the line sits on a plate of the world's paper colour.
+ function world(id,t){const th=themes[id];g.fillStyle=th.bg;g.fillRect(0,0,W,H);g.globalAlpha=.58;g.drawImage(poster(id),0,128,420,292,0,0,W,H);g.globalAlpha=1;g.drawImage(flyer(id,t),155,132+Math.sin(t*2)*12,970,546);
+  const line='One flight. Twenty worlds.';g.font='900 42px Arial';g.fillStyle=th.bg;g.globalAlpha=.9;g.beginPath();g.roundRect(30,30,g.measureText(line).width+36,66,12);g.fill();g.globalAlpha=1;
+  text(g,line,48,76,42,th.ink);text(g,th.name.toUpperCase(),48,672,23,th.ink);}
  return {canvas,frame(t){
    t=Math.max(0,Math.min(7.2,t));g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;
    if(t<5.4){const k=Math.min(5,Math.floor(t/.9)),u=(t-k*.9)/.9;world(picked[k],t);if(k<5&&u>.76){const wipe=ease((u-.76)/.24);g.save();g.beginPath();g.rect(W*(1-wipe),0,W*wipe,H);g.clip();world(picked[k+1],t);g.restore();}proof={phase:'flight',theme:picked[k],poseTime:t};}

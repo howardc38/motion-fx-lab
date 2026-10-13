@@ -220,9 +220,9 @@ var ART = {
 
   // ── 3 · three reasons (4.2–7.2 s): each whips in and lands on a beat.
   const lands = [4.8, 5.4, 6.0];
+  // The product shrinks to the corner and keeps its halo, scaled with it, so the list has a clear field.
   document.getElementById("s3").insertAdjacentHTML("beforeend",
-    `<div class="a halo" style="opacity:.6"></div>` +
-    `<div class="deco" style="left:520px;top:1180px;width:560px;height:747px" data-fx="up" data-at="0.1" data-dur="0.6">${drawing()}</div>` +
+    `<div class="deco" style="left:520px;top:1180px;width:560px;height:747px" data-fx="up" data-at="0.1" data-dur="0.6"><div class="a halo" style="left:280px;top:312px;width:610px;height:610px;margin:-305px 0 0 -305px;opacity:.6"></div>${drawing()}</div>` +
     S.points.map((p, i) => `<div class="a pt" style="top:${320 + i * 250}px" data-effect="whip beat" data-fx="whip" data-dx="640" data-at="${(lands[i] - 4.2 - 0.45).toFixed(2)}" data-sfx="pop" data-sfx-at="${(lands[i] - 4.2).toFixed(2)}"><i class="tick">✓</i><b>${esc(p)}</b></div>`).join(""));
 
   // ── 4 · proof (7.2–9.6 s): the rating and review count count up; a review is read out word by word.
