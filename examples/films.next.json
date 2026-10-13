@@ -1,0 +1,674 @@
+{
+  "$schema": "../tools/films-schema.json",
+  "version": 2,
+  "layers": [
+    {"id": "intro", "title": "Intro", "singular": "intro", "description": "What the repository makes and how a page becomes an MP4."},
+    {"id": "use-case", "title": "Use cases", "singular": "use case", "description": "Start from a familiar video format and replace its copy, data or brand."},
+    {"id": "demo", "title": "Demo films", "singular": "demo film", "description": "Finished pieces that combine several effects around one subject or story."},
+    {
+      "id": "comparison",
+      "title": "Comparisons",
+      "singular": "comparison",
+      "description": "The same input under different treatments, for choosing an effect."
+    },
+    {
+      "id": "effect-film",
+      "title": "Effect films",
+      "singular": "effect film",
+      "description": "Full renders of one effect; each also plays inside its effect card."
+    }
+  ],
+  "films": [
+    {
+      "id": "intro",
+      "layer": "intro",
+      "tier": "hero",
+      "title": "Intro",
+      "summary": "A guided overview that deliberately repeats selected uses and techniques.",
+      "duration": 55.2,
+      "format": "16:9",
+      "page": "video/intro.html",
+      "media": {"mp4": "media/intro.mp4?v=dialogue-73", "poster": "media/intro.jpg?v=dialogue-73", "gif": "media/intro.gif?v=dialogue-73"},
+      "card": {
+        "headline": "Intro",
+        "description": "Four uses, a voiced character, an effect montage and three short stories, then a word edit and an MP4 export.",
+        "useFor": "Seeing what the repository makes before choosing an example.",
+        "relation": "It repeats selected use cases and effects; each has its own film below."
+      },
+      "audience": "First-time visitors deciding whether the repository fits their work.",
+      "effects": [
+        {"id": "whip", "at": [0, 2.4], "label": "Whip-in title"},
+        {"id": "chars", "at": [0, 2.4], "label": "Letter pop"},
+        {"id": "karaoke", "at": [2.4, 6], "label": "Timed captions", "proof": ["video/intro.html", "capWords"]},
+        {"id": "sticker", "at": [2.4, 6], "label": "Labels", "proof": ["video/intro.html", "class=\"sticker\""]},
+        {"id": "uifly", "at": [6, 9.6], "label": "UI camera", "proof": ["video/intro.html", "perspective:1800px"]},
+        {"id": "count", "at": [9.6, 13.2], "label": "Counters"},
+        {"id": "datachart", "at": [9.6, 13.2], "label": "Chart drawing", "proof": ["video/intro.html", "stroke-dasharray=\"0 ${DC}\""]},
+        {"id": "orbs", "at": [13.2, 16.8], "label": "Colour fields", "proof": ["video/intro.html", "mix-blend-mode: screen"]},
+        {"id": "ridgelines", "at": [13.2, 16.8], "label": "Ridgelines", "proof": ["video/intro.html", "id=\"ridges\""]},
+        {
+          "id": "dialogue-lipsync",
+          "at": [16.8, 21.6],
+          "label": "Speech and expression",
+          "proof": ["video/intro.html", "FXDialogue.create(\"character-dialogue\")"]
+        },
+        {"id": "signal-audio-relief", "at": [21.6, 22.8], "label": "Audio relief"},
+        {"id": "signal-motion-fragments", "at": [22.8, 24], "label": "Motion fragments"},
+        {"id": "design-type-orbit", "at": [24, 25.2], "label": "Spatial type"},
+        {"id": "fluid-smoke", "at": [25.2, 26.4], "label": "Volumetric smoke"},
+        {"id": "studio-themes", "at": [26.4, 33.6], "label": "Twenty art directions", "proof": ["fx/intro-stories.js", "poster(id)"]},
+        {"id": "studio-flight", "at": [26.4, 33.6], "label": "Courier motion", "proof": ["fx/intro-stories.js", "flyer(id,t)"]},
+        {"id": "cjk-solid", "at": [33.6, 35.4], "label": "Solid type", "proof": ["fx/material-studies/films.js", "type.frame(t, { text, labels: false })"]},
+        {"id": "particles", "at": [35.4, 36.6], "label": "Particle type", "proof": ["fx/material-studies/films.js", "phase === \"particles\""]},
+        {"id": "organic-contours", "at": [36.6, 37.8], "label": "Contours", "proof": ["fx/material-studies/films.js", "drawContours(c, t,"]},
+        {"id": "frame-glitch", "at": [37.8, 38.8], "label": "Glitch", "proof": ["fx/material-studies/films.js", "fx.frame(t, {"]},
+        {"id": "particles", "at": [38.8, 40], "label": "Particle type", "proof": ["fx/material-studies/films.js", "phase === \"particles\""]},
+        {"id": "stack-rapier", "at": [40.8, 45.6], "label": "Domino chain"},
+        {"id": "sticker", "at": [50.4, 55.2], "label": "Labels", "proof": ["video/intro.html", "class=\"sticker\""]},
+        {"id": "type", "at": [50.4, 55.2], "label": "Typewriter"},
+        {"id": "wipe", "label": "Scene wipe", "proof": ["video/intro.html", "<div class=\"edge\"></div>"]}
+      ],
+      "groups": ["all", "showcase"]
+    },
+    {
+      "id": "reel",
+      "layer": "use-case",
+      "tier": "featured",
+      "title": "Social clips",
+      "summary": "Hook, interaction and call to action.",
+      "duration": 12,
+      "format": "9:16",
+      "page": "examples/reel.html",
+      "media": {"mp4": "media/reel.mp4", "poster": "media/reel.jpg", "gif": "media/reel.gif"},
+      "card": {
+        "headline": "Social clips",
+        "description": "A hook, a booking interaction and a closing call to action in a vertical social ad.",
+        "useFor": "Reels, announcements and short campaigns.",
+        "relation": "Product demos below use the same app in a closer walkthrough."
+      },
+      "audience": "Small businesses and creators posting short vertical promos.",
+      "effects": [
+        {"id": "chars", "label": "Letter pop"},
+        {"id": "sticker", "label": "Labels", "proof": ["examples/reel.html", "class=\"sticker\""]},
+        {"id": "wipe", "label": "Scene wipe", "proof": ["examples/reel.html", "<div class=\"edge\"></div>"]}
+      ],
+      "related": [
+        {"id": "hook", "label": "Headline reveal"},
+        {"id": "karaoke", "label": "Timed captions"}
+      ],
+      "groups": ["all"]
+    },
+    {
+      "id": "product",
+      "layer": "use-case",
+      "tier": "featured",
+      "title": "Product demos",
+      "summary": "One interface interaction, explained.",
+      "duration": 7.2,
+      "format": "16:9",
+      "page": "examples/product.html",
+      "media": {"mp4": "media/product.mp4", "poster": "media/product.jpg", "gif": "media/product.gif"},
+      "card": {
+        "headline": "Product demos",
+        "description": "Follow a cursor into a booking screen and watch one tap change its state.",
+        "useFor": "Feature walkthroughs and interface launches.",
+        "relation": "A focused interaction example, rather than another effect family."
+      },
+      "audience": "App and software teams announcing a feature.",
+      "effects": [
+        {"id": "uifly", "label": "UI camera", "proof": ["examples/product.html", "rotateY("]},
+        {"id": "sticker", "label": "Labels", "proof": ["examples/product.html", "class=\"sticker\""]}
+      ],
+      "related": [
+        {"id": "scan", "label": "State reveal"},
+        {"id": "sweep", "label": "Light sweep"}
+      ],
+      "groups": ["all"]
+    },
+    {
+      "id": "infographic",
+      "layer": "use-case",
+      "tier": "featured",
+      "title": "Infographics",
+      "summary": "Turn figures into a data story.",
+      "duration": 14.4,
+      "format": "16:9",
+      "page": "examples/infographic.html",
+      "media": {"mp4": "media/infographic.mp4", "poster": "media/infographic.jpg", "gif": "media/infographic.gif"},
+      "card": {
+        "headline": "Infographics",
+        "description": "Numbers build into bars, a share-of-total ring and an hourly trend.",
+        "useFor": "Reports, explainers and data stories.",
+        "relation": "Sample figures; replace the data and labels together."
+      },
+      "audience": "Teams turning a report or a year of figures into a short video.",
+      "effects": [
+        {"id": "whip", "label": "Whip-in title"},
+        {"id": "chars", "label": "Letter pop"},
+        {"id": "count", "label": "Counters"},
+        {"id": "datachart", "label": "Chart drawing", "proof": ["examples/infographic.html", "stroke-dashoffset"]},
+        {"id": "sticker", "label": "Labels", "proof": ["examples/infographic.html", "class=\"sticker\""]},
+        {"id": "wipe", "label": "Scene wipe", "proof": ["examples/infographic.html", "<div class=\"edge\"></div>"]}
+      ],
+      "related": [
+        {"id": "ring", "label": "Progress ring"}
+      ],
+      "groups": ["all"]
+    },
+    {
+      "id": "broll",
+      "layer": "use-case",
+      "tier": "featured",
+      "title": "Animated backgrounds",
+      "summary": "Three reusable background loops.",
+      "duration": 12,
+      "format": "16:9",
+      "page": "examples/broll.html",
+      "media": {"mp4": "media/broll.mp4", "poster": "media/broll.jpg", "gif": "media/broll.gif"},
+      "card": {
+        "headline": "Animated backgrounds",
+        "description": "Three four-second loops: a flowing gradient, moving ridgelines and a particle network.",
+        "useFor": "Title backgrounds, transitions and supporting footage.",
+        "relation": "Each source loop is seamless; the comparison film cuts between them."
+      },
+      "audience": "Editors who need looping backgrounds under titles, interviews or streams.",
+      "effects": [
+        {"id": "orbs", "at": [0, 4], "label": "Colour fields", "proof": ["examples/broll.html", "mix-blend-mode: screen"]},
+        {"id": "ridgelines", "at": [4, 8], "label": "Ridgelines", "proof": ["examples/broll.html", "id=\"ridges\""]}
+      ],
+      "related": [
+        {"id": "gradient", "label": "Gradient"}
+      ],
+      "groups": ["all"]
+    },
+    {
+      "id": "style-journey",
+      "layer": "demo",
+      "tier": "featured",
+      "title": "One flight. Twenty worlds.",
+      "summary": "One character travels through twenty art directions.",
+      "duration": 40.8,
+      "format": "16:9",
+      "page": "examples/style-journey.html",
+      "media": {"mp4": "media/style-journey.mp4", "poster": "media/style-journey.jpg", "gif": "media/style-journey.gif"},
+      "card": {
+        "headline": "One flight. Twenty worlds.",
+        "description": "One courier travels through twenty artworks while its flight and cape remain continuous.",
+        "useFor": "Character-led journeys and transitions between visual worlds.",
+        "relation": "Flight, cape motion and camera movement stay continuous across changing artwork."
+      },
+      "audience": "Brand and title designers planning a sequence across visual styles.",
+      "effects": [
+        {"id": "studio-gallery", "label": "Gallery journey"},
+        {"id": "studio-flight", "label": "Courier motion", "proof": ["fx/studio/flight.js", "flyer(i, t)"]},
+        {"id": "studio-portal", "label": "Style portal", "proof": ["fx/studio/flight.js", "hx - heroWidth / 2"]},
+        {"id": "studio-themes", "label": "Twenty art directions", "proof": ["fx/studio/flight.js", "g.drawImage(poster(i), x, y, w, h)"]},
+        {"id": "studio-lowpoly", "at": [29.9, 37], "label": "Low-poly course", "proof": ["fx/studio/flight.js", "if (i === 17 && city)"]}
+      ],
+      "groups": ["all", "showcase", "studio"]
+    },
+    {
+      "id": "character-dialogue",
+      "layer": "demo",
+      "tier": "featured",
+      "title": "The Final Final",
+      "summary": "A two-character conversation with speech, gestures, reaction holds and a closing joke.",
+      "duration": 22.5,
+      "format": "16:9",
+      "page": "examples/character-dialogue.html",
+      "media": {"mp4": "media/character-dialogue.mp4", "poster": "media/character-dialogue.jpg", "gif": "media/character-dialogue.gif"},
+      "card": {
+        "headline": "The Final Final",
+        "description": "Mira asks for the launch video. Pip has made one small, dramatic improvement.",
+        "useFor": "Voiced character stories, product explainers and comedy shorts.",
+        "relation": "Speech mouth cues, expressive hands, listening reactions and deliberate camera cuts share one timeline.",
+        "guide": "fx/dialogue/README.md"
+      },
+      "audience": "Explainer, comedy and product-story makers who need talking characters.",
+      "effects": [
+        {"id": "dialogue-lipsync", "label": "Speech and expression", "proof": ["fx/dialogue/scene.js", "MOUTHS"]}
+      ],
+      "groups": ["all", "showcase", "dialogue"]
+    },
+    {
+      "id": "water-forms",
+      "layer": "demo",
+      "tier": "featured",
+      "title": "One drop. Many forms.",
+      "summary": "Authored drop, splash, morph and underwater chapters.",
+      "duration": 21.6,
+      "format": "16:9",
+      "page": "examples/water-forms.html",
+      "media": {"mp4": "media/water-forms.mp4", "poster": "media/water-forms.jpg", "gif": "media/water-forms.gif"},
+      "card": {
+        "headline": "One drop. Many forms.",
+        "description": "A drop becomes a crown, changing glass shapes and a dive below the surface.",
+        "useFor": "Material-led title sequences and transitions between scenes.",
+        "relation": "Choreographed surfaces and shape changes; the separate liquid studies demonstrate baked fluid motion.",
+        "guide": "fx/material-studies/README.md"
+      },
+      "audience": "Designers of material-led openers, product ads and transitions.",
+      "effects": [
+        {
+          "id": "water-impact",
+          "at": [0, 5.4],
+          "label": "Splash",
+          "proof": ["fx/material-studies/films.js", "[\"impact\", \"morph\", \"material\", \"underwater\"].map(water)"]
+        },
+        {
+          "id": "water-morph",
+          "at": [5.4, 13.4],
+          "label": "Shape blending",
+          "proof": ["fx/material-studies/films.js", "[\"impact\", \"morph\", \"material\", \"underwater\"].map(water)"]
+        },
+        {
+          "id": "water-material",
+          "at": [13.4, 16.2],
+          "label": "Transmission",
+          "proof": ["fx/material-studies/films.js", "[\"impact\", \"morph\", \"material\", \"underwater\"].map(water)"]
+        },
+        {
+          "id": "water-underwater",
+          "at": [16.2, 21.6],
+          "label": "Underwater scene",
+          "proof": ["fx/material-studies/films.js", "[\"impact\", \"morph\", \"material\", \"underwater\"].map(water)"]
+        }
+      ],
+      "groups": ["all", "showcase", "materials"]
+    },
+    {
+      "id": "dot-story",
+      "layer": "demo",
+      "tier": "listed",
+      "title": "One dot. Many roles.",
+      "summary": "One orange dot becomes a switch, a letter, a spring trace and a reveal before returning to the start.",
+      "duration": 19.2,
+      "format": "16:9",
+      "page": "examples/dot-story.html",
+      "media": {"mp4": "media/dot-story.mp4", "poster": "media/dot-story.jpg", "gif": "media/dot-story.gif"},
+      "card": {
+        "headline": "One dot. Many roles.",
+        "description": "A visual cue connects type, timing, depth and a reveal; closes its loop.",
+        "useFor": "Brand loops, logo openers and identity motion.",
+        "relation": "Each role is a reusable effect: letter reflow, spring response, spatial type and dot reveal.",
+        "guide": "fx/design/README.md"
+      },
+      "audience": "Brand-motion designers building a short identity loop.",
+      "effects": [
+        {"id": "design-letter-flow", "at": [1.2, 5.4], "label": "Letter reflow", "proof": ["fx/design/films.js", "drawLetters(g,phase(t,1.2,2.4))"]},
+        {"id": "design-spring-response", "at": [4.8, 9.6], "label": "Spring", "proof": ["fx/design/films.js", "drawSpring(g,"]},
+        {"id": "design-type-orbit", "at": [12, 14.4], "label": "Spatial type", "proof": ["fx/design/films.js", "ring.frame(t-12,"]},
+        {"id": "design-dot-reveal", "at": [14.4, 16.8], "label": "Dot reveal", "proof": ["fx/design/films.js", "masked(g,before.canvas,after.canvas,mask,"]}
+      ],
+      "groups": ["all", "showcase", "design"]
+    },
+    {
+      "id": "word-forms",
+      "layer": "demo",
+      "tier": "listed",
+      "title": "One word. Many forms.",
+      "summary": "A word changes form and returns to a readable title.",
+      "duration": 21.6,
+      "format": "16:9",
+      "page": "examples/word-forms.html",
+      "media": {"mp4": "media/word-forms.mp4", "poster": "media/word-forms.jpg", "gif": "media/word-forms.gif"},
+      "card": {
+        "headline": "One word. Many forms.",
+        "description": "A replaceable CJK title passes through solid, particle, contour and signal treatments.",
+        "useFor": "Title sequences and logo stings.",
+        "relation": "The solid, contour and glitch chapters reuse library effects; the particle chapters are authored in the film.",
+        "guide": "fx/material-studies/README.md"
+      },
+      "audience": "Creators who need a title or logo sting, including CJK lettering.",
+      "effects": [
+        {"id": "cjk-solid", "at": [0, 5.4], "label": "Solid type", "proof": ["fx/material-studies/films.js", "type.frame(t, { text, labels: false })"]},
+        {"id": "particles", "at": [5.4, 9], "label": "Particle type", "proof": ["fx/material-studies/films.js", "phase === \"particles\""]},
+        {"id": "organic-contours", "at": [9, 12.6], "label": "Contours", "proof": ["fx/material-studies/films.js", "drawContours(c, t,"]},
+        {"id": "frame-glitch", "at": [12.6, 15.6], "label": "Glitch", "proof": ["fx/material-studies/films.js", "fx.frame(t, {"]},
+        {"id": "particles", "at": [15.6, 19.2], "label": "Particle type", "proof": ["fx/material-studies/films.js", "phase === \"particles\""]}
+      ],
+      "groups": ["all", "showcase", "materials"],
+      "becomes": {"layer": "use-case", "headline": "Titles & logo stings"},
+      "plan": "D2 and D11: rebuilt as three six-second title presets with a short hook and a readable hold."
+    },
+    {
+      "id": "dot-battle",
+      "layer": "demo",
+      "tier": "listed",
+      "title": "COUNTERFORM",
+      "summary": "A complete fight with authored action and contact timing.",
+      "duration": 19.2,
+      "format": "16:9",
+      "page": "examples/dot-battle.html",
+      "media": {"mp4": "media/dot-battle.mp4", "poster": "media/dot-battle.jpg", "gif": "media/dot-battle.gif"},
+      "card": {
+        "headline": "COUNTERFORM",
+        "description": "Original action choreography, contact holds and framing.",
+        "useFor": "Action promos, game trailers and sports intros.",
+        "relation": "Same fight. Eight treatments. reuses this choreography to compare operations."
+      },
+      "audience": "Action, game and sports promo makers.",
+      "effects": [
+        {"id": "studio-video-dots", "label": "Dots", "proof": ["fx/studio/battle.js", "function dots(data,t,spacing,solid,alpha=1)"]},
+        {"id": "studio-dot-impact", "label": "Impact", "proof": ["fx/studio/battle.js", "kick=burst*near"]},
+        {"id": "studio-echo", "label": "Echoes", "proof": ["fx/studio/battle.js", "const trail="]},
+        {"id": "studio-time-remap", "at": [7.8, 9.6], "label": "Time control", "proof": ["fx/studio/battle.js", "const sourceTime=t=>"]}
+      ],
+      "groups": ["all", "showcase", "studio"]
+    },
+    {
+      "id": "fight-effects",
+      "layer": "comparison",
+      "tier": "listed",
+      "title": "Same fight. Eight treatments.",
+      "summary": "Compare eight operations on the same choreography.",
+      "duration": 38.4,
+      "format": "16:9",
+      "page": "examples/fight-effects.html",
+      "media": {"mp4": "media/fight-effects.mp4", "poster": "media/fight-effects.jpg", "gif": "media/fight-effects.gif"},
+      "card": {
+        "headline": "Same fight. Eight treatments.",
+        "description": "A common source makes eight different operations comparable.",
+        "useFor": "Choosing a treatment for moving footage.",
+        "relation": "COUNTERFORM uses the same choreography as a finished sequence."
+      },
+      "audience": "Anyone choosing a treatment for moving footage.",
+      "effects": [
+        {"id": "studio-video-dots", "at": [0, 4.8], "label": "Dots"},
+        {"id": "studio-freeze-orbit", "at": [4.8, 9.6], "label": "Frozen orbit"},
+        {"id": "studio-echo", "at": [9.6, 14.4], "label": "Echoes"},
+        {"id": "studio-particle-lens", "at": [14.4, 19.2], "label": "Depth scatter"},
+        {"id": "studio-dot-impact", "at": [19.2, 24], "label": "Impact"},
+        {"id": "studio-time-remap", "at": [24, 28.8], "label": "Time control"},
+        {"id": "studio-depth-dots", "at": [28.8, 33.6], "label": "Image relief"},
+        {"id": "studio-skin-cloud", "at": [33.6, 38.4], "label": "Surface points"}
+      ],
+      "groups": ["all", "showcase", "studio"]
+    },
+    {
+      "id": "scene-eras",
+      "layer": "comparison",
+      "tier": "listed",
+      "title": "One scene. Many eras.",
+      "summary": "The same room/action under eight art treatments.",
+      "duration": 24,
+      "format": "16:9",
+      "page": "examples/scene-eras.html",
+      "media": {"mp4": "media/scene-eras.mp4", "poster": "media/scene-eras.jpg", "gif": "media/scene-eras.gif"},
+      "card": {
+        "headline": "One scene. Many eras.",
+        "description": "One continuous cup-lifting action, eight room treatments and stable scene landmarks.",
+        "useFor": "Comparing illustration and period styles on one scene.",
+        "relation": "The scene is also a reusable preset in the effect library.",
+        "guide": "fx/material-studies/README.md"
+      },
+      "audience": "Art directors comparing period or illustration styles on one scene.",
+      "effects": [
+        {"id": "scene-eras", "label": "Eight room treatments", "proof": ["fx/material-studies/films.js", "if (id === \"eras\") return room();"]}
+      ],
+      "groups": ["all", "showcase", "materials"]
+    },
+    {
+      "id": "fluid-smoke",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "Find the Form",
+      "summary": "An extended rendered example of volumetric smoke.",
+      "duration": 9.6,
+      "format": "16:9",
+      "page": "examples/fluid-smoke.html",
+      "media": {"mp4": "media/fluid-smoke.mp4", "poster": "media/fluid-smoke.jpg", "gif": "media/fluid-smoke.gif"},
+      "card": {
+        "headline": "Find the Form",
+        "description": "Inspect baked volumetric smoke around lettering.",
+        "useFor": "Title reveals and atmospheric logo stings.",
+        "relation": "Baked in Blender; playback does not need Blender.",
+        "guide": "tools/blender/README.md"
+      },
+      "audience": "Designers of title reveals and atmospheric logo stings.",
+      "effects": [
+        {"id": "fluid-smoke", "label": "Volumetric smoke"}
+      ],
+      "groups": ["all", "showcase", "fluid"]
+    },
+    {
+      "id": "fluid-overflow",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "Overflow",
+      "summary": "Partly filled bowl → rising water → overflow → settling.",
+      "duration": 9.6,
+      "format": "16:9",
+      "page": "examples/fluid-overflow.html?v=liquid-v2",
+      "media": {"mp4": "media/fluid-overflow.mp4?v=liquid-v2", "poster": "media/fluid-overflow.jpg?v=liquid-v2", "gif": "media/fluid-overflow.gif?v=liquid-v2"},
+      "card": {
+        "headline": "Overflow",
+        "description": "Inspect filling, spill and drainage of a partly filled bowl.",
+        "useFor": "Drink and product shots with liquid motion.",
+        "relation": "Baked in Blender; Slow Gold is its viscous variant.",
+        "guide": "tools/blender/README.md"
+      },
+      "audience": "Product and drink ad makers who need liquid motion.",
+      "effects": [
+        {"id": "fluid-overflow", "label": "Liquid flow"}
+      ],
+      "groups": ["all", "showcase", "fluid"]
+    },
+    {
+      "id": "fluid-viscous",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "Slow Gold",
+      "summary": "Inspect liquid contact, stretching and drainage over a ring.",
+      "duration": 9.6,
+      "format": "16:9",
+      "page": "examples/fluid-viscous.html?v=liquid-v2",
+      "media": {"mp4": "media/fluid-viscous.mp4?v=liquid-v2", "poster": "media/fluid-viscous.jpg?v=liquid-v2", "gif": "media/fluid-viscous.gif?v=liquid-v2"},
+      "card": {
+        "headline": "Slow Gold",
+        "description": "A moving golden stream lays a viscous sheet over a dark ceramic ring, stretches and drains onto its plinth.",
+        "useFor": "Product ads with thick, slow liquid.",
+        "relation": "A viscosity variant of the liquid-flow effect; baked in Blender.",
+        "guide": "tools/blender/README.md"
+      },
+      "audience": "Product ad makers who need thick, slow liquid.",
+      "effects": [
+        {"id": "fluid-viscous", "label": "Viscous coating"}
+      ],
+      "groups": ["all", "showcase", "fluid"]
+    },
+    {
+      "id": "ink-city",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "One block. A drawn city.",
+      "summary": "Surface hatching, staged construction and camera travel in one scene.",
+      "duration": 19.2,
+      "format": "16:9",
+      "page": "examples/ink-city.html",
+      "media": {"mp4": "media/ink-city.mp4", "poster": "media/ink-city.jpg", "gif": "media/ink-city.gif"},
+      "card": {
+        "headline": "One block. A drawn city.",
+        "description": "Hatching is anchored in object coordinates. Camera movement preserves the marks, while changing light changes ink density.",
+        "useFor": "Architectural and illustrated 3D scenes.",
+        "relation": "The full render of the surface-hatching effect.",
+        "guide": "fx/design/README.md"
+      },
+      "audience": "Illustrators and architects presenting a drawn 3D scene.",
+      "effects": [
+        {"id": "design-surface-ink", "label": "Surface hatching", "proof": ["fx/design/films.js", "if(id==='ink-city')return createCity();"]}
+      ],
+      "groups": ["all", "showcase", "design"]
+    },
+    {
+      "id": "shadow-lab",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "One light. Different edges.",
+      "summary": "Inspect source size and object height against the shadow.",
+      "duration": 9.6,
+      "format": "16:9",
+      "page": "examples/shadow-lab.html",
+      "media": {"mp4": "media/shadow-lab.mp4", "poster": "media/shadow-lab.jpg", "gif": "media/shadow-lab.gif"},
+      "card": {
+        "headline": "One light. Different edges.",
+        "description": "Widen a light source or raise a sphere to change the softness and spread of its shadow.",
+        "useFor": "Tuning product and 3D lighting.",
+        "relation": "The soft-shadow effect card keeps its own loop.",
+        "guide": "fx/design/README.md"
+      },
+      "audience": "Product and 3D designers tuning lighting.",
+      "effects": [
+        {"id": "design-soft-shadow", "label": "Soft shadows", "proof": ["fx/design/films.js", "if(id==='shadow-lab'){const e=lighting()"]}
+      ],
+      "groups": ["all", "showcase", "design"],
+      "retire": "D2: no new render; the soft-shadow effect card keeps its loop.",
+      "plan": "Soft shadows are to appear in a product spotlight use case instead."
+    },
+    {
+      "id": "optical",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "Six optical treatments",
+      "summary": "Six independent looks for choosing a treatment.",
+      "duration": 18,
+      "format": "16:9",
+      "page": "examples/optical.html",
+      "media": {"mp4": "media/optical.mp4", "poster": "media/optical.jpg", "gif": "media/optical.gif"},
+      "card": {
+        "headline": "Six optical treatments",
+        "description": "Moiré, slit-scan type, a paper ribbon, caustic light, holographic foil and a path morph, three seconds each.",
+        "useFor": "Choosing an optical look for a title or background.",
+        "relation": "Each three-second segment plays inside its own effect card."
+      },
+      "audience": "Designers choosing an optical look for a title or background.",
+      "effects": [
+        {"id": "optical-moire", "at": [0, 3], "label": "Moiré"},
+        {"id": "optical-slit", "at": [3, 6], "label": "Slit-scan type"},
+        {"id": "optical-ribbon", "at": [6, 9], "label": "Paper ribbon"},
+        {"id": "optical-caustic", "at": [9, 12], "label": "Caustic light"},
+        {"id": "optical-foil", "at": [12, 15], "label": "Holographic foil"},
+        {"id": "optical-morph", "at": [15, 18], "label": "Path morph"}
+      ],
+      "groups": ["all", "showcase"]
+    },
+    {
+      "id": "stacks",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "Image distortion, collisions and particles",
+      "summary": "Three unrelated operations with separate settings.",
+      "duration": 24,
+      "format": "16:9",
+      "page": "examples/stacks.html",
+      "media": {"mp4": "media/stacks.mp4", "poster": "media/stacks.jpg", "gif": "media/stacks.gif"},
+      "card": {
+        "headline": "Image distortion, collisions and particles",
+        "description": "A PixiJS liquid poster, a Rapier domino chain and WebGPU orbital particles, each with its own settings.",
+        "useFor": "Seeing what each rendering library adds.",
+        "relation": "Each segment plays inside its own effect card."
+      },
+      "audience": "Developers choosing between PixiJS, Rapier and WebGPU effects.",
+      "effects": [
+        {"id": "stack-pixi", "at": [0, 7], "label": "Liquid poster", "proof": ["examples/stacks.html", "i = t < 7 ? 0 : t < 16 ? 1 : 2"]},
+        {"id": "stack-rapier", "at": [7, 16], "label": "Domino chain", "proof": ["examples/stacks.html", "i = t < 7 ? 0 : t < 16 ? 1 : 2"]},
+        {"id": "stack-gpu", "at": [16, 24], "label": "Orbital particles", "proof": ["examples/stacks.html", "i = t < 7 ? 0 : t < 16 ? 1 : 2"]}
+      ],
+      "groups": ["all", "showcase"]
+    },
+    {
+      "id": "audio-relief",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "Pulse / Form",
+      "summary": "Measured audio changes solid image-cell depth.",
+      "duration": 12,
+      "format": "16:9",
+      "page": "examples/audio-relief.html",
+      "media": {"mp4": "media/audio-relief.mp4", "poster": "media/audio-relief.jpg", "gif": "media/audio-relief.gif"},
+      "card": {
+        "headline": "Pulse / Form",
+        "description": "Measured sound energy and frequency bands give image cells depth.",
+        "useFor": "Music visuals and sound-reactive posts.",
+        "relation": "A variant of the image-relief effect.",
+        "guide": "fx/signals/README.md"
+      },
+      "audience": "Musicians and podcasters making sound-reactive visuals.",
+      "effects": [
+        {"id": "signal-audio-relief", "label": "Audio relief"}
+      ],
+      "groups": ["all", "showcase", "signals"]
+    },
+    {
+      "id": "motion-fragments",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "Motion / Release",
+      "summary": "Measured image movement emits and directs fragments.",
+      "duration": 12,
+      "format": "16:9",
+      "page": "examples/motion-fragments.html",
+      "media": {"mp4": "media/motion-fragments.mp4", "poster": "media/motion-fragments.jpg", "gif": "media/motion-fragments.gif"},
+      "card": {
+        "headline": "Motion / Release",
+        "description": "Measured image movement releases solid fragments from faster regions.",
+        "useFor": "Action edits and kinetic transitions.",
+        "relation": "The full render of the motion-driven fragments effect.",
+        "guide": "fx/signals/README.md"
+      },
+      "audience": "Editors adding energy to action footage.",
+      "effects": [
+        {"id": "signal-motion-fragments", "label": "Motion fragments"}
+      ],
+      "groups": ["all", "showcase", "signals"]
+    },
+    {
+      "id": "impact-orbit",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "Impact / Orbit",
+      "summary": "A measured score attack cues an authored held 3D pose and animated lighting.",
+      "duration": 12,
+      "format": "16:9",
+      "page": "examples/impact-orbit.html",
+      "media": {"mp4": "media/impact-orbit.mp4", "poster": "media/impact-orbit.jpg", "gif": "media/impact-orbit.gif"},
+      "card": {
+        "headline": "Impact / Orbit",
+        "description": "Music attacks cue authored held poses; camera and lights keep moving around real 3D geometry.",
+        "useFor": "A bullet-time beat inside an action edit.",
+        "relation": "A variant of the freeze-orbit effect.",
+        "guide": "fx/signals/README.md"
+      },
+      "audience": "Action and sports editors who want a bullet-time beat.",
+      "effects": [
+        {"id": "signal-freeze-orbit", "label": "Impact orbit", "proof": ["fx/signals/films.js", "effect:'freeze-orbit'"]}
+      ],
+      "groups": ["all", "showcase", "signals"],
+      "mergeInto": "dot-battle",
+      "plan": "D2: COUNTERFORM gains a 1.2 s freeze-orbit beat; this entry is removed after that render."
+    },
+    {
+      "id": "character-lipsync",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "Say it. Mean it.",
+      "summary": "Recorded speech, expressive mouth shapes and authored gestures.",
+      "duration": 9.6,
+      "format": "16:9",
+      "page": "examples/character-lipsync.html",
+      "media": {"mp4": "media/character-lipsync.mp4", "poster": "media/character-lipsync.jpg", "gif": "media/character-lipsync.gif"},
+      "card": {
+        "headline": "Say it. Mean it.",
+        "description": "Speech mouth shapes and facial performance in close-up.",
+        "useFor": "Talking-character clips and explainers.",
+        "relation": "The Final Final uses the same speech and expression rig.",
+        "guide": "fx/dialogue/README.md"
+      },
+      "audience": "Makers of talking-character clips and explainers.",
+      "effects": [
+        {"id": "dialogue-lipsync", "label": "Speech and expression", "proof": ["fx/dialogue/scene.js", "MOUTHS"]}
+      ],
+      "groups": ["all", "showcase", "dialogue"]
+    }
+  ]
+}

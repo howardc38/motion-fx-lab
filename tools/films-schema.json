@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/howardc38/motion-fx-lab/blob/main/tools/films-schema.json",
+  "title": "Published film manifest, version 2",
+  "description": "examples/films.json is the only source for published films: their layer, tier, card copy and the catalogue effects their source runs. tools/films.cjs checks this structure, then the rules it cannot express (one intro, sampler timings, catalogue ids, source evidence, files on disk) and generates every film block from it.",
+  "type": "object",
+  "required": ["version", "layers", "films"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "const": 2 },
+    "layers": {
+      "description": "Display order of the film layers. Titles and descriptions head the generated film list; singular names build the count sentence.",
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "singular", "description"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/layer" },
+          "title": { "$ref": "#/$defs/text" },
+          "singular": { "$ref": "#/$defs/text" },
+          "description": { "$ref": "#/$defs/text" }
+        }
+      }
+    },
+    "films": {
+      "description": "Order within a layer is display order.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/film" }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "text": { "type": "string", "minLength": 1, "pattern": "^[^|<>]*[^|<>\\s][^|<>]*$" },
+    "layer": {
+      "description": "intro: what the repository is. use-case: a familiar video format to adapt. demo: several effects combined into a finished piece. comparison: one input, different treatments. effect-film: a full render of one effect (or a sampler that plays one segment per effect card).",
+      "enum": ["intro", "use-case", "demo", "comparison", "effect-film"]
+    },
+    "tier": {
+      "description": "hero: the page-top video (only the intro). featured: a card in its layer's section (use-case or demo). listed: the film list only. in-card: plays inside its effect card(s); effect films only.",
+      "enum": ["hero", "featured", "listed", "in-card"]
+    },
+    "span": {
+      "description": "[start, end] in authored seconds; 0 <= start < end <= duration.",
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "type": "number", "minimum": 0 }
+    },
+    "effect": {
+      "type": "object",
+      "required": ["id"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "at": { "$ref": "#/$defs/span" },
+        "label": { "$ref": "#/$defs/text" },
+        "proof": {
+          "description": "[repository file reachable from the film page, literal text in it] showing where the source runs this effect. Without it, the page itself must name the effect (data-fx, data-demo or the quoted id).",
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "related": {
+      "type": "object",
+      "required": ["id"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "label": { "$ref": "#/$defs/text" }
+      }
+    },
+    "media": {
+      "type": "string",
+      "pattern": "^media/[a-z0-9-]+(\\.preview)?\\.(mp4|gif|jpg)(\\?v=[A-Za-z0-9.-]+)?$"
+    },
+    "film": {
+      "type": "object",
+      "required": ["id", "layer", "tier", "title", "summary", "duration", "format", "page", "media", "card", "audience", "effects", "groups"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "layer": { "$ref": "#/$defs/layer" },
+        "tier": { "$ref": "#/$defs/tier" },
+        "title": { "$ref": "#/$defs/text" },
+        "summary": { "description": "One line for the film list, README and viewing guide.", "$ref": "#/$defs/text" },
+        "duration": { "description": "Authored length in seconds (window.__DUR).", "type": "number", "exclusiveMinimum": 0 },
+        "format": { "enum": ["16:9", "9:16", "4:5", "1:1"] },
+        "page": {
+          "description": "The editable page that video/build.sh renders.",
+          "type": "string",
+          "pattern": "^(examples|video)/[a-z0-9-]+\\.html(\\?v=[A-Za-z0-9.-]+)?$"
+        },
+        "media": {
+          "type": "object",
+          "required": ["mp4", "poster"],
+          "additionalProperties": false,
+          "properties": {
+            "mp4": { "$ref": "#/$defs/media" },
+            "poster": { "$ref": "#/$defs/media" },
+            "preview": { "description": "Silent MP4 loop for cards.", "$ref": "#/$defs/media" },
+            "gif": { "$ref": "#/$defs/media" }
+          }
+        },
+        "card": {
+          "description": "Card copy. Featured films need useFor and relation.",
+          "type": "object",
+          "required": ["headline", "description"],
+          "additionalProperties": false,
+          "properties": {
+            "headline": { "$ref": "#/$defs/text" },
+            "description": { "$ref": "#/$defs/text" },
+            "useFor": { "$ref": "#/$defs/text" },
+            "relation": { "$ref": "#/$defs/text" },
+            "guide": { "description": "Repository path of the edit guide.", "type": "string", "pattern": "^[A-Za-z0-9./-]+\\.md$" }
+          }
+        },
+        "audience": { "$ref": "#/$defs/text" },
+        "effects": {
+          "description": "Catalogue ids the film's source actually runs, with optional [start, end]. Ids that only inspired the film belong in related.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/effect" }
+        },
+        "related": { "type": "array", "items": { "$ref": "#/$defs/related" } },
+        "groups": {
+          "description": "Build groups for node tools/films.cjs build <group>.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "contains": { "const": "all" },
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "mergeInto": { "description": "Planned: this film's content moves into another film, then this entry is removed.", "$ref": "#/$defs/id" },
+        "retire": { "description": "Planned: no new render; the reason.", "$ref": "#/$defs/text" },
+        "becomes": {
+          "description": "Planned: the film is rebuilt in another layer.",
+          "type": "object",
+          "required": ["layer", "headline"],
+          "additionalProperties": false,
+          "properties": { "layer": { "$ref": "#/$defs/layer" }, "headline": { "$ref": "#/$defs/text" } }
+        },
+        "plan": { "description": "Note for the planned change.", "$ref": "#/$defs/text" }
+      }
+    }
+  }
+}
