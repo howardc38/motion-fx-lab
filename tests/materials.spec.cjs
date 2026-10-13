@@ -218,11 +218,11 @@ test("transparent external glitch sources do not inherit the previous image", as
   });
   expect(p).toBe(true);
 });
-test("every featured film card opens its own playable video", async ({ page }) => {
+test("every film card opens its own playable video", async ({ page }) => {
   await gallery(page);
   const cards = page.locator(".film-preview");
-  const { featured } = require("./fixtures/expected-counts.json").films;
-  expect(await cards.count()).toBe(featured["use-case"].length + featured.demo.length);
+  const { cards: byLayer } = require("./fixtures/expected-counts.json").films;
+  expect(await cards.count()).toBe(Object.values(byLayer).flat().length);
   for (let i = 0; i < (await cards.count()); i++) {
     const c = cards.nth(i);
     await c.locator("button").click();

@@ -41,7 +41,7 @@
       "enum": ["intro", "use-case", "demo", "comparison", "effect-film"]
     },
     "tier": {
-      "description": "hero: the page-top video (only the intro). featured: a card in its layer's section (use-case or demo). listed: the film list only. in-card: plays inside its effect card(s); effect films only.",
+      "description": "hero: the page-top video (only the intro). featured: a large card in its layer's section (use-case or demo). listed: a smaller card in its layer's section (demo or comparison), or, with versionOf, a link on its parent's card; every film is also in the full film list. in-card: plays inside its effect card(s); effect films only.",
       "enum": ["hero", "featured", "listed", "in-card"]
     },
     "span": {
@@ -89,6 +89,7 @@
         "id": { "$ref": "#/$defs/id" },
         "layer": { "$ref": "#/$defs/layer" },
         "tier": { "$ref": "#/$defs/tier" },
+        "versionOf": { "description": "Another cut, ratio or brand of the named film in the same layer, rendered from the same page; linked from that film's card.", "$ref": "#/$defs/id" },
         "title": { "$ref": "#/$defs/text" },
         "summary": { "description": "One line for the film list, README and viewing guide.", "$ref": "#/$defs/text" },
         "duration": { "description": "Authored length in seconds (window.__DUR).", "type": "number", "exclusiveMinimum": 0 },

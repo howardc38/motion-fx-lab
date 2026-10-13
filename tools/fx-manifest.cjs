@@ -1,6 +1,7 @@
 // fx/manifest.json owns how the effect library loads: each code family's scripts in load order,
 // its ?v= cache tag, the demos it registers with their source files, and the gallery order.
-// This tool writes the generated blocks in index.html, video/intro.html and fx/gallery-meta.js.
+// This tool writes the generated blocks in index.html, video/intro.html, fx/gallery-meta.js and the README's
+// effect overview (names by kind in gallery order, plus the code-family guides).
 //   node tools/fx-manifest.cjs --check   fail when the manifest disagrees with the code or a block is stale
 //   node tools/fx-manifest.cjs --write   rewrite the generated blocks
 const fs = require('node:fs');
@@ -12,6 +13,8 @@ const GALLERY_FILE = 'fx/gallery-meta.js';
 const SCRIPT_MARKERS = ['<!-- fx:scripts:start -->', '<!-- fx:scripts:end -->'];
 const GALLERY_MARKERS = ['// fx:gallery:start', '// fx:gallery:end'];
 const GALLERY_KEYS = ['order', 'showcaseOrder', 'previewDefault', 'previewHero'];
+const README_FILE = 'README.md';
+const README_MARKERS = ['<!-- fx:effects:start -->', '<!-- fx:effects:end -->'];
 const isUrl = file => /^https:\/\//.test(file);
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const own = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
@@ -57,9 +60,24 @@ function replaceBlock(text, [start, end], body, file) {
   return text.slice(0, afterStart) + body + '\n' + text.slice(endLine);
 }
 
+// README table of effect names by gallery kind, in gallery order, each linking to its live card; Motion basics last.
+// No counts: the list grows and shrinks with the catalogue.
+function renderReadmeEffects(manifest, root = ROOT) {
+  const reg = registry(manifest, root), site = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).homepage.replace(/\/?$/, '/');
+  const rank = id => manifest.gallery.order.indexOf(id), cell = text => String(text).replace(/\|/g, '\\|');
+  const list = cards => [...cards].sort((a, b) => rank(a.id) - rank(b.id)).map(c => `[${cell(c.name)}](${site}#demo-${c.id})`).join(' · ');
+  const rows = Object.entries(reg.kinds).map(([kind, label]) => [label, reg.cards.filter(c => !c.basic && c.kind === kind)]).filter(([, cards]) => cards.length);
+  rows.push(['Motion basics', reg.cards.filter(c => c.basic)]);
+  const guides = manifest.families.filter(f => f.readme).map(f => `[${f.id}](${f.readme})`).join(' · ');
+  return ['| Kind | Effects, in gallery order |', '|---|---|', ...rows.map(([label, cards]) => `| ${cell(label)} | ${list(cards)} |`), '', `Code families with their own guide: ${guides}.`].join('\n');
+}
+
 function sync(check = false, root = ROOT, manifest = load(root)) {
   const targets = [...manifest.pages.map(page => [page, SCRIPT_MARKERS, renderScripts(manifest, page)]),
     [GALLERY_FILE, GALLERY_MARKERS, renderGallery(manifest.gallery)]];
+  // The README block needs the full registry, so it is only written where the README carries its markers.
+  const readme = path.join(root, README_FILE);
+  if (fs.existsSync(readme) && fs.readFileSync(readme, 'utf8').includes(README_MARKERS[0])) targets.push([README_FILE, README_MARKERS, renderReadmeEffects(manifest, root)]);
   const stale = [];
   for (const [file, markers, body] of targets) {
     const absolute = path.join(root, file), old = fs.readFileSync(absolute, 'utf8'), next = replaceBlock(old, markers, body, file);
@@ -116,7 +134,15 @@ function registry(manifest = load(), root = ROOT) {
   }
   const catalog = context.FXCatalog;
   if (!catalog) throw new Error('FXCatalog was not defined; the catalogue must load last');
+  // Kind labels live with the other gallery labels.
+  let kinds = {};
+  if (fs.existsSync(path.join(root, GALLERY_FILE))) {
+    vm.runInContext(fs.readFileSync(path.join(root, GALLERY_FILE), 'utf8'), context, { filename: GALLERY_FILE });
+    kinds = { ...(context.FXGalleryMeta?.KINDS || {}) };
+  }
   return {
+    kinds,
+    cards: [...catalog.families.map(f => ({ id: f.id, name: f.name, kind: f.kind, basic: false })), ...(catalog.basics || []).map(f => ({ id: f.id, name: f.name, kind: f.kind, basic: true }))],
     owner,
     demos: [...catalog.byId.values()].map(d => ({ id: d.id, period: d.period, hero: d.hero, role: d.role, familyId: d.familyId })),
     // Motion basics are gallery cards too; they share the one order list with the effect families.
@@ -229,8 +255,8 @@ if (require.main === module) {
     const manifest = load(), errors = validate(manifest);
     if (errors.length) throw new Error('fx/manifest.json does not match the code:\n- ' + errors.join('\n- '));
     const changed = sync(command === '--check', ROOT, manifest), { stats } = registry(manifest);
-    console.log(`fx manifest OK: ${manifest.families.length} code families register ${stats.demos} demos in ${stats.techniques} effect families, ${stats.basics ?? 0} motion basics and ${stats.showcases} collections` +
+    console.log(`fx manifest OK: ${manifest.families.length} code families register ${stats.demos} demos in ${stats.techniques} effect families, ${stats.basics ?? 0} motion basics and ${stats.showcases} comparison and scene presets` +
       (command === '--write' ? `; ${changed.length ? 'updated ' + changed.join(', ') : 'nothing to update'}` : ''));
   } catch (error) { console.error(error.message); process.exitCode = 1; }
 }
-module.exports = { load, scripts, renderScripts, renderGallery, registry, sourceRefs, validate, sync };
+module.exports = { load, scripts, renderScripts, renderGallery, renderReadmeEffects, registry, sourceRefs, validate, sync };

@@ -14,6 +14,12 @@
     "featured": {
       "use-case": ["reel", "product", "infographic", "broll", "titles", "countdown", "spotlight"],
       "demo": ["style-journey", "character-dialogue", "water-forms"]
+    },
+    "$cards": "Film cards on the home page by section, in page order: the featured cards, then the smaller cards (listed films that are not a version of another film).",
+    "cards": {
+      "use-case": ["reel", "product", "infographic", "broll", "titles", "countdown", "spotlight"],
+      "demo": ["style-journey", "character-dialogue", "water-forms", "dot-story", "dot-battle"],
+      "comparison": ["fight-effects", "scene-eras"]
     }
   }
 }

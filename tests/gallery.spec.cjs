@@ -1,7 +1,7 @@
 const {test,expect}=require('@playwright/test');
 const COUNTS=require('./fixtures/expected-counts.json'),C=COUNTS.catalog;
 async function open(page){await page.goto('/');await page.waitForFunction(()=>window.galleryAPI);await page.evaluate(()=>galleryAPI.pause());}
-const available=f=>`${f.demos} ${f.demos===1?'demo matches':'demos match'} these filters${f.variants?`, including ${f.variants} variant${f.variants===1?'':'s'} in the card selectors`:''}.`;
+const available=f=>`${f.demos} ${f.demos===1?'preview matches':'previews match'} these filters${f.variants?`, including ${f.variants} variant${f.variants===1?'':'s'} in the card selectors`:''}.`;
 async function filter(page,f){
  await page.locator('#fKind').getByRole('button',{name:f.kind,exact:true}).click();
  await page.locator('#fStack').getByRole('button',{name:f.stack,exact:true}).click();
@@ -9,10 +9,10 @@ async function filter(page,f){
 test('catalogue owns every demo once; variants, basics and showcases do not inflate the effect count',async({page})=>{
  await open(page);
  const all=COUNTS.filters[0];
- await expect(page.locator('#shown')).toHaveText(`${C.techniques} / ${C.techniques} effect families shown`);
+ await expect(page.locator('#shown')).toHaveText(`${C.techniques} / ${C.techniques} effects shown`);
  await expect(page.locator('#basics-shown')).toHaveText(`${C.basics} / ${C.basics} motion basics shown`);
  await expect(page.locator('#available')).toHaveText(available(all));
- await expect(page.locator('#showcase-count')).toHaveText(`${C.showcases} combined showcases below ↘`);
+ await expect(page.locator('#showcase-count')).toHaveText('Compare treatments below ↘');
  const p=await page.evaluate(()=>({stats:FXCatalog.stats,ids:FX.DEMOS.map(d=>d.id),groups:[...FXCatalog.families,...FXCatalog.basics].map(f=>f.entries.map(d=>d.id)),shows:FXCatalog.showcases.map(f=>f.id),
   uiIds:[...document.querySelectorAll('#gallery > figure, #basicsGallery > figure, #showcaseGallery > figure')].flatMap(card=>card.querySelector('select')?[...card.querySelectorAll('option')].map(o=>o.value):[card.dataset.effectId]),
   basicCards:[...document.querySelectorAll('#basicsGallery > figure')].map(f=>f.dataset.effectId).sort(),basicIds:FXCatalog.basics.map(f=>f.id).sort(),
@@ -58,17 +58,17 @@ test('landscape gallery remains usable at phone width and filters include charac
  await page.getByRole('button',{name:'Characters',exact:true}).click();
  await page.evaluate(()=>galleryAPI.draw('dithercharacter',2.4));
  const stage=page.locator('.stage[data-demo="dithercharacter"]');const b=await stage.boundingBox();expect(b.width/b.height).toBeCloseTo(16/9,2);
- await expect(page.locator('#shown')).toHaveText(`${COUNTS.filters[1].families} / ${C.techniques} effect families shown`);
+ await expect(page.locator('#shown')).toHaveText(`${COUNTS.filters[1].families} / ${C.techniques} effects shown`);
 });
 
 test('counts include a matching variant when its parent does not match the filter',async({page})=>{
  await open(page);
  const f=COUNTS.filters.find(x=>x.stack==='PixiJS');
  await filter(page,f);
- await expect(page.locator('#shown')).toHaveText(`${f.families} / ${C.techniques} effect families shown`);
+ await expect(page.locator('#shown')).toHaveText(`${f.families} / ${C.techniques} effects shown`);
  await expect(page.locator('#available')).toHaveText(available(f));
  await expect(page.locator('[data-effect-id="liquid"] select')).toHaveValue('stack-pixi');
- await expect(page.locator('#showcase-count')).toHaveAttribute('href','#showcases');
+ await expect(page.locator('#showcase-count')).toHaveAttribute('href','#comparisons');
 });
 
 test('old demo links for merged or removed effects open the card that replaced them',async({page})=>{

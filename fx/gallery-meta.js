@@ -5,16 +5,16 @@
   // Generated from fx/manifest.json by tools/fx-manifest.cjs; edit the manifest, not this block.
   const GALLERY = {
     order: [
-      "signal-motion-fragments", "dialogue-lipsync", "plush-fur", "gpuparticles", "domainrep",
-      "optical-foil", "fluid-smoke", "liquid", "organic-contours", "studio-depth-dots",
-      "studio-freeze-orbit", "design-type-orbit", "water-material", "optical-ribbon", "reaction",
-      "stack-gpu", "clay", "optical-moire", "optical-caustic", "toon", "character-rig", "cjk-solid",
-      "studio-portal", "studio-lowpoly", "vartype", "rhythm", "cardflip", "water-impact",
-      "design-surface-ink", "optical-slit", "optical-morph", "rays", "ridgelines", "chrome",
-      "studio-echo", "studio-skin-cloud", "studio-video-dots", "fluid-overflow", "rigid", "glitch",
-      "dissolve", "design-soft-shadow", "uifly", "whip", "hook", "chars", "karaoke", "datachart",
-      "timing", "glass", "sweep", "stamp", "beat", "sticker", "gradient", "ring", "count", "type",
-      "mark", "scan", "wipe", "lut", "grain",
+      "optical-foil", "domainrep", "plush-fur", "fluid-smoke", "reaction", "studio-lowpoly",
+      "gpuparticles", "studio-freeze-orbit", "organic-contours", "dissolve", "dialogue-lipsync",
+      "studio-skin-cloud", "studio-echo", "rays", "stack-gpu", "design-type-orbit",
+      "studio-video-dots", "chrome", "optical-slit", "clay", "water-material", "toon",
+      "signal-motion-fragments", "cjk-solid", "studio-depth-dots", "optical-moire", "studio-portal",
+      "optical-caustic", "optical-morph", "water-impact", "rhythm", "vartype", "optical-ribbon",
+      "glitch", "cardflip", "fluid-overflow", "liquid", "ridgelines", "rigid", "character-rig",
+      "design-surface-ink", "design-soft-shadow", "whip", "uifly", "hook", "chars", "karaoke",
+      "datachart", "timing", "glass", "sweep", "stamp", "beat", "sticker", "gradient", "ring",
+      "count", "type", "mark", "scan", "wipe", "lut", "grain",
     ],
     showcaseOrder: [
       "styles", "studio-themes", "studio-gallery", "water-underwater", "scene-eras",
@@ -34,23 +34,24 @@
   const TILE_FILM_LAYERS = ["effect-film"];
   const TILE_FILM_LABELS = {
     "character-lipsync": "Watch the 11.6 s lip-sync film with sound",
-    "audio-relief": "Watch the 12 s study with sound",
-    "motion-fragments": "Watch the 12 s study with sound",
-    "dot-story": "Watch the finished film",
+    "audio-relief": "Watch the 12 s effect film with sound",
+    "motion-fragments": "Watch the 12 s effect film with sound",
+    "dot-story": "Watch the demo film that uses it",
     "dot-battle": "Watch COUNTERFORM, the fight film that uses it",
-    "ink-city": "Watch the related study",
+    "ink-city": "Watch the full render",
     "fluid-overflow": "Watch the full 9.6 s render",
     "fluid-smoke": "Watch the full 9.6 s render",
-    "fluid-viscous": "Watch the archived material study",
+    "fluid-viscous": "Watch the full 9.6 s render",
     "optical": "Watch the optical sampler",
     "stacks": "Watch the three-operation sampler",
     "scene-eras": "Compare eight room treatments",
   };
-  // Old #film-<id> bookmarks for films that left the film list; they now open the related effect.
+  // Old #film-<id> bookmarks that open an effect card: effect films that play there, and retired or merged films.
+  // (#film-scene-eras is the comparison card again, so it needs no entry.)
   const FILM_BOOKMARKS = {
     "film-ink-city": "design-surface-ink", "film-shadow-lab": "design-soft-shadow",
     "film-optical": "optical-foil", "film-stacks": "stack-pixi",
-    "film-scene-eras": "scene-eras", "film-fluid-viscous": "fluid-viscous",
+    "film-fluid-viscous": "fluid-viscous",
     "film-impact-orbit": "signal-freeze-orbit",
   };
   // Old #film-<id> bookmarks for films replaced by another film.

@@ -17,12 +17,12 @@ async function open(page) {
   await page.waitForFunction(() => window.galleryAPI);
   await page.evaluate(() => galleryAPI.pause());
 }
-test("featured sequences stay distinct from the film shortlist and single effects", async ({
+test("film cards sit in their layer sections, apart from the full film list and the effects", async ({
   page,
 }) => {
   await open(page);
   const p = await page.evaluate(() => ({
-    groups: [...document.querySelectorAll(".film-group")].map((g) => ({
+    groups: [...document.querySelectorAll("main > .film-group")].map((g) => ({
       id: g.id,
       films: [...g.querySelectorAll("[data-film-id]")].map(
         (f) => f.dataset.filmId,
@@ -40,14 +40,18 @@ test("featured sequences stay distinct from the film shortlist and single effect
       .map((a) => a.hash.slice(6))
       .filter((id) => !FXCatalog.byId.has(id)),
   }));
-  const featured = COUNTS.films.featured;
-  expect(p.groups.map((g) => g.films)).toEqual([featured["use-case"], featured.demo]);
+  const cards = COUNTS.films.cards;
+  expect(p.groups.map((g) => [g.id, g.films])).toEqual([["uses", cards["use-case"]], ["films", cards.demo], ["comparisons", cards.comparison]]);
   expect(new Set(p.ids).size).toBe(COUNTS.films.total);
   expect(p.ids).toHaveLength(COUNTS.films.total);
-  expect(p.groups.every((g) => g.beforeEffects)).toBe(true);
+  // Use cases and demo films come before the effects; comparisons follow them.
+  expect(p.groups.map((g) => g.beforeEffects)).toEqual([true, true, false]);
   expect(p.badLinks).toEqual([]);
-  // Every featured card shows a loop: its GIF, or its poster when the film publishes no GIF.
-  await expect(page.locator(".film-preview img")).toHaveCount(featured["use-case"].length + featured.demo.length);
+  // Every card shows a still or loop: the featured GIF, or the poster when there is no GIF or the card is a small one.
+  await expect(page.locator(".film-preview img")).toHaveCount(Object.values(cards).flat().length);
+  // Versions of a film are linked from its card.
+  await expect(page.locator('#film-reel .film-versions a')).toHaveText(["bakery, 9:16", "yoga studio, 9:16"]);
+  await expect(page.locator('#film-water-forms .film-versions a')).toHaveAttribute("href", "media/water-forms-vertical.mp4");
   await expect(page.locator("#film-index")).not.toHaveAttribute("open");
   for (const [id, card] of [["fluid-overflow", "Fluid flow and overflow"], ["fluid-smoke", "Volumetric smoke around geometry"]])
     await expect(page.locator(`[data-film-index-id="${id}"] td`).first()).toHaveText("Effect card: " + card);
@@ -70,9 +74,14 @@ test("a film link reveals its precise variant and clears incompatible filters", 
     "true",
   );
   await expect(page.locator("#shown")).toHaveText(
-    `${COUNTS.catalog.techniques} / ${COUNTS.catalog.techniques} effect families shown`,
+    `${COUNTS.catalog.techniques} / ${COUNTS.catalog.techniques} effects shown`,
   );
+  // The comparison film has its own card again; its live preset stays folded away.
   await page.goto('/#film-scene-eras');
+  await page.waitForFunction(() => window.galleryAPI);
+  await expect(page.locator("#film-scene-eras")).toBeVisible();
+  await expect(page.locator("#composition-presets")).not.toHaveAttribute("open");
+  await page.goto('/#demo-scene-eras');
   await expect(page.locator("#composition-presets")).toHaveAttribute("open");
   await expect(page.locator("#demo-scene-eras")).toBeVisible();
 });
@@ -86,13 +95,13 @@ test("legacy film links reveal the index and the selected liquid variant links t
   await card.locator('select').selectOption('fluid-overflow');
   await expect(card.locator('.preview-link a').first()).toHaveAttribute('href', /media\/fluid-overflow\.mp4/);
 });
-test("the Film shortlist link reopens the index when its hash is unchanged", async ({ page }) => {
+test("the all-films link reopens the film list when its hash is unchanged", async ({ page }) => {
   await open(page);
-  await page.locator('nav a[href="#film-index"]').click();
+  await page.locator('#films .note a[href="#film-index"]').click();
   await expect(page.locator('#film-index')).toHaveAttribute('open');
   await page.locator('#film-index > summary').click();
   await expect(page.locator('#film-index')).not.toHaveAttribute('open');
-  await page.locator('nav a[href="#film-index"]').click();
+  await page.locator('#films .note a[href="#film-index"]').click();
   await expect(page.locator('#film-index')).toHaveAttribute('open');
 });
 test("fight studies compare real input and output, with separate pose and camera clocks", async ({
@@ -266,8 +275,8 @@ test('source and renderer variations keep working through their family links and
  }
 });
 
-test('moved film bookmarks lead to related studies with complete playable links',async({page,request})=>{
- for(const [film,demo,parent,sampler] of [['ink-city','design-surface-ink','design-surface-ink'],['optical','optical-foil','optical-foil',true],['stacks','stack-pixi','liquid',true],['scene-eras','scene-eras','scene-eras'],['fluid-viscous','fluid-viscous','fluid-overflow']]){
+test('effect-film bookmarks open their effect card with complete playable links',async({page,request})=>{
+ for(const [film,demo,parent,sampler] of [['ink-city','design-surface-ink','design-surface-ink'],['optical','optical-foil','optical-foil',true],['stacks','stack-pixi','liquid',true],['fluid-viscous','fluid-viscous','fluid-overflow']]){
   await page.goto('/#film-'+film);await page.waitForFunction(()=>window.galleryAPI);
   await expect(page).toHaveURL(new RegExp('#demo-'+demo+'$'));
   const card=page.locator('[data-effect-id="'+parent+'"]');await expect(card).toBeVisible();

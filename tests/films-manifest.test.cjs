@@ -93,6 +93,9 @@ test('the checker rejects broken structure and broken film rules', () => {
     [m => { m.films[1].media.gif = 'media/no-such.gif'; }, /missing or outside file|media\/ differs/],
     [m => { m.films[1].card.description = 'A | B'; }, /does not match/],
     [m => { m.films[1].groups = ['showcase']; }, /must contain "all"/],
+    [m => { m.films.find(f => f.versionOf).versionOf = 'no-such-film'; }, /versionOf no-such-film must name a film with a card/],
+    [m => { const v = m.films.find(f => f.versionOf && f.layer === 'use-case'); delete v.versionOf; }, /listed use case must be a version/],
+    [m => { m.films.find(f => f.tier === 'featured').versionOf = m.films.find(f => f.tier === 'featured' && f.layer === 'demo').id; }, /only a listed film can be a version/],
   ];
   for (const [change, pattern] of cases) assert.match(errorsAfter(change), pattern, String(change));
 });
@@ -118,6 +121,18 @@ test('generated blocks are current and cover every film', () => {
   const cards = tool.render.cards(manifest, 'use-case') + tool.render.cards(manifest, 'demo');
   assert.equal((cards.match(/<figure /g) || []).length, manifest.films.filter(f => f.tier === 'featured').length);
   for (const f of manifest.films.filter(x => x.tier === 'featured')) assert.ok(cards.includes(`data-film-id="${f.id}"`), f.id);
+});
+
+test('every film is reachable from its layer: the hero, a card, a version link on a card, or an effect card', () => {
+  const cards = tool.render.cards(manifest, 'use-case') + tool.render.cards(manifest, 'demo') + tool.render.cards(manifest, 'demo', undefined, 'listed') + tool.render.cards(manifest, 'comparison', undefined, 'listed');
+  for (const f of manifest.films) {
+    if (f.tier === 'hero') assert.match(tool.render.hero(manifest), new RegExp(`data-film-id="${f.id}"`));
+    else if (f.tier === 'in-card') assert.equal(f.layer, 'effect-film', f.id);
+    else if (f.versionOf) assert.ok(cards.includes(`<a href="${f.media.mp4}">`), f.id + ' is linked from ' + f.versionOf);
+    else assert.ok(cards.includes(`data-film-id="${f.id}"`), f.id + ' has a card');
+  }
+  const readme = tool.render.readmeCards(manifest);
+  for (const f of manifest.films.filter(x => ['use-case', 'demo'].includes(x.layer) && tool.hasCard(x))) assert.ok(readme.includes(`<a href="${f.media.mp4}"><img`), f.id);
 });
 
 test('the README table keeps the columns tests/media.spec.cjs reads', () => {

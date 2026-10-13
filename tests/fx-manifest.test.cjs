@@ -52,7 +52,7 @@ test('a demo claimed twice, by the wrong family or by none is rejected', () => {
 test('the gallery order lists every family once and nothing else', () => {
   let m = fresh();
   m.gallery.order.push(m.gallery.order[0]);
-  expectError(m, /gallery\.order repeats signal-motion-fragments/);
+  expectError(m, new RegExp(`gallery\\.order repeats ${m.gallery.order[0]}$`));
   m = fresh();
   m.gallery.order = m.gallery.order.filter(id => id !== 'character-rig');
   expectError(m, /gallery\.order is missing character-rig/);
@@ -113,6 +113,16 @@ test('pages load the generated block, then the gallery scripts in dependency ord
   assert.match(intro, /<script src="\.\.\/fx\/demos\.js"><\/script>/);
   assert.match(intro, /<script src="https:\/\/cdn\.jsdelivr\.net\/npm\/flubber@0\.4\.2\/build\/flubber\.min\.js"><\/script>/);
   assert.match(fxm.renderScripts(manifest, 'index.html'), /<script src="fx\/fluid-effects\.js\?v=liquid-v2"><\/script>/);
+});
+
+test('the README effect overview names every gallery card once, in gallery order, without counts', () => {
+  const manifest = fxm.load(), text = fxm.renderReadmeEffects(manifest), reg = fxm.registry(manifest);
+  const ids = [...text.matchAll(/#demo-([a-z0-9-]+)\)/g)].map(m => m[1]);
+  assert.deepEqual([...ids].sort(), reg.cards.map(c => c.id).sort());
+  const basics = new Set(reg.cards.filter(c => c.basic).map(c => c.id));
+  assert.deepEqual(ids.filter(id => basics.has(id)), manifest.gallery.order.filter(id => basics.has(id)));
+  assert.doesNotMatch(text, /\d+\s+(effects|effect families|variants|techniques)/i);
+  for (const f of manifest.families.filter(x => x.readme)) assert.ok(text.includes(`(${f.readme})`), f.readme);
 });
 
 test('--write rewrites only the marked blocks and --check reports stale ones', () => {

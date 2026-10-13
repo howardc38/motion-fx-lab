@@ -22,6 +22,10 @@ const esc = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<'
 const readJSON = (file, root = ROOT) => JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
 const num = n => String(+(+n).toFixed(2));
 const cap = s => s[0].toUpperCase() + s.slice(1);
+// Featured films get a large card in their layer's section; other listed demo films and comparisons get a smaller
+// one. A version of another film (versionOf: another cut, ratio or brand) is linked from its parent's card.
+const CARD_LAYERS = ['use-case', 'demo', 'comparison'];
+const hasCard = f => f.tier === 'featured' || (f.tier === 'listed' && f.versionOf === undefined && CARD_LAYERS.includes(f.layer));
 
 // ---------------------------------------------------------------- JSON Schema (the subset the schema uses)
 function schemaErrors(schema, value, at = '$', root = schema) {
@@ -156,6 +160,8 @@ function validateManifest(manifest, { root = ROOT, catalog = loadCatalog(root) }
     if ((film.layer === 'effect-film') !== (film.tier === 'in-card')) errors.push(where + ': effect films, and only they, play in-card');
     if (film.tier === 'featured' && !['use-case', 'demo'].includes(film.layer)) errors.push(where + ': only use cases and demo films have featured cards');
     if (film.tier === 'featured' && !(film.card.useFor && film.card.relation)) errors.push(where + ': a featured card needs useFor and relation');
+    if (film.versionOf !== undefined && film.tier !== 'listed') errors.push(where + ': only a listed film can be a version of another film');
+    if (film.tier === 'listed' && film.layer === 'use-case' && film.versionOf === undefined) errors.push(where + ': a listed use case must be a version (versionOf) of a use case with a card');
     const ids = new Set(film.effects.map(e => e.id));
     if (film.layer === 'effect-film' && ids.size > 1 && film.effects.some(e => !e.at)) errors.push(where + ': a sampler gives every effect its [start, end]');
     for (const effect of film.effects) {
@@ -180,6 +186,10 @@ function validateManifest(manifest, { root = ROOT, catalog = loadCatalog(root) }
   }
   if (manifest.films.filter(f => f.layer === 'intro').length !== 1) errors.push('films: exactly one intro');
   for (const film of manifest.films) if (film.mergeInto && (!byId.has(film.mergeInto) || film.mergeInto === film.id || byId.get(film.mergeInto).mergeInto)) errors.push(`film ${film.id}: cannot merge into ${film.mergeInto}`);
+  for (const film of manifest.films) if (film.versionOf !== undefined) {
+    const parent = byId.get(film.versionOf);
+    if (!parent || parent.layer !== film.layer || !hasCard(parent)) errors.push(`film ${film.id}: versionOf ${film.versionOf} must name a film with a card in the same layer`);
+  }
   const expected = manifest.films.flatMap(f => Object.values(f.media).map(clean)).sort();
   if (fs.existsSync(path.join(root, 'media'))) {
     const actual = fs.readdirSync(path.join(root, 'media')).filter(n => !n.startsWith('.') && !n.endsWith('_hq.mp4')).map(n => 'media/' + n).sort();
@@ -208,7 +218,7 @@ const DEFAULT_LAYERS = [
   { id: 'effect-film', title: 'Effect films', singular: 'effect film', description: 'Full renders of one effect; each also plays inside its effect card.' },
 ];
 const KIND_LAYER = { Overview: 'intro', 'Use case': 'use-case', Sequence: 'demo', Comparison: 'comparison' };
-const FIELD_ORDER = ['id', 'layer', 'tier', 'title', 'summary', 'duration', 'format', 'page', 'media', 'card', 'audience', 'effects', 'related', 'groups', 'mergeInto', 'retire', 'becomes', 'plan'];
+const FIELD_ORDER = ['id', 'layer', 'tier', 'versionOf', 'title', 'summary', 'duration', 'format', 'page', 'media', 'card', 'audience', 'effects', 'related', 'groups', 'mergeInto', 'retire', 'becomes', 'plan'];
 const ordered = (object, keys) => Object.fromEntries(keys.filter(k => object[k] !== undefined).map(k => [k, object[k]]));
 // v1 owns title, duration, format, source (now page), media, groups and description (now summary) until the
 // swap; everything else comes from the previous v2 entry or, for a new film, from its v1 kind and section.
@@ -280,24 +290,33 @@ function context(manifest, root = ROOT) {
   const grouped = manifest.layers.map(l => [l, manifest.films.filter(f => f.layer === l.id)]);
   const plan = f => f.mergeInto ? `to be merged into ${byId.get(f.mergeInto).title}` : f.retire ? 'to be retired' : f.becomes ? `to become a ${layers.get(f.becomes.layer).singular}: ${f.becomes.headline}` : '';
   const placement = (f, inList = false) => {
-    const base = f.tier === 'hero' ? 'Top of the page' : f.tier === 'featured' ? `Card in ${layers.get(f.layer).title}` : f.tier === 'listed' ? (inList ? 'This list only' : 'Film list only')
+    const base = f.tier === 'hero' ? 'Top of the page' : hasCard(f) ? `Card in ${layers.get(f.layer).title}` : f.versionOf ? `Linked from the ${byId.get(f.versionOf).title} card`
+      : f.tier === 'listed' ? (inList ? 'This list only' : 'Film list only')
       : (cards => `Effect card${cards.length > 1 ? 's' : ''}: ${cards.join(', ')}`)([...new Set(f.effects.map(e => catalog.byId.get(e.id).card))]);
     return base + (plan(f) ? '; ' + plan(f) : '');
   };
   const parts = grouped.map(([l, list]) => `${list.length} ${list.length === 1 ? l.singular : l.title.toLowerCase()}`);
   return { catalog, layers, byId, source, label, span, grouped, plan, placement, parts };
 }
-function renderCards(manifest, layer, root = ROOT) {
+// "Clear (9:16)" and "Titles (vertical)" → "9:16"; "This weekend only (bakery)" → "bakery, 9:16".
+const FORMAT_WORDS = { vertical: '9:16', square: '1:1', portrait: '4:5', landscape: '16:9' };
+const versionLabel = v => {
+  const m = v.title.match(/\(([^)]+)\)\s*$/), label = m ? m[1] : v.title;
+  return label === v.format || FORMAT_WORDS[label] === v.format ? v.format : `${label}, ${v.format}`;
+};
+// Cards for one layer: tier 'featured' gives the large cards, 'listed' the smaller ones (versions are links on their parent).
+function renderCards(manifest, layer, root = ROOT, tier = 'featured') {
   const c = context(manifest, root);
-  return manifest.films.filter(f => f.layer === layer && f.tier === 'featured').map(f => {
+  return manifest.films.filter(f => f.layer === layer && f.tier === tier && hasCard(f)).map(f => {
     const meta = `${num(f.duration)} s · ${f.format}`, title = esc(f.card.headline);
     const loop = f.media.preview ? `<video class="film-loop" muted loop playsinline autoplay preload="metadata" poster="${esc(f.media.poster)}" src="${esc(f.media.preview)}" aria-hidden="true"></video>`
-      : f.media.gif ? `<img src="${esc(f.media.gif)}" alt="${title} animated preview" loading="lazy">` : `<img src="${esc(f.media.poster)}" alt="${title} poster" loading="lazy">`;
+      : f.media.gif && f.tier === 'featured' ? `<img src="${esc(f.media.gif)}" alt="${title} animated preview" loading="lazy">` : `<img src="${esc(f.media.poster)}" alt="${title} poster" loading="lazy">`;
     const guide = f.card.guide ? `<a href="${esc(c.source(f.card.guide))}">Edit guide</a>` : `<a href="${esc(c.source(f.page))}">View source</a>`;
     const explore = f.effects.filter((e, i, all) => all.findIndex(x => x.id === e.id) === i).map(e => `<a href="#demo-${e.id}">${esc(c.label(e))}</a>`).join(' · ');
-    return `      <figure id="film-${f.id}" data-film-id="${f.id}">
+    const versions = manifest.films.filter(v => v.versionOf === f.id).map(v => `<a href="${esc(v.media.mp4)}">${esc(versionLabel(v))}</a>`).join(' · ');
+    return `      <figure id="film-${f.id}" data-film-id="${f.id}"${f.tier === 'featured' ? '' : ' class="compact"'}>
         <div class="film-preview">${loop}<button type="button" aria-label="Play ${title} video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="${esc(f.media.poster)}" src="${esc(f.media.mp4)}" aria-label="${title}, ${meta}, with sound"></video></div>
-        <figcaption><b>${title}</b><span class="film-meta">${meta}</span><p>${esc(f.card.description)}</p><p><strong>Use for:</strong> ${esc(f.card.useFor)}</p><p class="film-relation">${esc(f.card.relation)}</p><p class="film-links"><a href="${esc(f.page)}">Scrub timeline</a> · ${guide}</p><p class="film-effects">Explore: ${explore}</p></figcaption>
+        <figcaption><b>${title}</b><span class="film-meta">${meta}</span><p>${esc(f.card.description)}</p>${f.card.useFor ? `<p><strong>Use for:</strong> ${esc(f.card.useFor)}</p>` : ''}${f.card.relation ? `<p class="film-relation">${esc(f.card.relation)}</p>` : ''}${versions ? `<p class="film-versions">Also rendered: ${versions}</p>` : ''}<p class="film-links"><a href="${esc(f.page)}">Scrub timeline</a> · ${guide}</p><p class="film-effects">Explore: ${explore}</p></figcaption>
       </figure>`;
   }).join('\n');
 }
@@ -305,10 +324,10 @@ function renderList(manifest, root = ROOT) {
   const c = context(manifest, root);
   return c.grouped.filter(([, list]) => list.length).map(([layer, list]) => {
     const rows = list.map(f => {
-      const ownElement = f.tier === 'hero' || f.tier === 'featured';
+      const ownElement = f.tier === 'hero' || hasCard(f);
       const effects = f.effects.map(e => `<a href="#demo-${e.id}">${esc(c.label(e))}</a>${e.at ? ` <a href="${esc(f.media.mp4)}#t=${num(e.at[0])},${num(e.at[1])}">${c.span(f, e)}</a>` : ''}`).join(' · ');
       const related = (f.related || []).map(e => `<a href="#demo-${e.id}">${esc(c.label(e))}</a>`).join(' · ');
-      const watch = [`<a href="${esc(f.media.mp4)}">Play MP4</a>`, `<a href="${esc(f.page)}">Timeline</a>`, ...(f.media.gif ? [`<a href="${esc(f.media.gif)}">GIF</a>`] : [])].join(' · ');
+      const watch = [`<a href="${esc(f.media.mp4)}">Play MP4</a>`, `<a href="${esc(f.page)}">Scrub timeline</a>`, ...(f.media.gif ? [`<a href="${esc(f.media.gif)}">GIF</a>`] : [])].join(' · ');
       return `<tr${ownElement ? '' : ` id="film-${f.id}"`} data-film-index-id="${f.id}" data-film-layer="${f.layer}" data-film-tier="${f.tier}"><td>${esc(c.placement(f, true))}</td><td><b>${esc(f.title)}</b><span class="film-meta">${num(f.duration)} s · ${f.format}</span><p>${esc(f.summary)}</p><p class="film-effects">Effects: ${effects}${related ? `</p><p class="film-effects">Related, not in this film: ${related}` : ''}</p></td><td>${watch}</td></tr>`;
     }).join('\n');
     return `<section class="film-index-group" data-film-kind="${layer.id}"><h3>${esc(layer.title)} · ${list.length}</h3><p class="note">${esc(layer.description)}</p>\n<div class="scroll"><table><thead><tr><th>Where</th><th>Film and purpose</th><th>Watch / edit</th></tr></thead><tbody>\n${rows}\n</tbody></table></div></section>`;
@@ -330,6 +349,22 @@ function renderReadme(manifest, root = ROOT) {
   }));
   return [`${manifest.films.length} published films: ${parts.slice(0, -1).join(', ')} and ${parts.at(-1)}. Effect films also play inside their effect cards.`, '',
     '| Layer | Film | Authored length | Format | Preview | Source |', '|---|---|---:|---|---|---|', ...rows].join('\n');
+}
+// README overview: every use case and demo film that has a card on the site, three to a row.
+function renderReadmeCards(manifest, root = ROOT) {
+  const c = context(manifest, root), out = [];
+  for (const layer of manifest.layers.filter(l => ['use-case', 'demo'].includes(l.id))) {
+    const list = manifest.films.filter(f => f.layer === layer.id && hasCard(f));
+    if (!list.length) continue;
+    const cells = list.map(f => {
+      const still = f.media.gif || f.media.poster, versions = manifest.films.filter(v => v.versionOf === f.id).map(v => `<a href="${esc(v.media.mp4)}">${esc(versionLabel(v))}</a>`).join(' · ');
+      return `<td width="33%" valign="top"><a href="${esc(f.media.mp4)}"><img src="${esc(still)}" alt="${esc(f.card.headline)}" width="100%"></a><br><b>${esc(f.card.headline)}</b> · ${num(f.duration)} s · ${f.format}<br>${esc(f.card.description)}${f.card.useFor ? `<br><sub><b>Use for:</b> ${esc(f.card.useFor)}</sub>` : ''}${versions ? `<br><sub>Also rendered: ${versions}</sub>` : ''}<br><a href="${esc(f.page)}">Source</a>${f.card.guide ? ` · <a href="${esc(f.card.guide)}">edit guide</a>` : ''}</td>`;
+    });
+    const rows = [];
+    for (let i = 0; i < cells.length; i += 3) rows.push('<tr>\n' + cells.slice(i, i + 3).join('\n') + '\n</tr>');
+    out.push(`**${layer.title}**`, '', '<table>', ...rows, '</table>', '');
+  }
+  return out.join('\n').trim();
 }
 function renderGuide(manifest, root = ROOT) {
   const c = context(manifest, root);
@@ -353,9 +388,12 @@ const BLOCKS = [
   { file: 'index.html', name: 'films:hero', render: renderHero },
   { file: 'index.html', name: 'films:uses', render: (m, r) => renderCards(m, 'use-case', r) },
   { file: 'index.html', name: 'films:demos', render: (m, r) => renderCards(m, 'demo', r) },
+  { file: 'index.html', name: 'films:demos-more', render: (m, r) => renderCards(m, 'demo', r, 'listed') },
+  { file: 'index.html', name: 'films:comparisons', render: (m, r) => renderCards(m, 'comparison', r, 'listed') },
   { file: 'index.html', name: 'films:summary', inline: true, render: renderSummary },
   { file: 'index.html', name: 'films:count', inline: true, render: renderCount },
   { file: 'index.html', name: 'films', render: renderList },
+  { file: 'README.md', name: 'films:cards', render: renderReadmeCards },
   { file: 'README.md', name: 'films', render: renderReadme },
   { file: 'fx/VIEWING-GUIDE.md', name: 'films:guide', render: renderGuide },
 ];
@@ -420,4 +458,4 @@ if (require.main === module) {
     } else throw new Error('Usage: node tools/films.cjs --check | --write | --verify | --migrate | build <id|group>');
   } catch (error) { console.error(error.message); process.exitCode = 1; }
 }
-module.exports = { films, validate, sync, load, migrate, compareV1, validateManifest, schemaErrors, loadCatalog, closure, evidence, formatJSON, render: { hero: renderHero, cards: renderCards, list: renderList, summary: renderSummary, count: renderCount, readme: renderReadme, guide: renderGuide, data: renderData }, BLOCKS };
+module.exports = { films, validate, sync, load, migrate, compareV1, validateManifest, schemaErrors, loadCatalog, closure, evidence, formatJSON, render: { hero: renderHero, cards: renderCards, list: renderList, summary: renderSummary, count: renderCount, readme: renderReadme, readmeCards: renderReadmeCards, guide: renderGuide, data: renderData }, BLOCKS, hasCard };

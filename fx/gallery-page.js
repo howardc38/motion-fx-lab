@@ -1,4 +1,5 @@
 // index.html page script: effect gallery, filters, film links on tiles, benchmark bars and stack table.
+// Site words follow one glossary: use case, demo film, effect, variant, effect film, comparison (and Motion basics).
 // Load after fx/catalog.js, fx/gallery-layout.js, fx/films-data.js (window.FXFilms) and fx/gallery-meta.js.
 (() => {
   document.querySelectorAll('.film-preview').forEach(preview => {
@@ -46,7 +47,7 @@
   const filmsFor = (card, d) => { const own=filmsShowing(d.id); return own.length ? own.map(f=>[f,d.id]) : filmsShowing(card.family.id).map(f=>[f,card.family.id]); };
   function details(card) {
     const d = byId.get(card.selected);
-    card.caption.querySelector('.pills').innerHTML = `<span class="pill kind">${card.showcase ? 'Collection' : KINDS[d.kind]}</span><span class="grade" title="${NEEDS[d.grade][1]}">${NEEDS[d.grade][0]}</span>`;
+    card.caption.querySelector('.pills').innerHTML = `<span class="pill kind">${card.showcase ? 'Preset' : KINDS[d.kind]}</span><span class="grade" title="${NEEDS[d.grade][1]}">${NEEDS[d.grade][0]}</span>`;
     card.caption.querySelector('.chips').innerHTML = d.chips.map(c => `<code>${c}</code>`).join('');
     card.caption.querySelector('.seen').textContent = d.seen ? 'Seen in: ' + d.seen : '';
     card.caption.querySelector('.variant-description').textContent = card.family.entries.length > 1 ? d.purpose : '';
@@ -62,7 +63,7 @@
     card.placeholder.hidden = card.instances.has(id);
     details(card);
   }
-  // Effect families, then Motion basics (fundamentals, not counted as effects), then collections.
+  // Effects, then Motion basics (fundamentals, not counted as effects), then the comparison and scene presets.
   const basicsHost = document.getElementById('basicsGallery');
   for (const [list, host, showcase, rank, basic] of [[families, gallery, false, rankIn(ORDER), false], [basics, basicsHost || gallery, false, rankIn(ORDER), true], [showcases, document.getElementById('showcaseGallery'), true, rankIn(SHOWCASE_ORDER), false]]) {
     for (const family of [...list].sort((a,b) => rank(a)-rank(b))) {
@@ -82,8 +83,6 @@
       fig.append(preview,caption); host.appendChild(fig); cards.push(card); if(card.select) card.select.value=card.selected; details(card);
     }
   }
-  document.querySelector('meta[name=description]').content = `${document.querySelectorAll('[data-film-index-id]').length} selected films for social, product, data, titles and characters. Compare ${stats.techniques} effect families and export verified MP4.`;
-  document.getElementById('legend').innerHTML = `<span><b>${stats.techniques}</b> effect families · ${stats.basics || 0} motion basics · ${stats.variants} selectable variants · ${stats.showcases} collections</span><span>Effect previews: 16:9 · Order: visual impact</span>`;
   const mk = (host, key, opts) => {
     for (const [v,label] of opts) {
       const button=document.createElement('button'); button.type='button'; button.dataset.filterValue=v; button.textContent=label; button.setAttribute('aria-pressed',String(state[key]===v));
@@ -99,10 +98,10 @@
       if (card.select) for (const option of card.select.options) option.disabled=!entryMatches(byId.get(option.value));
       card.dirty=true;
     }
-    document.getElementById('shown').textContent=`${n} / ${stats.techniques} effect families shown`;
+    document.getElementById('shown').textContent=`${n} / ${stats.techniques} effects shown`;
     const basicsShown=document.getElementById('basics-shown'); if (basicsShown) basicsShown.textContent=`${nb} / ${stats.basics || 0} motion basics shown`;
-    document.getElementById('available').textContent=`${demoCount} ${demoCount===1?'demo matches':'demos match'} these filters${variantCount ? `, including ${variantCount} variant${variantCount===1?'':'s'} in the card selectors` : ''}.`;
-    document.getElementById('showcase-count').textContent=`${stats.showcases} combined showcases below ↘`;
+    document.getElementById('available').textContent=`${demoCount} ${demoCount===1?'preview matches':'previews match'} these filters${variantCount ? `, including ${variantCount} variant${variantCount===1?'':'s'} in the card selectors` : ''}.`;
+    document.getElementById('showcase-count').textContent='Compare treatments below ↘';
   }
   mk(document.getElementById('fKind'),'kind', [['all','All'],...Object.entries(KINDS).filter(([k])=>[...families, ...basics].some(f=>f.kind===k))]);
   mk(document.getElementById('fStack'),'stack', [['all','All'],...Object.entries(STACKS)]);
