@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Motion FX Lab use case: product spotlight, square</title>
+<style>html, body { margin: 0; background: #111110; overflow: hidden; } #film { display: block; border: 0; transform-origin: 0 0; }</style>
+</head>
+<body>
+<!-- Render wrapper. video/build.sh renders one file per film, so this page shows the variant below at its own
+     size and forwards the timeline calls to it (but no GIF clips: variants publish none). Edit the film itself, not this page. -->
+<iframe id="film" src="spotlight.html?format=square" width="1080" height="1080" title="Product spotlight, square"></iframe>
+<script>
+(() => {
+  const f = document.getElementById("film"), film = () => f.contentWindow;
+  for (const k of ["__DUR", "__SIZE", "__poster", "__music", "__audio", "__audioLayers", "__cues", "__effects"])
+    Object.defineProperty(window, k, { get: () => film()[k] });
+  const loaded = new Promise((resolve) => f.addEventListener("load", resolve, { once: true }));
+  window.__ready = loaded.then(() => film().__ready);
+  let recording = false;
+  const fit = () => { if (!recording) f.style.transform = `scale(${Math.min(innerWidth / f.width, innerHeight / f.height, 1)})`; };
+  addEventListener("resize", fit); fit();
+  window.__record = async () => { recording = true; f.style.transform = "none"; return film().__record(); };
+  window.__render = async (t) => {
+    await film().__render(t);
+    await film().document.fonts.ready;
+    // The recorder checks WebGL contexts and GPU errors on this page; hand it the film's own.
+    const w = film();
+    if (window.__gl && w.__gl) for (const g of w.__gl) if (!window.__gl.includes(g)) window.__gl.push(g);
+    if (window.__gpuErrors && w.__gpuErrors) window.__gpuErrors.push(...w.__gpuErrors.splice(0));
+  };
+})();
+</script>
+</body>
+</html>

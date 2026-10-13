@@ -2,12 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Motion FX Lab example: B-roll loops</title>
+<title>Motion FX Lab use case: background loops in place</title>
+<script>
+// ─── Edit here. The words laid over each loop, and the loops' colours. The show and guests are fictional. ──
+const LOOP_SECONDS = 4;   // every loop closes on itself after this many seconds
+const PLACES = {
+  title: { show: "NIGHT SHIFT NOTES", episode: "EPISODE 12", title: ["What we got wrong", "about pricing"], colors: ["#ff90e8", "#3b5bff", "#ffd400", "#19c3b0"] },
+  interview: { guests: [["Ada Moreno", "Founder, Paper Kite Studio"], ["Tomas Lind", "Host"]], topic: "Pricing a first product", colors: { line: "#f4f3ee", fill: "#0e0d12" } },
+  waiting: { headline: ["Starting", "soon"], when: "Live Q&A · 7:00 pm", handle: "@nightshiftnotes", colors: ["#3b5bff", "#ff90e8"] },
+};
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
-  :root { --ink: #0e0d12; --paper: #f4f3ee; --pink: #ff90e8; --sun: #ffd400; --blue: #3b5bff; --muted: #8f8a9c;
+  :root { --ink: #0e0d12; --paper: #f4f3ee; --pink: #ff90e8; --sun: #ffd400; --blue: #3b5bff; --mint: #2fd39a;
     --lat: "Archivo", "Helvetica Neue", Arial, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace; }
   html, body { height: 100%; }
   body { margin: 0; background: #111110; display: grid; place-items: center; }
@@ -18,94 +27,161 @@
   body.record #stage { transform: none !important; }
   .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; background: var(--ink); }
   .a { position: absolute; }
-  .tag { left: 60px; top: 50px; font: 700 22px var(--mono); letter-spacing: .12em; color: rgba(244,243,238,.75); background: rgba(14,13,18,.55); padding: 10px 16px; border-radius: 10px; }
-  .blob { width: 1300px; height: 1300px; margin: -650px 0 0 -650px; border-radius: 50%; mix-blend-mode: screen; filter: blur(70px); }
-  .lower { left: 60px; bottom: 90px; display: flex; flex-direction: column; gap: 10px; }
-  .lower b { font: 900 64px var(--lat); font-stretch: 112%; background: var(--paper); color: var(--ink); padding: 8px 22px; align-self: flex-start; }
-  .lower span { font: 700 26px var(--mono); background: var(--pink); color: var(--ink); padding: 8px 16px; align-self: flex-start; }
+  .loop { position: absolute; left: 0; top: 0; }
+  .use { left: 60px; top: 50px; font: 700 24px var(--mono); letter-spacing: .12em; color: var(--ink); background: var(--sun); padding: 10px 16px; border-radius: 10px; }
+  .wide { font-weight: 900; font-stretch: 112%; letter-spacing: -.03em; line-height: .95; }
+  .chip { font: 700 26px var(--mono); letter-spacing: .14em; padding: 10px 18px; border: 2px solid currentColor; border-radius: 999px; white-space: nowrap; }
+  /* the seam check: the loop's last frame, its first frame and their measured difference */
+  .seam { right: 50px; bottom: 44px; padding: 16px 18px; border-radius: 18px; background: rgba(14,13,18,.82); display: grid; grid-template-columns: auto auto; gap: 10px 14px; align-items: center; }
+  .seam canvas { width: 192px; height: 108px; border-radius: 8px; display: block; }
+  .seam .cap { font: 700 20px var(--mono); letter-spacing: .08em; color: rgba(244,243,238,.7); }
+  .seam .bar { grid-column: 1 / 3; height: 8px; border-radius: 4px; background: rgba(244,243,238,.18); overflow: hidden; }
+  .seam .bar i { display: block; height: 100%; width: 0; background: var(--paper); }
+  .seam .ok { grid-column: 1 / 3; font: 800 28px var(--lat); color: var(--mint); }
+  .tile { position: absolute; top: 150px; width: 700px; height: 478px; border-radius: 28px; overflow: hidden; background: #1b1a24; box-shadow: 0 30px 80px rgba(0,0,0,.45); border: 3px solid rgba(244,243,238,.25); }
+  .tile svg { width: 100%; height: 100%; display: block; }
+  .name { position: absolute; left: 22px; bottom: 22px; padding: 10px 18px; border-radius: 12px; background: rgba(14,13,18,.8); font: 800 32px var(--lat); }
+  .name span { display: block; font: 600 24px var(--lat); color: rgba(244,243,238,.75); }
+  .lower { left: 140px; top: 790px; display: flex; flex-direction: column; gap: 10px; }
+  .lower b { font: 900 60px var(--lat); font-stretch: 112%; background: var(--paper); color: var(--ink); padding: 8px 24px; align-self: flex-start; }
+  .lower span { font: 700 28px var(--mono); background: var(--pink); color: var(--ink); padding: 8px 16px; align-self: flex-start; }
+  .live { display: inline-flex; align-items: center; gap: 14px; }
+  .live i { width: 22px; height: 22px; border-radius: 50%; background: #ff4b4b; }
 </style>
 </head>
 <body>
 <div id="frame">
 <div id="stage" data-w="1920" data-h="1080" data-dur="12">
-
-  <!-- each scene is one loop: frame(4 s) is frame(0), so the clip repeats with no seam -->
-  <section class="scene" data-start="0" data-trans="cut" id="loopA">
-    <div class="a blob" style="background:radial-gradient(circle, #ff90e8 0%, rgba(255,144,232,0) 62%)"></div>
-    <div class="a blob" style="background:radial-gradient(circle, #3b5bff 0%, rgba(59,91,255,0) 62%)"></div>
-    <div class="a blob" style="background:radial-gradient(circle, #ffd400 0%, rgba(255,212,0,0) 58%)"></div>
-    <div class="a blob" style="background:radial-gradient(circle, #19c3b0 0%, rgba(25,195,176,0) 60%)"></div>
-    <div class="a tag">LOOP 1 / 3 · FLOWING GRADIENT · 4 S, SEAMLESS</div>
-  </section>
-
-  <section class="scene" data-start="4" data-trans="cut">
-    <svg class="a" id="ridges" style="inset:0" width="1920" height="1080" viewBox="0 0 1920 1080" aria-hidden="true"></svg>
-    <div class="a tag">LOOP 2 / 3 · NOISE RIDGELINES · 4 S, SEAMLESS</div>
-  </section>
-
-  <section class="scene" data-start="8" data-trans="cut">
-    <canvas class="a" id="net" width="1920" height="1080" style="inset:0"></canvas>
-    <div class="a tag">LOOP 3 / 3 · NETWORK · 4 S, SEAMLESS</div>
-    <div class="a lower" data-fx="left" data-at="0.4"><b>Your title here</b><span>A background loop under a lower third</span></div>
-  </section>
-
+  <!-- each scene is one loop in a place it would be used: frame(4 s) is frame(0), so it repeats with no seam -->
+  <section class="scene" data-start="0" data-trans="cut" id="s1"></section>
+  <section class="scene" data-start="4" data-trans="cut" id="s2"></section>
+  <section class="scene" data-start="8" data-trans="cut" id="s3"></section>
 </div>
 </div>
 <script>
 (() => {
-  window.__gif = [[0.2, 1.8], [4.2, 5.8], [8.8, 10.4]];
-  window.__poster = 5.5;   // the poster frame, in seconds
-  window.__music = [[0, "intro"], [2.4, "build"], [4.8, "drop"], [9.6, "tail"]];
-  const P = 4, TAU = Math.PI * 2;
+  const P = LOOP_SECONDS, TAU = Math.PI * 2, W = 1920, H = 1080;
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   // A seeded generator, so every render draws the same loops.
   let seed = 20260929;
   const rnd = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+  const rgba = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
 
-  // Loop 1: four glowing blobs, each on a closed path that it completes a whole number of times in P.
-  const blobs = [...document.querySelectorAll("#loopA .blob")].map((el, i) => ({ el, cx: 480 + i * 330, cy: 540, rx: 380 - i * 40, ry: 230 + i * 20, m: [1, 1, 2, 1][i], ph: i * 1.7 }));
-
-  // Loop 2: 34 lines of noise made from sines whose time frequencies are whole multiples of 1/P.
-  const LINES = 34, PTS = 150, svg = document.getElementById("ridges");
+  // ── The loops. Each draws a whole 1920 × 1080 frame for a phase u in [0, 2π); u and u + 2π draw the same frame.
+  // orbs: four glowing fields, each on a closed path it completes a whole number of times per loop.
+  const orbs = PLACES.title.colors.map((c, i) => ({ c, cx: 480 + i * 330, cy: 540, rx: 380 - i * 40, ry: 230 + i * 20, m: [1, 1, 2, 1][i], ph: i * 1.7 }));
+  function drawOrbs(g, u) {
+    g.globalCompositeOperation = "source-over"; g.fillStyle = "#0e0d12"; g.fillRect(0, 0, W, H);
+    g.globalCompositeOperation = "screen";
+    for (const o of orbs) {
+      const x = o.cx + o.rx * Math.cos(o.m * u + o.ph), y = o.cy + o.ry * Math.sin(o.m * u + o.ph);
+      const gr = g.createRadialGradient(x, y, 0, x, y, 700);
+      gr.addColorStop(0, rgba(o.c, 0.95)); gr.addColorStop(0.45, rgba(o.c, 0.35)); gr.addColorStop(1, rgba(o.c, 0));
+      g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    }
+    g.globalCompositeOperation = "source-over";
+  }
+  // ridgelines: 34 lines of noise from sines whose time frequencies are whole multiples of 1/P.
+  const LINES = 34, PTS = 150;
   const waves = Array.from({ length: LINES }, () => Array.from({ length: 4 }, (_, k) => ({ f: (0.004 + rnd() * 0.004) * (k + 1), p: rnd() * TAU, m: 1 + (k % 2), a: 1 / (k + 1) })));
-  svg.innerHTML = Array.from({ length: LINES }, () => `<path fill="#0e0d12" stroke="#f4f3ee" stroke-width="2.2"/>`).join("");
-  const paths = [...svg.children];
+  function drawRidges(g, u) {
+    const { line, fill } = PLACES.interview.colors;
+    g.fillStyle = fill; g.fillRect(0, 0, W, H);
+    g.lineWidth = 2.2; g.strokeStyle = line;
+    for (let i = 0; i < LINES; i++) {
+      const base = 250 + i * 22;
+      g.beginPath();
+      for (let j = 0; j <= PTS; j++) {
+        const x = -10 + (j / PTS) * 1940, env = Math.exp(-Math.pow((x - 960) / 420, 2));
+        let n = 0;
+        for (const w of waves[i]) n += w.a * Math.sin(w.f * x + w.p + w.m * u);
+        const y = base - env * (70 + 90 * Math.max(0, n));
+        j ? g.lineTo(x, y) : g.moveTo(x, y);
+      }
+      // The closing edges run outside the frame, so their stroke never shows.
+      g.lineTo(1930, 1090); g.lineTo(-10, 1090); g.closePath();
+      g.fill(); g.stroke();
+    }
+  }
+  // network: 130 points, each on a Lissajous path closed over P, joined when close.
+  const nodes = Array.from({ length: 130 }, () => ({ x: rnd() * W, y: rnd() * H, ax: 40 + rnd() * 120, ay: 40 + rnd() * 90, mx: 1 + Math.floor(rnd() * 2), my: 1 + Math.floor(rnd() * 2), px: rnd() * TAU, py: rnd() * TAU }));
+  function drawNetwork(g, u) {
+    const [c1, c2] = PLACES.waiting.colors;
+    g.fillStyle = "#0e0d12"; g.fillRect(0, 0, W, H);
+    const pos = nodes.map((n) => [n.x + n.ax * Math.sin(n.mx * u + n.px), n.y + n.ay * Math.sin(n.my * u + n.py)]);
+    g.lineWidth = 1.6;
+    for (let i = 0; i < pos.length; i++) for (let j = i + 1; j < pos.length; j++) {
+      const dd = Math.hypot(pos[i][0] - pos[j][0], pos[i][1] - pos[j][1]);
+      if (dd < 190) { g.strokeStyle = rgba(i % 3 ? c1 : c2, +(1 - dd / 190).toFixed(3)); g.beginPath(); g.moveTo(pos[i][0], pos[i][1]); g.lineTo(pos[j][0], pos[j][1]); g.stroke(); }
+    }
+    g.fillStyle = "#f4f3ee";
+    for (const [x, y] of pos) { g.beginPath(); g.arc(x, y, 3.2, 0, TAU); g.fill(); }
+  }
+  const LOOPS = [drawOrbs, drawRidges, drawNetwork];
 
-  // Loop 3: 130 points, each on a Lissajous path closed over P, joined when close.
-  const net = document.getElementById("net").getContext("2d");
-  const nodes = Array.from({ length: 130 }, () => ({ x: rnd() * 1920, y: rnd() * 1080, ax: 40 + rnd() * 120, ay: 40 + rnd() * 90, mx: 1 + Math.floor(rnd() * 2), my: 1 + Math.floor(rnd() * 2), px: rnd() * TAU, py: rnd() * TAU }));
+  // ── What sits on top of each loop: the place it is used.
+  const seamPanel = (i) => `<div class="a seam" id="seam${i}" data-fx="up" data-at="2.2"><canvas width="192" height="108"></canvas><canvas width="192" height="108"></canvas>` +
+    `<div class="cap">END ${P.toFixed(1)} S</div><div class="cap">START 0.0 S</div><div class="bar"><i></i></div><div class="ok">✓ Seamless · <span class="d"></span></div></div>`;
+  const T = PLACES.title, I = PLACES.interview, Wt = PLACES.waiting;
+  document.getElementById("s1").innerHTML =
+    `<canvas class="loop" width="${W}" height="${H}" data-effect="orbs"></canvas>` +
+    `<div class="a use">USE 1 · OPENING TITLE · COLOUR FIELDS</div>` +
+    `<div class="a chip" style="left:150px;top:300px;color:var(--paper)" data-fx="fade" data-at="0.1">${esc(T.show)} · ${esc(T.episode)}</div>` +
+    T.title.map((l, k) => `<div class="a wide" style="left:140px;top:${400 + k * 150}px;font-size:140px;white-space:nowrap" data-fx="chars" data-at="${0.3 + k * 0.35}" data-stagger="0.025" data-sfx="${k ? "" : "whoosh"}">${esc(l)}</div>`).join("") +
+    seamPanel(0);
+  document.getElementById("s2").innerHTML =
+    `<canvas class="loop" width="${W}" height="${H}" data-effect="ridgelines"></canvas>` +
+    `<div class="a use">USE 2 · INTERVIEW BACKDROP · RIDGELINES</div>` +
+    I.guests.map(([n, r], k) => `<div class="tile" style="left:${k ? 1100 : 120}px" data-fx="up" data-at="${0.1 + k * 0.15}">${person(k)}<div class="name">${esc(n)}<span>${esc(r)}</span></div></div>`).join("") +
+    `<div class="a lower" data-fx="left" data-at="0.6"><b>${esc(I.topic)}</b><span>${esc(I.guests[0][0])} · ${esc(I.guests[0][1])}</span></div>` +
+    seamPanel(1);
+  document.getElementById("s3").innerHTML =
+    `<canvas class="loop" width="${W}" height="${H}" data-effect="network"></canvas>` +
+    `<div class="a use">USE 3 · "STARTING SOON" SCREEN · NETWORK</div>` +
+    `<div class="a chip live" style="left:150px;top:300px;color:var(--paper)" data-fx="fade" data-at="0.1"><i data-fx="blink" data-at="0.1"></i>${esc(Wt.when)}</div>` +
+    Wt.headline.map((l, k) => `<div class="a wide" style="left:140px;top:${400 + k * 190}px;font-size:200px;white-space:nowrap${k ? ";color:var(--pink)" : ""}" data-fx="whip" data-dx="700" data-at="${0.2 + k * 0.15}" data-sfx="${k ? "" : "whoosh"}">${esc(l)}</div>`).join("") +
+    `<div class="a" style="left:150px;top:830px;font:700 34px var(--mono);color:var(--sun)" data-fx="up" data-at="0.6">${esc(Wt.handle)}</div>` +
+    seamPanel(2);
 
+  // Head-and-shoulders drawings for the two call tiles. They breathe on the loop, so the tiles loop too.
+  function person(k) {
+    const skin = ["#c98a64", "#f0c8a8"][k], hair = ["#2a1a14", "#6b4a2e"][k], top = ["#3b5bff", "#ff90e8"][k], bg = ["#2b2a3a", "#33313f"][k];
+    return `<svg viewBox="0 0 820 560" aria-hidden="true"><rect width="820" height="560" fill="${bg}"/><rect x="520" y="60" width="220" height="300" rx="12" fill="rgba(255,255,255,.06)"/>
+      <g class="who" data-k="${k}"><path d="M210 560 C220 430 300 380 410 380 C520 380 600 430 610 560 Z" fill="${top}"/>
+      <rect x="380" y="330" width="60" height="70" rx="20" fill="${skin}"/><ellipse cx="410" cy="260" rx="96" ry="112" fill="${skin}"/>
+      ${k ? `<path d="M314 250 C310 160 360 130 412 130 C470 130 512 170 506 250 C490 200 450 180 410 186 C370 180 330 200 314 250 Z" fill="${hair}"/>`
+          : `<path d="M300 280 C290 150 360 120 412 120 C480 120 530 160 520 290 C520 240 500 200 470 190 C430 214 370 214 330 196 C312 220 306 250 300 280 Z" fill="${hair}"/>`}
+      <circle cx="378" cy="262" r="8" fill="#1a1414"/><circle cx="442" cy="262" r="8" fill="#1a1414"/><path d="M388 312 Q410 326 432 312" stroke="#7a3b2a" stroke-width="6" fill="none" stroke-linecap="round"/></g></svg>`;
+  }
+
+  // ── Wire up: each scene's canvas, its seam check, and a measured first/last difference.
+  const scenes = [...document.querySelectorAll(".scene")];
+  const big = scenes.map((s) => s.querySelector("canvas.loop").getContext("2d"));
+  const seams = scenes.map((s, i) => {
+    const [a, b] = [...s.querySelectorAll(".seam canvas")].map((c) => c.getContext("2d"));
+    // Draw the loop at its end (u = 2π) and its start (u = 0) at thumbnail size and compare the pixels.
+    for (const [g, u] of [[a, TAU], [b, 0]]) { g.save(); g.scale(192 / W, 108 / H); LOOPS[i](g, u); g.restore(); }
+    const da = a.getImageData(0, 0, 192, 108).data, db = b.getImageData(0, 0, 192, 108).data;
+    let diff = 0;
+    for (let k = 0; k < da.length; k++) diff += Math.abs(da[k] - db[k]);
+    s.querySelector(".seam .d").textContent = `Δ ${(diff / da.length / 2.55).toFixed(2)}%`;
+    return { bar: s.querySelector(".seam .bar i") };
+  });
+  const whos = [...document.querySelectorAll(".who")];
+
+  window.__gif = [[4.2, 5.8]];   // a short silent preview; the MP4 is the film
+  window.__poster = 5.5;   // the interview over the ridgelines
+  window.__music = [[0, "intro"], [2.4, "build"], [4.8, "drop"], [9.6, "tail"]];
+  window.__effects = [
+    { id: "orbs", at: [0, 4] }, { id: "chars", at: [0.3, 1.4] }, { id: "ridgelines", at: [4, 8] },
+    { id: "whip", at: [8.2, 8.8] },
+  ];
   window.__renderHooks = window.__renderHooks || [];
   window.__renderHooks.push((t) => {
-    if (t < 4) {
-      const u = (t / P) * TAU;
-      for (const b of blobs) { b.el.style.left = `${b.cx + b.rx * Math.cos(b.m * u + b.ph)}px`; b.el.style.top = `${b.cy + b.ry * Math.sin(b.m * u + b.ph)}px`; }
-    } else if (t < 8) {
-      const u = ((t - 4) / P) * TAU;
-      for (let i = 0; i < LINES; i++) {
-        const base = 250 + i * 22;
-        let d = "";
-        for (let j = 0; j <= PTS; j++) {
-          const x = -10 + (j / PTS) * 1940, env = Math.exp(-Math.pow((x - 960) / 420, 2));
-          let n = 0;
-          for (const w of waves[i]) n += w.a * Math.sin(w.f * x + w.p + w.m * u);
-          const y = base - env * (70 + 90 * Math.max(0, n));
-          d += `${j ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`;
-        }
-        // The closing edges run outside the frame, so their stroke never shows.
-        paths[i].setAttribute("d", `${d}L1930 1090L-10 1090Z`);
-      }
-    } else {
-      const u = ((t - 8) / P) * TAU;
-      net.fillStyle = "#0e0d12"; net.fillRect(0, 0, 1920, 1080);
-      const pos = nodes.map((n) => [n.x + n.ax * Math.sin(n.mx * u + n.px), n.y + n.ay * Math.sin(n.my * u + n.py)]);
-      net.lineWidth = 1.6;
-      for (let i = 0; i < pos.length; i++) for (let j = i + 1; j < pos.length; j++) {
-        const dx = pos[i][0] - pos[j][0], dy = pos[i][1] - pos[j][1], dd = Math.hypot(dx, dy);
-        if (dd < 190) { net.strokeStyle = `rgba(${i % 3 ? "59,91,255" : "255,144,232"},${(1 - dd / 190).toFixed(3)})`; net.beginPath(); net.moveTo(pos[i][0], pos[i][1]); net.lineTo(pos[j][0], pos[j][1]); net.stroke(); }
-      }
-      net.fillStyle = "#f4f3ee";
-      for (const [x, y] of pos) { net.beginPath(); net.arc(x, y, 3.2, 0, TAU); net.fill(); }
-    }
+    const i = Math.min(2, Math.floor(t / P)), local = t - i * P, u = (local / P) * TAU;
+    LOOPS[i](big[i], u);
+    seams[i].bar.style.width = `${((local / P) * 100).toFixed(2)}%`;
+    if (i === 1) whos.forEach((w, k) => w.setAttribute("transform", `translate(0 ${(6 * Math.sin(u * (k + 1) + k)).toFixed(2)}) rotate(${(1.5 * Math.sin(u + k * 2)).toFixed(2)} 410 380)`));
   });
   window.__ready = document.fonts.ready;
 })();

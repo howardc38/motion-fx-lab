@@ -2,7 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Motion FX Lab example: infographic</title>
+<title>Motion FX Lab use case: year in numbers</title>
+<script>
+// ─── Edit here. The data, the shop and the frame; every chart, total and sentence is drawn from it. ──
+// Brindle Tea Bar and its figures are fictional. FORMAT is "wide" (1920 × 1080) or "vertical" (1080 × 1920);
+// ?format=vertical previews the other one.
+const FORMAT = "wide";
+const shop = { name: "Brindle Tea Bar", year: 2025, unit: "cups" };
+const goal = 120000;
+const quarters = [["Q1", 24310], ["Q2", 29870], ["Q3", 36540], ["Q4", 37730]];
+const drinks = [["Brown sugar", 38, "#ff90e8"], ["Jasmine green", 27, "#ffd400"], ["Oolong milk", 21, "#3b5bff"], ["Other", 14, "#8f8a9c"]];
+const hours = [[10, 180], [11, 260], [12, 420], [13, 610], [14, 700], [15, 880], [16, 760], [17, 640], [18, 540], [19, 470], [20, 350], [21, 260], [22, 180]];
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@500;700&display=swap">
@@ -12,7 +23,7 @@
   html, body { height: 100%; }
   body { margin: 0; background: #111110; display: grid; place-items: center; }
   #frame { position: relative; overflow: hidden; background: var(--ink); }
-  #stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; font-family: var(--lat); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  #stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; font-family: var(--lat); color: var(--ink); -webkit-font-smoothing: antialiased; }
   body.record { display: block; }
   body.record #frame { position: fixed; left: 0; top: 0; }
   body.record #stage { transform: none !important; }
@@ -25,125 +36,175 @@
   .dots { background-image: radial-gradient(rgba(255,255,255,.12) 1.6px, transparent 2px); background-size: 40px 40px; }
   .wide { font-weight: 900; font-stretch: 125%; letter-spacing: -.02em; line-height: .95; }
   .mono { font-family: var(--mono); }
-  .chip { font: 700 20px var(--mono); letter-spacing: .12em; padding: 10px 18px; border: 2px solid currentColor; border-radius: 999px; }
+  .chip { font: 700 22px var(--mono); letter-spacing: .12em; padding: 10px 18px; border: 2px solid currentColor; border-radius: 999px; white-space: nowrap; }
   .num { font-variant-numeric: tabular-nums; }
-  .row { position: absolute; left: 1060px; height: 96px; display: flex; align-items: center; gap: 22px; }
+  .label { font: 700 34px var(--mono); letter-spacing: .04em; }
+  .insight { font: 800 46px/1.22 var(--lat); }
+  /* mark: a highlighter stroke grows under the key phrase (engine data-fx="mark"). */
+  .hl { background: linear-gradient(var(--hl, rgba(255,144,232,.55)), var(--hl, rgba(255,144,232,.55))) no-repeat 0 88%; background-size: 0% 40%; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .row { position: absolute; height: 96px; display: flex; align-items: center; gap: 22px; }
   .row .q { width: 60px; font: 700 26px var(--mono); color: #5c5868; }
   .row .bar { height: 64px; border-radius: 10px; background: var(--ink); transform-origin: left center; }
   .row .v { font: 800 34px var(--lat); }
-  .legend { position: absolute; left: 1100px; display: flex; align-items: center; gap: 22px; font: 800 44px var(--lat); color: var(--paper); }
+  .legend { position: absolute; display: flex; align-items: center; gap: 22px; font: 800 44px var(--lat); color: var(--paper); white-space: nowrap; }
   .legend i { width: 30px; height: 30px; border-radius: 8px; }
   .legend span { font: 700 30px var(--mono); color: var(--muted); }
   .sticker { position: absolute; padding: 18px 30px; border-radius: 18px; border: 6px solid #fff; box-shadow: 0 8px 0 rgba(0,0,0,.14), 0 16px 34px rgba(0,0,0,.18); font: 900 40px var(--lat); white-space: nowrap; }
+  .goal { display: flex; align-items: center; gap: 28px; }
+  .goal b { display: block; font: 900 64px/1 var(--lat); font-variant-numeric: tabular-nums; }
+  .goal em { display: block; font: 700 30px var(--lat); font-style: normal; color: #5c5868; margin-top: 6px; }
 </style>
 </head>
 <body>
 <div id="frame">
-<div id="stage" data-w="1920" data-h="1080" data-dur="14.4">
-
-  <!-- 01 title -->
-  <section class="scene ink" data-start="0">
-    <div class="a dots" style="inset:0" data-fx="bgpan" data-vx="-12" data-vy="0"></div>
-    <div class="a chip" style="left:156px;top:150px;color:var(--sun)" data-fx="fade" data-at="0.2">SAMPLE DATA · FICTIONAL SHOP</div>
-    <div class="a wide" style="left:150px;top:340px;font-size:156px;white-space:nowrap" data-fx="whip" data-at="0.3" data-dx="900" data-sfx="whoosh">Sample Tea Co.</div>
-    <div class="a wide" style="left:150px;top:540px;font-size:140px;white-space:nowrap;color:var(--pink)" data-fx="chars" data-at="0.9" data-stagger="0.03" data-sfx="pop" data-sfx-repeat="4" data-sfx-every="0.12">2025 in numbers</div>
-  </section>
-
-  <!-- 02 cups sold, by quarter -->
-  <section class="scene paper" data-start="3.6">
-    <div class="edge"></div>
-    <div class="a mono" style="left:150px;top:220px;font-size:34px;font-weight:700;color:#5c5868" data-fx="up" data-at="0.2">CUPS SOLD</div>
-    <div id="cups-total" class="a wide num" style="left:146px;top:290px;font-size:150px" data-fx="count" data-at="0.3" data-dur="1.6" data-sfx="riser">0</div>
-    <div id="quarter-summary" class="a" style="left:150px;top:500px;font-size:40px;font-weight:700;width:560px;line-height:1.3" data-fx="fade" data-at="1.4"></div>
-    <div id="bars"></div>
-  </section>
-
-  <!-- 03 top drinks -->
-  <section class="scene ink dots" data-start="7.2">
-    <div class="edge"></div>
-    <div class="a mono" style="left:150px;top:120px;font-size:34px;font-weight:700;color:var(--muted)" data-fx="up" data-at="0.2">TOP DRINKS, SHARE OF CUPS</div>
-    <svg class="a" style="left:150px;top:220px" width="720" height="720" viewBox="0 0 200 200" aria-hidden="true">
-      <g id="donut" transform="rotate(-90 100 100)" fill="none" stroke-width="34"></g>
-    </svg>
-    <div class="a wide num" style="left:150px;top:500px;width:720px;text-align:center;font-size:120px;color:var(--paper)" data-fx="pop" data-at="1.0" data-sfx="impact"><span id="leading-share" data-fx="count" data-at="1.0" data-dur="1.0">0</span>%</div>
-    <div id="legend"></div>
-  </section>
-
-  <!-- 04 busiest hour -->
-  <section class="scene sun" data-start="10.8">
-    <div class="edge"></div>
-    <div class="a mono" style="left:150px;top:110px;font-size:34px;font-weight:700;color:#5c4b00" data-fx="up" data-at="0.2">CUPS PER HOUR, AVERAGE DAY</div>
-    <svg class="a" id="line" style="left:150px;top:200px" width="1620" height="640" viewBox="0 0 1620 640" aria-hidden="true"></svg>
-    <div class="sticker" id="peak" style="background:var(--pink)" data-fx="pop" data-at="1.5" data-sfx="stamp"></div>
-    <div class="a mono" style="left:150px;top:960px;font-size:24px;color:#5c4b00" data-fx="fade" data-at="2.0">Every frame of this video is code · Motion FX Lab</div>
-  </section>
-
+<div id="stage" data-dur="14.4">
+  <section class="scene ink" data-start="0" id="s1"></section>
+  <section class="scene paper" data-start="3.6" id="s2"><div class="edge"></div></section>
+  <section class="scene ink dots" data-start="7.2" id="s3"><div class="edge"></div></section>
+  <section class="scene sun" data-start="10.8" id="s4"><div class="edge"></div></section>
 </div>
 </div>
 
 <script>
 (() => {
-  // The data. Change it and render again; every chart below is drawn from these numbers.
-  const quarters = [["Q1", 24310], ["Q2", 29870], ["Q3", 36540], ["Q4", 37730]];
-  const drinks = [["Brown sugar", 38, "#ff90e8"], ["Jasmine green", 27, "#ffd400"], ["Oolong milk", 21, "#3b5bff"], ["Other", 14, "#8f8a9c"]];
-  const hours = [[10, 180], [11, 260], [12, 420], [13, 610], [14, 700], [15, 880], [16, 760], [17, 640], [18, 540], [19, 470], [20, 350], [21, 260], [22, 180]];
+  const fmt = new URLSearchParams(location.search).get("format") || FORMAT;
+  const V = fmt === "vertical";
+  const W = V ? 1080 : 1920, H = V ? 1920 : 1080;
+  const stage = document.getElementById("stage");
+  Object.assign(stage.dataset, { w: W, h: H });
+  stage.style.width = `${W}px`; stage.style.height = `${H}px`;
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const fmtN = (n) => n.toLocaleString("en-US");
+  const hourLabel = (h) => `${h % 12 || 12} ${h < 12 || h === 24 ? "am" : "pm"}`;
 
-  // Bind summaries before engine.js captures the count targets and text.
-  document.getElementById("cups-total").dataset.to = quarters.reduce((sum, [, value]) => sum + value, 0);
-  document.getElementById("quarter-summary").textContent = quarters.length > 1 && quarters.every(([, value], i) => i === 0 || value > quarters[i - 1][1])
-    ? "Every quarter beat the one before." : "Cups sold by quarter.";
-  const leader = drinks.reduce((best, drink) => drink[1] > best[1] ? drink : best);
-  const share = document.getElementById("leading-share");
-  share.dataset.to = leader[1];
-  share.parentElement.setAttribute("role", "img");
-  share.parentElement.setAttribute("aria-label", `${leader[0]}: ${leader[1]}%`);
+  // ── The numbers every page states, computed from the data so an edit never leaves a stale sentence.
+  const total = quarters.reduce((sum, [, value]) => sum + value, 0);
+  const rising = quarters.length > 1 && quarters.every(([, value], i) => i === 0 || value > quarters[i - 1][1]);
+  const growth = Math.round((quarters[quarters.length - 1][1] / quarters[0][1] - 1) * 100);
+  const ofGoal = Math.round((total / goal) * 100);
+  const ranked = [...drinks].sort((a, b) => b[1] - a[1]);
+  const leader = ranked[0], margin = ranked[0][1] - ranked[1][1];
   const [peakHour, peakCups] = hours.reduce((best, hour) => hour[1] > best[1] ? hour : best);
-  const hourLabel = h => `${h % 12 || 12} ${h < 12 ? "am" : "pm"}`;
+  const dayTotal = hours.reduce((sum, [, v]) => sum + v, 0);
+  let rush = { from: hours[0][0], share: 0 };
+  for (let i = 0; i + 4 <= hours.length; i++) {
+    const share = hours.slice(i, i + 4).reduce((sum, [, v]) => sum + v, 0) / dayTotal;
+    if (share > rush.share) rush = { from: hours[i][0], share };
+  }
+  // Each page ends on one sentence; the highlighted part is its point.
+  const insights = [
+    [`${fmtN(total)} ${shop.unit}, `, rising ? "up every quarter." : `${ofGoal}% of our goal.`],
+    [`${quarters[quarters.length - 1][0]} sold `, `${Math.abs(growth)}% ${growth >= 0 ? "more" : "fewer"} than ${quarters[0][0]}.`],
+    [`${leader[0]} led, `, `${margin} points ahead of ${ranked[1][0]}.`],
+    [`${hourLabel(rush.from)}–${hourLabel(rush.from + 4)} sells `, `${Math.round(rush.share * 100)}% of the day's ${shop.unit}.`],
+  ];
+  const insight = (i, x, y, w, at, color) =>
+    `<div class="a insight" data-effect="mark" style="left:${x}px;top:${y}px;width:${w}px${color ? `;color:${color}` : ""}" data-fx="up" data-at="${at}">${esc(insights[i][0])}<span class="hl" data-fx="mark" data-at="${at + 0.45}" data-dur="0.5">${esc(insights[i][1])}</span></div>`;
+
+  // ── Layout. Wide pages put the figure left and the chart right; vertical pages stack them inside the
+  // area Reels, TikTok and Shorts leave clear (x 120–888, y 288–1248) wherever words matter.
+  const L = V ? {
+    pad: 120, title: { y: 420, size: 116, lines: true }, chipY: 300, s1In: { y: 1000, w: 760 },
+    cups: { labelY: 300, totalY: 350, totalSize: 150, sumY: 530, sumW: 760, ringY: 640, inY: 860, inW: 760, barsX: 120, barsY: 1060, barMax: 560, barGap: 112 },
+    donut: { x: 190, y: 330, size: 700, shareY: 600, labelY: 290, legX: 120, legY: 1080, legGap: 76, inY: 1400, inW: 760 },
+    line: { x: 60, y: 380, w: 960, h: 760, labelY: 290, inY: 1180, inW: 760, tickFont: 26 },
+  } : {
+    pad: 150, title: { y: 300, size: 150, lines: false }, chipY: 150, s1In: { y: 760, w: 1500 },
+    cups: { labelY: 200, totalY: 260, totalSize: 150, sumY: 460, sumW: 720, ringY: 600, inY: 840, inW: 820, barsX: 1060, barsY: 250, barMax: 560, barGap: 130 },
+    donut: { x: 150, y: 210, size: 680, shareY: 480, labelY: 110, legX: 1040, legY: 230, legGap: 120, inY: 760, inW: 760 },
+    line: { x: 150, y: 200, w: 1620, h: 600, labelY: 105, inY: 875, inW: 1300, tickFont: 22 },
+  };
+
+  // 01 title
+  document.getElementById("s1").innerHTML =
+    `<div class="a dots" style="inset:0" data-fx="bgpan" data-vx="-12" data-vy="0"></div>` +
+    `<div class="a chip" style="left:${L.pad + 6}px;top:${L.chipY}px;color:var(--sun)" data-fx="fade" data-at="0.2">SAMPLE DATA · FICTIONAL SHOP</div>` +
+    (L.title.lines
+      ? shop.name.split(" ").map((w, i) => `<div class="a wide" style="left:${L.pad}px;top:${L.title.y + i * L.title.size * 0.98}px;font-size:${L.title.size}px;white-space:nowrap" data-fx="whip" data-at="${0.3 + i * 0.1}" data-dx="700" data-sfx="${i ? "" : "whoosh"}">${esc(w)}</div>`).join("") +
+        `<div class="a wide" style="left:${L.pad}px;top:${L.title.y + 3 * L.title.size * 0.98 + 20}px;font-size:${L.title.size * 0.62}px;white-space:nowrap;color:var(--pink)" data-fx="chars" data-at="0.9" data-stagger="0.03" data-sfx="pop" data-sfx-repeat="4" data-sfx-every="0.12">${shop.year} in numbers</div>`
+      : `<div class="a wide" style="left:${L.pad}px;top:${L.title.y}px;font-size:${L.title.size}px;white-space:nowrap" data-fx="whip" data-at="0.3" data-dx="900" data-sfx="whoosh">${esc(shop.name)}</div>` +
+        `<div class="a wide" style="left:${L.pad}px;top:${L.title.y + 190}px;font-size:140px;white-space:nowrap;color:var(--pink)" data-fx="chars" data-at="0.9" data-stagger="0.03" data-sfx="pop" data-sfx-repeat="4" data-sfx-every="0.12">${shop.year} in numbers</div>`) +
+    insight(0, L.pad, L.s1In.y, L.s1In.w, 1.75, "var(--paper)");
+
+  // 02 cups sold, by quarter, and the goal ring
+  const C2 = L.cups, ringR = 64, ringC = 2 * Math.PI * ringR;
+  const max = Math.max(...quarters.map((q) => q[1]));
+  document.getElementById("s2").insertAdjacentHTML("beforeend",
+    `<div class="a mono label" style="left:${L.pad}px;top:${C2.labelY}px;color:#5c5868" data-fx="up" data-at="0.2">${shop.unit.toUpperCase()} SOLD</div>` +
+    `<div id="cups-total" class="a wide num" style="left:${L.pad - 4}px;top:${C2.totalY}px;font-size:${C2.totalSize}px" data-effect="count" data-fx="count" data-to="${total}" data-at="0.3" data-dur="1.6" data-sfx="riser">0</div>` +
+    `<div class="a" style="left:${L.pad}px;top:${C2.sumY}px;font-size:40px;font-weight:700;width:${C2.sumW}px;line-height:1.3" data-fx="fade" data-at="1.0"><span id="quarter-summary">${rising ? "Every quarter beat the one before." : `${shop.unit[0].toUpperCase()}${shop.unit.slice(1)} sold by quarter.`}</span></div>` +
+    `<div class="a goal" style="left:${L.pad}px;top:${C2.ringY}px" data-effect="ring" data-fx="up" data-at="1.2"><svg width="170" height="170" viewBox="0 0 170 170" aria-hidden="true"><circle cx="85" cy="85" r="${ringR}" fill="none" stroke="rgba(14,13,18,.12)" stroke-width="20"/><circle id="goal-arc" cx="85" cy="85" r="${ringR}" fill="none" stroke="#c2267f" stroke-width="20" stroke-linecap="round" stroke-dasharray="0 ${ringC}" transform="rotate(-90 85 85)"/></svg><div><b><span id="goal-pct">0</span>%</b><em>of the ${fmtN(goal)}-${shop.unit.replace(/s$/, "")} goal</em></div></div>` +
+    insight(1, L.pad, C2.inY, C2.inW, 1.9) +
+    `<div id="bars">${quarters.map(([q, v], i) =>
+      `<div class="row" style="left:${C2.barsX}px;top:${C2.barsY + i * C2.barGap}px"><span class="q">${esc(q)}</span>` +
+      `<div class="bar" style="width:${Math.round((v / max) * C2.barMax)}px" data-fx="grow" data-at="${0.5 + i * 0.18}" data-dur="0.6" data-sfx="tap"></div>` +
+      `<span class="v num" data-fx="count" data-to="${v}" data-at="${0.5 + i * 0.18}" data-dur="0.8">0</span></div>`).join("")}</div>`);
+
+  // 03 top drinks
+  const D = L.donut, DC = 2 * Math.PI * 80;
+  let acc = 0;
+  const segs = drinks.map(([, pct]) => { const s = { start: acc * DC / 100, len: pct * DC / 100 }; acc += pct; return s; });
+  document.getElementById("s3").insertAdjacentHTML("beforeend",
+    `<div class="a mono label" style="left:${L.pad}px;top:${D.labelY}px;color:var(--muted)" data-fx="up" data-at="0.2">TOP DRINKS, SHARE OF ${shop.unit.toUpperCase()}</div>` +
+    `<svg class="a" style="left:${D.x}px;top:${D.y}px" width="${D.size}" height="${D.size}" viewBox="0 0 200 200" aria-hidden="true"><g id="donut" transform="rotate(-90 100 100)" fill="none" stroke-width="34">${drinks.map(([, , col]) => `<circle cx="100" cy="100" r="80" stroke="${col}" stroke-dasharray="0 ${DC}"/>`).join("")}</g></svg>` +
+    `<div class="a wide num" role="img" aria-label="${esc(leader[0])}: ${leader[1]}%" style="left:${D.x}px;top:${D.y + D.size / 2 - 60}px;width:${D.size}px;text-align:center;font-size:120px;color:var(--paper)" data-fx="pop" data-at="1.0" data-sfx="impact"><span id="leading-share" data-effect="count" data-fx="count" data-to="${leader[1]}" data-at="1.0" data-dur="1.0">0</span>%</div>` +
+    `<div id="legend">${drinks.map(([name, pct, col], i) =>
+      `<div class="legend" style="left:${D.legX}px;top:${D.legY + i * D.legGap}px" data-fx="left" data-at="${1.2 + i * 0.15}" data-sfx="tick"><i style="background:${col}"></i>${esc(name)}<span>${pct}%</span></div>`).join("")}</div>` +
+    insight(2, D.legX, D.inY, D.inW, 1.95, "var(--paper)"));
+  const arcs = [...document.querySelectorAll("#donut circle")];
+  segs.forEach((s, i) => arcs[i].setAttribute("stroke-dashoffset", String(-s.start)));
+
+  // 04 busiest hour
+  const LN = L.line, CW = LN.w, CH = LN.h;
+  const x = (h) => 60 + ((h - hours[0][0]) / (hours[hours.length - 1][0] - hours[0][0])) * (CW - 120), top = Math.max(...hours.map((p) => p[1]));
+  const y = (v) => CH - 60 - (v / top) * (CH - 160);
+  const pts = hours.map(([h, v]) => `${x(h).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  const rx0 = x(rush.from), rx1 = x(rush.from + 3);
+  document.getElementById("s4").insertAdjacentHTML("beforeend",
+    `<div class="a mono label" style="left:${L.pad}px;top:${LN.labelY}px;color:#5c4b00" data-fx="up" data-at="0.2">${shop.unit.toUpperCase()} PER HOUR, AVERAGE DAY</div>` +
+    `<svg class="a" id="line" data-effect="datachart" style="left:${LN.x}px;top:${LN.y}px" width="${CW}" height="${CH}" viewBox="0 0 ${CW} ${CH}" aria-hidden="true">` +
+      `<rect id="rush" x="${rx0}" y="40" width="${rx1 - rx0}" height="${CH - 100}" rx="14" fill="rgba(194,38,127,.14)" opacity="0"/>` +
+      `<g stroke="rgba(14,13,18,.18)" stroke-width="2">${hours.map(([h]) => `<line x1="${x(h)}" y1="${CH - 50}" x2="${x(h)}" y2="${CH - 40}"/>`).join("")}</g>` +
+      hours.filter(([h], i) => i % 2 === 0).map(([h]) => `<text x="${x(h)}" y="${CH - 8}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="${LN.tickFont}" fill="#5c4b00">${hourLabel(h)}</text>`).join("") +
+      `<polygon id="area" points="${x(hours[0][0])},${CH - 60} ${pts} ${x(hours[hours.length - 1][0])},${CH - 60}" fill="rgba(14,13,18,.10)" opacity="0"/>` +
+      `<polyline id="pl" points="${pts}" fill="none" stroke="#0e0d12" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>` +
+      `<circle id="dot" cx="${x(peakHour)}" cy="${y(peakCups)}" r="16" fill="#ff90e8" stroke="#0e0d12" stroke-width="6" opacity="0"/></svg>` +
+    `<div class="sticker" id="peak" data-effect="sticker" style="background:var(--pink)" data-fx="pop" data-at="1.5" data-sfx="stamp">Busiest: ${hourLabel(peakHour)}</div>` +
+    insight(3, L.pad, LN.inY, LN.inW, 1.95, "#0e0d12"));
+  const peak = document.getElementById("peak");
+  const peakX = LN.x + x(peakHour) + 40, peakY = LN.y + y(peakCups) - 40;
+  peak.style.left = `${V ? Math.min(peakX, W - 120 - 330) : peakX}px`; peak.style.top = `${V ? peakY - 70 : peakY}px`;
+  document.querySelectorAll("#s4 .hl").forEach((el) => el.style.setProperty("--hl", "rgba(255,255,255,.75)"));
 
   window.__gif = [[4, 5.8], [7.7, 9.5], [11.3, 13.1]];
-  window.__poster = 9.5;   // the poster frame, in seconds
+  window.__poster = 9.6;   // the donut, its share and the highlighted insight
   window.__music = [[0, "intro"], [2.4, "build"], [4.8, "drop"], [9.6, "final"], [12, "tail"]];
+  window.__effects = [
+    { id: "whip", at: [0.3, 0.75] }, { id: "chars", at: [0.9, 1.6] }, { id: "mark", at: [2.2, 2.7] },
+    { id: "count", at: [3.9, 5.5] }, { id: "ring", at: [4.9, 6.2] }, { id: "mark", at: [5.95, 6.45] },
+    { id: "datachart", at: [7.6, 9.0] }, { id: "count", at: [8.2, 9.2] }, { id: "mark", at: [9.6, 10.1] },
+    { id: "datachart", at: [11.1, 12.4] }, { id: "sticker", at: [12.3, 12.72] }, { id: "mark", at: [13.2, 13.7] },
+  ];
+  document.querySelectorAll("#donut, #line").forEach((el) => el.closest("svg").setAttribute("data-effect", "datachart"));
 
-  const max = Math.max(...quarters.map((q) => q[1]));
-  document.getElementById("bars").innerHTML = quarters.map(([q, v], i) =>
-    `<div class="row" style="top:${250 + i * 130}px"><span class="q">${q}</span>` +
-    `<div class="bar" style="width:${Math.round((v / max) * 560)}px" data-fx="grow" data-at="${0.5 + i * 0.18}" data-dur="0.6" data-sfx="tap"></div>` +
-    `<span class="v num" data-fx="count" data-to="${v}" data-at="${0.5 + i * 0.18}" data-dur="0.8">0</span></div>`).join("");
-
-  const C = 2 * Math.PI * 80;
-  let acc = 0;
-  const segs = drinks.map(([name, pct, col]) => { const s = { start: acc * C / 100, len: pct * C / 100 }; acc += pct; return s; });
-  const donut = document.getElementById("donut");
-  donut.innerHTML = drinks.map(([, , col]) => `<circle cx="100" cy="100" r="80" stroke="${col}" stroke-dasharray="0 ${C}"/>`).join("");
-  const arcs = [...donut.children];
-  segs.forEach((s, i) => arcs[i].setAttribute("stroke-dashoffset", String(-s.start)));
-  document.getElementById("legend").innerHTML = drinks.map(([name, pct, col], i) =>
-    `<div class="legend" style="top:${300 + i * 130}px" data-fx="left" data-at="${1.2 + i * 0.15}" data-sfx="tick"><i style="background:${col}"></i>${name}<span>${pct}%</span></div>`).join("");
-
-  const W = 1620, H = 640, x = (h) => 60 + ((h - 10) / 12) * (W - 120), top = Math.max(...hours.map((p) => p[1]));
-  const y = (v) => H - 60 - (v / top) * (H - 160);
-  const pts = hours.map(([h, v]) => `${x(h).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
-  const svg = document.getElementById("line");
-  svg.innerHTML = `<g stroke="rgba(14,13,18,.18)" stroke-width="2">${hours.map(([h]) => `<line x1="${x(h)}" y1="${H - 50}" x2="${x(h)}" y2="${H - 40}"/>`).join("")}</g>` +
-    hours.filter(([h]) => h % 2 === 0).map(([h]) => `<text x="${x(h)}" y="${H - 8}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="22" fill="#5c4b00">${hourLabel(h)}</text>`).join("") +
-    `<polygon id="area" points="${x(10)},${H - 60} ${pts} ${x(22)},${H - 60}" fill="rgba(14,13,18,.10)" opacity="0"/>` +
-    `<polyline id="pl" points="${pts}" fill="none" stroke="#0e0d12" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>` +
-    `<circle id="dot" cx="${x(peakHour)}" cy="${y(peakCups)}" r="16" fill="#ff90e8" stroke="#0e0d12" stroke-width="6" opacity="0"/>`;
-  const pl = svg.querySelector("#pl"), area = svg.querySelector("#area"), dot = svg.querySelector("#dot"), L = pl.getTotalLength();
-  pl.setAttribute("stroke-dasharray", `${L} ${L}`);
-  const peak = document.getElementById("peak");
-  peak.textContent = `Busiest: ${hourLabel(peakHour)}`;
-  peak.style.left = `${150 + x(peakHour) + 40}px`; peak.style.top = `${200 + y(peakCups) - 40}px`;
-
+  const pl = document.getElementById("pl"), area = document.getElementById("area"), dot = document.getElementById("dot"), rushBand = document.getElementById("rush"), PL = pl.getTotalLength();
+  pl.setAttribute("stroke-dasharray", `${PL} ${PL}`);
+  const goalArc = document.getElementById("goal-arc"), goalPct = document.getElementById("goal-pct");
   const eo = (p) => 1 - Math.pow(1 - p, 3), clamp = (v) => Math.max(0, Math.min(1, v));
   window.__renderHooks = window.__renderHooks || [];
   window.__renderHooks.push((t) => {
-    const d = t - 7.2, f = eo(clamp((d - 0.4) / 1.4)) * C;
-    segs.forEach((s, i) => arcs[i].setAttribute("stroke-dasharray", `${Math.max(0, Math.min(s.len, f - s.start)).toFixed(2)} ${C}`));
+    // ring: the year fills the goal ring; past 100 % the ring stays full and the figure keeps counting.
+    const g = eo(clamp((t - 3.6 - 1.3) / 1.3));
+    goalArc.setAttribute("stroke-dasharray", `${(Math.min(1, total / goal) * g * ringC).toFixed(2)} ${ringC}`);
+    goalPct.textContent = Math.round(ofGoal * g);
+    // datachart: the donut draws round, then the line draws across the day.
+    const d = t - 7.2, f = eo(clamp((d - 0.4) / 1.4)) * DC;
+    segs.forEach((s, i) => arcs[i].setAttribute("stroke-dasharray", `${Math.max(0, Math.min(s.len, f - s.start)).toFixed(2)} ${DC}`));
     const l = t - 10.8, p = eo(clamp((l - 0.3) / 1.3));
-    pl.setAttribute("stroke-dashoffset", String((1 - p) * L));
+    pl.setAttribute("stroke-dashoffset", String((1 - p) * PL));
     area.setAttribute("opacity", String(clamp((l - 1.2) / 0.5)));
     dot.setAttribute("opacity", String(clamp((l - 1.4) / 0.2)));
+    rushBand.setAttribute("opacity", String(clamp((l - 2.3) / 0.4)));
   });
   window.__ready = document.fonts.ready;
 })();

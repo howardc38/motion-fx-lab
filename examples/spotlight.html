@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Motion FX Lab use case: product spotlight</title>
+<script>
+// ─── Edit here. One product: picture, name, price, three selling points and its colourways. ──────────────
+// Halden and the Field Bottle are fictional. FORMAT is "portrait" (4:5, 1080 × 1350), "vertical" (9:16,
+// 1080 × 1920) or "square" (1:1, 1080 × 1080); ?format=vertical previews another one without editing.
+// image: null draws the bottle in code and recolours it per colourway; a path to a transparent PNG
+// (cut-out product shot, about 3:8) replaces the drawing.
+const FORMAT = "portrait";
+const PRODUCT = {
+  brand: "HALDEN",
+  name: ["Field", "Bottle"],
+  size: "750 ML",
+  image: null,
+  price: "$32", was: "$40", deal: "−20%",
+  points: [["Leak-proof lid", "Carry it in any bag"], ["24 h cold", "12 h hot, double wall"], ["410 g", "Recycled steel"]],
+  colorways: [["Sage", "#a7c2a0", "#6d8f6a"], ["Clay", "#e09a7a", "#b5654a"], ["Ink", "#47546b", "#263041"]],
+  cta: "Shop now · link in bio",
+  colors: { bg: "#efe8dd", floor: "#e3d9ca", ink: "#1f2421", accent: "#e2552d", card: "rgba(255,255,255,.42)" },
+};
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  :root { --lat: "Archivo", "Helvetica Neue", Arial, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+  html, body { height: 100%; }
+  body { margin: 0; background: #111110; display: grid; place-items: center; }
+  #frame { position: relative; overflow: hidden; background: var(--bg); }
+  #stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; font-family: var(--lat); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  body.record { display: block; }
+  body.record #frame { position: fixed; left: 0; top: 0; }
+  body.record #stage { transform: none !important; }
+  .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; background: var(--bg); }
+  .a { position: absolute; }
+  .floor { left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, var(--floor), var(--bg)); }
+  .backlight { border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.9), rgba(255,255,255,0) 66%); }
+  .shadow { border-radius: 50%; background: radial-gradient(closest-side, rgba(40,30,20,.85), rgba(40,30,20,0)); }
+  #bottle svg, #bottle img { width: 100%; height: 100%; display: block; }
+  .brand { font: 700 30px var(--mono); letter-spacing: .3em; }
+  .pname { font: 900 104px/.92 var(--lat); letter-spacing: -.035em; }
+  .size { font: 700 30px var(--mono); letter-spacing: .14em; opacity: .7; }
+  .glass { padding: 18px 24px; border-radius: 24px; background: var(--card); border: 2px solid rgba(255,255,255,.75);
+    -webkit-backdrop-filter: blur(18px) saturate(1.3); backdrop-filter: blur(18px) saturate(1.3); box-shadow: 0 18px 40px rgba(60,40,20,.14); }
+  .glass b { display: block; font: 900 44px/1 var(--lat); letter-spacing: -.02em; }
+  .glass span { display: block; margin-top: 6px; font: 600 28px/1.2 var(--lat); opacity: .8; }
+  .lead { overflow: visible; pointer-events: none; }
+  .flip { perspective: 1200px; }
+  .flip .card { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
+  .flip .face { position: absolute; inset: 0; border-radius: 22px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 14px; box-sizing: border-box; }
+  .flip .front { background: #fff; box-shadow: 0 14px 30px rgba(60,40,20,.15); }
+  .flip .front svg { height: 72%; width: auto; margin-bottom: 8px; }
+  .flip .front b { font: 800 30px var(--lat); }
+  .flip .back { background: var(--ink); transform: rotateY(180deg); color: #fff; justify-content: center; font: 700 26px var(--mono); letter-spacing: .3em; }
+  .flip.on .front { outline: 6px solid var(--accent); outline-offset: -6px; }
+  .price { font: 900 180px/1 var(--lat); letter-spacing: -.04em; white-space: nowrap; }
+  .was { font: 800 64px var(--lat); opacity: .55; white-space: nowrap; }
+  .was i { position: absolute; left: -6px; right: -6px; top: 52%; height: 8px; background: var(--accent); transform-origin: left; }
+  .deal { width: 210px; height: 210px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font: 900 66px var(--lat); letter-spacing: -.03em; border: 8px solid #fff; box-shadow: 0 12px 30px rgba(120,40,10,.3); }
+  .flash { inset: 0; background: rgba(255,255,255,.55); opacity: 0; pointer-events: none; }
+  .sticker { position: absolute; padding: 20px 34px; border-radius: 22px; border: 6px solid #fff; background: var(--ink); color: #fff; box-shadow: 0 10px 0 rgba(0,0,0,.14), 0 20px 40px rgba(0,0,0,.2); font: 900 46px var(--lat); white-space: nowrap; }
+  #grain { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: multiply; opacity: .07; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="frame">
+<div id="stage" data-dur="10">
+  <section class="scene" data-start="0" id="s1"></section>
+</div>
+</div>
+<script>
+// The drawn product: a steel bottle with a carry-loop lid, shaded as a cylinder. Colours come per colourway.
+function drawBottle(id, [, base, dark], hero) {
+  return `<svg viewBox="0 0 300 800" aria-hidden="true">
+    <defs>
+      <linearGradient id="${id}b" x1="0" x2="1"><stop offset="0" class="dk" stop-color="${dark}"/><stop offset=".18" class="bs" stop-color="${base}"/><stop offset=".34" stop-color="#ffffff" stop-opacity=".0"/><stop offset=".62" class="bs" stop-color="${base}"/><stop offset="1" class="dk" stop-color="${dark}"/></linearGradient>
+      <linearGradient id="${id}s" x1="0" x2="1"><stop offset="0" stop-color="#8e949b"/><stop offset=".3" stop-color="#f4f6f8"/><stop offset=".55" stop-color="#b7bcc2"/><stop offset="1" stop-color="#6c7178"/></linearGradient>
+      <linearGradient id="${id}c" x1="0" x2="1"><stop offset="0" stop-color="#15181c"/><stop offset=".35" stop-color="#4a4f57"/><stop offset="1" stop-color="#121417"/></linearGradient>
+      <clipPath id="${id}clip"><path d="M75 150 L225 150 Q230 200 262 236 Q272 250 272 280 L272 742 Q272 788 226 788 L74 788 Q28 788 28 742 L28 280 Q28 250 38 236 Q70 200 75 150 Z"/></clipPath>
+    </defs>
+    <path d="M118 22 Q150 -8 182 22" fill="none" stroke="url(#${id}c)" stroke-width="16" stroke-linecap="round"/>
+    <rect x="78" y="26" width="144" height="104" rx="22" fill="url(#${id}c)"/>
+    <rect x="78" y="116" width="144" height="20" fill="#0c0e10" opacity=".5"/>
+    <rect x="70" y="132" width="160" height="26" rx="6" fill="url(#${id}s)"/>
+    <g clip-path="url(#${id}clip)">
+      <rect x="0" y="140" width="300" height="660" fill="url(#${id}b)"/>
+      <rect x="62" y="230" width="22" height="520" rx="11" fill="#fff" opacity=".42"/>
+      <rect x="96" y="240" width="8" height="500" rx="4" fill="#fff" opacity=".22"/>
+      <rect x="0" y="738" width="300" height="60" fill="url(#${id}s)"/>
+      ${hero ? `<rect id="bottleShine" x="-200" y="100" width="120" height="760" fill="#fff" opacity="0" transform="skewX(-14)"/>` : ""}
+    </g>
+    <text x="150" y="470" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="30" letter-spacing="9" fill="#fff" opacity=".85">${PRODUCT.brand}</text>
+    <text x="150" y="508" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="500" font-size="18" letter-spacing="4" fill="#fff" opacity=".7">${PRODUCT.size}</text>
+  </svg>`;
+}
+(() => {
+  const fmt = new URLSearchParams(location.search).get("format") || FORMAT;
+  const SIZES = { portrait: [1080, 1350], vertical: [1080, 1920], square: [1080, 1080] };
+  if (!SIZES[fmt]) throw new Error(`unknown format "${fmt}"; use ${Object.keys(SIZES).join(", ")}`);
+  const [W, H] = SIZES[fmt];
+  const stage = document.getElementById("stage");
+  Object.assign(stage.dataset, { w: W, h: H });
+  stage.style.width = `${W}px`; stage.style.height = `${H}px`;
+  const P = PRODUCT, C = P.colors;
+  for (const [k, v] of Object.entries(C)) document.documentElement.style.setProperty(`--${k}`, v);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  // The bottle stands on the left; words live in the right-hand column and never over the product.
+  // Vertical frames keep words inside the area Reels, TikTok and Shorts leave clear (x 120–888, y 288–1248).
+  const L = {
+    portrait: { bx: 330, bw: 300, floorY: 1110, titleX: 70, titleY: 70, col: 610, colW: 410, cardY: [300, 520, 760], flipY: 1150, flipX: 120, flipW: 250, flipH: 170, priceY: 520, ctaY: 1170 },
+    vertical: { bx: 290, bw: 240, floorY: 1240, titleX: 124, titleY: 290, col: 470, colW: 300, cardY: [520, 720, 920], flipY: 1290, flipX: 120, flipW: 270, flipH: 180, priceY: 640, ctaY: 1095 },
+    square:   { bx: 300, bw: 240, floorY: 1000, titleX: 60, titleY: 50, col: 560, colW: 470, cardY: [250, 450, 650], flipY: 830, flipX: 560, flipW: 150, flipH: 220, priceY: 420, ctaY: 900 },
+  }[fmt];
+  const bh = L.bw * 8 / 3, bTop = L.floorY - bh;
+  window.__layout = { W, H, product: { x: L.bx - L.bw / 2, y: bTop, w: L.bw, h: bh } };
+  // Callout targets on the bottle (fractions of its box): lid, body, base.
+  const anchors = [[0.5, 0.1], [0.82, 0.48], [0.82, 0.93]];
+  // When each colourway takes over the hero bottle.
+  const swaps = [4.9, 5.6, 6.3];
+  const flipCards = P.colorways.map((cw, i) => {
+    const x = fmt === "square" ? L.flipX + i * (L.flipW + 20) : L.flipX + i * (L.flipW + 30), y = L.flipY;
+    return { x, y };
+  });
+  const s1 = document.getElementById("s1");
+  s1.innerHTML =
+    `<div class="a floor" style="top:${L.floorY - 40}px"></div>` +
+    `<div class="a backlight" style="left:${L.bx - 520}px;top:${bTop - 260}px;width:1040px;height:1040px"></div>` +
+    `<div class="a shadow" id="shadow" data-effect="soft-shadow"></div>` +
+    `<div class="a" id="bottle" style="left:${L.bx - L.bw / 2}px;top:${bTop}px;width:${L.bw}px;height:${bh}px;transform-origin:50% 100%" data-effect="sweep">` +
+      (P.image ? `<img src="${esc(P.image)}" alt="">` : drawBottle("hb", P.colorways[0], true)) + `</div>` +
+    `<div class="a brand" style="left:${L.titleX}px;top:${L.titleY}px;color:${C.accent}" data-fx="fade" data-at="0.5">${esc(P.brand)}</div>` +
+    `<div class="a pname" style="left:${L.titleX - 4}px;top:${L.titleY + 46}px" data-fx="chars" data-at="0.6" data-stagger="0.03">${esc(fmt === "vertical" ? P.name.join(" ") : P.name[0])}</div>` +
+    (fmt === "vertical" ? "" : `<div class="a pname" style="left:${L.titleX - 4}px;top:${L.titleY + 46 + 96}px" data-fx="chars" data-at="0.75" data-stagger="0.03">${esc(P.name[1])}</div>`) +
+    `<svg class="a lead" style="left:0;top:0" width="${W}" height="${H}" aria-hidden="true">${P.points.map((_, i) => {
+      const ax = L.bx - L.bw / 2 + anchors[i][0] * L.bw, ay = bTop + anchors[i][1] * bh, cy = L.cardY[i] + 40;
+      return `<g class="ld" data-out="3.95"><path d="M${L.col - 14} ${cy} L${(ax + L.col) / 2} ${cy} L${ax} ${ay}" fill="none" stroke="${C.ink}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${ax}" cy="${ay}" r="10" fill="${C.accent}" stroke="#fff" stroke-width="4"/></g>`; }).join("")}</svg>` +
+    P.points.map(([b, sub], i) => `<div class="a glass" data-effect="glass" style="left:${L.col}px;top:${L.cardY[i]}px;max-width:${L.colW - 48}px" data-fx="left" data-at="${(1.2 + i * 0.6).toFixed(1)}" data-out="3.9" data-sfx="pop"><b>${esc(b)}</b><span>${esc(sub)}</span></div>`).join("") +
+    P.colorways.map((cw, i) => `<div class="a flip" data-effect="cardflip" style="left:${flipCards[i].x}px;top:${flipCards[i].y}px;width:${L.flipW}px;height:${L.flipH}px" data-out="6.6"><div class="card"><div class="face front">${drawBottle("fc" + i, cw, false)}<b>${esc(cw[0])}</b></div><div class="face back">${esc(P.brand)}</div></div></div>`).join("") +
+    `<div class="a brand" style="left:${L.col}px;top:${L.cardY[0] + 20}px" data-fx="fade" data-at="4.4" data-out="6.6">${P.colorways.length} COLOURS</div>` +
+    P.colorways.map(([n, base, dark], i) => `<div class="a pname cw" style="left:${L.col - 4}px;top:${L.cardY[0] + 70}px;color:${dark}" data-fx="up" data-at="${(swaps[i] - 0.15).toFixed(2)}" data-dur="0.3" data-out="${i < 2 ? (swaps[i + 1] - 0.2).toFixed(2) : "6.6"}">${esc(n)}</div>`).join("") +
+    `<div class="a was" style="left:${L.col}px;top:${L.priceY - 90}px" data-fx="up" data-at="6.75"><span style="position:relative">${esc(P.was)}<i data-fx="grow" data-at="7.0" data-dur="0.3"></i></span></div>` +
+    `<div class="a price" data-effect="stamp" style="left:${L.col - 8}px;top:${L.priceY}px${fmt === "vertical" ? ";font-size:160px" : ""}" data-fx="slam" data-at="7.1" data-sfx="stamp">${esc(P.price)}</div>` +
+    `<div class="a deal" data-effect="sticker" style="left:${L.col + (fmt === "vertical" ? 80 : 200)}px;top:${L.priceY + 190}px;transform:rotate(-12deg)" data-fx="slam" data-at="7.5" data-base="rotate(-12deg)" data-sfx="impact">${esc(P.deal)}</div>` +
+    `<div class="a flash" data-fx="flash" data-at="7.5" data-dur="0.3"></div>` +
+    `<div class="sticker" data-effect="sticker" style="left:${fmt === "portrait" ? L.col - 120 : fmt === "square" ? L.col - 60 : L.col}px;top:${L.ctaY}px;transform:rotate(-3deg)${fmt === "vertical" ? ";white-space:normal;max-width:290px;font-size:42px;line-height:1.05" : ""}" data-fx="pop" data-at="8.6" data-base="rotate(-3deg)" data-sfx="ding">${esc(P.cta)}</div>` +
+    `<canvas id="grain" data-effect="grain"></canvas>`;
+
+  window.__poster = 2.9;   // the bottle with its three callouts
+  window.__music = [[0, "build"], [2.4, "drop"], [7.2, "lift"], [8.4, "tail"]];
+  window.__effects = [
+    { id: "sweep", at: [0.8, 1.6] }, { id: "chars", at: [0.6, 1.2] }, { id: "glass", at: [1.2, 3.9] },
+    { id: "cardflip", at: [4.1, 5.3] }, { id: "stamp", at: [7.1, 7.9] }, { id: "sticker", at: [7.5, 9.0] },
+    { id: "grain", at: [0, 10] },
+  ];
+
+  const clamp = (v) => Math.max(0, Math.min(1, v));
+  const eo = (x) => 1 - Math.pow(1 - x, 3), eio = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  const bottle = document.getElementById("bottle"), shadow = document.getElementById("shadow"), shine = document.getElementById("bottleShine");
+  const leads = [...document.querySelectorAll(".ld")], flips = [...document.querySelectorAll(".flip")];
+  const lens = leads.map((g) => { const p = g.querySelector("path"), n = p.getTotalLength(); p.setAttribute("stroke-dasharray", `${n} ${n}`); return n; });
+  const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const mixHex = (a, b, k) => `rgb(${hex(a).map((v, i) => Math.round(v + (hex(b)[i] - v) * k)).join(",")})`;
+  const stopsBase = [...document.querySelectorAll("#bottle .bs")], stopsDark = [...document.querySelectorAll("#bottle .dk")];
+  const grain = document.getElementById("grain"), GW = W / 6, GH = H / 6;
+  grain.width = GW; grain.height = GH;
+  const gg = grain.getContext("2d"), noise = gg.createImageData(GW, GH);
+  let lastStep = -1;
+  window.__renderHooks = window.__renderHooks || [];
+  window.__renderHooks.push((t) => {
+    // The drop: the bottle falls from above, lands at 0.62 s, squashes and settles.
+    const fall = clamp(t / 0.62), height = t < 0.62 ? 1 - fall * fall : 0;
+    const d = t - 0.62, bounce = d > 0 ? Math.exp(-d * 7) * Math.sin(d * 22) : 0;
+    const lift = height * (bTop + bh + 40) + Math.max(0, bounce) * 26;
+    const squash = d > 0 ? 1 - 0.07 * Math.exp(-d * 9) * Math.cos(d * 18) : 1;
+    bottle.style.transform = `translateY(${(-lift).toFixed(1)}px) rotate(${(height * -8).toFixed(2)}deg) scale(${(2 - squash).toFixed(4)}, ${squash.toFixed(4)})`;
+    // A soft contact shadow: an area light at height Lh with size S throws a penumbra S·h / (Lh − h), so the
+    // shadow is wide and faint while the bottle is high and tightens and darkens as it lands.
+    const h = Math.min(0.92, lift / (bh * 1.6)), Lh = 1, S = 2.2, pen = (S * h) / (Lh - h);
+    const sw = L.bw * (1.15 + 0.9 * pen), sh = 34 + 60 * pen;
+    Object.assign(shadow.style, { left: `${(L.bx - sw / 2).toFixed(1)}px`, top: `${(L.floorY - sh / 2 + 4).toFixed(1)}px`, width: `${sw.toFixed(1)}px`, height: `${sh.toFixed(1)}px`, opacity: (0.75 / (1 + 2.5 * pen)).toFixed(3) });
+    // sweep: one band of light across the steel, then a second when the price lands.
+    if (shine) {
+      const a = (t - 0.8) / 0.8, b = (t - 7.15) / 0.8, k = a > 0 && a < 1 ? a : b > 0 && b < 1 ? b : -1;
+      shine.setAttribute("opacity", k < 0 ? 0 : 0.55);
+      shine.setAttribute("x", (-200 + 560 * eo(Math.max(0, k))).toFixed(1));
+    }
+    // Leader lines draw from each card to its part of the bottle.
+    leads.forEach((g, i) => {
+      const k = eo(clamp((t - (1.35 + i * 0.6)) / 0.45));
+      g.querySelector("path").setAttribute("stroke-dashoffset", ((1 - k) * lens[i]).toFixed(1));
+      g.querySelector("circle").setAttribute("r", (10 * eo(clamp((t - (1.7 + i * 0.6)) / 0.2))).toFixed(2));
+    });
+    // cardflip: the colourways turn face up, then each one in turn recolours the bottle.
+    flips.forEach((f, i) => {
+      const k = eio(clamp((t - (4.1 + i * 0.25)) / 0.6));
+      f.firstChild.style.transform = `rotateY(${(180 * (1 - k)).toFixed(2)}deg)`;
+      if (t < 4.1 + i * 0.25) f.style.opacity = 0;   // after that the engine owns its fade-out (data-out)
+      f.classList.toggle("on", t >= swaps[i] && (i === 2 || t < swaps[i + 1]));
+    });
+    if (!P.image) {
+      let from = P.colorways[0], to = from, k = 0;
+      for (let i = 1; i < 3; i++) if (t >= swaps[i] - 0.25) { from = P.colorways[i - 1]; to = P.colorways[i]; k = clamp((t - swaps[i] + 0.25) / 0.25); }
+      stopsBase.forEach((s) => s.setAttribute("stop-color", mixHex(from[1], to[1], k)));
+      stopsDark.forEach((s) => s.setAttribute("stop-color", mixHex(from[2], to[2], k)));
+    }
+    // grain: new noise every third frame from a per-step seed.
+    const step = Math.floor(t * 10);
+    if (step !== lastStep) {
+      let s = (step * 2654435761) >>> 0;
+      for (let i = 0; i < noise.data.length; i += 4) { s = (s * 1664525 + 1013904223) >>> 0; const v = 128 + ((s >>> 24) >> 1); noise.data[i] = noise.data[i + 1] = noise.data[i + 2] = v; noise.data[i + 3] = 255; }
+      gg.putImageData(noise, 0, 0); lastStep = step;
+    }
+  });
+  window.__ready = document.fonts.ready;
+})();
+</script>
+<script src="../video/engine.js"></script>
+</body>
+</html>
