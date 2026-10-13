@@ -71,14 +71,18 @@ function word(g, s, x, y, size, col, font = "Arial", align = "center") {
   g.textAlign = align;
   g.fillText(s, x, y);
 }
-export function poster(id) {
-  if (cache.has(id)) return cache.get(id);
+// `scale` draws the same vector artwork at a higher resolution; scale 1 is
+// the original 420×560 poster used by the films.
+export function poster(id, scale = 1) {
+  const key = scale === 1 ? id : id + "@" + scale;
+  if (cache.has(key)) return cache.get(key);
   const th = themes[id],
     c = document.createElement("canvas");
-  c.width = 420;
-  c.height = 560;
+  c.width = Math.round(420 * scale);
+  c.height = Math.round(560 * scale);
   const g = c.getContext("2d"),
     R = seeded(id + 13);
+  if (scale !== 1) g.scale(scale, scale);
   g.fillStyle = th.bg;
   g.fillRect(0, 0, 420, 560);
   g.globalAlpha = 0.15;
@@ -444,21 +448,28 @@ export function poster(id) {
       word(g, "FLIGHT CLUB", 210, 516, 13, th.ink, "monospace");
       break;
   }
-  cache.set(id, c);
+  cache.set(key, c);
   return c;
 }
-export function flyer(id, t) {
-  const th = themes[id];
-  if (!sprites.has(id)) {
+// The courier sprite (320×180 at scale 1). A larger `scale` keeps vector edges
+// and the per-theme cell treatments proportionate instead of upsampling pixels.
+export function flyer(id, t, scale = 1) {
+  const th = themes[id],
+    key = scale === 1 ? id : id + "@" + scale,
+    S = (v) => v * scale;
+  if (!sprites.has(key)) {
     const c = document.createElement("canvas");
-    c.width = 320;
-    c.height = 180;
-    sprites.set(id, c);
+    c.width = Math.round(320 * scale);
+    c.height = Math.round(180 * scale);
+    sprites.set(key, c);
   }
-  const c = sprites.get(id),
+  const c = sprites.get(key),
+    CW = c.width,
+    CH = c.height,
     g = c.getContext("2d", { willReadFrequently: true });
-  g.clearRect(0, 0, 320, 180);
+  g.clearRect(0, 0, CW, CH);
   g.save();
+  if (scale !== 1) g.scale(scale, scale);
   g.translate(153, 90);
   g.rotate(Math.sin(t * 1.6) * 0.025);
   const outline = th.mode === "outline" || th.mode === "neon",
@@ -467,7 +478,7 @@ export function flyer(id, t) {
     cape = th.mode === "silhouette" ? (id === 18 ? th.accent : ink) : th.accent;
   if (th.mode === "neon") {
     g.shadowColor = th.accent;
-    g.shadowBlur = 10;
+    g.shadowBlur = S(10);
   }
   const shape = (pts, co) =>
     poly(g, pts, outline ? null : co, outline ? ink : "#15272d");
@@ -578,8 +589,8 @@ export function flyer(id, t) {
       "facet",
     ].includes(th.mode)
   ) {
-    const image = g.getImageData(0, 0, 320, 180),
-      step =
+    const image = g.getImageData(0, 0, CW, CH),
+      step = Math.round(S(
         th.mode === "ascii"
           ? 6
           : th.mode === "pixel"
@@ -590,27 +601,27 @@ export function flyer(id, t) {
                 ? 4
                 : th.mode === "dots"
                   ? 4
-                  : 7;
-    g.clearRect(0, 0, 320, 180);
-    for (let y = 0; y < 180; y += step)
-      for (let x = 0; x < 320; x += step) {
-        const k = (y * 320 + x) * 4;
+                  : 7));
+    g.clearRect(0, 0, CW, CH);
+    for (let y = 0; y < CH; y += step)
+      for (let x = 0; x < CW; x += step) {
+        const k = (y * CW + x) * 4;
         if (image.data[k + 3] < 80) continue;
         const col = `rgb(${image.data[k]},${image.data[k + 1]},${image.data[k + 2]})`;
         if (th.mode === "stitch") {
-          line(g, x, y, x + 3, y + 3, col, 1.5);
-          line(g, x + 3, y, x, y + 3, col, 1.5);
+          line(g, x, y, x + S(3), y + S(3), col, S(1.5));
+          line(g, x + S(3), y, x, y + S(3), col, S(1.5));
         } else if (th.mode === "ascii") {
           // Dense glyphs represent dark source areas; cell coordinates stepped
           // by six previously selected '@' everywhere from a six-glyph ramp.
           const ramp = "@#%*+:";
           const luminance = 0.2126 * image.data[k] + 0.7152 * image.data[k + 1] + 0.0722 * image.data[k + 2];
-          word(g, ramp[Math.min(ramp.length - 1, Math.floor(luminance / 256 * ramp.length))], x, y + 5, 6, th.ink, "monospace");
-        } else if (th.mode === "dots") circle(g, x + 2, y + 2, 1.8, col);
+          word(g, ramp[Math.min(ramp.length - 1, Math.floor(luminance / 256 * ramp.length))], x, y + S(5), S(6), th.ink, "monospace");
+        } else if (th.mode === "dots") circle(g, x + S(2), y + S(2), S(1.8), col);
         else if (th.mode === "hatch") {
           g.fillStyle = col;
           g.fillRect(x, y, step, step);
-          line(g, x, y + 6, x + 6, y, th.ink, 0.6);
+          line(g, x, y + S(6), x + S(6), y, th.ink, S(0.6));
         } else if (th.mode === "glass" || th.mode === "facet")
           poly(
             g,
@@ -627,8 +638,8 @@ export function flyer(id, t) {
           g.fillRect(
             x,
             y,
-            step - (th.mode === "mosaic" ? 1 : 0),
-            step - (th.mode === "mosaic" ? 1 : 0),
+            step - (th.mode === "mosaic" ? S(1) : 0),
+            step - (th.mode === "mosaic" ? S(1) : 0),
           );
         }
       }

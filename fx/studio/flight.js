@@ -30,7 +30,7 @@ export function createFlight(mode) {
   canvas.height = H;
   const g = canvas.getContext("2d");
   let last = {};
-  const city = mode === "lowpoly" || mode === "journey" ? lowpoly() : null;
+  const city = mode === "journey" ? lowpoly() : null;
   function card(i, x, y, w, h, t, hx, hy, heroWidth = 380) {
     g.save();
     g.beginPath();
@@ -102,40 +102,15 @@ export function createFlight(mode) {
     frame(t, options = {}) {
       base(g);
       let active = 0;
-      if (mode === "flight") {
-        base(g, "#112d40");
-        g.fillStyle = "#214956";
-        for (let i = 0; i < 22; i++) {
-          const x = ((((i * 97 - t * 28) % 1400) + 1400) % 1400) - 80;
-          g.fillRect(x, 460 - (i % 5) * 24, 65, 220 + (i % 5) * 24);
-        }
-        g.strokeStyle = "#4b8792";
-        for (let i = 0; i < 11; i++) {
-          const y = 160 + i * 29;
-          g.beginPath();
-          g.moveTo(60, y);
-          g.lineTo(220 + 30 * Math.sin(t + i), y);
-          g.stroke();
-        }
-        g.drawImage(flyer(12, t), 240, 170 + Math.sin(t * 2) * 12, 820, 461);
-        text(g, "SKY COURIER", 50, 90, 42, "#f4e4b8");
-        text(g, "A pose, a cape, a continuous flight.", 50, 650, 22, "#9fc7ca");
-      } else if (mode === "portal") {
-        const ids = [0, 13, 19],
-          hx = -190 + ((t % 6) / 6) * 1660;
-        ids.forEach((id, i) => {
-          card(id, 55 + i * 400, 74, 370, 494, t, hx, 320);
-          text(g, themes[id].name, 55 + i * 400, 606, 23);
-        });
-        text(g, "CROSS THE FRAME. CHANGE THE INK.", 55, 46, 23, "#b65545");
-      } else if (mode === "themes") {
+      if (mode === "themes") {
         active =
           options.theme == null
             ? Math.floor(t / 1.2) % 20
             : clamp(Math.floor(options.theme), 0, 19);
         const th = themes[active];
         g.drawImage(poster(active), 645, 52, 444, 592);
-        g.drawImage(flyer(active, t), 630, 228, 478, 269);
+        // Drawn at 1.5× so the courier stays crisp instead of upsampling the 320 px sprite.
+        g.drawImage(flyer(active, t, 1.5), 630, 228, 478, 269);
         text(
           g,
           String(active + 1).padStart(2, "0") + " / 20",
@@ -176,20 +151,7 @@ export function createFlight(mode) {
             "monospace",
           );
         } else layout(t, 1 - smooth((t - 37.2) / 2.4), 19 * 430);
-      } else {
-        g.drawImage(city(t), 0, 0, W, H);
-        text(g, "FLIGHT / LOW POLY", 48, 65, 26, "#ffe597");
-        text(
-          g,
-          "CHECKPOINT " +
-            (Math.floor(((t % 6) * 8) / 7) + 1).toString().padStart(2, "0"),
-          48,
-          654,
-          23,
-          "#ffe597",
-          "monospace",
-        );
-      }
+      } else throw new Error("Unknown flight mode: " + mode);
       last = { mode, active, theme: themes[active].name, time: t };
     },
     proof: () => last,

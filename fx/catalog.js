@@ -5,6 +5,8 @@
   const variants = {
     'signal-audio-relief': 'studio-depth-dots',
     'signal-freeze-orbit': 'studio-freeze-orbit',
+    'studio-time-remap': 'studio-echo',
+    'studio-particle-lens': 'studio-skin-cloud',
     'stack-pixi': 'liquid',
     halftonetype: 'studio-video-dots',
     orbs: 'gradient',
@@ -27,6 +29,8 @@
   const names = {
     'studio-depth-dots': 'Image relief',
     'studio-freeze-orbit': 'Freeze frame and camera orbit',
+    'studio-echo': 'Time echoes and speed ramps',
+    'studio-skin-cloud': 'Skinned point cloud',
     liquid: 'Image displacement',
     gradient: 'Soft colour fields',
     ring: 'Countdown ring',
@@ -43,7 +47,7 @@
   };
   const descriptions = {
     'studio-depth-dots': 'Turn image samples into shallow depth. Compare a dot surface with solid cells driven by measured sound energy.',
-    'studio-freeze-orbit': 'Hold a real 3D pose while the camera moves. Choose a direct comparison or an impact sequence with changing lights and surface treatment.',
+    'studio-freeze-orbit': 'Hold the instant of impact while the camera travels round real 3D geometry, then let time resume. Choose a slam frozen with its debris, dust and shock ring, or the measured fighters as a point cloud.',
     liquid: 'Warp a flat image with a moving displacement field. Choose glass-like distortion or the filtered poster variation.',
     gradient: 'Animate soft fields of colour behind readable text. Choose a low-contrast wash or drifting glow orbs.',
     ring: 'A radial progress stroke and numeric countdown show time remaining.',
@@ -70,7 +74,7 @@
     if (byId.has(demo.id)) throw new Error('Duplicate demo ID: ' + demo.id);
     const entry = { ...demo, role: collections.has(demo.id) ? 'showcase' : variants[demo.id] ? 'variant' : 'technique', familyId: variants[demo.id] || demo.id };
     if (['studio-video-dots', 'studio-dot-rhythm', 'studio-dot-impact', 'studio-echo', 'studio-time-remap'].includes(demo.id)) entry.stacks = ['canvas'];
-    if (['studio-skin-cloud', 'studio-freeze-orbit', 'studio-particle-lens'].includes(demo.id)) entry.stacks = ['canvas', 'three', 'glsl'];
+    if (['studio-skin-cloud', 'studio-particle-lens'].includes(demo.id)) entry.stacks = ['canvas', 'three', 'glsl'];
     byId.set(entry.id, entry);
   }
   for (const [id, parent] of Object.entries(variants)) {

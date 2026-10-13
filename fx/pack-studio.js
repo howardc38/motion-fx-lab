@@ -1,33 +1,51 @@
 (() => {
   if (!window.FX || !window.FXStudio) return;
+  // Effects render a 1280×720 master frame. A tile shows it through a canvas
+  // sized to the tile's device pixels and a high-quality downscale, so dot
+  // fields do not alias into moiré at gallery size.
+  function display(stage, effect, label) {
+    const out = document.createElement("canvas");
+    out.className = "fill";
+    out.setAttribute("role", "img");
+    out.setAttribute("aria-label", label);
+    Object.assign(out.style, { width: "100%", height: "100%", display: "block" });
+    out.width = 1280;
+    out.height = 720;
+    stage.appendChild(out);
+    const g = out.getContext("2d");
+    return () => {
+      const dpr = Math.min(2, window.devicePixelRatio || 1), css = stage.clientWidth || 1280;
+      const w = Math.max(320, Math.min(1280, Math.round((css * dpr) / 16) * 16)), h = (w * 9) / 16;
+      if (out.width !== w || out.height !== h) { out.width = w; out.height = h; }
+      g.imageSmoothingEnabled = true;
+      g.imageSmoothingQuality = "high";
+      g.drawImage(effect.canvas, 0, 0, w, h);
+    };
+  }
   for (const s of FXStudio.studies)
     FX.demo({
       id: "studio-" + s.id,
-      name: FXStudio.previews[s.id]?.title ?? s.name,
+      name: s.name,
       kind: s.kind,
       grade: s.grade,
-      purpose: FXStudio.previews[s.id] ? FXStudio.previews[s.id].watch+" "+FXStudio.previews[s.id].note : s.purpose,
-      stacks: ["skin-cloud", "freeze-orbit", "particle-lens"].includes(s.id)
+      purpose: s.purpose,
+      stacks: ["skin-cloud", "particle-lens"].includes(s.id)
         ? ["canvas", "three", "glsl"]
-        : ["lowpoly", "depth-dots"].includes(s.id) ? ["canvas", "three"] : ["canvas"],
+        : ["lowpoly", "depth-dots", "freeze-orbit"].includes(s.id) ? ["canvas", "three"] : ["canvas"],
       chips: [
-        s.module === "flight" ? "original art / motion" : "fixed source time",
-        s.grade === "A+"
-          ? "animated GLB / surface points"
-          : "deterministic frame(t)",
+        { portal: "art-direction presets", themes: "art-direction presets", gallery: "art-direction presets", lowpoly: "three.js scene", "depth-dots": "image relief", "skin-cloud": "procedural 3D dancer", "freeze-orbit": "procedural 3D dancer", "particle-lens": "procedural 3D dancer" }[s.id] || "fx/character subject",
+        "deterministic frame(t)",
       ],
       aspect: "16 / 9",
       period: s.period,
-      hero: FXStudio.previews[s.id]?.hero ?? s.hero,
+      hero: s.hero,
       build(stage) {
-        const ready = (FXStudio.previews[s.id] ? FXStudio.preview(s.id) : FXStudio.create(s.id)).then((effect) => {
-          effect.canvas.className = "fill";
-          effect.canvas.setAttribute("role", "img");
-          effect.canvas.setAttribute("aria-label", s.name);
-          stage.appendChild(effect.canvas);
+        let show;
+        const ready = FXStudio.create(s.id).then((effect) => {
+          show = display(stage, effect, s.name);
           return effect;
         });
-        return { ready, frame: async (t) => (await ready).frame(t) };
+        return { ready, frame: async (t) => { const effect = await ready; await effect.frame(t); show(); } };
       },
     });
 })();

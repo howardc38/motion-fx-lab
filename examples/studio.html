@@ -161,7 +161,8 @@
         seek.max = s.period;
         document.getElementById("compare-control").hidden=!FXStudio.previews[id];
         theme.hidden = id !== "themes";
-        document.getElementById("description").textContent = comparing ? FXStudio.previews[id].watch+" "+FXStudio.previews[id].note : s.purpose;
+        // Gallery tiles show the raw effect; the comparison keeps the COUNTERFORM reference fight as input.
+        document.getElementById("description").textContent = comparing ? FXStudio.previews[id].watch+" "+FXStudio.previews[id].note+" Input: the COUNTERFORM reference fight." : s.purpose;
         document.getElementById("error").textContent = "";
         try {
           const key=id+(comparing?":comparison":":effect");
@@ -212,11 +213,8 @@
           return id;
         },
       };
-      select(
-        FXStudio.studies.some((s) => s.id === location.hash.slice(1))
-          ? location.hash.slice(1)
-          : "portal",
-      );
+      const requested = location.hash.slice(1) === "flight" ? "themes" : location.hash.slice(1);
+      select(FXStudio.studies.some((s) => s.id === requested) ? requested : "portal");
       requestAnimationFrame(loop);
     </script>
   </body>

@@ -107,20 +107,19 @@
       "prefix": "studio-",
       "anchor": "\"{key}\"",
       "sources": {
-        "studio-flight": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/flight.js"],
-        "studio-portal": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/flight.js"],
-        "studio-themes": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/flight.js"],
-        "studio-gallery": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/flight.js"],
-        "studio-lowpoly": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/flight.js"],
-        "studio-video-dots": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
-        "studio-dot-rhythm": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
-        "studio-dot-impact": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
-        "studio-echo": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
-        "studio-time-remap": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
-        "studio-depth-dots": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
-        "studio-skin-cloud": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
-        "studio-freeze-orbit": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
-        "studio-particle-lens": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"]
+        "studio-portal": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/portal.js", "fx/studio/themes.js"],
+        "studio-themes": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/flight.js", "fx/studio/themes.js"],
+        "studio-gallery": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/flight.js", "fx/studio/themes.js"],
+        "studio-lowpoly": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/course.js", "fx/studio/figure.js"],
+        "studio-video-dots": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/hero2d.js", "fx/studio/subjects.js", "fx/studio/rig-gl.js", "fx/studio/dots.js"],
+        "studio-dot-rhythm": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/hero2d.js", "fx/studio/subjects.js", "fx/studio/rig-gl.js", "fx/studio/dots.js"],
+        "studio-dot-impact": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/hero2d.js", "fx/studio/subjects.js", "fx/studio/rig-gl.js", "fx/studio/dots.js"],
+        "studio-echo": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/hero2d.js", "fx/studio/subjects.js", "fx/studio/rig-gl.js", "fx/studio/dots.js"],
+        "studio-time-remap": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/hero2d.js", "fx/studio/subjects.js", "fx/studio/rig-gl.js", "fx/studio/dots.js"],
+        "studio-depth-dots": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/relief.js", "fx/studio/subjects.js", "fx/studio/figure.js", "fx/studio/dots.js"],
+        "studio-skin-cloud": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/cloud.js", "fx/studio/figure.js", "fx/studio/dots.js"],
+        "studio-freeze-orbit": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/freeze.js", "fx/studio/figure.js", "fx/studio/dots.js"],
+        "studio-particle-lens": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/cloud.js", "fx/studio/figure.js", "fx/studio/dots.js"]
       }
     },
     {
@@ -317,7 +316,6 @@
       "cjk-solid",
       "studio-portal",
       "tunnel",
-      "studio-flight",
       "vartype",
       "rhythm",
       "cardflip",
@@ -325,7 +323,6 @@
       "design-surface-ink",
       "optical-slit",
       "optical-morph",
-      "studio-particle-lens",
       "rays",
       "ridgelines",
       "chrome",
@@ -338,7 +335,6 @@
       "flat",
       "glitch",
       "dissolve",
-      "studio-time-remap",
       "design-soft-shadow",
       "uifly",
       "whip",
@@ -367,8 +363,7 @@
     "showcaseOrder": ["styles", "studio-themes", "studio-gallery", "water-underwater", "scene-eras"],
     "previewDefault": {
       "tunnel": "studio-lowpoly",
-      "studio-depth-dots": "signal-audio-relief",
-      "studio-freeze-orbit": "signal-freeze-orbit"
+      "studio-depth-dots": "signal-audio-relief"
     },
     "previewHero": {
       "gpuparticles": 1.5
