@@ -50,32 +50,34 @@ The main shortlist contains six sequences, four use-case templates, one comparis
 The three featured sequences cover art direction, voiced character performance and
 materials. Newness and technical complexity do not determine prominence.
 
-| Film | Role and reason to keep it | Placement |
-|---|---|---|
-| One flight. Twenty worlds. | A continuous character journey through contrasting art directions | Featured sequence |
-| The Final Final | A voiced two-character story with gestures, reaction holds and camera cuts | Featured sequence |
-| Say it. Mean it. | Speech mouth shapes and facial performance in close-up | Speech effect card; outside the shortlist |
-| One dot. Many roles. | A visual cue connects type, timing, depth and a reveal; closes its loop | Sequence index |
-| One drop. Many forms. | A material-led journey from a splash through changing forms to an underwater view | Featured sequence; authored surfaces, not a fluid solver |
-| One word. Many forms. | A replaceable CJK title passes through solid, particle, contour and signal treatments | Sequence index |
-| COUNTERFORM | Original action choreography, contact holds and framing | Sequence index; related fight studies share its action |
-| One block. A drawn city. | Surface hatching, staged construction and camera travel in one scene | Surface-hatching effect card; outside the shortlist |
-| Social clips | Hook → interaction → closing action in a vertical ad | Use-case template |
-| Product demos | One interface interaction explained closely | Use-case template; intentionally shares the social example's app |
-| Infographics | Counting figures become bars, a ring and a trend | Use-case template |
-| Animated backgrounds | Three reusable loops plus an example title overlay | Use-case template; its own source includes the network loop |
-| Same fight. Eight treatments. | A common source makes eight different operations comparable | Comparison |
-| One scene. Many eras. | The same room/action under eight art treatments | Combined-scene preset; outside the shortlist |
-| Six optical treatments | Six independent looks for choosing a treatment | Related optical effect cards; outside the shortlist |
-| Image distortion, collisions and particles | Three unrelated operations with separate settings | Distortion, collision and particle effect cards; outside the shortlist |
-| Find the Form | Inspect baked volumetric smoke around lettering | Single-effect study |
-| One light. Different edges. | Inspect source size and object height against the shadow | Soft-shadow effect card; outside the shortlist |
-| Overflow | Inspect filling, spill and drainage of a partly filled bowl | Single-effect study |
-| Slow Gold | Inspect liquid contact, stretching and drainage over a ring | Archived material study; liquid-flow selector and source archive |
-| Pulse / Form | Measured audio changes solid image-cell depth | Image-relief variation; effect card |
-| Motion / Release | Measured image movement emits and directs fragments | New motion family; effect card |
-| Impact / Orbit | A measured score attack cues an authored held 3D pose and animated lighting | Freeze-orbit variation; effect card |
-| Intro | A guided overview that deliberately repeats selected uses and techniques | Page header; outside the shortlist |
+<!-- films:guide:start -->
+| Film | Layer | Role | Placement |
+|---|---|---|---|
+| Intro | Intro | A guided overview that deliberately repeats selected uses and techniques. | Top of the page |
+| Social clips | Use case | Hook, interaction and call to action. | Card in Use cases |
+| Product demos | Use case | One interface interaction, explained. | Card in Use cases |
+| Infographics | Use case | Turn figures into a data story. | Card in Use cases |
+| Animated backgrounds | Use case | Three reusable background loops. | Card in Use cases |
+| One flight. Twenty worlds. | Demo film | One character travels through twenty art directions. | Card in Demo films |
+| The Final Final | Demo film | A two-character conversation with speech, gestures, reaction holds and a closing joke. | Card in Demo films |
+| One drop. Many forms. | Demo film | Authored drop, splash, morph and underwater chapters. | Card in Demo films |
+| One dot. Many roles. | Demo film | One orange dot becomes a switch, a letter, a spring trace and a reveal before returning to the start. | Film list only |
+| One word. Many forms. | Demo film | A word changes form and returns to a readable title. | Film list only; to become a use case: Titles & logo stings |
+| COUNTERFORM | Demo film | A complete fight with authored action and contact timing. | Film list only |
+| Same fight. Eight treatments. | Comparison | Compare eight operations on the same choreography. | Film list only |
+| One scene. Many eras. | Comparison | The same room/action under eight art treatments. | Film list only |
+| Find the Form | Effect film | An extended rendered example of volumetric smoke. | Effect card: Volumetric smoke around geometry |
+| Overflow | Effect film | Partly filled bowl → rising water → overflow → settling. | Effect card: Fluid flow and overflow |
+| Slow Gold | Effect film | Inspect liquid contact, stretching and drainage over a ring. | Effect card: Fluid flow and overflow |
+| One block. A drawn city. | Effect film | Surface hatching, staged construction and camera travel in one scene. | Effect card: Light-responsive surface hatching |
+| One light. Different edges. | Effect film | Inspect source size and object height against the shadow. | Effect card: Source size and soft shadows; to be retired |
+| Six optical treatments | Effect film | Six independent looks for choosing a treatment. | Effect cards: Moiré interference, Slit-scan typography, Folding paper ribbon, Caustic light, Holographic foil, Shape morphing |
+| Image distortion, collisions and particles | Effect film | Three unrelated operations with separate settings. | Effect cards: Image displacement, 3D domino chain, Orbital particles |
+| Pulse / Form | Effect film | Measured audio changes solid image-cell depth. | Effect card: Image relief |
+| Motion / Release | Effect film | Measured image movement emits and directs fragments. | Effect card: Motion-driven fragments |
+| Impact / Orbit | Effect film | A measured score attack cues an authored held 3D pose and animated lighting. | Effect card: Freeze frame and camera orbit; to be merged into COUNTERFORM |
+| Say it. Mean it. | Effect film | Recorded speech, expressive mouth shapes and authored gestures. | Effect card: Speech, expression and lip sync |
+<!-- films:guide:end -->
 
 The index links each film to related effects. This does not assert that every
 film imports those exact factories: some author their own versions of the same

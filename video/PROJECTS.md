@@ -23,15 +23,45 @@ FX_PROJECT_ROOT=/path/to/project FX_OUTPUT_DIR=/path/to/project/out FX_FILM_NAME
 
 ## The public film list
 
-`examples/films.json` owns the published films: each entry names its `source` page, its three `media` files
-(MP4, GIF, poster), a `section` and the build `groups` it belongs to. Nothing in `media/` is published unless an
-entry lists it.
+`examples/films.json` (version 2, structure in [`tools/films-schema.json`](../tools/films-schema.json)) is the only
+place a published film is described. Nothing in `media/` is published unless an entry lists it, and no film card,
+list, table or count is written by hand.
+
+Each entry gives:
+
+- `layer`: `intro`, `use-case` (a familiar format to adapt), `demo` (several effects in a finished piece),
+  `comparison` (one input, different treatments) or `effect-film` (a full render of one effect).
+- `tier`: `hero` (the intro at the top of the page), `featured` (a card in the use-case or demo section), `listed`
+  (the film list only) or `in-card` (effect films, played inside their effect cards).
+- `title`, a one-line `summary`, `duration` (the page's `__DUR`), `format`, the editable `page`, `media`
+  (`mp4`, `poster`, optional silent `preview` loop and `gif`), `card` copy (`headline`, `description`, `useFor`,
+  `relation`, optional `guide`), `audience` and the build `groups`.
+- `effects`: the catalogue ids the film's source actually runs, each with an optional `at: [start, end]` in seconds.
+  A sampler gives every effect its segment, so each effect card can play its own part. Ids that only inspired the
+  film go in `related`. The check needs evidence for each listed effect: either the page names it (`data-fx`,
+  `data-demo` or the quoted id), or `proof: [file, text]` points to literal text in a file the page loads.
+- Planned changes, while they are pending: `mergeInto` (another film id), `retire` (reason) or `becomes`
+  (`{layer, headline}`), with an optional `plan` note.
+- The top-level `layers` list sets the order, headings and singular names used by the generated list and counts.
 
 ```sh
 node tools/films.cjs build <id|group>   # render one film or a group through video/build.sh
-npm run sync:films                      # regenerate the film tables between the films markers in README and index
-node tools/films.cjs --check            # fail if those tables are stale or media/ differs from the manifest
+npm run sync:films                      # regenerate every films marker block and fx/films-data.js
+node tools/films.cjs --check            # validate, and fail if any generated block is stale
+node tools/films.cjs --verify           # print where each film's source runs each listed effect
 npm run check:public                    # fail if a private or unregistered file would be committed
 ```
 
+The generated blocks are `films:hero`, `films:uses`, `films:demos`, `films:summary`, `films:count` and `films` in
+`index.html`, `films` in `README.md` and `films:guide` in `fx/VIEWING-GUIDE.md`. `fx/films-data.js` defines
+`window.FXFilms` (id, layer, tier, title, duration, format, media and effects) for the gallery's effect → film
+links. Counts name films only; no generated text states an exact number of effects.
+
 To add a film: put the page under `examples/`, add its entry, build it, run `sync:films`, then both checks.
+
+**Moving from version 1.** `node tools/films.cjs --migrate` reads a version 1 `examples/films.json` and writes
+`examples/films.next.json`. It keeps every v1 value (`source` becomes `page`, `description` becomes `summary`, and
+`kind`/`section` become `layer`/`tier`), keeps the v2-only fields already in `films.next.json`, and lists each v1
+value with where it went. A v1 effect that the v2 entry no longer runs moves to `related` with its label. While
+`films.json` is still version 1, the other commands read `films.next.json` and fail if it is stale or loses a v1
+value. Replacing `films.json` with `films.next.json` completes the move.
