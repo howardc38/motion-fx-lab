@@ -10,7 +10,8 @@ import {STAGE,CAT,createCat,sourceTime,playbackRate} from './performance.js';
 export const LOOK={background:'#e4ecef',flash:'#2340d0',accent:'#2340d0',ink:'#1d2b33',shadow:'#5b6f78'};
 // Stage px per source frame. Slow walking measures below LO; a sprint's legs, the
 // take-off and the tail whip exceed it. A sudden speed increase (BURST) releases the most.
-export const RULES={lo:14,hi:34,burstLo:18,burstHi:40,base:.03,localBase:.28,burst:.9,settle:6,minAge:.3,returnTime:.45,maxFlight:2.4,drag:3.0,carry:.75,launch:45,shards:4,lead:1};
+// A piece starts home once the flow under it drops below SETTLE (walking pace) or after MAXFLIGHT s.
+export const RULES={lo:14,hi:34,burstLo:18,burstHi:40,base:.03,localBase:.28,burst:.9,settle:11,minAge:.3,returnTime:.45,maxFlight:1.7,drag:3.0,carry:.75,launch:45,shards:4,lead:1,heal:.55,scar:.7};
 const PX=1/100; // world units per stage px
 // Returns accelerate into place and stop on arrival: a snap rather than a drift.
 const ease=x=>{x=clamp(x);return x*x*(2.2-1.2*x);};
@@ -150,7 +151,11 @@ export async function createFragments({signalsUrl}={}){
       pieces++;if(Math.floor(kf)===p.kb)births++;if(p.speed>=.75*p.frameMax)fastPieces++;
       const ti=Math.min(p.track.length/2-1,kf-p.kb),i0=Math.floor(ti),i1=Math.min(p.track.length/2-1,i0+1),u=ti-i0;
       const hx=p.track[i0*2]+(p.track[i1*2]-p.track[i0*2])*u,hy=p.track[i0*2+1]+(p.track[i1*2+1]-p.track[i0*2+1])*u;
-      const hc=Math.floor(hx/cell),hr=Math.floor(hy/cell);if(Rw<.97&&hc>=0&&hr>=0&&hc<gw&&hr<gh)holes[(gh-1-hr)*gw+hc]=255;
+      // The hole a piece leaves is fully open at the break and closes over R.scar seconds, so the
+      // impact reads as broken while the body stays readable as its shards trail behind; it is also
+      // closed by the time a returning piece is R.heal of the way home (no white cracks on reassembly).
+      const scar=1-Math.min(1,age/R.scar)**2,hc=Math.floor(hx/cell),hr=Math.floor(hy/cell),open=Math.round(255*Math.min(scar,1-Math.min(1,Rw/R.heal)));
+      if(open>0&&hc>=0&&hr>=0&&hc<gw&&hr<gh){const hi=(gh-1-hr)*gw+hc;if(open>holes[hi])holes[hi]=open;}
       // Launch speed is capped so a very fast whip cannot throw pieces out of the frame.
       const lv=Math.hypot(p.vx,p.vy),cap=Math.min(1,R.launch/Math.max(lv,1e-6)),v=lv*cap*fps;
       for(let q=0;q<R.shards;q++){
@@ -160,7 +165,10 @@ export async function createFragments({signalsUrl}={}){
         const travel=a=>(1-Math.exp(-R.drag*a))/R.drag;
         // Pieces get a half-frame head start so the impact frame already shows the break.
         // Pieces that fall settle on the (invisible) floor line instead of sinking below it.
-        const fa=Math.min(age,returnAge)+.5/fps,fx=p.x+ox+jx*travel(fa),fy=Math.min(p.y+oy+jy*travel(fa),Math.max(p.y+oy,CAT.ground+4+8*h1)),fz=vz*travel(fa);
+        const fa=Math.min(age,returnAge)+.5/fps,fx=p.x+ox+jx*travel(fa),rawY=p.y+oy+jy*travel(fa),floorY=Math.max(p.y+oy,CAT.ground+4+8*h1),fy=Math.min(rawY,floorY),fz=vz*travel(fa);
+        // A shard that has come to rest on the floor crumbles to a third of its size (the further its free
+        // path would have carried it, the longer it has lain there), and regains its size flying home.
+        const crumble=.65*smooth(0,60,rawY-floorY)*(1-Rw);
         let x=fx,y=fy,z=fz;
         if(Rw>0){const rx=hx+ox,ry=hy+oy;x=rx+(fx-rx)*(1-Rw);y=ry+(fy-ry)*(1-Rw);z=fz*(1-Rw);}
         if(q===0){if(Rw>0)returning++;distance+=Math.hypot(x-hx-ox,y-hy-oy);}
@@ -168,7 +176,7 @@ export async function createFragments({signalsUrl}={}){
         col[c]=p.color[0];col[c+1]=p.color[1];col[c+2]=p.color[2];
         const cur=Math.hypot(jx,jy)*Math.exp(-R.drag*fa)*(1-Rw),dl=Math.hypot(jx,jy)||1;dir[c]=jx/dl;dir[c+1]=-jy/dl;dir[c+2]=clamp(cur/900)*1.6;
         const sp=count*4;spin[sp]=h2-.5;spin[sp+1]=h3-.5;spin[sp+2]=.6+h1;spin[sp+3]=(h4-.5)*(1-Rw)*fa*(4+h1*9);
-        size[count]=cell*PX*(.5+.45*h4);accentShare[count]=h3<.35?1:0;count++;
+        size[count]=cell*PX*(.5+.45*h4)*(1-crumble);accentShare[count]=h3<.35?1:0;count++;
       }
     }
     for(const a of Object.values(A))a.needsUpdate=true;g.instanceCount=count;holeTexture.needsUpdate=true;

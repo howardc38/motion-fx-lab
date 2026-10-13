@@ -69,14 +69,16 @@ export async function createPlushFur({width = 1280, height = 720, features = 'al
     poseAt(t);
     // The drawn path stays laid down until the shake fluffs it back up.
     const strength = 1 - smooth((t - TIMING.shake[0] - .05) / .55);
-    bear.setBrush(path, {now: t, radius: .05, strength: t < TIMING.draw[0] ? 0 : strength});
+    // A wide track, so the heart still reads in a 382 px gallery tile.
+    bear.setBrush(path, {now: t, radius: .075, strength: t < TIMING.draw[0] ? 0 : strength});
     // Rim light builds through the anticipation and flares on the shake.
     const flare = Math.max(0, spring(t, TIMING.shake[0], .8, 2.5));
     stage.lights.rim.intensity = 3.2 + 2.6 * smooth(t / 2.2) * (1 - smooth((t - 5.2) / .8)) + 2.5 * flare;
     stage.lights.rim2.intensity = 2.4 + 1.6 * smooth(t / 2.2) * (1 - smooth((t - 5.2) / .8));
     stage.bloom.strength = .22 + .25 * flare;
     const push = smooth((t - .2) / 2.2) * (1 - smooth((t - 3.6) / 1.8)), punch = .25 * Math.max(0, spring(t, TIMING.shake[0], 3, 6));
-    const cam = {pos: [lerp(.55, .4, push), lerp(1.12, 1.02, push), lerp(3.25, 2.7, push) - punch * .2], target: [lerp(0, -.06, push), lerp(.98, .72, push), .1], fov: 30, aperture: .0012, roll: .01 * Math.sin((t - TIMING.shake[0]) * 30) * env(t, TIMING.shake[0], TIMING.shake[1], .05, .3)};
+    // The push-in frames the heart on the belly with the ears still in shot.
+    const cam = {pos: [lerp(.55, .45, push), lerp(1.12, 1.16, push), lerp(3.25, 3.1, push) - punch * .2], target: [lerp(0, -.04, push), lerp(.98, .96, push), .1], fov: 30, aperture: .0012, roll: .01 * Math.sin((t - TIMING.shake[0]) * 30) * env(t, TIMING.shake[0], TIMING.shake[1], .05, .3)};
     ctx.drawImage(stage.render(camera || cam), 0, 0);
     const vg = ctx.createRadialGradient(W / 2, H * .5, H * .3, W / 2, H * .5, H * .95); vg.addColorStop(0, 'rgba(4,12,16,0)'); vg.addColorStop(1, 'rgba(4,12,16,.5)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
     Object.assign(proof, {time: t, brush: t < TIMING.draw[0] ? 0 : strength, drawn: clamp((t - TIMING.draw[0]) / (TIMING.draw[1] - TIMING.draw[0])), phase: t < TIMING.shake[0] ? 'anticipation' : t < TIMING.settle ? 'impact' : 'aftermath', rim: stage.lights.rim.intensity});

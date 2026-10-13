@@ -1,6 +1,7 @@
 import { createCharacterSource, STYLE_PRESETS } from './index.js';
 import { sampleMotion } from './motion.js';
 import { CharacterScene } from './scene.js';
+import { smooth } from './math.js';
 
 export const CHARACTER_FILES = {
   cat: new URL('../../assets/characters/apricot-cat/rig.json', import.meta.url),
@@ -20,7 +21,7 @@ export async function createStudies() {
     const ground = id === 'cat' ? 70 : 95, y = 588 - ground * scale, cameraX = pose.meta.worldX * scale;
     scene.frame(t, { background: STYLE_PRESETS.find(s => s.id === style)?.background || '#f1eee7', camera: [cameraX, 0], actors: [{ character: id, motion, style, x: 640, y, scale, skeleton: options.skeleton }] });
     floor(588, cameraX); label(source.rig.definition.name, 52, 74, 34); label(`${motion}  /  ${style}`, 52, 119, 24);
-    label('透明角色來源 → 配置動作 → 套用角色畫法', 52, 674, 22);
+    label('Transparent character source → configured motion → drawing style', 52, 674, 22);
     return scene.canvas;
   }
   function pairs(t, options = {}) {
@@ -29,13 +30,13 @@ export async function createStudies() {
       { character: 'cat', motion: 'jump', style, x: 355, y: 432, scale: 2.2, travel: false },
       { character: 'robot', motion: 'wave', style, x: 934, y: 418, scale: 1.8, travel: false },
     ] });
-    label('同一套模組 · 不同關節結構', 52, 74, 36); floor(589);
-    label('四腳 · 跳躍', 210, 640, 24); label('兩腳＋雙臂 · 揮手', 800, 640, 24); return scene.canvas;
+    label('One module, two joint layouts', 52, 74, 36); floor(589);
+    label('Four legs · jump', 230, 640, 24); label('Two legs + two arms · wave', 790, 640, 24); return scene.canvas;
   }
   function board(t, options = {}) {
     const id = options.character || 'cat', motion = options.motion || (id === 'cat' ? 'run' : 'wave');
     g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, 1280, 720); g.fillStyle = '#f1eee7'; g.fillRect(0, 0, 1280, 720);
-    label('換畫法，角色本身也一起改變', 36, 54, 28);
+    label('Change the drawing style and the character itself changes', 36, 54, 28);
     for (let i = 0; i < STYLE_PRESETS.length; i++) {
       const s = STYLE_PRESETS[i], x = 20 + i % 4 * 315, y = 82 + Math.floor(i / 4) * 309;
       g.fillStyle = s.background; g.fillRect(x, y, 295, 285);
@@ -47,17 +48,36 @@ export async function createStudies() {
     }
     return scene.canvas;
   }
-  function atlas(t) {
-    scene.frame(t, { background: '#f1eee7', actors: [
-      { character: 'cat', motion: 'walk', x: 330, y: 307, scale: 1.8, travel: false, skeleton: true },
-      { character: 'robot', motion: 'wave', x: 940, y: 370, scale: 1.4, travel: false, skeleton: true },
-    ] });
-    label('素材 + 關節配置 = 可控制的角色', 36, 57, 32);
-    label('四腳鏈；步態接觸約束', 85, 460, 24); label('兩腳鏈 + 手臂鏈；揮手', 720, 460, 24);
-    for (const [id, x] of [['cat', 55], ['robot', 730]]) {
-      const source = sources[id]; const parts = source.rig.parts.filter(p => !p.id.startsWith('leg') || p.id === 'leg0' || p.id === 'leg-left').slice(0, 5);
-      for (let i = 0; i < parts.length; i++) { const p = parts[i], im = p.image, scale = Math.min(95 / im.width, 100 / im.height); g.drawImage(im, x + i * 100, 500, im.width * scale, im.height * scale); label(p.id, x + i * 100, 630, 14); }
+  // The gallery tile: the cat runs and the robot jumps twice, then waves. Mid-loop the joint chains
+  // that drive them fade in over the art for about a second, then fade out again (period 4 s).
+  const RIG_PERIOD = 4, XRAY = [1.45, 2.65];
+  function robotMotion(t) {
+    if (t < 2.4) return { motion: 'jump', offset: t % 1.2 };
+    return { motion: 'wave', offset: t - 2.4, overrides: { duration: 1.6, raise: .4, lower: .4 } };
+  }
+  function atlas(time) {
+    const t = ((time % RIG_PERIOD) + RIG_PERIOD) % RIG_PERIOD, groundY = 560;
+    const cat = { character: 'cat', motion: 'run', x: 370, y: groundY - 70 * 2, scale: 2, travel: false };
+    const r = robotMotion(t), robot = { character: 'robot', motion: r.motion, offset: r.offset, overrides: r.overrides, x: 965, y: groundY - 95 * 1.7, scale: 1.7, travel: false };
+    // Each actor runs on its own local clock (offset), so give both the same scene time 0.
+    const local = a => ({ ...a, start: 0, offset: a === cat ? t : a.offset });
+    scene.frame(0, { background: '#f1eee7', actors: [local(cat), local(robot)] });
+    // Ground: the cat's floor scrolls at its running speed so it reads as running, the robot's stays put.
+    const run = sources.cat.rig.definition.motions.run.speed * 2 * t;
+    g.strokeStyle = '#ccd1c7'; g.lineWidth = 3; g.beginPath(); g.moveTo(40, groundY); g.lineTo(600, groundY); g.moveTo(700, groundY); g.lineTo(1240, groundY); g.stroke();
+    g.fillStyle = '#ccd1c7';
+    g.save(); g.beginPath(); g.rect(40, groundY, 560, 30); g.clip();
+    for (let x = 40 - run % 80; x < 600; x += 80) g.fillRect(x, groundY + 14, 28, 4);
+    g.restore();
+    // X-ray: veil the art a little and draw only the joint chains on top.
+    const k = smooth((t - XRAY[0]) / .25) * (1 - smooth((t - XRAY[1] + .25) / .25));
+    if (k > 0) {
+      g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = `rgba(241,238,231,${.45 * k})`; g.fillRect(0, 0, 1280, 720);
+      scene.frame(0, { clear: false, actors: [local(cat), local(robot)].map(a => ({ ...a, skeleton: 3, parts: false, opacity: k })) });
+      g.globalAlpha = k; label('JOINT CHAINS', 1236 - 170, 68, 22, '#17806f'); g.globalAlpha = 1;
     }
+    label('Image parts + joints = a character you can direct', 44, 68, 30);
+    label('Four leg chains · foot contact', 160, 622, 24); label('Two legs + an arm chain · jump, wave', 780, 622, 24);
     return scene.canvas;
   }
   return { sources, scene, canvas: scene.canvas, frame(t, mode = 'single', options = {}) {

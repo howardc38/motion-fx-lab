@@ -12,18 +12,19 @@
       "signal-motion-fragments", "cjk-solid", "studio-depth-dots", "optical-moire", "studio-portal",
       "optical-caustic", "optical-morph", "water-impact", "rhythm", "vartype", "optical-ribbon",
       "glitch", "cardflip", "fluid-overflow", "liquid", "ridgelines", "rigid", "character-rig",
-      "design-surface-ink", "design-soft-shadow", "whip", "uifly", "hook", "chars", "karaoke",
-      "datachart", "timing", "glass", "sweep", "stamp", "beat", "sticker", "gradient", "ring",
-      "count", "type", "mark", "scan", "wipe", "lut", "grain",
+      "design-surface-ink", "whip", "uifly", "hook", "chars", "karaoke", "datachart", "timing",
+      "glass", "sweep", "stamp", "beat", "sticker", "gradient", "ring", "count", "type", "mark",
+      "scan", "wipe", "lut", "design-soft-shadow", "grain",
     ],
     showcaseOrder: [
       "styles", "studio-themes", "studio-gallery", "water-underwater", "scene-eras",
     ],
     previewDefault: { "glitch": "frame-glitch", "studio-depth-dots": "signal-audio-relief" },
     previewHero: { "gpuparticles": 1.5 },
+    previewWindow: { "signal-motion-fragments": [1,8], "dialogue-lipsync": [0,10.7] },
   };
   // fx:gallery:end
-  const KINDS = { shader: "Materials & image treatments", sim: "Physics & growth", character: "Characters", motion: "Motion & timing", backdrop: "Backgrounds", ui: "UI & data", type: "Type" };
+  const KINDS = { shader: "Materials & surfaces", light: "Light & image treatments", space: "3D space & particles", sim: "Physics & growth", character: "Characters", motion: "Motion & timing", backdrop: "Backgrounds", ui: "UI & data", type: "Type" };
   // What a tile needs beyond the page itself.
   const NEEDS = { "A": ["Base stack only", "Needs nothing beyond HTML, CSS, SVG, Canvas and the existing three.js core"],
     "A+": ["Plus a three.js add-on", "Uses three.js add-ons, such as post-processing or animated GLB loading"],
@@ -44,15 +45,15 @@
     "fluid-viscous": "Watch the full 9.6 s render",
     "optical": "Watch the optical sampler",
     "stacks": "Watch the three-operation sampler",
-    "scene-eras": "Compare eight room treatments",
   };
   // Old #film-<id> bookmarks that open an effect card: effect films that play there, and retired or merged films.
-  // (#film-scene-eras is the comparison card again, so it needs no entry.)
+  // scene-eras is no longer a published film (most of it held still); its bookmark opens the live preset.
   const FILM_BOOKMARKS = {
     "film-ink-city": "design-surface-ink", "film-shadow-lab": "design-soft-shadow",
     "film-optical": "optical-foil", "film-stacks": "stack-pixi",
     "film-fluid-viscous": "fluid-viscous",
     "film-impact-orbit": "signal-freeze-orbit",
+    "film-scene-eras": "scene-eras",
   };
   // Old #film-<id> bookmarks for films replaced by another film.
   const FILM_RENAMES = { "film-word-forms": "film-titles" };
@@ -62,6 +63,8 @@
     lit3d: "cjk-solid", smoke: "fluid-smoke", tunnel: "studio-lowpoly", halftonetype: "studio-video-dots",
     coderain: "type", blueprint: "datachart", drawflow: "datachart",
     "studio-flight": "studio-themes", "design-spring-response": "timing",
+    // The flat SVG suit-and-phone mascot variant was retired; the cutout character rig replaces it.
+    flat: "character-rig",
   };
   window.FXGalleryMeta = Object.freeze({ ...GALLERY, KINDS, NEEDS, STACKS, TILE_FILM_LAYERS, TILE_FILM_LABELS, FILM_BOOKMARKS, FILM_RENAMES, DEMO_ALIASES });
 })();

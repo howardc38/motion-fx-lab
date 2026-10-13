@@ -46,8 +46,11 @@ export function createPortal() {
         g.clip();
         g.fillStyle = th.bg;
         g.fillRect(0, 0, W, H);
-        const art = poster(id, 1.3), cx = (left + right) / 2;
-        g.drawImage(art, cx - art.width / 2, 0, art.width, H);
+        // The last panel is narrow at the top: its poster is drawn a little smaller and further right so
+        // the headline (FLIGHT!) clears the slanted edge instead of being cut by it.
+        const last = i === WORLDS.length - 1, art = poster(id, last ? 1.1 : 1.3), cx = last ? W - 148 : (left + right) / 2;
+        if (last) g.drawImage(art, cx - art.width / 2, 40, art.width, art.height);
+        else g.drawImage(art, cx - art.width / 2, 0, art.width, H);
         const sprite = flyer(id, t, SCALE);
         g.drawImage(sprite, c.x - 153 * SCALE, c.y - 90 * SCALE);
         g.restore();

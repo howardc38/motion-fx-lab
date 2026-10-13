@@ -43,8 +43,8 @@ export function mask(data, word = "流動") {
   }
   return canvas;
 }
-// mode "reveal" (gallery): the extrusion grows out of the page while a light sweeps
-// across the faces. No mode keeps the original turntable used by the word film.
+// mode "reveal" (gallery): the flat word spins into depth with an overshoot and a camera kick, then a
+// light sweeps across the faces. No mode keeps the original turntable used by the word film.
 export async function create(mode) {
   const data = await font(),
     view = stage3D(),
@@ -133,6 +133,8 @@ export async function create(mode) {
     for (const c of group.children) c.position.sub(center);
     current = word;
   }
+  const TAU = Math.PI * 2,
+    backOut = (x) => 1 + 2.2 * (x - 1) ** 3 + 1.2 * (x - 1) ** 2;
   const phase = (x, a, b) => {
     const u = Math.max(0, Math.min(1, (x - a) / (b - a)));
     return u * u * (3 - 2 * u);
@@ -152,21 +154,33 @@ export async function create(mode) {
         light = 0;
       if (mode === "reveal") {
         const q = t % 8;
-        grow = Math.max(0.02, phase(q, 0.3, 2.4) * (1 - phase(q, 6.4, 7.8)));
+        // Impact (0.15–1.0 s): the flat word spins once round its vertical axis while the extrusion
+        // punches out of the face, overshoots and settles with a camera kick. Then light sweeps and a
+        // slow orbit show the depth; at the end the word spins away and folds back flat (seamless at 8 s).
+        const kick = Math.max(0, q - 0.15),
+          punch = q < 0.15 ? 0 : 1 - Math.exp(-6 * kick) * Math.cos(9 * kick), // a damped spring: 12% overshoot
+          spinIn = backOut(Math.max(0, Math.min(1, (q - 0.15) / 0.85))),
+          spinOut = phase(q, 6.9, 7.8);
+        grow = Math.max(0.02, punch * (1 - phase(q, 6.6, 7.8)));
         // the extrusion grows backwards from a fixed front face
-        group.scale.set(fit, fit, fit * grow);
+        const pop = 1 + 0.1 * Math.exp(-(((q - 0.62) / 0.12) ** 2));
+        group.scale.set(fit * pop, fit * pop, fit * grow * pop);
         group.position.set(0, 0.1, (size.z / 2) * fit * (1 - grow));
-        const orbit = 0.55 * phase(q, 0.3, 2.4) - 1.0 * phase(q, 3.8, 6.4) + 0.45 * phase(q, 6.4, 7.8);
-        camera.position.set(Math.sin(orbit) * 12.5, 1.2 + 1.4 * Math.sin(orbit * 2) * 0.5, Math.cos(orbit) * 12.5);
+        group.rotation.y = -TAU * (1 - spinIn) + TAU * spinOut * spinOut;
+        group.rotation.x = 0.18 * Math.sin(Math.PI * Math.min(1, Math.max(0, (q - 0.15) / 0.85)));
+        const orbit = 0.55 * phase(q, 0.9, 2.4) - 1.0 * phase(q, 3.8, 6.4) + 0.45 * phase(q, 6.4, 7.8);
+        const shake = q > 0.95 ? Math.exp(-(q - 0.95) * 9) * Math.sin((q - 0.95) * 75) * 0.18 : 0;
+        camera.position.set(Math.sin(orbit) * 12.5 + shake, 1.2 + 1.4 * Math.sin(orbit * 2) * 0.5 - shake * 0.6, Math.cos(orbit) * 12.5);
         camera.lookAt(0, 0, 0);
         const s1 = phase(q, 2.2, 3.8),
-          s2 = phase(q, 4.8, 6.3);
+          s2 = phase(q, 4.8, 6.3),
+          flash = Math.exp(-(((q - 0.55) / 0.22) ** 2));
         light = Math.sin(Math.PI * s1) + Math.sin(Math.PI * s2);
-        const sx = q < 4.3 ? -6.5 + 13 * s1 : 6.5 - 13 * s2;
+        const sx = q < 1.6 ? 0 : q < 4.3 ? -6.5 + 13 * s1 : 6.5 - 13 * s2;
         sweep.position.set(sx, 0.9, 1.6);
-        sweep.intensity = 120 * Math.min(1, light);
-        sweepUniforms.sweepX.value = sx * 0.62;
-        sweepUniforms.sweepAmount.value = 1.6 * Math.min(1, light);
+        sweep.intensity = 120 * Math.min(1, light + flash);
+        sweepUniforms.sweepX.value = q < 1.6 ? 0 : sx * 0.62;
+        sweepUniforms.sweepAmount.value = q < 1.6 ? 2.4 * flash : 1.6 * Math.min(1, light);
       } else {
         group.scale.setScalar(fit);
         group.rotation.set(

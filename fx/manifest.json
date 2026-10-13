@@ -25,7 +25,6 @@
         "particles": ["fx/demos.js"],
         "dissolve": ["fx/pack-light.js", "fx/demos.js"],
         "chrome": ["fx/pack-light.js", "fx/demos.js"],
-        "flat": ["fx/demos.js"],
         "hook": ["fx/demos.js"],
         "karaoke": ["fx/demos.js"],
         "sticker": ["fx/demos.js"],
@@ -312,7 +311,7 @@
   },
   "pages": ["index.html", "video/intro.html"],
   "gallery": {
-    "$comment": "order: effect cards curated by visual impact (judged on tile screenshots) and contrast between neighbouring looks, then the Motion basics; every gallery family must be listed once. showcaseOrder: the same for the comparison and scene presets. previewDefault: the variant a card shows first. previewHero: the frame time shown while motion is paused (gpuparticles shows the flowing form).",
+    "$comment": "order: effect cards curated by visual impact (judged on tile screenshots) and contrast between neighbouring looks, then the Motion basics; every gallery family must be listed once. showcaseOrder: the same for the comparison and scene presets. previewDefault: the variant a card shows first. previewHero: the frame time shown while motion is paused (gpuparticles shows the flowing form). previewWindow: [start, end] of the demo time a card loops, where a shared film timeline starts or ends with a long calm stretch (films and the intro still play the whole timeline).",
     "order": [
       "optical-foil",
       "domainrep",
@@ -355,7 +354,6 @@
       "rigid",
       "character-rig",
       "design-surface-ink",
-      "design-soft-shadow",
       "whip",
       "uifly",
       "hook",
@@ -376,6 +374,7 @@
       "scan",
       "wipe",
       "lut",
+      "design-soft-shadow",
       "grain"
     ],
     "showcaseOrder": ["styles", "studio-themes", "studio-gallery", "water-underwater", "scene-eras"],
@@ -385,6 +384,10 @@
     },
     "previewHero": {
       "gpuparticles": 1.5
+    },
+    "previewWindow": {
+      "signal-motion-fragments": [1, 8],
+      "dialogue-lipsync": [0, 10.7]
     }
   }
 }

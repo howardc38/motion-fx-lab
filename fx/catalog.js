@@ -16,7 +16,6 @@
     'design-dot-reveal': 'wipe',
     'character-motion': 'character-rig',
     'character-style': 'character-rig',
-    flat: 'character-rig',
     'fluid-viscous': 'fluid-overflow',
     'water-morph': 'clay',
     'stack-rapier': 'rigid',
@@ -62,23 +61,33 @@
     scan: 'A scan line moves over a list and reveals each item’s check state.',
     stamp: 'Combine a flash, shake and stamped label for a short impact beat.',
     clay: "Blend implicit 3D forms and split or merge their surfaces. Compare opaque ray-marched clay with a transparent reconstructed mesh.",
-    'cjk-solid': "Extruded lettering with lit faces and depth: the depth grows out of the flat face while a light band sweeps it. Bundled CJK outlines plus Latin capitals and digits.",
+    'cjk-solid': "Extruded lettering with lit faces and depth: the flat word whips round once as its extrusion punches out of the face and overshoots, then a light band sweeps the bevels. Bundled CJK outlines plus Latin capitals and digits.",
     glitch: "Displace slices and colour channels. Choose a text-only treatment or a full-frame image effect.",
     toon: 'One 3D explorer robot jumps, turns to camera and lands; then the key light circles it so the shading sweeps across its body. Choose toon bands with an outline, a two-colour halftone print or a two-ink dither.',
     'studio-video-dots': 'Sample an image into a screen-space dot field. Compare footage, rhythmic palettes or letter shapes; changing the source does not add a new family.',
     datachart: 'Progressive stroke reveals, shown as a self-drawing data chart.',
     gpuparticles: 'Particles flow into sampled lettering. Compare the dense curl-field version with the lighter point animation.',
     'optical-morph': 'Interpolate shape contours. Compare arbitrary concave paths with a spring-driven polar morph.',
-    'character-rig': 'Bind image or vector parts to named joints and pose them over time. Compare cutout characters, motion presets, drawing styles and a flat SVG illustration rig.',
+    'character-rig': 'Bind transparent image parts to named joints and drive them with motion presets: a four-legged cat and a two-legged robot share one renderer. Compare motion presets and eight drawing styles applied to the character itself.',
+  };
+  // Gallery kind (the Kind filter and the README grouping) where it differs from the registering pack's
+  // broad 'shader': flights, particles and point clouds read as 3D space; light and image treatments
+  // are kept apart from materials and surfaces; a field of contours is a background.
+  const kinds = {
+    domainrep: 'space', gpuparticles: 'space', particles: 'space', 'stack-gpu': 'space', 'studio-lowpoly': 'space',
+    'studio-skin-cloud': 'space', 'studio-particle-lens': 'space',
+    rays: 'light', liquid: 'light', 'stack-pixi': 'light', 'optical-moire': 'light', 'optical-caustic': 'light',
+    'studio-video-dots': 'light', 'studio-dot-rhythm': 'light', 'studio-depth-dots': 'light', 'signal-audio-relief': 'light', 'organic-contours': 'backdrop',
   };
   const byId = new Map();
   for (const demo of FX.DEMOS) {
     if (byId.has(demo.id)) throw new Error('Duplicate demo ID: ' + demo.id);
-    const entry = { ...demo, role: collections.has(demo.id) ? 'showcase' : variants[demo.id] ? 'variant' : 'technique', familyId: variants[demo.id] || demo.id };
+    const entry = { ...demo, kind: kinds[demo.id] || demo.kind, role: collections.has(demo.id) ? 'showcase' : variants[demo.id] ? 'variant' : 'technique', familyId: variants[demo.id] || demo.id };
     if (['studio-video-dots', 'studio-dot-rhythm', 'studio-dot-impact', 'studio-echo', 'studio-time-remap'].includes(demo.id)) entry.stacks = ['canvas'];
     if (['studio-skin-cloud', 'studio-particle-lens'].includes(demo.id)) entry.stacks = ['canvas', 'three', 'glsl'];
     byId.set(entry.id, entry);
   }
+  for (const id of Object.keys(kinds)) if (!byId.has(id)) throw new Error('Unknown kind override: ' + id);
   for (const [id, parent] of Object.entries(variants)) {
     if (!byId.has(id) || !byId.has(parent)) throw new Error('Unknown catalogue relation: ' + id + ' → ' + parent);
   }

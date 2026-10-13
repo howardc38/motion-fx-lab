@@ -301,7 +301,8 @@ export async function create(spec, data, {width = 1280, height = 720, mode = 'fi
   function effectsAt(t) {
     const on = new Set(['plush-fur']);
     if (activeTurn(spec, t)) on.add('dialogue-lipsync');
-    if (t >= K.slam && t < b.hook[1] + .6) on.add('rays').add('stamp');
+    // The burst and the LAUNCH slam are on screen until the cut to the bear's close-up.
+    if (t >= K.slam && t < K.jump - .05) on.add('rays').add('stamp');
     for (const beat of BEATS) if (t >= K.trailer + beat.from && t < K.trailer + beat.to) on.add(beat.effect);
     if (t >= K.cards && t < L.count.end + .55) on.add('cardflip');
     if (t >= K.loading - .05 && t < K.reveal) on.add('ring');

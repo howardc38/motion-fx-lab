@@ -1,25 +1,25 @@
-# 可重用 2D 角色
+# Reusable 2D characters
 
-**圖像決定角色長相；JSON 決定分件怎樣接；動作模組決定怎樣動；畫法模組處理角色每一幀；scene 決定它在影片哪裏出現。**
+**Images decide how a character looks; JSON decides how its parts join; motion modules decide how it moves; style modules redraw the character every frame; a scene decides where it appears in a video.**
 
-模組使用 Canvas 2D，點陣取樣沿用 `fx/studio/point-field.js`。角色外觀由透明圖像素材提供，動作由 rig 配置及程式決定。
+The modules use Canvas 2D; dot sampling reuses `fx/studio/point-field.js`. A character's appearance comes from transparent image parts; its motion comes from the rig configuration and code.
 
-- [可換角色／動作／畫法的工作台](../../examples/character-workbench.html)
+- [Workbench: switch character, motion and drawing style](../../examples/character-workbench.html)
 
-## 輸入與輸出
+## Inputs and outputs
 
-| 層 | 輸入 | 輸出／作用 |
+| Layer | Input | Output / role |
 |---|---|---|
-| `rig.js` | PNG／atlas + version 1 rig JSON | 組合角色；rigid 旋轉、圖層及 mesh 綁定 |
-| `motion.js` | rig、動作配置、絕對秒數 | 關節 pose、角色變換、位移與接觸資訊 |
-| `styles.js` | 透明角色 Canvas + style | 透明的風格化角色 Canvas |
-| `scene.js` | 角色來源 + actor 時間／位置／動作／畫法 | 可合成的場景 Canvas |
-| Menu | 能力描述、code 入口及示例 | 讓 LLM 選能力、看動態並核實接口 |
+| `rig.js` | PNG / atlas + version 1 rig JSON | Assembles the character: rigid rotation, layers and mesh binding |
+| `motion.js` | Rig, motion configuration, absolute seconds | Joint pose, character transform, travel and contact information |
+| `styles.js` | Transparent character canvas + style | Transparent, stylised character canvas |
+| `scene.js` | Character sources + actor time / position / motion / style | A scene canvas ready to composite |
+| Menu | Capability description, code entry points and examples | Lets an LLM choose a capability, see it move and check the interface |
 
 
-## 最小用法
+## Minimal use
 
-在 repo 根目錄開 localhost HTTP server，再載入 ES module：
+Start a localhost HTTP server at the repository root, then load the ES module:
 
 ```js
 import { createCharacterSource, CharacterScene } from './fx/character/index.js';
@@ -28,7 +28,7 @@ const cat = await createCharacterSource('./assets/characters/apricot-cat/rig.jso
 const robot = await createCharacterSource('./assets/characters/explorer-robot/rig.json');
 const scene = new CharacterScene({ cat, robot }, { width: 1280, height: 720 });
 
-// 每次用絕對時間直接取影格，可任意 seek，不必先跑前面的幀。
+// Every frame is taken directly at an absolute time, so you can seek anywhere without playing earlier frames.
 const frame = scene.frame(1.2, {
   background: '#f1eee7',
   actors: [
@@ -39,45 +39,47 @@ const frame = scene.frame(1.2, {
 document.body.append(frame);
 ```
 
-角色 source、styles 和 scene 都重用自己的 Canvas；下一次 `frame()` 會更新它。要保留某一幀，當下複製到另一個 Canvas 或輸出 PNG。
+Character sources, styles and scenes each reuse their own canvas; the next `frame()` call overwrites it. To keep a frame, copy it to another canvas or export a PNG at once.
 
-`actor.x/y` 是角色 rig 的原點位置，`scale` 同時作用於角色及其位移。`start/end` 控制出場區間；`offset/rate` 控制動作時間；`flip/rotation/opacity` 控制場景中的角色。`travel:false` 不套用動作位移，適合原地能力比較。`camera:[x,y]` 平移整個角色場景；背景畫面／地面另由影片 compositor 同步。角色 `flip` 也會翻轉場景位移方向。
+`actor.x/y` is the position of the character rig's origin; `scale` applies to the character and to its travel. `start/end` set when it is on screen; `offset/rate` set the motion clock; `flip/rotation/opacity` place the character in the scene. `travel:false` ignores the motion's travel, which suits side-by-side comparisons in place. `camera:[x,y]` pans the whole character scene; the background and floor are kept in step by the video's compositor. A character's `flip` also reverses the direction of its travel in the scene.
 
-## 換角色：更換素材與配置
+`actor.skeleton` overlays the joint chains (`true`, or a line width in rig units); with `parts:false` only the chains are drawn. `scene.frame(t, {clear:false, actors})` draws over what the canvas already holds, which is how the gallery tile fades the chains in over the drawn characters for a moment.
 
-準備需要的透明角色分件。對照 [四腳貓配置](../../assets/characters/apricot-cat/rig.json) 與 [兩腳機械人配置](../../assets/characters/explorer-robot/rig.json)：renderer 沒有寫死身體、頭、手或腳的數量，關節名亦由配置決定。
+## New character: replace the art and the configuration
 
-| `rig.json` 欄位 | 寫甚麼 |
+Prepare the transparent character parts you need. Compare the [four-legged cat configuration](../../assets/characters/apricot-cat/rig.json) with the [two-legged robot configuration](../../assets/characters/explorer-robot/rig.json): the renderer does not hard-code how many bodies, heads, arms or legs there are, and joint names come from the configuration.
+
+| `rig.json` field | What to write |
 |---|---|
 | `version` | `1` |
-| `canvas` | 正整數 `width/height`、`origin:[x,y]` |
-| `assets` | 任意 asset ID → 圖像路徑，相對 rig JSON |
-| `joints` | 任意關節 ID → 原點相對座標 `[x,y]`，Canvas +x 向右、+y 向下 |
-| `parts` 共用 | 穩定 `id`、`asset`、原圖像素 `rect:[x,y,w,h]`、`layer`；可加 opacity／Canvas filter |
-| rigid part | `from` 錨點、可選 `to` 方向關節、裁圖內 `pivot`、`scale`；`sourceAngle` 為裁圖本身的骨方向弧度 |
-| mesh part | `mesh.grid`、`bindings`；每 binding 寫 `from/to`、裁圖內 `sourceA/sourceB`、可選 `widthScale` |
-| mesh blend | 兩骨時用 `blend:{axis,start,end}`；多骨用每頂點 `weights`，按 grid 由上至下、由左至右排列 |
-| terminal pin | 可選 `mesh.pin`：joint、裁圖內 source、blend axis/start/end、scale；例如保持接地腳掌方向 |
-| `orientation` | 左右分件的 `side/sourceSide`，均是角色自身的 anatomical `left/right`；鏡像時兩值不同。validator 核對 binding／pin 的鏡像是否一致 |
-| `pairs` | 可選成對分件清單：`{id,left:partID,right:partID}`；左右分件應填此資料 |
-| `bones` | 可選 debug 顯示的關節對，不決定繪圖綁定 |
-| `legs` | 動作使用的 root/knee/foot、upper/lower、bend ±1、phase；可兩條、四條或其他數量 |
-| `motions` | 可用動作名 → 動作規格；每個角色只列合適且已配置的動作 |
+| `canvas` | Positive integer `width/height`, `origin:[x,y]` |
+| `assets` | Any asset ID → image path, relative to the rig JSON |
+| `joints` | Any joint ID → `[x,y]` relative to the origin; canvas +x is right, +y is down |
+| `parts` (all) | A stable `id`, `asset`, source pixel `rect:[x,y,w,h]`, `layer`; optional opacity / canvas filter |
+| rigid part | `from` anchor joint, optional `to` direction joint, `pivot` inside the crop, `scale`; `sourceAngle` is the bone direction of the crop itself, in radians |
+| mesh part | `mesh.grid`, `bindings`; each binding gives `from/to`, `sourceA/sourceB` inside the crop and an optional `widthScale` |
+| mesh blend | With two bones, `blend:{axis,start,end}`; with more, per-vertex `weights`, listed by grid from top to bottom and left to right |
+| terminal pin | Optional `mesh.pin`: joint, source point inside the crop, blend axis/start/end, scale; for example to keep a planted foot's orientation |
+| `orientation` | `side/sourceSide` for left and right parts, both the character's own anatomical `left/right`; they differ when the part is mirrored. The validator checks that binding and pin mirroring agree |
+| `pairs` | Optional list of paired parts: `{id,left:partID,right:partID}`; fill it in for left and right parts |
+| `bones` | Optional joint pairs drawn for debugging; they do not decide how parts are bound |
+| `legs` | root/knee/foot, upper/lower, bend ±1 and phase used by motions; two, four or any other number |
+| `motions` | Motion name → motion spec; list only the motions that suit and are configured for that character |
 
-crop、pivot、骨長與接位仍須按新素材配置。PNG 不會自帶關節；不能任意換一張圖便保證動作自然。比例不同要調配置，轉側／背面或露出被遮擋部分需要額外圖像。
+Crops, pivots, bone lengths and joint positions still have to be configured for new art. A PNG carries no joints; swapping in an arbitrary image does not guarantee natural motion. Different proportions need configuration changes; turning sideways or to the back, or revealing hidden parts, needs extra images.
 
-角色自身的左／右與畫面左／右分開，例如正面朝向觀眾時，角色左手在畫面右方。機械人使用一張右臂素材及一張左腿素材；另一側明確鏡像，`pairs` 及 `orientation` 驗證配置。負的 mesh `widthScale` 翻轉骨旁的素材；rigid 的單軸負 scale 翻轉手性，雙軸負 scale 是旋轉而不是左右互換。
+The character's own left and right are separate from screen left and right: facing the viewer, the character's left hand is on the right of the screen. The robot uses one right-arm image and one left-leg image; the other side is mirrored explicitly, and `pairs` and `orientation` validate the configuration. A negative mesh `widthScale` flips the art across its bone; a negative scale on one axis of a rigid part flips handedness, while negative scale on both axes is a rotation, not a left/right swap.
 
-驗證不能讀出 PNG 中哪個是拇指，也不能判斷任何新角色的美術是否合理。新素材應用完整角色參考、靜止姿勢、關鍵動作連續畫面及實際播放核對；新角色不能只填標籤及跑數值測試便宣稱已檢查。
+Validation cannot tell which part of a PNG is the thumb, nor judge whether a new character's art makes sense. Check new art against a complete character reference, a still pose, continuous frames of the key motions and real playback; a new character is not checked just because its labels are filled in and the numeric tests pass.
 
-## 換動作：沿用同一 rig
+## New motion: same rig
 
-| type | 配置 | 行為 |
+| type | Configuration | Behaviour |
 |---|---|---|
-| `keyframes` | duration、loop、joints／transform tracks | 任意關節或整體變換；`[{t,value}]`，value 是點或 scalar，time 嚴格遞增 |
-| `gait` | legs、speed、cycle、stance、lift、bob | 支撐腳在世界座標固定，抬腳前移；負 speed 同時翻轉面向；回報 reachability |
-| `jump` | legs、prep、flight、land、height、distance、crouch、tuck | 準備、拋物線離地、收腿與落地；可 loop |
-| `wave` | arm 骨鏈、target、raise／lower、duration、amplitude／frequency | 抬手、往復擺動、放手；可 loop |
+| `keyframes` | duration, loop, joints / transform tracks | Any joint or the whole-body transform; `[{t,value}]`, where value is a point or a scalar and times strictly increase |
+| `gait` | legs, speed, cycle, stance, lift, bob | Planted feet stay fixed in world space while lifted feet move forward; a negative speed also flips the facing; reports reachability |
+| `jump` | legs, prep, flight, land, height, distance, crouch, tuck | Wind-up, parabolic flight with tucked legs, and landing; can loop |
+| `wave` | arm chain, target, raise / lower, duration, amplitude / frequency | Raise the hand, swing it back and forth, lower it; can loop |
 
 ```js
 import { sampleMotion } from './fx/character/index.js';
@@ -86,33 +88,32 @@ const raw = cat.rig.frame(pose);
 const styled = cat.styles.frame(raw, 'ink');
 ```
 
-pose 中的 joints 是角色局部座標，transform 是局部的 bob／方向等；`meta.worldX` 是場景位移，由 `CharacterScene` 套用。`meta.contacts` 記 stance/swing 與世界腳位；`meta.unreachable` 不能忽略，應調步幅、骨長或目標。
+The pose's joints are in the character's local coordinates and its transform holds local bob, facing and so on; `meta.worldX` is travel in the scene, applied by `CharacterScene`. `meta.contacts` records stance/swing and world foot positions; do not ignore `meta.unreachable`: adjust the stride, bone lengths or target instead.
 
-這些是有接觸約束的 2D 運動方法，不是碰撞、重力、肌肉或全身力學模擬器。打鬥、轉身、對話或特殊表演需要相應的 keyframes／素材；沒有宣稱任意動作已現成可用。
+These are 2D motion methods with contact constraints, not a simulator of collisions, gravity, muscles or whole-body mechanics. Fights, turns, dialogue or special performances need their own keyframes and art; nothing here claims that any motion is ready-made.
 
-## 換風格：角色本身改畫法
+## New style: redraw the character itself
 
-目前提供 `original / poster / ink / pixel / dots / ascii / etch / duotone` 八種 code 畫法。可用 style ID 或自訂 style 物件：
+There are eight code drawing styles: `original / poster / ink / pixel / dots / ascii / etch / duotone` (Original, Four-colour poster, Ink hatching, Pixel blocks, Halftone dots, ASCII, Cross-hatch etching and Duotone poster). Use a style ID or a custom style object:
 
 ```js
 const frame = cat.frame(1.2, {
   motion: 'run',
   style: { mode: 'poster', colors: ['#192932', '#975956', '#e3b783', '#fff0d5'] },
 });
-// 點陣密度與色彩亦可配置。
+// Dot density and colour can be configured too.
 cat.frame(1.2, { motion: 'run', style: { mode: 'dots', step: 4, ink: '#294f48' } });
 ```
 
-這些處理顏色、明暗、像素／點／字形及排線，不會自動重畫造型。要角色變成另一種筆觸、比例或美術外形，可以準備一致的新分件版本並載入相應 rig；也可以在透明來源後接其他 Menu 處理。風格預設不代表所有藝術家的畫風。
+These change colour, shading, pixels / dots / glyphs and hatching; they do not redraw the character's shapes. To give a character a different stroke, proportions or art style, prepare a consistent new set of parts and load the matching rig, or pass the transparent source on to other Menu treatments. The style presets do not stand for every artist's style.
 
-## 不同影片怎樣共用
+## Sharing across videos
 
-角色與動作配置不含固定 storyboard。單角色廣告、雙角色互動、風格切換或其他影片，都可以重用 source，再以 actor 時間、鏡頭位置及 compositor 編排。`studies.js` 是示範內容，不是影片必須遵守的結構。
+Characters and motion configurations carry no fixed storyboard. A single-character advert, a two-character exchange, a style switch or any other video can reuse a source and arrange it with actor timing, camera position and the compositor. `studies.js` is demonstration content, not a structure videos must follow. Its `rig` mode is the gallery tile: the cat runs and the robot jumps, then waves, while the joint skeleton fades in briefly mid-loop.
 
-## 檢查與重建
+## Checks and rebuilds
 
 ```sh
 node --test tests/character-math.test.mjs
 npx playwright test tests/character.spec.cjs tests/organization.spec.cjs
 ```
-

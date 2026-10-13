@@ -13,7 +13,7 @@ and keeps its own terms.
 | PixiJS 8.22.0 (PixiJS film filter pipeline) | jsDelivr | MIT |
 | Rapier 0.21.0, `@dimforge/rapier3d-compat` (3D domino film effect) | jsDelivr | Apache-2.0 |
 | three.js r180 and `examples/jsm` helpers (film effects and asset tools) | jsDelivr | MIT |
-| Archivo, Instrument Serif, JetBrains Mono, Noto Sans TC, Roboto Condensed, Space Grotesk, IBM Plex Mono | Google Fonts | SIL Open Font License 1.1 |
+| Archivo, Instrument Serif, JetBrains Mono, Noto Sans TC | Google Fonts | SIL Open Font License 1.1 |
 | Playwright (development dependency) | npm | Apache-2.0 |
 
 The WebGPU film effect's TSL implementation follows the three.js r180 attractor
@@ -86,7 +86,7 @@ images generated with an AI image model for the configurable character effect, a
 
 ## Generated character speech and mouth analysis
 
-The plush bear (`fx/plush/`), Pip, their gestures, the scripts and the sets are authored in this repository. No model, voice recording, video or dialogue from the Instagram reference is copied. Included English speech was generated offline with [Kokoro-82M v1.0](https://huggingface.co/hexgrad/Kokoro-82M) (Apache-2.0 model), using `af_jessica` (the bear) and `bm_george` (Pip), through [kokoro-onnx 0.5.0](https://github.com/thewh1teagle/kokoro-onnx) (MIT) and [ONNX Runtime 1.31.0](https://github.com/microsoft/onnxruntime) (MIT); `assets/dialogue/manifest.json` records the voices, speeds and generator. Its optional phonemizer uses eSpeak NG (GPL-3.0); model weights and executables are not distributed in this repository. [Rhubarb Lip Sync 1.14.0](https://github.com/DanielSWolf/rhubarb-lip-sync) (MIT) produces the bundled mouth-cue JSON. SoundFile 0.13.1 (BSD-3-Clause) and NumPy 2.5.4 (BSD-3-Clause) are offline build dependencies. Browser playback and MP4 export need only the checked-in WAV/JSON assets and existing rendering tools.
+The plush bear (`fx/plush/`), Pip, their gestures, the scripts and the sets are authored in this repository; no character model, voice recording, video or dialogue is copied from elsewhere. Included English speech was generated offline with [Kokoro-82M v1.0](https://huggingface.co/hexgrad/Kokoro-82M) (Apache-2.0 model), using `af_jessica` (the bear) and `bm_george` (Pip), through [kokoro-onnx 0.5.0](https://github.com/thewh1teagle/kokoro-onnx) (MIT) and [ONNX Runtime 1.31.0](https://github.com/microsoft/onnxruntime) (MIT); `assets/dialogue/manifest.json` records the voices, speeds and generator. Its optional phonemizer uses eSpeak NG (GPL-3.0); model weights and executables are not distributed in this repository. [Rhubarb Lip Sync 1.14.0](https://github.com/DanielSWolf/rhubarb-lip-sync) (MIT) produces the bundled mouth-cue JSON. SoundFile 0.13.1 (BSD-3-Clause) and NumPy 2.5.4 (BSD-3-Clause) are offline build dependencies. Browser playback and MP4 export need only the checked-in WAV/JSON assets and existing rendering tools.
 
 ## Plush fur textures (Poly Haven, CC0)
 

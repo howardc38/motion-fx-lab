@@ -115,12 +115,13 @@ export class CutoutRig {
       return { ...p, image };
     }).sort((a, b) => (a.layer || 0) - (b.layer || 0));
   }
-  draw(ctx, pose = restPose(this.definition), { skeleton = false } = {}) {
+  // parts:false draws only the skeleton (with skeleton:true), for an overlay over an already drawn character.
+  draw(ctx, pose = restPose(this.definition), { skeleton = false, parts = true } = {}) {
     const joints = { ...this.definition.joints, ...pose.joints }, tr = pose.transform || {}, origin = this.definition.canvas.origin;
     for (const [id, p] of Object.entries(joints)) point(p, `pose joint ${id}`);
     for (const [k, v] of Object.entries(tr)) number(v, `transform ${k}`);
     ctx.save(); ctx.translate(origin[0] + (tr.x || 0), origin[1] + (tr.y || 0)); ctx.rotate(tr.rotation || 0); ctx.scale(tr.scaleX ?? 1, tr.scaleY ?? 1);
-    for (const p of this.parts) {
+    for (const p of parts === false ? [] : this.parts) {
       ctx.save(); ctx.globalAlpha *= p.opacity ?? 1; if (p.filter) ctx.filter = p.filter;
       if (p.mesh) {
         const [nx, ny] = p.mesh.grid || [8, 12], vertices = [];
@@ -133,9 +134,12 @@ export class CutoutRig {
       ctx.restore();
     }
     if (skeleton) {
-      ctx.strokeStyle = '#17aa91'; ctx.lineWidth = 2;
+      ctx.strokeStyle = '#17aa91'; ctx.lineWidth = typeof skeleton === 'number' ? skeleton : 2;
       for (const b of this.definition.bones || []) { ctx.beginPath(); ctx.moveTo(...joints[b[0]]); ctx.lineTo(...joints[b[1]]); ctx.stroke(); }
-      for (const p of Object.values(joints)) { ctx.fillStyle = '#ff765f'; ctx.beginPath(); ctx.arc(...p, 3.5, 0, Math.PI * 2); ctx.fill(); }
+      const r = typeof skeleton === 'number' ? skeleton * 1.75 : 3.5;
+      // Joints that no bone uses (aim targets, helpers) are left out, so only the chains show.
+      const used = new Set((this.definition.bones || []).flat());
+      for (const [id, p] of Object.entries(joints)) { if (used.size && !used.has(id)) continue; ctx.fillStyle = '#ff765f'; ctx.beginPath(); ctx.arc(...p, r, 0, Math.PI * 2); ctx.fill(); }
     }
     ctx.restore(); return this;
   }

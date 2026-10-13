@@ -316,26 +316,30 @@ function renderCards(manifest, layer, root = ROOT, tier = 'featured') {
   const c = context(manifest, root);
   return manifest.films.filter(f => f.layer === layer && f.tier === tier && hasCard(f)).map(f => {
     const meta = `${num(f.duration)} s · ${f.format}`, title = esc(f.card.headline);
-    const loop = f.media.preview ? `<video class="film-loop" muted loop playsinline preload="none" poster="${esc(f.media.poster)}" src="${esc(f.media.preview)}" aria-hidden="true"></video>`
+    const loop = f.media.preview ? `<video class="film-loop" muted loop playsinline preload="none" data-poster="${esc(f.media.poster)}" src="${esc(f.media.preview)}" aria-hidden="true"></video>`
       : `<img src="${esc(f.media.poster)}" alt="${title} poster" loading="lazy">`;
     const guide = f.card.guide ? `<a href="${esc(c.source(f.card.guide))}">Edit guide</a>` : `<a href="${esc(c.source(f.page))}">View source</a>`;
-    const explore = f.effects.filter((e, i, all) => all.findIndex(x => x.id === e.id) === i).map(e => `<a href="#demo-${e.id}">${esc(c.label(e))}</a>`).join(' · ');
+    // Explore links carry the title of the card they open, once per card (a variant opens its family's card).
+    const cardOf = e => c.catalog.byId.get(e.id).card;
+    const explore = f.effects.filter((e, i, all) => all.findIndex(x => cardOf(x) === cardOf(e)) === i).map(e => `<a href="#demo-${e.id}">${esc(cardOf(e))}</a>`).join(' · ');
     const versions = manifest.films.filter(v => v.versionOf === f.id).map(v => `<a href="${esc(v.media.mp4)}">${esc(versionLabel(v))}</a>`).join(' · ');
     return `      <figure id="film-${f.id}" data-film-id="${f.id}"${f.tier === 'featured' ? '' : ' class="compact"'}>
-        <div class="film-preview">${loop}<button type="button" aria-label="Play ${title} video">▶ Play with sound</button><video hidden controls playsinline preload="none" poster="${esc(f.media.poster)}" src="${esc(f.media.mp4)}" aria-label="${title}, ${meta}, with sound"></video></div>
+        <div class="film-preview">${loop}<button type="button" aria-label="Play ${title} video">▶ Play with sound</button><video hidden controls playsinline preload="none" data-poster="${esc(f.media.poster)}" src="${esc(f.media.mp4)}" aria-label="${title}, ${meta}, with sound"></video></div>
         <figcaption><b>${title}</b><span class="film-meta">${meta}</span><p>${esc(f.card.description)}</p>${f.card.useFor ? `<p><strong>Use for:</strong> ${esc(f.card.useFor)}</p>` : ''}${f.card.relation ? `<p class="film-relation">${esc(f.card.relation)}</p>` : ''}${versions ? `<p class="film-versions">Also rendered: ${versions}</p>` : ''}<p class="film-links"><a href="${esc(f.page)}">Scrub timeline</a> · ${guide}</p><p class="film-effects">Explore: ${explore}</p></figcaption>
       </figure>`;
   }).join('\n');
 }
+const FOLD_EFFECTS = 12;
 function renderList(manifest, root = ROOT) {
   const c = context(manifest, root);
   return c.grouped.filter(([, list]) => list.length).map(([layer, list]) => {
     const rows = list.map(f => {
       const ownElement = f.tier === 'hero' || hasCard(f);
       const effects = f.effects.map(e => `<a href="#demo-${e.id}">${esc(c.label(e))}</a>${e.at ? ` <a href="${esc(f.media.mp4)}#t=${num(e.at[0])},${num(e.at[1])}">${c.span(f, e)}</a>` : ''}`).join(' · ');
+      const listed = f.effects.length > FOLD_EFFECTS ? `<details class="film-effects"><summary>Effects · ${f.effects.length} uses</summary><p>${effects}</p></details>` : `<p class="film-effects">Effects: ${effects}</p>`;
       const related = (f.related || []).map(e => `<a href="#demo-${e.id}">${esc(c.label(e))}</a>`).join(' · ');
       const watch = [`<a href="${esc(f.media.mp4)}">Play MP4</a>`, `<a href="${esc(f.page)}">Scrub timeline</a>`, ...(f.media.gif ? [`<a href="${esc(f.media.gif)}">GIF</a>`] : [])].join(' · ');
-      return `<tr${ownElement ? '' : ` id="film-${f.id}"`} data-film-index-id="${f.id}" data-film-layer="${f.layer}" data-film-tier="${f.tier}"><td>${esc(c.placement(f, true))}</td><td><b>${esc(f.title)}</b><span class="film-meta">${num(f.duration)} s · ${f.format}</span><p>${esc(f.summary)}</p><p class="film-effects">Effects: ${effects}${related ? `</p><p class="film-effects">Related, not in this film: ${related}` : ''}</p></td><td>${watch}</td></tr>`;
+      return `<tr${ownElement ? '' : ` id="film-${f.id}"`} data-film-index-id="${f.id}" data-film-layer="${f.layer}" data-film-tier="${f.tier}"><td>${esc(c.placement(f, true))}</td><td><b>${esc(f.title)}</b><span class="film-meta">${num(f.duration)} s · ${f.format}</span><p>${esc(f.summary)}</p>${listed}${related ? `<p class="film-effects">Related, not in this film: ${related}</p>` : ''}</td><td>${watch}</td></tr>`;
     }).join('\n');
     return `<section class="film-index-group" data-film-kind="${layer.id}"><h3>${esc(layer.title)} · ${list.length}</h3><p class="note">${esc(layer.description)}</p>\n<div class="scroll"><table><thead><tr><th>Where</th><th>Film and purpose</th><th>Watch / edit</th></tr></thead><tbody>\n${rows}\n</tbody></table></div></section>`;
   }).join('\n');

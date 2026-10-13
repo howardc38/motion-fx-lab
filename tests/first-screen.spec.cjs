@@ -51,11 +51,15 @@ test('card loops play only on screen and never with reduced motion', async ({ br
       expect(await loops.count()).toBeGreaterThan(0);
       for (const v of await loops.all()) {
         expect(await v.getAttribute('preload')).toBe('none');
-        expect(await v.getAttribute('poster')).toMatch(/^media\/[a-z0-9-]+\.jpg/);
+        // Posters are lazy: data-poster until the card is near the screen, then poster.
+        expect((await v.getAttribute('poster')) ?? (await v.getAttribute('data-poster'))).toMatch(/^media\/[a-z0-9-]+\.jpg/);
         expect(await v.getAttribute('src')).toMatch(/^media\/[a-z0-9-]+\.preview\.mp4$/);
         expect(await v.evaluate(el => el.muted && el.loop && el.playsInline && !el.autoplay)).toBe(true);
       }
-      const first = page.locator('#film-reel video.film-loop'), last = page.locator('#film-scene-eras video.film-loop');
+      const first = page.locator('#film-reel video.film-loop'), last = page.locator('#film-fight-effects video.film-loop');
+      // A card far below the first screen has not fetched its poster yet; scrolling to it sets the poster.
+      expect(await last.getAttribute('poster')).toBeNull();
+      expect(await last.getAttribute('data-poster')).toMatch(/^media\/fight-effects\.jpg/);
       await first.scrollIntoViewIfNeeded();
       await page.waitForTimeout(1500);
       const playing = el => el.evaluate(v => !v.paused);
@@ -66,6 +70,7 @@ test('card loops play only on screen and never with reduced motion', async ({ br
         await expect.poll(() => playing(first)).toBe(true);
         expect(await playing(last)).toBe(false);
         await last.scrollIntoViewIfNeeded();
+        await expect.poll(() => last.getAttribute('poster')).toMatch(/^media\/fight-effects\.jpg/);
         await expect.poll(() => playing(last)).toBe(true);
         await expect.poll(() => playing(first)).toBe(false);
       }

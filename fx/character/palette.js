@@ -1,12 +1,12 @@
 export const STYLE_PRESETS = Object.freeze([
-  { id: 'original', name: '原畫', mode: 'original', background: '#f1eee7' },
-  { id: 'poster', name: '四色版畫', mode: 'poster', colors: ['#223749','#bc5946','#daa86a','#f2ddaf'], background: '#eee0c4' },
-  { id: 'ink', name: '墨線排線', mode: 'ink', colors: ['#1e302e','#3b4a40','#7d8878','#ede8d5'], background: '#ede8d5' },
-  { id: 'pixel', name: '像素方塊', mode: 'pixel', step: 5, colors: ['#223b56','#526f83','#d6a566','#efddae'], background: '#e3e4d9' },
-  { id: 'dots', name: '明暗點陣', mode: 'dots', step: 5, ink: '#263651', background: '#f4ecd6' },
-  { id: 'ascii', name: '文字畫法', mode: 'ascii', step: 7, ink: '#224538', background: '#ebefd9' },
-  { id: 'etch', name: '交叉刻線', mode: 'etch', colors: ['#303336','#6e6960','#b2a38d','#e4d9c6'], background: '#e4d9c6' },
-  { id: 'duotone', name: '雙色版畫', mode: 'poster', colors: ['#263b51','#263b51','#e78367','#f2c887'], background: '#ead6bc' },
+  { id: 'original', name: 'Original', mode: 'original', background: '#f1eee7' },
+  { id: 'poster', name: 'Four-colour poster', mode: 'poster', colors: ['#223749','#bc5946','#daa86a','#f2ddaf'], background: '#eee0c4' },
+  { id: 'ink', name: 'Ink hatching', mode: 'ink', colors: ['#1e302e','#3b4a40','#7d8878','#ede8d5'], background: '#ede8d5' },
+  { id: 'pixel', name: 'Pixel blocks', mode: 'pixel', step: 5, colors: ['#223b56','#526f83','#d6a566','#efddae'], background: '#e3e4d9' },
+  { id: 'dots', name: 'Halftone dots', mode: 'dots', step: 5, ink: '#263651', background: '#f4ecd6' },
+  { id: 'ascii', name: 'ASCII', mode: 'ascii', step: 7, ink: '#224538', background: '#ebefd9' },
+  { id: 'etch', name: 'Cross-hatch etching', mode: 'etch', colors: ['#303336','#6e6960','#b2a38d','#e4d9c6'], background: '#e4d9c6' },
+  { id: 'duotone', name: 'Duotone poster', mode: 'poster', colors: ['#263b51','#263b51','#e78367','#f2c887'], background: '#ead6bc' },
 ]);
 export function resolveStyle(input = 'original') {
   const s = typeof input === 'string' ? STYLE_PRESETS.find(s => s.id === input) : input;

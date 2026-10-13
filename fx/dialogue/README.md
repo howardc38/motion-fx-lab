@@ -1,7 +1,8 @@
 # Speech and character performance
 
 A plush bear (from [fx/plush/](../plush/README.md)) and Pip, a studio robot with a screen face,
-perform two voiced films. One recording drives nine analysed mouth shapes; captions highlight each
+perform two voiced films. One generated voice track (offline Kokoro text-to-speech) drives nine analysed
+mouth shapes; captions highlight each
 word as it is spoken. Models, lighting, performance, cameras and the film-within-the-film are
 editable source, not video textures.
 
@@ -41,7 +42,7 @@ document.body.append(film.canvas);
 ```
 
 Use the three.js r180 import map from either example page. Mouth cues come from analysis of each
-actual recording, not from volume alone. Expressions, gestures and camera direction are authored
+generated voice track itself, not from volume alone. Expressions, gestures and camera direction are authored
 against the analysed words and beats, so a rebuilt voice moves them with the speech; the code does
 not infer emotion from arbitrary audio.
 
