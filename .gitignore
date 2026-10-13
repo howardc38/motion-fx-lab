@@ -1,4 +1,4 @@
-node_modules/
+node_modules
 media/*_hq.mp4
 media/.deliver-*
 video/stills/
@@ -19,3 +19,5 @@ __pycache__/
 .render/
 # Browser-automation session logs written by local tools.
 .playwright-cli/
+# Local agent worktrees, evidence and locks (never published).
+/.claude/

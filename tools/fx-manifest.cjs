@@ -119,7 +119,8 @@ function registry(manifest = load(), root = ROOT) {
   return {
     owner,
     demos: [...catalog.byId.values()].map(d => ({ id: d.id, period: d.period, hero: d.hero, role: d.role, familyId: d.familyId })),
-    families: catalog.families.map(f => ({ id: f.id, entries: f.entries.map(e => e.id) })),
+    // Motion basics are gallery cards too; they share the one order list with the effect families.
+    families: [...catalog.families, ...(catalog.basics || [])].map(f => ({ id: f.id, entries: f.entries.map(e => e.id) })),
     showcases: catalog.showcases.map(f => f.id),
     stats: { ...catalog.stats },
   };
@@ -228,7 +229,7 @@ if (require.main === module) {
     const manifest = load(), errors = validate(manifest);
     if (errors.length) throw new Error('fx/manifest.json does not match the code:\n- ' + errors.join('\n- '));
     const changed = sync(command === '--check', ROOT, manifest), { stats } = registry(manifest);
-    console.log(`fx manifest OK: ${manifest.families.length} code families register ${stats.demos} demos in ${stats.techniques} gallery families and ${stats.showcases} collections` +
+    console.log(`fx manifest OK: ${manifest.families.length} code families register ${stats.demos} demos in ${stats.techniques} effect families, ${stats.basics ?? 0} motion basics and ${stats.showcases} collections` +
       (command === '--write' ? `; ${changed.length ? 'updated ' + changed.join(', ') : 'nothing to update'}` : ''));
   } catch (error) { console.error(error.message); process.exitCode = 1; }
 }

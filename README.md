@@ -59,34 +59,43 @@ Three effect families cover **3D spatial type, source-size soft shadows and ligh
 ## Published films and previews
 
 <!-- films:start -->
-24 published films: 1 intro, 4 use cases, 6 demo films, 2 comparisons and 11 effect films. Effect films also play inside their effect cards.
+33 published films: 1 intro, 15 use cases, 6 demo films, 2 comparisons and 9 effect films. Effect films also play inside their effect cards.
 
 | Layer | Film | Authored length | Format | Preview | Source |
 |---|---|---:|---|---|---|
 | Intro | [Intro](media/intro.mp4?v=dialogue-73) | 55.2 s | 16:9 | [GIF](media/intro.gif?v=dialogue-73) · [poster](media/intro.jpg?v=dialogue-73) | [HTML](video/intro.html) |
-| Use case | [Social clips](media/reel.mp4) | 12 s | 9:16 | [GIF](media/reel.gif) · [poster](media/reel.jpg) | [HTML](examples/reel.html) |
-| Use case | [Product demos](media/product.mp4) | 7.2 s | 16:9 | [GIF](media/product.gif) · [poster](media/product.jpg) | [HTML](examples/product.html) |
-| Use case | [Infographics](media/infographic.mp4) | 14.4 s | 16:9 | [GIF](media/infographic.gif) · [poster](media/infographic.jpg) | [HTML](examples/infographic.html) |
-| Use case | [Animated backgrounds](media/broll.mp4) | 12 s | 16:9 | [GIF](media/broll.gif) · [poster](media/broll.jpg) | [HTML](examples/broll.html) |
+| Use case | [This weekend only](media/reel.mp4) | 12 s | 9:16 | [GIF](media/reel.gif) · [poster](media/reel.jpg) | [HTML](examples/reel.html) |
+| Use case | [This weekend only (bakery)](media/reel-bakery.mp4) | 12 s | 9:16 | [poster](media/reel-bakery.jpg) | [HTML](examples/reel-bakery.html) |
+| Use case | [This weekend only (yoga studio)](media/reel-yoga.mp4) | 12 s | 9:16 | [poster](media/reel-yoga.jpg) | [HTML](examples/reel-yoga.html) |
+| Use case | [Feature launch in 15 seconds](media/product.mp4) | 15 s | 16:9 | [GIF](media/product.gif) · [poster](media/product.jpg) | [HTML](examples/product.html) |
+| Use case | [Feature launch in 15 seconds (square)](media/product-square.mp4) | 15 s | 1:1 | [poster](media/product-square.jpg) | [HTML](examples/product-square.html) |
+| Use case | [Year in numbers](media/infographic.mp4) | 14.4 s | 16:9 | [GIF](media/infographic.gif) · [poster](media/infographic.jpg) | [HTML](examples/infographic.html) |
+| Use case | [Year in numbers (vertical)](media/infographic-vertical.mp4) | 14.4 s | 9:16 | [poster](media/infographic-vertical.jpg) | [HTML](examples/infographic-vertical.html) |
+| Use case | [Background loops in place](media/broll.mp4) | 12 s | 16:9 | [GIF](media/broll.gif) · [poster](media/broll.jpg) | [HTML](examples/broll.html) |
+| Use case | [Titles & logo stings](media/titles.mp4) | 18 s | 16:9 | [poster](media/titles.jpg) | [HTML](examples/titles.html) |
+| Use case | [Titles & logo stings (vertical)](media/titles-vertical.mp4) | 18 s | 9:16 | [poster](media/titles-vertical.jpg) | [HTML](examples/titles-vertical.html) |
+| Use case | [Event countdown](media/countdown.mp4) | 15 s | 16:9 | [poster](media/countdown.jpg) | [HTML](examples/countdown.html) |
+| Use case | [Event countdown (vertical)](media/countdown-vertical.mp4) | 15 s | 9:16 | [poster](media/countdown-vertical.jpg) | [HTML](examples/countdown-vertical.html) |
+| Use case | [Product spotlight](media/spotlight.mp4) | 10 s | 4:5 | [poster](media/spotlight.jpg) | [HTML](examples/spotlight.html) |
+| Use case | [Product spotlight (vertical)](media/spotlight-vertical.mp4) | 10 s | 9:16 | [poster](media/spotlight-vertical.jpg) | [HTML](examples/spotlight-vertical.html) |
+| Use case | [Product spotlight (square)](media/spotlight-square.mp4) | 10 s | 1:1 | [poster](media/spotlight-square.jpg) | [HTML](examples/spotlight-square.html) |
 | Demo film | [One flight. Twenty worlds.](media/style-journey.mp4) | 40.8 s | 16:9 | [GIF](media/style-journey.gif) · [poster](media/style-journey.jpg) | [HTML](examples/style-journey.html) |
-| Demo film | [The Final Final](media/character-dialogue.mp4) | 22.5 s | 16:9 | [GIF](media/character-dialogue.gif) · [poster](media/character-dialogue.jpg) | [HTML](examples/character-dialogue.html) |
-| Demo film | [One drop. Many forms.](media/water-forms.mp4) | 21.6 s | 16:9 | [GIF](media/water-forms.gif) · [poster](media/water-forms.jpg) | [HTML](examples/water-forms.html) |
-| Demo film | [One dot. Many roles.](media/dot-story.mp4) | 19.2 s | 16:9 | [GIF](media/dot-story.gif) · [poster](media/dot-story.jpg) | [HTML](examples/dot-story.html) |
-| Demo film · to become a use case: Titles & logo stings | [One word. Many forms.](media/word-forms.mp4) | 21.6 s | 16:9 | [GIF](media/word-forms.gif) · [poster](media/word-forms.jpg) | [HTML](examples/word-forms.html) |
-| Demo film | [COUNTERFORM](media/dot-battle.mp4) | 19.2 s | 16:9 | [GIF](media/dot-battle.gif) · [poster](media/dot-battle.jpg) | [HTML](examples/dot-battle.html) |
+| Demo film | [The Final Final](media/character-dialogue.mp4) | 23.8 s | 16:9 | [GIF](media/character-dialogue.gif) · [poster](media/character-dialogue.jpg) | [HTML](examples/character-dialogue.html) |
+| Demo film | [Clear](media/water-forms.mp4) | 15 s | 16:9 | [GIF](media/water-forms.gif) · [poster](media/water-forms.jpg) | [HTML](examples/water-forms.html) |
+| Demo film | [Clear (9:16)](media/water-forms-vertical.mp4) | 15 s | 9:16 | [poster](media/water-forms-vertical.jpg) | [HTML](examples/water-forms-vertical.html) |
+| Demo film | [One dot. Many roles.](media/dot-story.mp4) | 14.1 s | 16:9 | [GIF](media/dot-story.gif) · [poster](media/dot-story.jpg) | [HTML](examples/dot-story.html) |
+| Demo film | [COUNTERFORM](media/dot-battle.mp4) | 19.8 s | 16:9 | [GIF](media/dot-battle.gif) · [poster](media/dot-battle.jpg) | [HTML](examples/dot-battle.html) |
 | Comparison | [Same fight. Eight treatments.](media/fight-effects.mp4) | 38.4 s | 16:9 | [GIF](media/fight-effects.gif) · [poster](media/fight-effects.jpg) | [HTML](examples/fight-effects.html) |
 | Comparison | [One scene. Many eras.](media/scene-eras.mp4) | 24 s | 16:9 | [GIF](media/scene-eras.gif) · [poster](media/scene-eras.jpg) | [HTML](examples/scene-eras.html) |
 | Effect film | [Find the Form](media/fluid-smoke.mp4) | 9.6 s | 16:9 | [GIF](media/fluid-smoke.gif) · [poster](media/fluid-smoke.jpg) | [HTML](examples/fluid-smoke.html) |
 | Effect film | [Overflow](media/fluid-overflow.mp4?v=liquid-v2) | 9.6 s | 16:9 | [GIF](media/fluid-overflow.gif?v=liquid-v2) · [poster](media/fluid-overflow.jpg?v=liquid-v2) | [HTML](examples/fluid-overflow.html?v=liquid-v2) |
 | Effect film | [Slow Gold](media/fluid-viscous.mp4?v=liquid-v2) | 9.6 s | 16:9 | [GIF](media/fluid-viscous.gif?v=liquid-v2) · [poster](media/fluid-viscous.jpg?v=liquid-v2) | [HTML](examples/fluid-viscous.html?v=liquid-v2) |
-| Effect film | [One block. A drawn city.](media/ink-city.mp4) | 19.2 s | 16:9 | [GIF](media/ink-city.gif) · [poster](media/ink-city.jpg) | [HTML](examples/ink-city.html) |
-| Effect film · to be retired | [One light. Different edges.](media/shadow-lab.mp4) | 9.6 s | 16:9 | [GIF](media/shadow-lab.gif) · [poster](media/shadow-lab.jpg) | [HTML](examples/shadow-lab.html) |
-| Effect film | [Six optical treatments](media/optical.mp4) | 18 s | 16:9 | [GIF](media/optical.gif) · [poster](media/optical.jpg) | [HTML](examples/optical.html) |
+| Effect film | [One block. A drawn city.](media/ink-city.mp4) | 12 s | 16:9 | [GIF](media/ink-city.gif) · [poster](media/ink-city.jpg) | [HTML](examples/ink-city.html) |
+| Effect film | [Optical effects](media/optical.mp4) | 31.6 s | 16:9 | [GIF](media/optical.gif) · [poster](media/optical.jpg) | [HTML](examples/optical.html) |
 | Effect film | [Image distortion, collisions and particles](media/stacks.mp4) | 24 s | 16:9 | [GIF](media/stacks.gif) · [poster](media/stacks.jpg) | [HTML](examples/stacks.html) |
 | Effect film | [Pulse / Form](media/audio-relief.mp4) | 12 s | 16:9 | [GIF](media/audio-relief.gif) · [poster](media/audio-relief.jpg) | [HTML](examples/audio-relief.html) |
 | Effect film | [Motion / Release](media/motion-fragments.mp4) | 12 s | 16:9 | [GIF](media/motion-fragments.gif) · [poster](media/motion-fragments.jpg) | [HTML](examples/motion-fragments.html) |
-| Effect film · to be merged into COUNTERFORM | [Impact / Orbit](media/impact-orbit.mp4) | 12 s | 16:9 | [GIF](media/impact-orbit.gif) · [poster](media/impact-orbit.jpg) | [HTML](examples/impact-orbit.html) |
-| Effect film | [Say it. Mean it.](media/character-lipsync.mp4) | 9.6 s | 16:9 | [GIF](media/character-lipsync.gif) · [poster](media/character-lipsync.jpg) | [HTML](examples/character-lipsync.html) |
+| Effect film | [Say it. Mean it.](media/character-lipsync.mp4) | 11.6 s | 16:9 | [GIF](media/character-lipsync.gif) · [poster](media/character-lipsync.jpg) | [HTML](examples/character-lipsync.html) |
 <!-- films:end -->
 
 All 24 retained video bundles have animated GIF previews and still posters. A GIF

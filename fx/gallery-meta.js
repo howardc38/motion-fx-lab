@@ -8,18 +8,18 @@
       "signal-motion-fragments", "dialogue-lipsync", "plush-fur", "gpuparticles", "domainrep",
       "optical-foil", "fluid-smoke", "liquid", "organic-contours", "studio-depth-dots",
       "studio-freeze-orbit", "design-type-orbit", "water-material", "optical-ribbon", "reaction",
-      "stack-gpu", "clay", "optical-moire", "optical-caustic", "toon", "cjk-solid", "studio-portal",
-      "tunnel", "vartype", "rhythm", "cardflip", "water-impact", "design-surface-ink",
-      "optical-slit", "optical-morph", "rays", "ridgelines", "chrome", "studio-echo",
-      "studio-skin-cloud", "studio-video-dots", "fluid-overflow", "rigid", "flat", "glitch",
+      "stack-gpu", "clay", "optical-moire", "optical-caustic", "toon", "character-rig", "cjk-solid",
+      "studio-portal", "studio-lowpoly", "vartype", "rhythm", "cardflip", "water-impact",
+      "design-surface-ink", "optical-slit", "optical-morph", "rays", "ridgelines", "chrome",
+      "studio-echo", "studio-skin-cloud", "studio-video-dots", "fluid-overflow", "rigid", "glitch",
       "dissolve", "design-soft-shadow", "uifly", "whip", "hook", "chars", "karaoke", "datachart",
       "timing", "glass", "sweep", "stamp", "beat", "sticker", "gradient", "ring", "count", "type",
-      "mark", "scan", "wipe", "lut", "grain", "character-rig", "character-style",
+      "mark", "scan", "wipe", "lut", "grain",
     ],
     showcaseOrder: [
       "styles", "studio-themes", "studio-gallery", "water-underwater", "scene-eras",
     ],
-    previewDefault: { "tunnel": "studio-lowpoly", "studio-depth-dots": "signal-audio-relief" },
+    previewDefault: { "glitch": "frame-glitch", "studio-depth-dots": "signal-audio-relief" },
     previewHero: { "gpuparticles": 1.5 },
   };
   // fx:gallery:end
@@ -33,17 +33,15 @@
   // (examples/films.json); a film is offered when its layer is listed here or its id has a label.
   const TILE_FILM_LAYERS = ["effect-film"];
   const TILE_FILM_LABELS = {
-    "character-lipsync": "Watch the 9.6 s lip-sync film with sound",
+    "character-lipsync": "Watch the 11.6 s lip-sync film with sound",
     "audio-relief": "Watch the 12 s study with sound",
     "motion-fragments": "Watch the 12 s study with sound",
-    "impact-orbit": "Watch the 12 s study with sound",
     "dot-story": "Watch the finished film",
     "ink-city": "Watch the related study",
-    "shadow-lab": "Watch the related study",
     "fluid-overflow": "Watch the full 9.6 s render",
     "fluid-smoke": "Watch the full 9.6 s render",
     "fluid-viscous": "Watch the archived material study",
-    "optical": "Compare six optical treatments",
+    "optical": "Watch the optical sampler",
     "stacks": "Watch the three-operation sampler",
     "scene-eras": "Compare eight room treatments",
   };
@@ -52,6 +50,16 @@
     "film-ink-city": "design-surface-ink", "film-shadow-lab": "design-soft-shadow",
     "film-optical": "optical-foil", "film-stacks": "stack-pixi",
     "film-scene-eras": "scene-eras", "film-fluid-viscous": "fluid-viscous",
+    "film-impact-orbit": "signal-freeze-orbit",
   };
-  window.FXGalleryMeta = Object.freeze({ ...GALLERY, KINDS, NEEDS, STACKS, TILE_FILM_LAYERS, TILE_FILM_LABELS, FILM_BOOKMARKS });
+  // Old #film-<id> bookmarks for films replaced by another film.
+  const FILM_RENAMES = { "film-word-forms": "film-titles" };
+  // Old #demo-<id> links for demos that were merged or removed; each opens the card (or variant) that replaced it.
+  const DEMO_ALIASES = {
+    bounce: "halftone", dithercards: "dithercharacter", ditherpeek: "dithercharacter", ditheravatar: "dithercharacter",
+    lit3d: "cjk-solid", smoke: "fluid-smoke", tunnel: "studio-lowpoly", halftonetype: "studio-video-dots",
+    coderain: "type", blueprint: "datachart", drawflow: "datachart",
+    "studio-flight": "studio-themes", "design-spring-response": "timing",
+  };
+  window.FXGalleryMeta = Object.freeze({ ...GALLERY, KINDS, NEEDS, STACKS, TILE_FILM_LAYERS, TILE_FILM_LABELS, FILM_BOOKMARKS, FILM_RENAMES, DEMO_ALIASES });
 })();

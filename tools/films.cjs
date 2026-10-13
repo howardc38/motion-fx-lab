@@ -79,8 +79,8 @@ function loadCatalog(root = ROOT) {
     try { vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8'), sandbox, { filename: file }); }
     catch (error) { throw new Error(`Cannot load the effect catalogue (${file}): ${error.message}`); }
   }
-  const { byId: entries, families, showcases } = sandbox.FXCatalog;
-  const cards = new Map([...families, ...showcases].map(f => [f.id, f.name]));
+  const { byId: entries, families, showcases, basics = [] } = sandbox.FXCatalog;
+  const cards = new Map([...families, ...basics, ...showcases].map(f => [f.id, f.name]));
   const byId = new Map([...entries.values()].map(e => [e.id, { id: e.id, role: e.role, familyId: e.familyId, name: e.name, card: cards.get(e.familyId) || e.name }]));
   const catalog = { byId };
   catalogs.set(root, catalog);
@@ -100,6 +100,8 @@ function closure(page, root = ROOT) {
     const resolve = spec => spec.startsWith('/') ? path.posix.normalize(clean(spec).slice(1)) : path.posix.normalize(path.posix.join(dir, clean(spec)));
     const add = (spec, bare = false) => { if (/^[a-z]+:|^\/\//i.test(spec) || (!bare && !/^\.{0,2}\//.test(spec))) return; queue.push(resolve(spec)); };
     for (const m of text.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["']/g)) add(m[1], true);
+    // Render wrappers for a format variant embed the film page itself (e.g. product.html?format=square).
+    for (const m of text.matchAll(/<iframe\b[^>]*\bsrc=["']([^"']+)["']/g)) add(m[1], true);
     for (const m of text.matchAll(/\b(?:import|export)\s+(?:[\w$*{}\s,]+?\s+from\s+)?["']([^"']+)["']/g)) add(m[1]);
     for (const m of text.matchAll(/\bimport\(\s*["']([^"']+)["']\s*\)/g)) add(m[1]);
     for (const m of text.matchAll(/new URL\(\s*["']([^"']+)["']\s*,\s*(?:document\.currentScript\.src|import\.meta\.url)/g)) {

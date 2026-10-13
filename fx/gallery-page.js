@@ -3,7 +3,8 @@
 (() => {
   document.querySelectorAll('.film-preview').forEach(preview => {
     preview.addEventListener('click', () => {
-      preview.querySelector('img').hidden = true;
+      const loop = preview.querySelector('img, video.film-loop');
+      if (loop) { loop.hidden = true; if (loop.pause) loop.pause(); }
       preview.querySelector('button').hidden = true;
       const video = preview.querySelector('video');
       video.hidden = false;
@@ -11,10 +12,10 @@
     }, {once:true});
   });
   const { R3 } = window.FX;
-  const { families, showcases, stats, byId } = window.FXCatalog;
+  const { families, showcases, stats, byId } = window.FXCatalog, basics = window.FXCatalog.basics || [];
   // Order, preview defaults and labels: fx/gallery-meta.js (order from fx/manifest.json).
   const { KINDS, NEEDS, STACKS, order: ORDER, showcaseOrder: SHOWCASE_ORDER, previewDefault: PREVIEW_DEFAULT, previewHero: PREVIEW_HERO,
-    TILE_FILM_LAYERS, TILE_FILM_LABELS, FILM_BOOKMARKS } = window.FXGalleryMeta;
+    TILE_FILM_LAYERS, TILE_FILM_LABELS, FILM_BOOKMARKS, FILM_RENAMES = {}, DEMO_ALIASES = {} } = window.FXGalleryMeta;
   // Cards missing from the order still appear, after the ordered ones; tools/fx-manifest.cjs --check rejects that.
   const rankIn = order => d => order.includes(d.id) ? order.indexOf(d.id) : order.length;
   // Films linked from effect tiles; the effects each film shows come from examples/films.json.
@@ -32,14 +33,17 @@
     if(host.childNodes.length) host.append(document.createTextNode(' · '));
     const a=document.createElement('a'); a.href=href; a.textContent=text; host.append(a);
   }
-  function appendFilmLinks(host, film) {
+  function appendFilmLinks(host, film, id) {
     const version=(film.media.mp4.match(/\?.*$/) || [''])[0];
     appendLink(host, film.media.mp4, TILE_FILM_LABELS[film.id] || `Watch the ${film.duration} s film`);
+    // A sampler plays one segment per effect card: link straight to this card's segment.
+    const segment=film.layer==='effect-film' && new Set(film.effects.map(e=>e.id)).size>1 && film.effects.find(e=>e.id===id && e.at);
+    if(segment) appendLink(host, `${film.media.mp4}#t=${segment.at[0]},${segment.at[1]}`, `This effect's segment (${segment.at[0]}–${segment.at[1]} s)`);
     appendLink(host, film.source || 'examples/'+film.id+'.html'+version, 'Scrub timeline');
     if(film.media.gif) appendLink(host, film.media.gif, 'GIF preview');
   }
   // A film made for a family also covers its variants, unless the selected variant has its own film.
-  const filmsFor = (card, d) => { const own=filmsShowing(d.id); return own.length ? own : filmsShowing(card.family.id); };
+  const filmsFor = (card, d) => { const own=filmsShowing(d.id); return own.length ? own.map(f=>[f,d.id]) : filmsShowing(card.family.id).map(f=>[f,card.family.id]); };
   function details(card) {
     const d = byId.get(card.selected);
     card.caption.querySelector('.pills').innerHTML = `<span class="pill kind">${card.showcase ? 'Collection' : KINDS[d.kind]}</span><span class="grade" title="${NEEDS[d.grade][1]}">${NEEDS[d.grade][0]}</span>`;
@@ -47,7 +51,7 @@
     card.caption.querySelector('.seen').textContent = d.seen ? 'Seen in: ' + d.seen : '';
     card.caption.querySelector('.variant-description').textContent = card.family.entries.length > 1 ? d.purpose : '';
     const link=card.caption.querySelector('.preview-link');link.replaceChildren();
-    for (const film of filmsFor(card, d)) appendFilmLinks(link, film);
+    for (const [film, id] of filmsFor(card, d)) appendFilmLinks(link, film, id);
     if(d.id.startsWith('studio-') && FXStudio.previews[d.id.slice(7)]) appendLink(link,'examples/studio.html?compare=1#'+d.id.slice(7),'Open the input / effect comparison');
   }
   function choose(card, id) {
@@ -58,14 +62,17 @@
     card.placeholder.hidden = card.instances.has(id);
     details(card);
   }
-  for (const [list, host, showcase, rank] of [[families, gallery, false, rankIn(ORDER)], [showcases, document.getElementById('showcaseGallery'), true, rankIn(SHOWCASE_ORDER)]]) {
+  // Effect families, then Motion basics (fundamentals, not counted as effects), then collections.
+  const basicsHost = document.getElementById('basicsGallery');
+  for (const [list, host, showcase, rank, basic] of [[families, gallery, false, rankIn(ORDER), false], [basics, basicsHost || gallery, false, rankIn(ORDER), true], [showcases, document.getElementById('showcaseGallery'), true, rankIn(SHOWCASE_ORDER), false]]) {
     for (const family of [...list].sort((a,b) => rank(a)-rank(b))) {
       const fig = document.createElement('figure'); fig.className = 'tile'; fig.dataset.effectId = family.id; fig.id='demo-'+family.id; fig.tabIndex=-1;
       const preview = document.createElement('div'); preview.className = 'preview';
       const placeholder = document.createElement('div'); placeholder.className = 'stage'; placeholder.innerHTML = '<span class="loading">Preview loads when visible</span>'; preview.appendChild(placeholder);
       const caption = document.createElement('figcaption');
       caption.innerHTML = `<h3>${family.name}</h3><p>${family.purpose}</p><p class="variant-description"></p><p class="seen"></p><p class="preview-link"></p><details class="implementation"><summary>Drawing details</summary><div class="pills"></div><div class="chips"></div></details>`;
-      const card = {family, fig, preview, placeholder, caption, showcase, selected: PREVIEW_DEFAULT[family.id] || family.id, instances:new Map(), work:Promise.resolve(), busy:false, visible:false, dirty:true};
+      if (basic) fig.dataset.tier = 'basic';
+      const card = {family, fig, preview, placeholder, caption, showcase, basic, selected: PREVIEW_DEFAULT[family.id] || family.id, instances:new Map(), work:Promise.resolve(), busy:false, visible:false, dirty:true};
       if (family.entries.length > 1) {
         const label = document.createElement('label'); label.className = 'variant-picker'; label.append('Variant');
         const select = document.createElement('select'); select.setAttribute('aria-label', family.name + ' variant');
@@ -76,7 +83,7 @@
     }
   }
   document.querySelector('meta[name=description]').content = `${document.querySelectorAll('[data-film-index-id]').length} selected films for social, product, data, titles and characters. Compare ${stats.techniques} effect families and export verified MP4.`;
-  document.getElementById('legend').innerHTML = `<span><b>${stats.techniques}</b> effect families · ${stats.variants} selectable variants · ${stats.showcases} collections</span><span>Effect previews: 16:9 · Order: visual impact</span>`;
+  document.getElementById('legend').innerHTML = `<span><b>${stats.techniques}</b> effect families · ${stats.basics || 0} motion basics · ${stats.variants} selectable variants · ${stats.showcases} collections</span><span>Effect previews: 16:9 · Order: visual impact</span>`;
   const mk = (host, key, opts) => {
     for (const [v,label] of opts) {
       const button=document.createElement('button'); button.type='button'; button.dataset.filterValue=v; button.textContent=label; button.setAttribute('aria-pressed',String(state[key]===v));
@@ -84,15 +91,16 @@
     }
   };
   function apply() {
-    let n=0, demoCount=0, variantCount=0;
+    let n=0, nb=0, demoCount=0, variantCount=0;
     for (const card of cards) {
       if (card.showcase) continue;
       const matches=card.family.entries.filter(entryMatches); card.fig.hidden=matches.length===0;
-      if (matches.length) { n++; demoCount+=matches.length; variantCount+=matches.filter(d=>d.role==='variant').length; if (!matches.some(d=>d.id===card.selected)) choose(card,matches[0].id); }
+      if (matches.length) { if (card.basic) nb++; else n++; demoCount+=matches.length; variantCount+=matches.filter(d=>d.role==='variant').length; if (!matches.some(d=>d.id===card.selected)) choose(card,matches[0].id); }
       if (card.select) for (const option of card.select.options) option.disabled=!entryMatches(byId.get(option.value));
       card.dirty=true;
     }
     document.getElementById('shown').textContent=`${n} / ${stats.techniques} effect families shown`;
+    const basicsShown=document.getElementById('basics-shown'); if (basicsShown) basicsShown.textContent=`${nb} / ${stats.basics || 0} motion basics shown`;
     document.getElementById('available').textContent=`${demoCount} ${demoCount===1?'demo matches':'demos match'} these filters${variantCount ? `, including ${variantCount} variant${variantCount===1?'':'s'} in the card selectors` : ''}.`;
     document.getElementById('showcase-count').textContent=`${stats.showcases} combined showcases below ↘`;
   }
@@ -146,7 +154,9 @@
   window.galleryReady=Promise.resolve(window.galleryAPI);
   function revealLinkedDemo(){
     if(!location.hash.startsWith('#demo-'))return;
-    const id=location.hash.slice(6);if(!byId.has(id))return;
+    let id=location.hash.slice(6);
+    if(!byId.has(id)&&Object.hasOwn(DEMO_ALIASES,id)){id=DEMO_ALIASES[id];history.replaceState(null,'','#demo-'+id);}
+    if(!byId.has(id))return;
     state.kind=state.stack='all';
     document.querySelectorAll('#fKind button, #fStack button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.filterValue==='all')));
     apply();const card=galleryAPI.selectVariant(id);card.manual=false;
@@ -157,10 +167,13 @@
     const effect=FILM_BOOKMARKS[location.hash.slice(1)];
     if(effect){history.replaceState(null,'','#demo-'+effect);revealLinkedDemo();return;}
 
+    const renamed=FILM_RENAMES[location.hash.slice(1)];
+    if(renamed)history.replaceState(null,'','#'+renamed);
     const index=document.getElementById('film-index');
     if(['#material-films','#studio-studies','#new-studies','#film-index'].includes(location.hash)){index.open=true;index.scrollIntoView({block:'start'});return;}
     const target=document.getElementById(location.hash.slice(1));
     if(target && index.contains(target)){index.open=true;target.scrollIntoView({block:'start'});}
+    else if(target && renamed)target.scrollIntoView({block:'start'});
   }
   window.addEventListener('hashchange',revealLinkedFilm);revealLinkedFilm();
   window.addEventListener('hashchange',revealLinkedDemo);

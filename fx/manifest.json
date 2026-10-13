@@ -26,7 +26,6 @@
         "dissolve": ["fx/pack-light.js", "fx/demos.js"],
         "chrome": ["fx/pack-light.js", "fx/demos.js"],
         "flat": ["fx/demos.js"],
-        "tunnel": ["fx/demos.js"],
         "hook": ["fx/demos.js"],
         "karaoke": ["fx/demos.js"],
         "sticker": ["fx/demos.js"],
@@ -36,7 +35,6 @@
         "uifly": ["fx/demos.js"],
         "ring": ["fx/demos.js"],
         "liquid": ["fx/pack-light.js", "fx/demos.js"],
-        "halftonetype": ["fx/demos.js"],
         "glitch": ["fx/demos.js"]
       }
     },
@@ -336,9 +334,10 @@
       "optical-moire",
       "optical-caustic",
       "toon",
+      "character-rig",
       "cjk-solid",
       "studio-portal",
-      "tunnel",
+      "studio-lowpoly",
       "vartype",
       "rhythm",
       "cardflip",
@@ -354,7 +353,6 @@
       "studio-video-dots",
       "fluid-overflow",
       "rigid",
-      "flat",
       "glitch",
       "dissolve",
       "design-soft-shadow",
@@ -378,13 +376,11 @@
       "scan",
       "wipe",
       "lut",
-      "grain",
-      "character-rig",
-      "character-style"
+      "grain"
     ],
     "showcaseOrder": ["styles", "studio-themes", "studio-gallery", "water-underwater", "scene-eras"],
     "previewDefault": {
-      "tunnel": "studio-lowpoly",
+      "glitch": "frame-glitch",
       "studio-depth-dots": "signal-audio-relief"
     },
     "previewHero": {

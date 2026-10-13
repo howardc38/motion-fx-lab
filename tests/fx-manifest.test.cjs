@@ -54,17 +54,17 @@ test('the gallery order lists every family once and nothing else', () => {
   m.gallery.order.push(m.gallery.order[0]);
   expectError(m, /gallery\.order repeats signal-motion-fragments/);
   m = fresh();
-  m.gallery.order = m.gallery.order.filter(id => id !== 'character-style');
-  expectError(m, /gallery\.order is missing character-style/);
+  m.gallery.order = m.gallery.order.filter(id => id !== 'character-rig');
+  expectError(m, /gallery\.order is missing character-rig/);
   m = fresh();
-  m.gallery.order.push('cjk-solid'); // a variant, not a card
-  expectError(m, /gallery\.order lists cjk-solid/);
+  m.gallery.order.push('frame-glitch'); // a variant, not a card
+  expectError(m, /gallery\.order lists frame-glitch/);
   m = fresh();
   m.gallery.showcaseOrder.pop();
   expectError(m, /gallery\.showcaseOrder is missing/);
   m = fresh();
-  m.gallery.previewDefault.lit3d = 'tunnel';
-  expectError(m, /previewDefault: tunnel is not a variant of lit3d/);
+  m.gallery.previewDefault['cjk-solid'] = 'studio-lowpoly';
+  expectError(m, /previewDefault: studio-lowpoly is not a variant of cjk-solid/);
   m = fresh();
   m.gallery.previewHero.gpuparticles = 999;
   expectError(m, /previewHero: gpuparticles needs a time within/);

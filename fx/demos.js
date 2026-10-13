@@ -497,34 +497,6 @@
       };
     } });
 
-  demo({ id: "tunnel", gl: true, name: "Line tunnel", kind: "shader", stacks: ["three"], chips: ["Three.js LineSegments", "Fog", "Points"], grade: "A",
-    purpose: "The camera flies down a tunnel of lines, through fog and points of light.", period: 10, hero: 1,
-    build(s) {
-      const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(64, GW / GH, 0.1, 200), R = rng(77);
-      scene.fog = new THREE.Fog(0x06050a, 10, 90);
-      const CELL = 4, LEN = 160, HW = 6, HH = 7.5;
-      const face = (p0, u, uLen, uStep) => {
-        const pts = [];
-        for (let k = 0; k <= uLen + 1e-6; k += uStep) { const x = p0[0] + u[0] * k, y = p0[1] + u[1] * k; pts.push(x, y, 0, x, y, -LEN); }
-        for (let z = 0; z >= -LEN; z -= CELL) pts.push(p0[0], p0[1], z, p0[0] + u[0] * uLen, p0[1] + u[1] * uLen, z);
-        return new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute(pts, 3));
-      };
-      const tm = new THREE.LineBasicMaterial({ color: 0xff90e8, transparent: true, opacity: 0.45 }), tunnel = new THREE.Group();
-      [face([-HW, -HH], [1, 0], 2 * HW, 1.3), face([-HW, HH], [1, 0], 2 * HW, 1.3), face([-HW, -HH], [0, 1], 2 * HH, 1.4), face([HW, -HH], [0, 1], 2 * HH, 1.4)].forEach((g) => tunnel.add(new THREE.LineSegments(g, tm)));
-      scene.add(tunnel);
-      const NP = 900, base = new Float32Array(NP * 3), pos = new Float32Array(NP * 3);
-      for (let i = 0; i < NP; i++) { base[i * 3] = (R() - 0.5) * 2 * HW; base[i * 3 + 1] = (R() - 0.5) * 2 * HH; base[i * 3 + 2] = -R() * LEN; }
-      const pg = new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(pos, 3));
-      scene.add(new THREE.Points(pg, new THREE.PointsMaterial({ color: 0xffffff, size: 0.06, transparent: true, opacity: 0.8 })));
-      return (t, abs) => {
-        tunnel.position.z = (abs * 7) % CELL;
-        for (let i = 0; i < NP; i++) { pos[i * 3] = base[i * 3]; pos[i * 3 + 1] = base[i * 3 + 1]; pos[i * 3 + 2] = -(((-base[i * 3 + 2]) - abs * 14) % LEN + LEN) % LEN; }
-        pg.attributes.position.needsUpdate = true;
-        cam.rotation.z = 0.05 * Math.sin(abs * 0.4);
-        R3.setClearColor(0x06050a, 1); R3.render(scene, cam); blit();
-      };
-    } });
-
   // ================= Motion basics, continued (tier: "basic", 16:9, centred) =================
   demo({ id: "hook", tier: "basic", name: "3-second headline hook", kind: "type", stacks: ["css"], chips: ["CSS mask reveal", "transform"], grade: "A",
     purpose: "A headline revealed by a mask within the first second, with no logo before it.", period: 4, hero: 2.3,
@@ -707,43 +679,6 @@
       };
     } });
 
-
-  demo({ id: "halftonetype", name: "Halftone type", kind: "type", stacks: ["canvas"], chips: ["Canvas 2D", "dot size from ink coverage"], grade: "A",
-    purpose: "A word printed as halftone dots whose size breathes from fine to coarse and back. Once the dots grow, thin and dense strokes, such as small Chinese characters, break up.", period: 4, hero: 2,
-    build(s) {
-      s.style.background = "#ffd400";
-      const wide = s.classList.contains("landscape"), W = wide ? 800 : 360, H = 450, c = document.createElement("canvas"); c.width = W; c.height = H; c.className = "fill"; s.appendChild(c);
-      const g = c.getContext("2d"), off = document.createElement("canvas"); off.width = W; off.height = H;
-      const og = off.getContext("2d", { willReadFrequently: true });
-      let ink = null, last = null;
-      const prep = () => {
-        og.font = `900 100px ${LAT}`;
-        const px = Math.floor(100 * (wide ? W*.82 : 300) / (wide ? og.measureText("HALFTONE").width : Math.max(og.measureText("HALF").width, og.measureText("TONE").width)));
-        og.clearRect(0, 0, W, H); og.fillStyle = "#000"; og.textAlign = "center"; og.textBaseline = "middle"; og.font = `900 ${px}px ${LAT}`;
-        if (wide) og.fillText("HALFTONE", W/2, H/2);
-        else { og.fillText("HALF", W / 2, H / 2 - px * 0.52); og.fillText("TONE", W / 2, H / 2 + px * 0.52); }
-        const d = og.getImageData(0, 0, W, H).data; ink = new Float32Array(W * H);
-        for (let i = 0; i < W * H; i++) ink[i] = d[i * 4 + 3] / 255;
-      };
-      const frame = (t) => {
-        last = t;
-        g.fillStyle = "#ffd400"; g.fillRect(0, 0, W, H);
-        if (!ink) return;
-        const cell = 4 + 8 * (0.5 - 0.5 * Math.cos((2 * Math.PI * t) / 4));
-        g.fillStyle = "#111016";
-        // Cells tile the canvas without gaps or overlaps: each spans floor(x) to floor(x + cell).
-        for (let y = 0; y < H; y += cell) for (let x = 0; x < W; x += cell) {
-          const x0 = Math.floor(x), y0 = Math.floor(y), x1 = Math.min(W, Math.floor(x + cell)), y1 = Math.min(H, Math.floor(y + cell));
-          let a = 0, n = 0;
-          for (let yy = y0; yy < y1; yy++) for (let xx = x0; xx < x1; xx++) { a += ink[yy * W + xx]; n++; }
-          const r = n ? Math.sqrt(a / n) * cell * 0.62 : 0;
-          if (r > 0.25) { g.beginPath(); g.arc(x + cell / 2, y + cell / 2, r, 0, Math.PI * 2); g.fill(); }
-        }
-        g.font = "700 13px JetBrains Mono, monospace"; g.textAlign = "left"; g.fillText(`dot grid ${cell.toFixed(1)} px`, 18, H - 22);
-      };
-      const ready = document.fonts.load(`900 100px ${LAT}`, "HALFTONE").then(() => { prep(); if (last !== null) frame(last); });
-      return { ready, frame };
-    } });
 
   demo({ id: "glitch", name: "RGB-split glitch", kind: "type", stacks: ["css"], chips: ["CSS transform", "clip-path slices", "mix-blend-mode: screen"], grade: "A",
     purpose: "The red and blue channels split and jitter in bursts while slices of the word jump sideways, like a broken signal. Split edges make thin, dense strokes, such as small Chinese characters, hard to read.", period: 2.4, hero: 0.83,

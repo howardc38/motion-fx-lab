@@ -54,29 +54,38 @@ materials. Newness and technical complexity do not determine prominence.
 | Film | Layer | Role | Placement |
 |---|---|---|---|
 | Intro | Intro | A guided overview that deliberately repeats selected uses and techniques. | Top of the page |
-| Social clips | Use case | Hook, interaction and call to action. | Card in Use cases |
-| Product demos | Use case | One interface interaction, explained. | Card in Use cases |
-| Infographics | Use case | Turn figures into a data story. | Card in Use cases |
-| Animated backgrounds | Use case | Three reusable background loops. | Card in Use cases |
+| This weekend only | Use case | A 9:16 weekend promo for a small shop: hook, product, offer and call to action inside every app’s safe area. | Card in Use cases |
+| This weekend only (bakery) | Use case | bakery version of This weekend only, rendered from the same page. | Film list only |
+| This weekend only (yoga studio) | Use case | yoga studio version of This weekend only, rendered from the same page. | Film list only |
+| Feature launch in 15 seconds | Use case | One new feature from problem to result: the pile-up, the feature at work, the time saved and the call to action. | Card in Use cases |
+| Feature launch in 15 seconds (square) | Use case | square version of Feature launch in 15 seconds, rendered from the same page. | Film list only |
+| Year in numbers | Use case | Figures build into counters, a goal ring and charts; every page ends on a sentence computed from the data. | Card in Use cases |
+| Year in numbers (vertical) | Use case | vertical version of Year in numbers, rendered from the same page. | Film list only |
+| Background loops in place | Use case | Seamless loops shown where they are used: behind an opening title, an interview and a “starting soon” screen. | Card in Use cases |
+| Titles & logo stings | Use case | Three 6-second openers for one name: solid type with light rays, particles flowing into the word, and contour lines with a glitch hit. | Card in Use cases |
+| Titles & logo stings (vertical) | Use case | vertical version of Titles & logo stings, rendered from the same page. | Film list only |
+| Event countdown | Use case | A 15-second countdown locked to the beat: a draining ring, info chips, a hard 3-2-1 and a chrome logo reveal on the drop. | Card in Use cases |
+| Event countdown (vertical) | Use case | vertical version of Event countdown, rendered from the same page. | Film list only |
+| Product spotlight | Use case | A code-drawn product drops in, gains three callouts, changes colourway and ends on price and call to action. | Card in Use cases |
+| Product spotlight (vertical) | Use case | vertical version of Product spotlight, rendered from the same page. | Film list only |
+| Product spotlight (square) | Use case | square version of Product spotlight, rendered from the same page. | Film list only |
 | One flight. Twenty worlds. | Demo film | One character travels through twenty art directions. | Card in Demo films |
-| The Final Final | Demo film | A two-character conversation with speech, gestures, reaction holds and a closing joke. | Card in Demo films |
-| One drop. Many forms. | Demo film | Authored drop, splash, morph and underwater chapters. | Card in Demo films |
+| The Final Final | Demo film | The plush bear asks for the launch video; Pip has made one small, dramatic improvement. Nine library effects play a part in the story. | Card in Demo films |
+| Clear | Demo film | A 15-second drinks advert: a drop crowns, rises into a glass bottle, dives underwater and surfaces as the brand. | Card in Demo films |
+| Clear (9:16) | Demo film | The Clear drinks advert recomposed for 9:16 from the same page. | Film list only |
 | One dot. Many roles. | Demo film | One orange dot becomes a switch, a letter, a spring trace and a reveal before returning to the start. | Film list only |
-| One word. Many forms. | Demo film | A word changes form and returns to a readable title. | Film list only; to become a use case: Titles & logo stings |
-| COUNTERFORM | Demo film | A complete fight with authored action and contact timing. | Film list only |
+| COUNTERFORM | Demo film | A complete fight with authored action and contact timing, and a 1.2 s freeze-orbit at the climax. | Film list only |
 | Same fight. Eight treatments. | Comparison | Compare eight operations on the same choreography. | Film list only |
 | One scene. Many eras. | Comparison | The same room/action under eight art treatments. | Film list only |
 | Find the Form | Effect film | An extended rendered example of volumetric smoke. | Effect card: Volumetric smoke around geometry |
 | Overflow | Effect film | Partly filled bowl → rising water → overflow → settling. | Effect card: Fluid flow and overflow |
 | Slow Gold | Effect film | Inspect liquid contact, stretching and drainage over a ring. | Effect card: Fluid flow and overflow |
 | One block. A drawn city. | Effect film | Surface hatching, staged construction and camera travel in one scene. | Effect card: Light-responsive surface hatching |
-| One light. Different edges. | Effect film | Inspect source size and object height against the shadow. | Effect card: Source size and soft shadows; to be retired |
-| Six optical treatments | Effect film | Six independent looks for choosing a treatment. | Effect cards: Moiré interference, Slit-scan typography, Folding paper ribbon, Caustic light, Holographic foil, Shape morphing |
-| Image distortion, collisions and particles | Effect film | Three unrelated operations with separate settings. | Effect cards: Image displacement, 3D domino chain, Orbital particles |
-| Pulse / Form | Effect film | Measured audio changes solid image-cell depth. | Effect card: Image relief |
-| Motion / Release | Effect film | Measured image movement emits and directs fragments. | Effect card: Motion-driven fragments |
-| Impact / Orbit | Effect film | A measured score attack cues an authored held 3D pose and animated lighting. | Effect card: Freeze frame and camera orbit; to be merged into COUNTERFORM |
-| Say it. Mean it. | Effect film | Recorded speech, expressive mouth shapes and authored gestures. | Effect card: Speech, expression and lip sync |
+| Optical effects | Effect film | A sampler of six optical effects; each segment plays inside its own effect card. | Effect cards: Holographic foil, Slit-scan typography, Moiré interference, Folding paper ribbon, Caustic light, Shape morphing |
+| Image distortion, collisions and particles | Effect film | Three unrelated operations with separate settings. | Effect cards: Image displacement, Rigid bodies with Matter.js, Orbital particles |
+| Pulse / Form | Effect film | Measured loudness pushes Milo’s portrait out into solid pins; silence is flat. | Effect card: Image relief |
+| Motion / Release | Effect film | Apricot shatters only where measured motion is fast and reassembles when she lands. | Effect card: Motion shatter and reassemble |
+| Say it. Mean it. | Effect film | The plush bear in close-up: three named expressions, a split-screen line and the nine mouth shapes. | Effect cards: Speech, expression and lip sync, Plush fur |
 <!-- films:guide:end -->
 
 The index links each film to related effects. This does not assert that every

@@ -18,6 +18,9 @@ const EXAMPLES_OUTSIDE_FILMS = [
   'examples/films.json', 'examples/character-workbench.html', 'examples/fight-source.html', 'examples/studio.html',
   'examples/stack-lab/index.html', 'examples/stack-lab/app.js', 'examples/stack-lab/style.css',
   'examples/stack-lab/README.md', 'examples/stack-lab/NOTICE',
+  // Source pages of films that left the published list (impact-orbit merged into dot-battle, shadow-lab
+  // retired, word-forms replaced by the titles use case); tests and the family READMEs still open them.
+  'examples/impact-orbit.html', 'examples/shadow-lab.html', 'examples/word-forms.html',
 ];
 // assets/ holds media and data only, each inside a folder (or below one) that has a manifest.json or README.md.
 const ASSET_TYPES = /\.(png|jpe?g|webp|avif|gif|svg|mp4|webm|wav|mp3|ogg|m4a|flac|glb|gltf|bin|hdr|ktx2|woff2?|ttf|otf|json|csv|gz|md|txt)$/i;
