@@ -77,11 +77,13 @@ test("a film link reveals its precise variant and clears incompatible filters", 
   await expect(page.locator("#shown")).toHaveText(
     `${COUNTS.catalog.techniques} / ${COUNTS.catalog.techniques} effects shown`,
   );
-  // The comparison film has its own card again; its live preset stays folded away.
+  // scene-eras is no longer a comparison film: its old bookmark opens the live preset instead.
   await page.goto('/#film-scene-eras');
   await page.waitForFunction(() => window.galleryAPI);
-  await expect(page.locator("#film-scene-eras")).toBeVisible();
-  await expect(page.locator("#composition-presets")).not.toHaveAttribute("open");
+  await expect(page).toHaveURL(/#demo-scene-eras$/);
+  await expect(page.locator("#film-scene-eras")).toHaveCount(0);
+  await expect(page.locator("#composition-presets")).toHaveAttribute("open");
+  await expect(page.locator("#demo-scene-eras")).toBeVisible();
   await page.goto('/#demo-scene-eras');
   await expect(page.locator("#composition-presets")).toHaveAttribute("open");
   await expect(page.locator("#demo-scene-eras")).toBeVisible();
@@ -266,7 +268,7 @@ test('the film list holds every published film, grouped by layer',async({page})=
 });
 test('source and renderer variations keep working through their family links and filters',async({page})=>{
  await open(page);
- for(const [id,parent,kind,stack] of [['stack-pixi','liquid','shader','pixi'],['flat','character-rig','character','svg'],['orbs','gradient','backdrop','css']]){
+ for(const [id,parent,kind,stack] of [['stack-pixi','liquid','light','pixi'],['character-style','character-rig','character','canvas'],['orbs','gradient','backdrop','css']]){
   await page.evaluate(({kind,stack})=>galleryAPI.filter(kind,stack),{kind,stack});
   const card=page.locator('[data-effect-id="'+parent+'"]');await expect(card).toBeVisible();
   await page.evaluate(async id=>{await galleryAPI.draw(id,1.4)},id);
@@ -274,6 +276,10 @@ test('source and renderer variations keep working through their family links and
   await page.goto('/#demo-'+id);await page.waitForFunction(()=>window.galleryAPI);
   await expect(page.locator('[data-effect-id="'+parent+'"] select')).toHaveValue(id);
  }
+ // The retired flat SVG mascot variant: its old link opens the cutout character rig instead.
+ await page.goto('/#demo-flat');await page.waitForFunction(()=>window.galleryAPI);
+ await expect(page).toHaveURL(/#demo-character-rig$/);
+ await expect(page.locator('[data-effect-id="character-rig"] select')).toHaveValue('character-rig');
 });
 
 test('effect-film bookmarks open their effect card with complete playable links',async({page,request})=>{

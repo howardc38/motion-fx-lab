@@ -39,8 +39,16 @@ of film time:
   faces carries the single accent colour.
 - Every piece keeps a *home*: the same material point, advanced frame by frame with
   the measured flow. When the measured speed at the home falls below `RULES.settle`
-  (the cat has landed or the tail is still) the piece flies straight back and snaps in;
-  the hole it left closes. The distance to home only decreases during a return.
+  (walking pace: the cat has landed or the tail is still), or after `RULES.maxFlight`
+  seconds, the piece flies straight back and snaps in. The distance to home only
+  decreases during a return.
+- The hole a piece leaves is fully open at the break and closes over `RULES.scar`
+  seconds, so the impact reads as broken while the body stays readable under its trail;
+  it is closed before a returning piece is `RULES.heal` of the way home, so reassembly
+  shows no cracks. Shards that come to rest on the floor crumble to a third of their size
+  and regain it on the way back.
+- The gallery card loops film seconds 1–8 (`gallery.previewWindow` in
+  `fx/manifest.json`); the film and the intro play the whole 12 s timeline.
 - The leap's apex is a time-remap (`performance.js` `REMAP`, 0.25×). Fragments are
   evaluated in source time, so they hang in the air with the cat.
 - The background changes only on the measured impact (±2 frames); the score's shatter
@@ -149,7 +157,7 @@ as a current-position velocity estimate. Vectors are stored at 1/256 of a source
 pixel per frame. Transparent background samples are suppressed. This measures
 apparent pixel movement; it does not infer joints, forces or true 3D trajectories.
 Fragment homes follow the measured flow, so tracking drift can return a piece a few
-pixels from where it left; the hole closes when it arrives.
+pixels from where it left; its hole has already closed by then.
 
 Relief and fragments use real solid geometry but remain 2.5D reconstructions of image
 samples: brightness and silhouette distance give depth, not recovered anatomy. The

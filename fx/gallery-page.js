@@ -12,6 +12,17 @@
       video.play().catch(() => {}); // Native controls remain available if playback is blocked.
     }, {once:true});
   });
+  // Card posters arrive as data-poster and are set only when the card comes within 400 px of the screen, so
+  // the first screen does not download every poster on the page (a <video poster> is never lazy by itself).
+  // The hidden full film in the same card gets its poster at the same time.
+  const lazyPosters = [...document.querySelectorAll('video.film-loop[data-poster]')];
+  const setPosters = box => box.querySelectorAll('video[data-poster]').forEach(v => { v.poster = v.dataset.poster; v.removeAttribute('data-poster'); });
+  if (lazyPosters.length && 'IntersectionObserver' in window) {
+    const near = new IntersectionObserver(entries => {
+      for (const e of entries) if (e.isIntersecting) { near.unobserve(e.target); setPosters(e.target.closest('.film-preview')); }
+    }, { rootMargin: '400px 0px' });
+    lazyPosters.forEach(v => near.observe(v));
+  } else lazyPosters.forEach(v => setPosters(v.closest('.film-preview')));
   // Film cards play a silent loop (media/<id>.preview.mp4, preload="none") only while a quarter of it is on
   // screen; off screen it pauses. With reduced motion it never starts and the card shows its poster.
   const loops = [...document.querySelectorAll('video.film-loop')], stillMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -27,7 +38,7 @@
   const { R3 } = window.FX;
   const { families, showcases, stats, byId } = window.FXCatalog, basics = window.FXCatalog.basics || [];
   // Order, preview defaults and labels: fx/gallery-meta.js (order from fx/manifest.json).
-  const { KINDS, NEEDS, STACKS, order: ORDER, showcaseOrder: SHOWCASE_ORDER, previewDefault: PREVIEW_DEFAULT, previewHero: PREVIEW_HERO,
+  const { KINDS, NEEDS, STACKS, order: ORDER, showcaseOrder: SHOWCASE_ORDER, previewDefault: PREVIEW_DEFAULT, previewHero: PREVIEW_HERO, previewWindow: PREVIEW_WINDOW = {},
     TILE_FILM_LAYERS, TILE_FILM_LABELS, FILM_BOOKMARKS, FILM_RENAMES = {}, DEMO_ALIASES = {} } = window.FXGalleryMeta;
   // Cards missing from the order still appear, after the ordered ones; tools/fx-manifest.cjs --check rejects that.
   const rankIn = order => d => order.includes(d.id) ? order.indexOf(d.id) : order.length;
@@ -50,9 +61,10 @@
     const version=(film.media.mp4.match(/\?.*$/) || [''])[0];
     appendLink(host, film.media.mp4, TILE_FILM_LABELS[film.id] || `Watch the ${film.duration} s film`);
     appendLink(host, film.page || film.source || 'examples/'+film.id+'.html'+version, 'Scrub timeline');
-    // A sampler plays one segment per effect card: link straight to this card's segment.
+    // A sampler plays one segment per effect card: link straight to this card's segment. An effect that
+    // runs through (nearly) the whole film has no segment of its own, so it gets no extra link.
     const segment=film.layer==='effect-film' && new Set(film.effects.map(e=>e.id)).size>1 && film.effects.find(e=>e.id===id && e.at);
-    if(segment) appendLink(host, `${film.media.mp4}#t=${segment.at[0]},${segment.at[1]}`, `This effect's segment (${segment.at[0]}–${segment.at[1]} s)`);
+    if(segment && segment.at[1]-segment.at[0] < .9*film.duration) appendLink(host, `${film.media.mp4}#t=${segment.at[0]},${segment.at[1]}`, `Jump to this effect (${segment.at[0]}–${segment.at[1]} s)`);
   }
   // A film made for a family also covers its variants, unless the selected variant has its own film.
   const filmsFor = (card, d) => { const own=filmsShowing(d.id); return own.length ? own.map(f=>[f,d.id]) : filmsShowing(card.family.id).map(f=>[f,card.family.id]); };
@@ -139,7 +151,9 @@
     card.busy=true;
     const work=card.work.then(async()=>{
       const id=card.selected, d=byId.get(id), instance=await instanceFor(card,id);
-      if (!instance.failed) try { await instance.frame(hero ? (PREVIEW_HERO[d.id] ?? d.hero) : time % d.period,time); } catch(error) { failure(instance,error); }
+      // A card may loop only part of a long shared timeline ([start, end] in fx/manifest.json gallery.previewWindow).
+      const span = PREVIEW_WINDOW[d.id], local = span ? span[0] + time % (span[1] - span[0]) : time % d.period;
+      if (!instance.failed) try { await instance.frame(hero ? (PREVIEW_HERO[d.id] ?? d.hero) : local,time); } catch(error) { failure(instance,error); }
       for (const [key,value] of card.instances) value.stage.hidden=key!==card.selected;
       return instance;
     });
@@ -201,7 +215,7 @@
   const rows = [
     ["Picture"],
     ["HTML + CSS", "Web layout", "Type and UI mock-ups", "Interface cards, character pops, highlighter, stamp, frosted glass (backdrop-filter), variable-font type, 3D card flips"],
-    ["SVG", "Vector shapes and filters", "Lines and filters", "Horizontal motion blur on letters (feGaussianBlur), the self-drawing data chart, the timing graph, the polar morph, the flat illustration rig"],
+    ["SVG", "Vector shapes and filters", "Lines and filters", "Horizontal motion blur on letters (feGaussianBlur), the self-drawing data chart, the timing graph, the polar morph"],
     ["Canvas 2D", "Pixels drawn in code", "Textures and text sampling", "Film grain, Bauhaus rhythm, ridgelines, the rigid bodies; text sampled for particles and reaction–diffusion; the ASCII glyph atlas; textures: the softboxes the chrome reflects and the poster behind the liquid glass"],
     ["Google Fonts", "Web fonts", "Chinese, wide Latin, a serif, monospace", "Noto Sans TC, Archivo, Instrument Serif, JetBrains Mono"],
     ["engine.js (ours)", "Timeline engine", "Every frame depends on t alone, so frames can be captured one by one", "30-odd animations (pop, whip, slam, type, scan…), scene wipes, the sound-cue list"],

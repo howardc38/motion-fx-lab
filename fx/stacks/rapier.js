@@ -180,6 +180,7 @@ export async function create() {
     async frame(seconds, options = {}) {
       if (!Number.isFinite(seconds)) throw new Error("Invalid frame time");
       label.visible = options.labels !== false;
+      label.material.opacity = 1;
       const desiredSpeed = Math.max(0.25, Math.min(2, options.speed ?? 1));
       if (desiredSpeed !== speed) reset();
       speed = desiredSpeed;
@@ -218,6 +219,8 @@ export async function create() {
           (lz + 9.2 + 2.4 * near) * (1 - back) + 19 * back,
         );
         camera.lookAt(lx * (1 - back), 0.35, lz * (1 - back));
+        // The ground caption only shows once the camera has pulled back far enough to frame all of it.
+        label.material.opacity = Math.max(0, Math.min(1, (back - 0.55) / 0.35));
       } else camera.lookAt(0, 0.3, 0);
       renderer.render(scene, camera);
     },

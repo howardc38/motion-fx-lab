@@ -56,8 +56,9 @@ export function drawTrailer(g, u, scratch) {
     if (u > TRAILER.fill[0] + .2 && u < TRAILER.glitch[0]) {
       const k = ((u - TRAILER.fill[0] - .2) % .9) / .9, x = bx - 120 + (fw + 240) * k;
       g.save(); g.beginPath(); g.roundRect(bx, by, fw, bh, 13); g.clip();
-      const s = g.createLinearGradient(x - 70, 0, x + 70, 0); s.addColorStop(0, 'rgba(255,255,255,0)'); s.addColorStop(.5, 'rgba(255,255,255,.9)'); s.addColorStop(1, 'rgba(255,255,255,0)');
-      g.fillStyle = s; g.transform(1, 0, -.6, 1, 0, 0); g.fillRect(x - 70 + by * .6, by, 140, bh); g.restore();
+      // The gradient is read in the skewed space the band is filled in, so it spans the band itself.
+      const sx = x + by * .6, s = g.createLinearGradient(sx - 70, 0, sx + 70, 0); s.addColorStop(0, 'rgba(255,255,255,0)'); s.addColorStop(.5, 'rgba(255,255,255,.9)'); s.addColorStop(1, 'rgba(255,255,255,0)');
+      g.fillStyle = s; g.transform(1, 0, -.6, 1, 0, 0); g.fillRect(sx - 70, by, 140, bh); g.restore();
     }
     // Sparks from the leading edge, seeded by birth time.
     g.globalCompositeOperation = 'lighter';

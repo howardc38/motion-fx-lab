@@ -12,7 +12,7 @@ const MANIFEST = 'fx/manifest.json';
 const GALLERY_FILE = 'fx/gallery-meta.js';
 const SCRIPT_MARKERS = ['<!-- fx:scripts:start -->', '<!-- fx:scripts:end -->'];
 const GALLERY_MARKERS = ['// fx:gallery:start', '// fx:gallery:end'];
-const GALLERY_KEYS = ['order', 'showcaseOrder', 'previewDefault', 'previewHero'];
+const GALLERY_KEYS = ['order', 'showcaseOrder', 'previewDefault', 'previewHero', 'previewWindow'];
 const README_FILE = 'README.md';
 const README_MARKERS = ['<!-- fx:effects:start -->', '<!-- fx:effects:end -->'];
 const isUrl = file => /^https:\/\//.test(file);
@@ -222,7 +222,7 @@ function validate(manifest = load(), root = ROOT) {
       try { sourceRefs(id, manifest, root); } catch (error) { errors.push(error.message); }
     }
   }
-  const { order, showcaseOrder, previewDefault, previewHero } = manifest.gallery;
+  const { order, showcaseOrder, previewDefault, previewHero, previewWindow } = manifest.gallery;
   const ordered = (list, ids, name) => {
     if (!Array.isArray(list)) return errors.push(`gallery.${name} must be an array`);
     const seen = new Set();
@@ -244,7 +244,12 @@ function validate(manifest = load(), root = ROOT) {
     if (!demos.has(id)) errors.push(`gallery.previewHero: unknown demo ${id}`);
     else if (!(Number.isFinite(t) && t >= 0 && t <= demos.get(id).period)) errors.push(`gallery.previewHero: ${id} needs a time within its ${demos.get(id).period} s period`);
   }
-  if (!isObject(previewDefault) || !isObject(previewHero)) errors.push('gallery.previewDefault and gallery.previewHero must be objects');
+  for (const [id, span] of Object.entries(isObject(previewWindow) ? previewWindow : {})) {
+    const ok = Array.isArray(span) && span.length === 2 && span.every(Number.isFinite) && span[0] >= 0 && span[0] < span[1];
+    if (!demos.has(id)) errors.push(`gallery.previewWindow: unknown demo ${id}`);
+    else if (!ok || span[1] > demos.get(id).period) errors.push(`gallery.previewWindow: ${id} needs [start, end] within its ${demos.get(id).period} s period`);
+  }
+  if (!isObject(previewDefault) || !isObject(previewHero) || !isObject(previewWindow)) errors.push('gallery.previewDefault, gallery.previewHero and gallery.previewWindow must be objects');
   return errors;
 }
 

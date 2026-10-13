@@ -1,25 +1,25 @@
 {
   "$comment": "Expected gallery and film counts, in one place. Adding, merging or removing an effect, variant, basic or film changes these on purpose: update the numbers here and say why in the commit. Filters name the gallery buttons; families and basics count visible cards, demos and variants count the matching entries.",
-  "catalog": { "techniques": 43, "basics": 20, "variants": 21, "showcases": 5, "demos": 89 },
+  "catalog": { "techniques": 42, "basics": 21, "variants": 20, "showcases": 5, "demos": 88 },
   "filters": [
-    { "kind": "All", "stack": "All", "families": 43, "basics": 20, "demos": 84, "variants": 21 },
-    { "kind": "Characters", "stack": "All", "families": 3, "basics": 0, "demos": 8, "variants": 5 },
+    { "kind": "All", "stack": "All", "families": 42, "basics": 21, "demos": 83, "variants": 20 },
+    { "kind": "Characters", "stack": "All", "families": 3, "basics": 0, "demos": 7, "variants": 4 },
     { "kind": "Characters", "stack": "Flubber", "families": 0, "basics": 0, "demos": 0, "variants": 0 },
     { "kind": "All", "stack": "Flubber", "families": 1, "basics": 0, "demos": 1, "variants": 0 },
-    { "kind": "Materials & image treatments", "stack": "PixiJS", "families": 1, "basics": 0, "demos": 1, "variants": 1 }
+    { "kind": "Light & image treatments", "stack": "PixiJS", "families": 1, "basics": 0, "demos": 1, "variants": 1 }
   ],
   "films": {
-    "total": 33,
-    "layers": { "intro": 1, "use-case": 15, "demo": 6, "comparison": 2, "effect-film": 9 },
+    "total": 32,
+    "layers": { "intro": 1, "use-case": 15, "demo": 6, "comparison": 1, "effect-film": 9 },
     "featured": {
       "use-case": ["reel", "product", "infographic", "broll", "titles", "countdown", "spotlight"],
-      "demo": ["style-journey", "character-dialogue", "water-forms"]
+      "demo": ["character-dialogue", "style-journey", "water-forms"]
     },
     "$cards": "Film cards on the home page by section, in page order: the featured cards, then the smaller cards (listed films that are not a version of another film).",
     "cards": {
       "use-case": ["reel", "product", "infographic", "broll", "titles", "countdown", "spotlight"],
-      "demo": ["style-journey", "character-dialogue", "water-forms", "dot-story", "dot-battle"],
-      "comparison": ["fight-effects", "scene-eras"]
+      "demo": ["character-dialogue", "style-journey", "water-forms", "dot-story", "dot-battle"],
+      "comparison": ["fight-effects"]
     }
   }
 }

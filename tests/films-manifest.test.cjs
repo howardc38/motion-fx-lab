@@ -43,7 +43,8 @@ test('planned changes from the review are recorded on the films they concern', (
   const byId = new Map(manifest.films.map(f => [f.id, f]));
   if (byId.has('impact-orbit')) assert.equal(byId.get('impact-orbit').mergeInto, 'dot-battle');
   if (byId.has('shadow-lab')) assert.ok(byId.get('shadow-lab').retire);
-  if (byId.has('scene-eras')) assert.equal(byId.get('scene-eras').layer, 'comparison');
+  // scene-eras held still for most of its 24 s: it is no longer a published film; its live preset stays.
+  assert.equal(byId.has('scene-eras'), false);
   if (byId.has('word-forms') && byId.get('word-forms').layer !== 'use-case') assert.equal(byId.get('word-forms').becomes.layer, 'use-case');
   for (const id of ['optical', 'stacks']) if (byId.has(id)) {
     const f = byId.get(id);

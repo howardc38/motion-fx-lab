@@ -340,7 +340,7 @@ const fragmentBody = /* glsl */`
 #endif
   furCol *= mix(mix(1., rootDark, smoothstep(.1, .6, vLenMask)), 1., pow(min(fH, 1.), .75));   // bald spots show light backing fabric
   furCol = mix(furCol, furCol * uTip, min(fH * fH, 1.));
-  furCol *= mix(vec3(1.), vec3(.36, .27, .22), fB);       // pressed pile: the track shows deeper, warmer shade
+  furCol *= mix(vec3(1.), vec3(.24, .15, .11), fB);       // pressed pile: the track shows deeper, warmer shade
 #ifdef FUR_SHADOW
   { float canopy = mix(.62, 1., clump);
     furDepthN = clamp((canopy - fH) / canopy, 0., 1.) * clamp(vLenMask * 1.4, 0., 1.)   // short fur (seams, holes, muzzle) hides less light

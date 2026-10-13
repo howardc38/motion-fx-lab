@@ -435,63 +435,6 @@
 
   // Toon, halftone and dithered characters: the Character shading family in fx/pack-shading.js.
 
-  demo({ id: "flat", host: "mascotRow", name: "2D flat illustration with a rig", kind: "character", stacks: ["svg"], chips: ["SVG curves", "per-part rig", "flat shadows"], grade: "A",
-    purpose: "Drawn curve by curve with an outline and flat shadows, like an app mascot; each part is rigged on its own, so it can wave and blink.", period: 5, hero: 1.3,
-    build(s) {
-      s.style.background = "#ff90e8";
-      const O = "#1a1720", SK = "#f6c9a6", SKS = "#e6a883", HR = "#2a2230", SU = "#26335c", SUS = "#1b2546";
-      s.innerHTML = `<svg class="svgfill" viewBox="0 0 400 500" stroke="${O}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
-        <defs><clipPath id="mfFace"><ellipse cx="200" cy="200" rx="78" ry="88"/></clipPath><clipPath id="mfMouth"><path d="M168 238 Q200 276 232 238 Q200 250 168 238 Z"/></clipPath></defs>
-        <circle cx="200" cy="262" r="150" fill="#ffd400" stroke="none"/>
-        <g class="mf-all">
-          <g class="mf-arm"><rect x="-22" y="-116" width="44" height="128" rx="22" fill="${SU}"/><rect x="-21" y="-126" width="42" height="16" rx="7" fill="#fff"/><ellipse cx="-20" cy="-146" rx="9" ry="13" fill="${SK}" transform="rotate(-25 -20 -146)"/><ellipse cx="0" cy="-150" rx="24" ry="27" fill="${SK}"/></g>
-          <path d="M176 280 L224 280 L227 364 L173 364 Z" fill="${SK}"/>
-          <path d="M178 312 L222 312 L222 330 C210 338 190 338 178 330 Z" fill="${SKS}" stroke="none"/>
-          <g class="mf-body">
-            <path d="M60 530 C62 424 104 372 164 358 L236 358 C296 372 338 424 340 530 Z" fill="${SU}"/>
-            <path d="M166 360 L200 424 L234 360 Z" fill="#fff"/>
-            <path d="M191 366 L209 366 L205 382 L195 382 Z" fill="#ff4f9a"/>
-            <path d="M195 382 L205 382 L211 410 L200 421 L189 410 Z" fill="#ff4f9a"/>
-            <path d="M166 360 L200 424 L180 446 L146 376 Z" fill="${SUS}"/>
-            <path d="M234 360 L200 424 L220 446 L254 376 Z" fill="${SUS}"/>
-            <circle cx="200" cy="464" r="5" fill="${O}" stroke="none"/>
-          </g>
-          <g class="mf-head">
-            <ellipse cx="124" cy="214" rx="16" ry="22" fill="${SK}"/><ellipse cx="276" cy="214" rx="16" ry="22" fill="${SK}"/>
-            <ellipse cx="200" cy="200" rx="78" ry="88" fill="${SK}"/>
-            <ellipse cx="264" cy="214" rx="42" ry="98" fill="${SKS}" stroke="none" clip-path="url(#mfFace)" opacity=".6"/>
-            <ellipse cx="200" cy="200" rx="78" ry="88" fill="none"/>
-            <path d="M120 206 C106 118 166 88 214 94 C266 100 298 138 282 208 C272 178 258 160 238 152 C214 170 176 174 148 160 C136 172 126 188 120 206 Z" fill="${HR}"/>
-            <path d="M178 116 C198 106 226 108 246 120" stroke="#51445c" stroke-width="6" fill="none"/>
-            <g class="mf-brows"><path d="M148 176 Q164 166 180 174" stroke="${HR}" stroke-width="8" fill="none"/><path d="M220 174 Q236 166 252 176" stroke="${HR}" stroke-width="8" fill="none"/></g>
-            <g class="mf-eyes"><ellipse cx="166" cy="204" rx="10" ry="13" fill="${O}" stroke="none"/><circle cx="170" cy="199" r="4" fill="#fff" stroke="none"/><ellipse cx="234" cy="204" rx="10" ry="13" fill="${O}" stroke="none"/><circle cx="238" cy="199" r="4" fill="#fff" stroke="none"/></g>
-            <path d="M199 214 Q192 228 203 230" stroke="#c98a66" stroke-width="4" fill="none"/>
-            <path class="mf-mouth" d="M168 238 Q200 276 232 238 Q200 250 168 238 Z" fill="#7a1f3a"/>
-            <ellipse cx="200" cy="262" rx="16" ry="9" fill="#ff7a9c" stroke="none" clip-path="url(#mfMouth)"/>
-            <ellipse cx="148" cy="236" rx="15" ry="8" fill="#ff8fb1" stroke="none" opacity=".6"/><ellipse cx="252" cy="236" rx="15" ry="8" fill="#ff8fb1" stroke="none" opacity=".6"/>
-          </g>
-          <g transform="rotate(10 292 442)"><rect x="262" y="392" width="60" height="100" rx="12" fill="${O}"/><rect x="270" y="404" width="44" height="72" rx="6" fill="#ff90e8" stroke="none"/><path d="M280 440 L289 450 L305 428" stroke="#fff" stroke-width="7" fill="none"/></g>
-          <ellipse cx="278" cy="474" rx="22" ry="18" fill="${SK}"/>
-        </g>
-        <g class="mf-note"><rect x="232" y="318" width="156" height="46" rx="23" fill="#fff"/><text x="310" y="348" text-anchor="middle" font-size="20" font-weight="900" stroke="none" fill="${O}" font-family='${ZH}'>✓ Done!</text></g>
-      </svg>`;
-      const all = q(s, ".mf-all"), bodyG = q(s, ".mf-body"), headG = q(s, ".mf-head"), eyes = q(s, ".mf-eyes"), brows = q(s, ".mf-brows"), armG = q(s, ".mf-arm"), note = q(s, ".mf-note");
-      return (t) => {
-        const hopP = t < 0.6 ? Math.sin((Math.PI * t) / 0.6) : 0, land = Math.exp(-Math.pow((t - 0.62) / 0.07, 2));
-        const sx = 1 + 0.06 * land, sy = 1 - 0.07 * land + 0.03 * hopP;
-        all.setAttribute("transform", `translate(0 ${-18 * hopP}) translate(200 500) scale(${sx} ${sy}) translate(-200 -500)`);
-        bodyG.setAttribute("transform", `translate(200 530) scale(1 ${1 + 0.012 * Math.sin((t * 2 * Math.PI) / 2.5)}) translate(-200 -530)`);
-        const up = smooth(0.4, 0.75, t) * (1 - smooth(2.6, 3.0, t)), wave = t > 0.75 && t < 2.6 ? 9 * Math.sin((t - 0.75) * 11) : 0;
-        headG.setAttribute("transform", `translate(0 32) rotate(${3 * Math.sin((t * 2 * Math.PI) / 5) - 3 * up} 200 330)`);
-        const blink = [1.4, 3.9].some((b) => t > b && t < b + 0.13);
-        eyes.setAttribute("transform", `translate(0 204) scale(1 ${blink ? 0.12 : 1}) translate(0 -204)`);
-        brows.setAttribute("transform", `translate(0 ${-6 * up})`);
-        armG.setAttribute("transform", `translate(110 392) rotate(${-165 + 145 * up + wave * up})`);
-        const k = Math.max(0, back(lin(3.0, 3.35, t))) * (1 - lin(4.5, 4.8, t));
-        note.setAttribute("transform", `translate(310 341) scale(${k}) translate(-310 -341)`);
-      };
-    } });
-
   // ================= Motion basics, continued (tier: "basic", 16:9, centred) =================
   demo({ id: "hook", tier: "basic", name: "3-second headline hook", kind: "type", stacks: ["css"], chips: ["CSS mask reveal", "transform"], grade: "A",
     purpose: "A headline revealed by a mask within the first second, with no logo before it.", period: 4, hero: 2.3,

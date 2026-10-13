@@ -141,14 +141,15 @@ export function create(mode = "material") {
   }
 
   // Drop, crown, jet and ripples for one impact at u = 0 of a 4 s loop. The next
-  // drop is already falling during the last half second, so the loop is seamless.
-  function splash(u, t) {
-    const s = u,
-      fallStart = period - 0.5;
+  // drop is already falling during the last `fall` seconds, so the loop is seamless.
+  // `slow` stretches the splash itself (slow motion), so it fills more of the loop.
+  function splash(u, t, slow = 1, fall = 0.5) {
+    const s = u / slow,
+      fallStart = period - fall;
     drop.visible = u > fallStart;
     if (drop.visible) {
-      const k = (u - fallStart) / 0.5,
-        y = 0.18 + 3.1 * (1 - k * k);
+      const k = (u - fallStart) / fall,
+        y = 0.18 + (fall > 0.5 ? 4.4 : 3.1) * (1 - k * k);
       drop.position.set(0, y, 0);
       drop.scale.set(0.17, 0.17 * (1 + 0.55 * k), 0.17);
     }
@@ -170,7 +171,7 @@ export function create(mode = "material") {
     pinch.scale.set(0.13, 0.13 * (1 + 0.25 * Math.exp(-ps * 8)), 0.13);
     pool.update((x, z, r) => {
       let h = K.swell(x, z, u, 0.012, period);
-      for (const k of [0, period]) {
+      for (const k of [0, period / slow]) {
         h += K.ripple(r, s + k, { amplitude: 0.13, speed: 1.35, wavelength: 0.5, decay: 0.75 });
         h += K.ripple(r, back + k, { amplitude: 0.06, speed: 1.1, wavelength: 0.32, decay: 1.1 });
       }
@@ -239,10 +240,12 @@ export function create(mode = "material") {
       rays.group.visible = false;
       under.visible = false;
       floor.mesh.visible = false;
-      detail = splash(u, t);
+      // Slow motion (x1.45) and a 0.9 s fall from above the frame fill the loop; the camera looks a
+      // little higher so the crown sits below the title.
+      detail = splash(u, t, 1.45, 0.9);
       const drift = 0.18 * Math.sin((u / period) * TAU);
-      camera.position.set(Math.sin(0.3 + drift) * 5.2, 0.95, Math.cos(0.3 + drift) * 5.2);
-      camera.lookAt(0, 0.6, 0);
+      camera.position.set(Math.sin(0.3 + drift) * 5.2, 1.05, Math.cos(0.3 + drift) * 5.2);
+      camera.lookAt(0, 0.95, 0);
     }
     if (mode === "underwater") {
       // Above the surface a drop lands; the camera follows it down into the bubbles.

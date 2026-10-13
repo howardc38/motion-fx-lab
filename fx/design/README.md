@@ -12,11 +12,12 @@ runtime library, external artwork, video or model is needed.
 | [One light. Different edges.](../../examples/shadow-lab.html) | 9.6 s | Enlarge the emitter, then raise the occluder; compare shadow edge width. |
 
 The first two are composed sequences. The third is a single-effect render.
-None is an extra technique. The catalogue adds three families and two variants:
+None is an extra technique. The catalogue adds two effect families, one Motion basic (the soft-shadow study, a lighting
+fundamental listed with the basics and not counted as an effect) and two variants:
 
 | Family / variant | Module | Editable controls |
 |---|---|---|
-| Spatial type (`design-type-orbit`) | `orbit.js` | `wrap`, `spin`, `scale`, `dot`, `fly`, `labels`; `create({message})` sets the ring lettering (default `MAKE IT MOVE`). The gallery camera flies through the ring's centre; `fly: false` keeps the fixed film view. Edge rim light; the far side of the ring is hazed and blurred. |
+| Spatial type (`design-type-orbit`) | `orbit.js` | `wrap`, `spin`, `scale`, `dot`, `fly`, `curl`, `labels`; with `curl` (the gallery default) the line rolls up into the ring along arcs, so letters never cross; films pass `fly: false` and keep the straight blend; `create({message})` sets the ring lettering (default `MAKE IT MOVE`). The gallery camera flies through the ring's centre; `fly: false` keeps the fixed film view. Edge rim light; the far side of the ring is hazed and blurred. |
 | Soft-shadow study (`design-soft-shadow`) | `lighting.js` | `lightSize` .02–4 (a bare spotlight at the small end, a four-pane window at the large end), `height` .59–2 for the floating ball, `lightHeight` 3–8, `labels`. |
 | Surface hatching (`design-surface-ink`) | `ink.js` | `objectAngle`, `cameraAngle`, `lightAngle` (moves the visible lamp), `strength`, `frequency`, `debugPattern` (fixed density, lamp hidden), `labels`. The subject is a turned vase with an ink outline. |
 | Letter reflow (variant of `chars`) | `flat.js` | Edit `letterLayout` and `drawLetters` for the word, its entry paths, `exit` (letters lift away in turn) and `wave`. The supplied dotless-i treatment is authored for “Motion”. |

@@ -47,7 +47,15 @@ void main(){
  let proof;
  return{canvas:s.canvas,proof:()=>proof,frame(t,o={}){t=time(t);const q=t%8,wrap=o.wrap??(phase(q,.3,1.4)*(1-phase(q,6.6,7.8))),spin=o.spin??t*.48;
   group.scale.setScalar(o.scale??1);group.rotation.set(0,0,0);
-  for(const {mesh,along:a0} of glyphs){const a=a0/total*TAU+spin;mesh.position.set(mix((a0-total/2)*unit*.55,Math.sin(a)*2.8,wrap),mix(.3,0,wrap),Math.cos(a)*2.8*wrap);mesh.rotation.set(0,a*wrap,0);mesh.scale.setScalar(mix(.55,1,wrap));}
+  // Gallery (curl): the line rolls up into the ring along arcs of shrinking radius 2.8 / wrap, so letters
+  // keep their order and never pass through each other. The ring's turn is taken modulo its symmetry
+  // (the default message repeats, so half a turn looks the same) and fades with the wrap, so the
+  // flat line at both ends of the loop is exactly the line it started as. Films keep the straight blend.
+  const curl=o.curl??o.fly!==false,sym=message===MESSAGE?Math.PI:TAU,sigma=((spin%sym)+sym)%sym,L=mix(.55,1,wrap);
+  for(const {mesh,along:a0} of glyphs){
+   if(curl){const b=a0/total*TAU-Math.PI,th=wrap*L*b+sigma*wrap*wrap,R=2.8/Math.max(wrap,1e-4);
+    mesh.position.set(wrap<1e-4?2.8*L*b:R*Math.sin(th),mix(.3,0,wrap),wrap<1e-4?0:2.8*wrap-R+R*Math.cos(th));mesh.rotation.set(0,th,0);mesh.scale.setScalar(L);continue;}
+   const a=a0/total*TAU+spin;mesh.position.set(mix((a0-total/2)*unit*.55,Math.sin(a)*2.8,wrap),mix(.3,0,wrap),Math.cos(a)*2.8*wrap);mesh.rotation.set(0,a*wrap,0);mesh.scale.setScalar(mix(.55,1,wrap));}
   // `fly` follows the gallery camera path; films pass `fly:false` for the fixed view.
   if(o.fly===false){s.camera.position.set(0,2.8,10.4);s.camera.lookAt(0,0,0);}
   else{const p=along(q,'pos'),m=along(q,'aim');s.camera.position.set(...p);s.camera.lookAt(...m);}

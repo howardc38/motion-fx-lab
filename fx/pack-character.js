@@ -1,7 +1,7 @@
 (() => {
   if (!window.FX) return;
   const entries = [
-    { id: 'character-rig', name: 'Configurable cutout character', purpose: 'Bind transparent image parts to named joints. Compare a quadruped and a humanoid without changing the renderer.', mode: 'rig', period: 3, hero: 1 },
+    { id: 'character-rig', name: 'Configurable cutout character', purpose: 'Transparent image parts bound to named joints: the cat runs, the robot jumps and waves, and for a moment the joint chains that drive them show through.', mode: 'rig', period: 4, hero: 2 },
     { id: 'character-motion', name: 'Character motion presets', purpose: 'Sample configured leg chains, foot contact, jumps and arm waves. The scene places the same transparent source in different videos.', mode: 'pairs', period: 3, hero: 1 },
     { id: 'character-style', name: 'Subject drawing styles', purpose: 'Apply eight drawing treatments to the character itself at the same pose time: original, poster, ink, pixels, dots, ASCII, etching and duotone.', mode: 'board', period: 3, hero: 1 },
   ];

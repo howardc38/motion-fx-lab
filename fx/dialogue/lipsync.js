@@ -1,4 +1,4 @@
-// "Say it. Mean it.": one recording drives a plush bear's puppet mouth in close-up, then the same
+// "Say it. Mean it.": one generated voice track drives a plush bear's puppet mouth in close-up, then the same
 // cues drive Pip's screen face in a split screen. Captions highlight each word as it is spoken and a
 // strip shows the current mouth cue. Every value is a function of the absolute time t.
 import * as T from 'three';
@@ -162,10 +162,11 @@ export async function create(spec, data, {width = 1280, height = 720, mode = 'fi
     if (endCard > 0) {
       ctx.globalAlpha = endCard; ctx.fillStyle = '#0d272c'; ctx.fillRect(0, 0, 1280, 720);
       const rise = 18 * (1 - endCard);
-      label(ctx, 'SPEECH  →  MOUTH CUES  →  ANY FACE', 640, 150 + rise, {size: tile ? 40 : 34, align: 'center', colour: '#ffe7b0', spacing: 4});
-      label(ctx, 'One recording, nine analysed shapes, the same timing on a plush bear and a robot.', 640, 196 + rise, {size: tile ? 22 : 18, align: 'center', colour: '#b9d4d6', weight: 500, spacing: 0});
-      const bw = 1080, bh = bw * board.height / board.width; ctx.drawImage(board, 640 - bw / 2, 250 + rise, bw, bh);
-      ['X', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].forEach((id, i) => label(ctx, id, 640 - bw / 2 + (i + .5) * bw / 9, 250 + rise + bh + 34, {size: 22, align: 'center', colour: '#ffd166'}));
+      // The tile drops the subtitle and draws the mouth board almost full width, so it reads at 382 px.
+      label(ctx, 'SPEECH  →  MOUTH CUES  →  ANY FACE', 640, (tile ? 232 : 150) + rise, {size: tile ? 48 : 34, align: 'center', colour: '#ffe7b0', spacing: 4});
+      if (!tile) label(ctx, 'One generated voice, nine analysed mouth shapes, the same timing on a plush bear and a robot.', 640, 196 + rise, {size: 18, align: 'center', colour: '#b9d4d6', weight: 500, spacing: 0});
+      const bw = tile ? 1240 : 1080, by = tile ? 282 : 250, bh = bw * board.height / board.width; ctx.drawImage(board, 640 - bw / 2, by + rise, bw, bh);
+      ['X', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].forEach((id, i) => label(ctx, id, 640 - bw / 2 + (i + .5) * bw / 9, by + rise + bh + (tile ? 46 : 34), {size: tile ? 36 : 22, align: 'center', colour: '#ffd166'}));
       if (!tile) label(ctx, 'SAY IT. MEAN IT.', 640, 640, {size: 18, align: 'center', colour: '#f1d9b0', spacing: 5});
       ctx.globalAlpha = 1;
     }

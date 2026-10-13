@@ -60,14 +60,13 @@ Every published film has one layer. Use cases and demo films get cards in their 
 | Product spotlight | Use case | A code-drawn product drops in, gains three callouts, changes colourway and ends on price and call to action. | Card in Use cases |
 | Product spotlight (vertical) | Use case | Vertical version of Product spotlight, rendered from the same page. | Linked from the Product spotlight card |
 | Product spotlight (square) | Use case | Square version of Product spotlight, rendered from the same page. | Linked from the Product spotlight card |
-| One flight. Twenty worlds. | Demo film | One character travels through twenty art directions. | Card in Demo films |
 | The Final Final | Demo film | The plush bear asks for the launch video; Pip has made one small, dramatic improvement. Nine library effects play a part in the story. | Card in Demo films |
+| One flight. Twenty worlds. | Demo film | One character travels through twenty art directions. | Card in Demo films |
 | Clear | Demo film | A 15-second drinks advert: a drop crowns, rises into a glass bottle, dives underwater and surfaces as the brand. | Card in Demo films |
 | Clear (9:16) | Demo film | The Clear drinks advert recomposed for 9:16 from the same page. | Linked from the Clear card |
 | One dot. Many roles. | Demo film | One orange dot becomes a switch, a letter, a spring trace and a reveal before returning to the start. | Card in Demo films |
 | COUNTERFORM | Demo film | A complete fight with authored action and contact timing, and a 1.2 s freeze-orbit at the climax. | Card in Demo films |
 | Same fight. Eight treatments. | Comparison | Compare eight operations on the same choreography. | Card in Comparisons |
-| One scene. Many eras. | Comparison | The same room/action under eight art treatments. | Card in Comparisons |
 | Find the Form | Effect film | An extended rendered example of volumetric smoke. | Effect card: Volumetric smoke around geometry |
 | Overflow | Effect film | Partly filled bowl → rising water → overflow → settling. | Effect card: Fluid flow and overflow |
 | Slow Gold | Effect film | Inspect liquid contact, stretching and drainage over a ring. | Effect card: Fluid flow and overflow |

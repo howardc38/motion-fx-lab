@@ -47,16 +47,15 @@
         {"id": "sweep", "at": [2.4, 4.8], "label": "Light sweep", "proof": ["examples/reel.html", "id: \"sweep\""]},
         {"id": "sticker", "at": [2.4, 4.8], "label": "Price sticker", "proof": ["examples/reel.html", "id: \"sticker\""]},
         {"id": "stamp", "at": [2.4, 4.8], "label": "Price slam", "proof": ["examples/reel.html", "id: \"stamp\""]},
-        {"id": "uifly", "at": [4.8, 7.2], "label": "UI camera", "proof": ["examples/product.html", "id: \"uifly\""]},
+        {"id": "type", "at": [4.8, 6.85], "label": "Typed reply", "proof": ["examples/product.html", "id: \"type\""]},
+        {"id": "mark", "at": [6.65, 7.15], "label": "Highlighted result", "proof": ["examples/product.html", "id: \"mark\""]},
         {"id": "count", "at": [7.2, 9.6], "label": "Counters", "proof": ["examples/infographic.html", "id: \"count\""]},
         {"id": "ring", "at": [7.2, 9.6], "label": "Goal ring", "proof": ["examples/infographic.html", "id: \"ring\""]},
-        {"id": "glass", "at": [9.6, 12], "label": "Glass shine", "proof": ["examples/spotlight.html", "id: \"glass\""]},
-        {"id": "chars", "at": [9.6, 12], "label": "Letter pop", "proof": ["examples/spotlight.html", "id: \"chars\""]},
+        {"id": "glass", "at": [10, 12], "label": "Glass shine", "proof": ["examples/spotlight.html", "id: \"glass\""]},
         {"id": "particles", "at": [12, 14.4], "label": "Particles into a logo", "proof": ["examples/countdown.html", "id: \"particles\""]},
         {"id": "chrome", "at": [12, 14.4], "label": "Chrome logo", "proof": ["examples/countdown.html", "id: \"chrome\""]},
         {"id": "rays", "at": [12, 14.4], "label": "Light rays", "proof": ["examples/countdown.html", "id: \"rays\""]},
-        {"id": "orbs", "at": [14.4, 16.8], "label": "Colour fields", "proof": ["examples/broll.html", "id: \"orbs\""]},
-        {"id": "ridgelines", "at": [14.4, 16.8], "label": "Ridgelines", "proof": ["examples/broll.html", "id: \"ridgelines\""]},
+        {"id": "ridgelines", "at": [14.6, 16.8], "label": "Ridgelines", "proof": ["examples/broll.html", "id: \"ridgelines\""]},
         {
           "id": "dialogue-lipsync",
           "at": [16.8, 21.6],
@@ -515,6 +514,38 @@
       "groups": ["all", "uses"]
     },
     {
+      "id": "character-dialogue",
+      "layer": "demo",
+      "tier": "featured",
+      "title": "The Final Final",
+      "summary": "The plush bear asks for the launch video; Pip has made one small, dramatic improvement. Nine library effects play a part in the story.",
+      "duration": 23.8,
+      "format": "16:9",
+      "page": "examples/character-dialogue.html",
+      "media": {"mp4": "media/character-dialogue.mp4", "poster": "media/character-dialogue.jpg", "preview": "media/character-dialogue.preview.mp4"},
+      "card": {
+        "headline": "The Final Final",
+        "description": "The bear asks for the launch video. Pip has made one small, dramatic improvement.",
+        "useFor": "Voiced character stories, product explainers and comedy shorts.",
+        "relation": "Speech and lip sync, plush fur and seven library effects inside the film-within-the-film each have a story role.",
+        "guide": "fx/dialogue/README.md"
+      },
+      "audience": "Explainer, comedy and product-story makers who need talking characters.",
+      "effects": [
+        {"id": "plush-fur", "label": "Plush fur", "proof": ["fx/dialogue/final.js", "{id: 'plush-fur'"]},
+        {"id": "dialogue-lipsync", "at": [1.35, 21.4], "label": "Speech and lip sync", "proof": ["fx/dialogue/final.js", "{id: 'dialogue-lipsync'"]},
+        {"id": "rays", "at": [0.28, 0.5], "label": "Launch burst", "proof": ["fx/dialogue/final.js", "{id: 'rays'"]},
+        {"id": "stamp", "at": [0.28, 0.5], "label": "LAUNCH slam", "proof": ["fx/dialogue/final.js", "{id: 'stamp'"]},
+        {"id": "count", "at": [7.45, 10.47], "label": "Stuck at 99%", "proof": ["fx/dialogue/trailer.js", "{effect: 'count'"]},
+        {"id": "sweep", "at": [7.65, 10.47], "label": "Progress sweep", "proof": ["fx/dialogue/trailer.js", "{effect: 'sweep'"]},
+        {"id": "glitch", "at": [10.45, 11.07], "label": "Trailer breaks up", "proof": ["fx/dialogue/trailer.js", "{effect: 'glitch'"]},
+        {"id": "stamp", "at": [11.05, 11.83], "label": "TO BE CONTINUED", "proof": ["fx/dialogue/trailer.js", "{effect: 'stamp'"]},
+        {"id": "cardflip", "at": [14.36, 17.83], "label": "Final, final, actually final", "proof": ["fx/dialogue/final.js", "{id: 'cardflip'"]},
+        {"id": "ring", "at": [18.9, 19.93], "label": "Loading face", "proof": ["fx/dialogue/final.js", "{id: 'ring'"]}
+      ],
+      "groups": ["all", "showcase", "dialogue"]
+    },
+    {
       "id": "style-journey",
       "layer": "demo",
       "tier": "featured",
@@ -538,38 +569,6 @@
         {"id": "studio-lowpoly", "at": [29.9, 37], "label": "Low-poly course", "proof": ["fx/studio/flight.js", "if (i === 17 && city)"]}
       ],
       "groups": ["all", "showcase", "studio"]
-    },
-    {
-      "id": "character-dialogue",
-      "layer": "demo",
-      "tier": "featured",
-      "title": "The Final Final",
-      "summary": "The plush bear asks for the launch video; Pip has made one small, dramatic improvement. Nine library effects play a part in the story.",
-      "duration": 23.8,
-      "format": "16:9",
-      "page": "examples/character-dialogue.html",
-      "media": {"mp4": "media/character-dialogue.mp4", "poster": "media/character-dialogue.jpg", "preview": "media/character-dialogue.preview.mp4"},
-      "card": {
-        "headline": "The Final Final",
-        "description": "The bear asks for the launch video. Pip has made one small, dramatic improvement.",
-        "useFor": "Voiced character stories, product explainers and comedy shorts.",
-        "relation": "Speech and lip sync, plush fur and seven library effects inside the film-within-the-film each have a story role.",
-        "guide": "fx/dialogue/README.md"
-      },
-      "audience": "Explainer, comedy and product-story makers who need talking characters.",
-      "effects": [
-        {"id": "plush-fur", "label": "Plush fur", "proof": ["fx/dialogue/final.js", "{id: 'plush-fur'"]},
-        {"id": "dialogue-lipsync", "at": [1.35, 21.4], "label": "Speech and lip sync", "proof": ["fx/dialogue/final.js", "{id: 'dialogue-lipsync'"]},
-        {"id": "rays", "at": [0.28, 1.97], "label": "Launch burst", "proof": ["fx/dialogue/final.js", "{id: 'rays'"]},
-        {"id": "stamp", "at": [0.28, 1.97], "label": "LAUNCH slam", "proof": ["fx/dialogue/final.js", "{id: 'stamp'"]},
-        {"id": "count", "at": [7.45, 10.47], "label": "Stuck at 99%", "proof": ["fx/dialogue/trailer.js", "{effect: 'count'"]},
-        {"id": "sweep", "at": [7.65, 10.47], "label": "Progress sweep", "proof": ["fx/dialogue/trailer.js", "{effect: 'sweep'"]},
-        {"id": "glitch", "at": [10.45, 11.07], "label": "Trailer breaks up", "proof": ["fx/dialogue/trailer.js", "{effect: 'glitch'"]},
-        {"id": "stamp", "at": [11.05, 11.83], "label": "TO BE CONTINUED", "proof": ["fx/dialogue/trailer.js", "{effect: 'stamp'"]},
-        {"id": "cardflip", "at": [14.36, 17.83], "label": "Final, final, actually final", "proof": ["fx/dialogue/final.js", "{id: 'cardflip'"]},
-        {"id": "ring", "at": [18.9, 19.93], "label": "Loading face", "proof": ["fx/dialogue/final.js", "{id: 'ring'"]}
-      ],
-      "groups": ["all", "showcase", "dialogue"]
     },
     {
       "id": "water-forms",
@@ -710,29 +709,6 @@
         {"id": "studio-skin-cloud", "at": [33.6, 38.4], "label": "Surface points"}
       ],
       "groups": ["all", "showcase", "studio"]
-    },
-    {
-      "id": "scene-eras",
-      "layer": "comparison",
-      "tier": "listed",
-      "title": "One scene. Many eras.",
-      "summary": "The same room/action under eight art treatments.",
-      "duration": 24,
-      "format": "16:9",
-      "page": "examples/scene-eras.html",
-      "media": {"mp4": "media/scene-eras.mp4", "poster": "media/scene-eras.jpg", "preview": "media/scene-eras.preview.mp4"},
-      "card": {
-        "headline": "One scene. Many eras.",
-        "description": "One continuous cup-lifting action, eight room treatments and stable scene landmarks.",
-        "useFor": "Comparing illustration and period styles on one scene.",
-        "relation": "The scene is also a live preset below.",
-        "guide": "fx/material-studies/README.md"
-      },
-      "audience": "Art directors comparing period or illustration styles on one scene.",
-      "effects": [
-        {"id": "scene-eras", "label": "Eight room treatments", "proof": ["fx/material-studies/films.js", "if (id === \"eras\") return room();"]}
-      ],
-      "groups": ["all", "showcase", "materials"]
     },
     {
       "id": "fluid-smoke",
@@ -935,7 +911,7 @@
       "media": {"mp4": "media/character-lipsync.mp4", "poster": "media/character-lipsync.jpg"},
       "card": {
         "headline": "Say it. Mean it.",
-        "description": "The plush bear says one line three ways; mouth shapes, captions and fur follow the recorded speech.",
+        "description": "The plush bear says one line three ways; mouth shapes, captions and fur follow the generated speech.",
         "useFor": "Talking-character clips and explainers.",
         "relation": "The Final Final uses the same speech and expression rig.",
         "guide": "fx/dialogue/README.md"

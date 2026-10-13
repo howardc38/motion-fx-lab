@@ -29,7 +29,7 @@
       "water",
       "impact",
       4,
-      0.4,
+      0.58,
       "A choreographed fall, crown splash, ballistic droplets, rebound jet and travelling waves.",
     ],
     [
@@ -50,7 +50,7 @@
       "reveal",
       8,
       3,
-      "Chinese or Latin outlines extrude out of the page while a light sweeps across the bevelled faces. Replace the text with supported glyphs.",
+      "Chinese or Latin outlines spin into depth: the extrusion punches out of the page with an overshoot, then a light sweeps across the bevelled faces. Replace the text with supported glyphs.",
     ],
     [
       "organic-contours",

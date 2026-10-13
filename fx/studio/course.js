@@ -118,9 +118,15 @@ export function createCourse() {
       renderer.localClippingEnabled = false;
       renderer.render(scene, camera);
       g.drawImage(renderer.domElement, 0, 0, W, H);
-      g.font = "800 28px Arial"; g.fillStyle = "#fff1dc"; g.fillText("FLIGHT / LOW POLY", 44, 58);
-      const gate = (Math.floor((travel + GATE / 2) / GATE) % 8) + 1;
-      g.font = "700 22px monospace"; g.fillText(`GATE ${String(gate).padStart(2, "0")} / 08   ${Math.round(SPEED * 3.6 * 2)} km/h`, 46, 676);
+      // HUD labels sit on dark pills so passing buildings never show through the letters.
+      const gate = (Math.floor((travel + GATE / 2) / GATE) % 8) + 1, hud = `GATE ${String(gate).padStart(2, "0")} / 08   ${Math.round(SPEED * 3.6 * 2)} km/h`;
+      const pill = (text, font, x, y, h) => {
+        g.font = font; const w = g.measureText(text).width;
+        g.fillStyle = "rgba(24,12,34,.72)"; g.beginPath(); g.roundRect(x - 16, y - h * 0.78, w + 32, h * 1.25, h * 0.62); g.fill();
+        g.fillStyle = "#fff1dc"; g.fillText(text, x, y);
+      };
+      pill("FLIGHT / LOW POLY", "800 28px Arial", 44, 58, 32);
+      pill(hud, "700 22px monospace", 46, 676, 26);
       proof = { mode: "lowpoly", travel, gate, fov: camera.fov, bank, fog: scene.fog.density, speedLines: LINES };
     },
   };
