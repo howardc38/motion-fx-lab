@@ -5,16 +5,16 @@
   // Generated from fx/manifest.json by tools/fx-manifest.cjs; edit the manifest, not this block.
   const GALLERY = {
     order: [
-      "signal-motion-fragments", "dialogue-lipsync", "gpuparticles", "domainrep", "optical-foil",
-      "fluid-smoke", "liquid", "organic-contours", "studio-depth-dots", "studio-freeze-orbit",
-      "design-type-orbit", "water-material", "optical-ribbon", "reaction", "stack-gpu", "clay",
-      "optical-moire", "optical-caustic", "toon", "cjk-solid", "studio-portal", "tunnel", "vartype",
-      "rhythm", "cardflip", "water-impact", "design-surface-ink", "optical-slit", "optical-morph",
-      "rays", "ridgelines", "chrome", "studio-echo", "studio-skin-cloud", "studio-video-dots",
-      "fluid-overflow", "rigid", "flat", "glitch", "dissolve", "design-soft-shadow", "uifly",
-      "whip", "hook", "chars", "karaoke", "datachart", "timing", "glass", "sweep", "stamp", "beat",
-      "sticker", "gradient", "ring", "count", "type", "mark", "scan", "wipe", "lut", "grain",
-      "character-rig", "character-style",
+      "signal-motion-fragments", "dialogue-lipsync", "plush-fur", "gpuparticles", "domainrep",
+      "optical-foil", "fluid-smoke", "liquid", "organic-contours", "studio-depth-dots",
+      "studio-freeze-orbit", "design-type-orbit", "water-material", "optical-ribbon", "reaction",
+      "stack-gpu", "clay", "optical-moire", "optical-caustic", "toon", "cjk-solid", "studio-portal",
+      "tunnel", "vartype", "rhythm", "cardflip", "water-impact", "design-surface-ink",
+      "optical-slit", "optical-morph", "rays", "ridgelines", "chrome", "studio-echo",
+      "studio-skin-cloud", "studio-video-dots", "fluid-overflow", "rigid", "flat", "glitch",
+      "dissolve", "design-soft-shadow", "uifly", "whip", "hook", "chars", "karaoke", "datachart",
+      "timing", "glass", "sweep", "stamp", "beat", "sticker", "gradient", "ring", "count", "type",
+      "mark", "scan", "wipe", "lut", "grain", "character-rig", "character-style",
     ],
     showcaseOrder: [
       "styles", "studio-themes", "studio-gallery", "water-underwater", "scene-eras",

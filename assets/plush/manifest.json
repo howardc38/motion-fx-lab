@@ -1,0 +1,88 @@
+{
+ "version": 1,
+ "source": "Poly Haven (https://polyhaven.com), downloaded unchanged from dl.polyhaven.org; the md5 of each file matched the Poly Haven API.",
+ "license": "CC0 1.0 Universal public domain dedication (https://polyhaven.com/license). Attribution is not required; authors are listed for credit.",
+ "note": "The browser decodes these files as images only. fx/plush/textures.js loads them for the optional photo feature of the fur shader.",
+ "files": [
+  {
+   "file": "curly_teddy_natural/curly_teddy_natural_diff_1k.jpg",
+   "asset": "Curly Teddy Natural",
+   "page": "https://polyhaven.com/a/curly_teddy_natural",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/curly_teddy_natural/curly_teddy_natural_diff_1k.jpg",
+   "authors": {
+    "colormass": "Photography",
+    "Rico Cilliers": "Processing"
+   },
+   "license": "CC0 1.0",
+   "licenseUrl": "https://polyhaven.com/license",
+   "sha256": "3e524df3f6b35bfd87b71ed6a1e2d0c96797e55ec4c1a5b2f7c4332b635a1d79",
+   "bytes": 673494,
+   "downloaded": "2026-10-13",
+   "use": "Fur: luminance sets the tuft layout and albedo mottling (character colours are unchanged)."
+  },
+  {
+   "file": "curly_teddy_natural/curly_teddy_natural_nor_gl_1k.jpg",
+   "asset": "Curly Teddy Natural",
+   "page": "https://polyhaven.com/a/curly_teddy_natural",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/curly_teddy_natural/curly_teddy_natural_nor_gl_1k.jpg",
+   "authors": {
+    "colormass": "Photography",
+    "Rico Cilliers": "Processing"
+   },
+   "license": "CC0 1.0",
+   "licenseUrl": "https://polyhaven.com/license",
+   "sha256": "a6cea84bddf31c9d4643a25a09c3ec8fa8884e3c3e2d8ac291623e3f702159b8",
+   "bytes": 576152,
+   "downloaded": "2026-10-13",
+   "use": "Fur: normal-map xy sets the pile direction (nap)."
+  },
+  {
+   "file": "caban/caban_diff_1k.jpg",
+   "asset": "Caban",
+   "page": "https://polyhaven.com/a/caban",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/caban/caban_diff_1k.jpg",
+   "authors": {
+    "colormass": "Photography",
+    "Rico Cilliers": "Processing"
+   },
+   "license": "CC0 1.0",
+   "licenseUrl": "https://polyhaven.com/license",
+   "sha256": "e6502a2516772c3158d11fc447a4d0972900dc81347334465b99b18f3b09524c",
+   "bytes": 715554,
+   "downloaded": "2026-10-13",
+   "use": "Felt pads: luminance re-tinted to the character colours."
+  },
+  {
+   "file": "caban/caban_nor_gl_1k.jpg",
+   "asset": "Caban",
+   "page": "https://polyhaven.com/a/caban",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/caban/caban_nor_gl_1k.jpg",
+   "authors": {
+    "colormass": "Photography",
+    "Rico Cilliers": "Processing"
+   },
+   "license": "CC0 1.0",
+   "licenseUrl": "https://polyhaven.com/license",
+   "sha256": "27cd0f98d833648c43d2c85db2e23a151b1ec2b74feaf56964a16b6c0c892f84",
+   "bytes": 616486,
+   "downloaded": "2026-10-13",
+   "use": "Felt pads: normal map."
+  },
+  {
+   "file": "caban/caban_rough_1k.jpg",
+   "asset": "Caban",
+   "page": "https://polyhaven.com/a/caban",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/caban/caban_rough_1k.jpg",
+   "authors": {
+    "colormass": "Photography",
+    "Rico Cilliers": "Processing"
+   },
+   "license": "CC0 1.0",
+   "licenseUrl": "https://polyhaven.com/license",
+   "sha256": "625125e1ba8e741c87da18e45e45ff870bce13fa2bb81fecef2edc6255c79918",
+   "bytes": 1022753,
+   "downloaded": "2026-10-13",
+   "use": "Felt pads: roughness map."
+  }
+ ]
+}

@@ -175,7 +175,7 @@
     {
       "id": "design",
       "scripts": ["fx/design-effects.js", "fx/pack-design.js"],
-      "cacheTag": "design-1",
+      "cacheTag": "design-2",
       "readme": "fx/design/README.md",
       "prefix": "design-",
       "anchor": "id:'{key}'",
@@ -270,25 +270,47 @@
     {
       "id": "dialogue",
       "scripts": ["fx/dialogue-effects.js", "fx/pack-dialogue.js"],
-      "cacheTag": "dialogue-1",
+      "cacheTag": "dialogue-2",
       "readme": "fx/dialogue/README.md",
       "sources": {
         "dialogue-lipsync": [
           "fx/pack-dialogue.js",
           "fx/dialogue-effects.js",
           "fx/dialogue/scene.js",
+          "fx/dialogue/lipsync.js",
+          "fx/dialogue/final.js",
           "fx/dialogue/actors.js",
+          "fx/dialogue/captions.js",
+          "fx/dialogue/data.js",
           "fx/dialogue/player.js",
           "assets/dialogue/manifest.json",
           "tools/dialogue/build.py",
           "fx/dialogue/README.md"
         ]
       }
+    },
+    {
+      "id": "plush",
+      "scripts": ["fx/pack-plush.js"],
+      "cacheTag": "plush-1",
+      "readme": "fx/plush/README.md",
+      "sources": {
+        "plush-fur": [
+          "fx/pack-plush.js",
+          "fx/plush/effect.js",
+          "fx/plush/bear.js",
+          "fx/plush/fur.js",
+          "fx/plush/stage.js",
+          "fx/plush/textures.js",
+          "assets/plush/manifest.json",
+          "fx/plush/README.md"
+        ]
+      }
     }
   ],
   "catalog": {
     "scripts": ["fx/catalog.js"],
-    "cacheTag": "dialogue-character-1"
+    "cacheTag": "catalog-2"
   },
   "pages": ["index.html", "video/intro.html"],
   "gallery": {
@@ -296,6 +318,7 @@
     "order": [
       "signal-motion-fragments",
       "dialogue-lipsync",
+      "plush-fur",
       "gpuparticles",
       "domainrep",
       "optical-foil",
