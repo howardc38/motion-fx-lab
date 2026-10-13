@@ -37,6 +37,7 @@
     "audio-relief": "Watch the 12 s study with sound",
     "motion-fragments": "Watch the 12 s study with sound",
     "dot-story": "Watch the finished film",
+    "dot-battle": "Watch COUNTERFORM, the fight film that uses it",
     "ink-city": "Watch the related study",
     "fluid-overflow": "Watch the full 9.6 s render",
     "fluid-smoke": "Watch the full 9.6 s render",

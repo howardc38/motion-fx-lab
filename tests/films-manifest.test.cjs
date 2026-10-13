@@ -146,8 +146,8 @@ test('fx/films-data.js exposes a frozen FXFilms list in manifest order', () => {
   assert.ok(Object.isFrozen(films) && Object.isFrozen(films[0].effects[0]));
   films.forEach((f, i) => {
     const m = manifest.films[i];
-    assert.deepEqual(Object.keys(f), ['id', 'layer', 'tier', 'title', 'duration', 'format', 'media', 'effects']);
-    assert.deepEqual(JSON.parse(JSON.stringify(f)), { id: m.id, layer: m.layer, tier: m.tier, title: m.title, duration: m.duration, format: m.format, media: m.media, effects: m.effects.map(e => e.at ? { id: e.id, at: e.at } : { id: e.id }) });
+    assert.deepEqual(Object.keys(f), ['id', 'layer', 'tier', 'title', 'duration', 'format', 'page', 'media', 'effects']);
+    assert.deepEqual(JSON.parse(JSON.stringify(f)), { id: m.id, layer: m.layer, tier: m.tier, title: m.title, duration: m.duration, format: m.format, page: m.page, media: m.media, effects: m.effects.map(e => e.at ? { id: e.id, at: e.at } : { id: e.id }) });
   });
 });
 

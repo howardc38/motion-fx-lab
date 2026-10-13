@@ -1,4 +1,6 @@
 const { test, expect } = require("@playwright/test");
+const COUNTS = require("./fixtures/expected-counts.json");
+const FILMS = require("../examples/films.json").films;
 test("updated pages bypass a cached pre-fluid catalog", async ({ page }) => {
   await page.route("**/fx/catalog.js", route => route.fulfill({
     contentType: "text/javascript",
@@ -7,9 +9,7 @@ test("updated pages bypass a cached pre-fluid catalog", async ({ page }) => {
   for (const url of ["/", "/video/intro.html"]) {
     await page.goto(url);
     await page.waitForFunction(() => window.FXCatalog);
-    expect(await page.evaluate(() => FXCatalog.stats)).toEqual({
-      techniques: 73, variants: 23, showcases: 5, demos: 101,
-    });
+    expect(await page.evaluate(() => FXCatalog.stats)).toEqual(COUNTS.catalog);
   }
 });
 async function open(page) {
@@ -36,21 +36,21 @@ test("featured sequences stay distinct from the film shortlist and single effect
       (f) => f.dataset.filmIndexId,
     ),
     badLinks: [...document.querySelectorAll(".film-effects a")]
+      .filter((a) => a.hash.startsWith("#demo-"))
       .map((a) => a.hash.slice(6))
       .filter((id) => !FXCatalog.byId.has(id)),
   }));
-  expect(p.groups.map((g) => g.films)).toEqual([
-    ["reel", "product", "infographic", "broll"],
-    ["style-journey", "character-dialogue", "water-forms"],
-  ]);
-  expect(new Set(p.ids).size).toBe(13);
-  expect(p.ids).toHaveLength(13);
+  const featured = COUNTS.films.featured;
+  expect(p.groups.map((g) => g.films)).toEqual([featured["use-case"], featured.demo]);
+  expect(new Set(p.ids).size).toBe(COUNTS.films.total);
+  expect(p.ids).toHaveLength(COUNTS.films.total);
   expect(p.groups.every((g) => g.beforeEffects)).toBe(true);
   expect(p.badLinks).toEqual([]);
-  await expect(page.locator(".film-preview img")).toHaveCount(7);
+  // Every featured card shows a loop: its GIF, or its poster when the film publishes no GIF.
+  await expect(page.locator(".film-preview img")).toHaveCount(featured["use-case"].length + featured.demo.length);
   await expect(page.locator("#film-index")).not.toHaveAttribute("open");
-  for (const id of ["fluid-overflow", "fluid-smoke"])
-    await expect(page.locator(`[data-film-index-id="${id}"] td`).first()).toHaveText("Single-effect render");
+  for (const [id, card] of [["fluid-overflow", "Fluid flow and overflow"], ["fluid-smoke", "Volumetric smoke around geometry"]])
+    await expect(page.locator(`[data-film-index-id="${id}"] td`).first()).toHaveText("Effect card: " + card);
   await expect(page.locator("#composition-presets")).not.toHaveAttribute(
     "open",
   );
@@ -61,16 +61,16 @@ test("a film link reveals its precise variant and clears incompatible filters", 
   await open(page);
   await page.getByRole("button", { name: "Characters", exact: true }).click();
   await page.locator('#film-index > summary').click();
-  await page.locator('#film-word-forms a[href="#demo-cjk-solid"]').click();
-  await expect(page.locator('[data-effect-id="lit3d"] select')).toHaveValue(
-    "cjk-solid",
+  await page.locator('#film-dot-battle a[href="#demo-signal-freeze-orbit"]').click();
+  await expect(page.locator('[data-effect-id="studio-freeze-orbit"] select')).toHaveValue(
+    "signal-freeze-orbit",
   );
   await expect(page.locator("#fKind button").first()).toHaveAttribute(
     "aria-pressed",
     "true",
   );
   await expect(page.locator("#shown")).toHaveText(
-    "73 / 73 effect families shown",
+    `${COUNTS.catalog.techniques} / ${COUNTS.catalog.techniques} effect families shown`,
   );
   await page.goto('/#film-scene-eras');
   await expect(page.locator("#composition-presets")).toHaveAttribute("open");
@@ -153,7 +153,7 @@ test("expanded study player can switch between the comparison and reusable raw o
   );
   await page.locator("#compare").uncheck();
   await page.waitForFunction(
-    () => window.studio?.current?.proof()?.choreography === "COUNTERFORM",
+    () => window.studio?.current?.proof()?.figure === "Juno",
   );
 });
 
@@ -247,15 +247,16 @@ test("switching presentation during an unfinished seek renders the newly selecte
   await expect(page.locator("#clock")).toHaveText("0.00 s");
 });
 
-test('the film shortlist contains exactly the thirteen selected videos',async({page})=>{
+test('the film list holds every published film, grouped by layer',async({page})=>{
  await open(page);
  const groups=await page.locator('#film-index .film-index-group').evaluateAll(nodes=>Object.fromEntries(nodes.map(n=>[n.dataset.filmKind,[...n.querySelectorAll('[data-film-index-id]')].map(r=>r.dataset.filmIndexId)])));
- expect(Object.fromEntries(Object.entries(groups).map(([k,v])=>[k,v.length]))).toEqual({sequences:6,uses:4,comparisons:1,studies:2});
- expect(Object.values(groups).flat().sort()).toEqual(['character-dialogue','style-journey','dot-story','water-forms','word-forms','dot-battle','reel','product','infographic','broll','fight-effects','fluid-smoke','fluid-overflow'].sort());
+ expect(Object.fromEntries(Object.entries(groups).map(([k,v])=>[k,v.length]))).toEqual(COUNTS.films.layers);
+ expect(Object.values(groups).flat()).toEqual(FILMS.map(f=>f.id));
+ expect(FILMS).toHaveLength(COUNTS.films.total);
 });
 test('source and renderer variations keep working through their family links and filters',async({page})=>{
  await open(page);
- for(const [id,parent,kind,stack] of [['stack-pixi','liquid','shader','pixi'],['halftonetype','studio-video-dots','type','canvas'],['orbs','gradient','backdrop','css']]){
+ for(const [id,parent,kind,stack] of [['stack-pixi','liquid','shader','pixi'],['flat','character-rig','character','svg'],['orbs','gradient','backdrop','css']]){
   await page.evaluate(({kind,stack})=>galleryAPI.filter(kind,stack),{kind,stack});
   const card=page.locator('[data-effect-id="'+parent+'"]');await expect(card).toBeVisible();
   await page.evaluate(async id=>{await galleryAPI.draw(id,1.4)},id);
@@ -266,21 +267,34 @@ test('source and renderer variations keep working through their family links and
 });
 
 test('moved film bookmarks lead to related studies with complete playable links',async({page,request})=>{
- for(const [film,demo,parent] of [['ink-city','design-surface-ink','design-surface-ink'],['shadow-lab','design-soft-shadow','design-soft-shadow'],['optical','optical-foil','optical-foil'],['stacks','stack-pixi','liquid'],['scene-eras','scene-eras','scene-eras'],['fluid-viscous','fluid-viscous','fluid-overflow']]){
+ for(const [film,demo,parent,sampler] of [['ink-city','design-surface-ink','design-surface-ink'],['optical','optical-foil','optical-foil',true],['stacks','stack-pixi','liquid',true],['scene-eras','scene-eras','scene-eras'],['fluid-viscous','fluid-viscous','fluid-overflow']]){
   await page.goto('/#film-'+film);await page.waitForFunction(()=>window.galleryAPI);
   await expect(page).toHaveURL(new RegExp('#demo-'+demo+'$'));
   const card=page.locator('[data-effect-id="'+parent+'"]');await expect(card).toBeVisible();
   const links=await card.locator('.preview-link a').evaluateAll(as=>as.map(a=>new URL(a.href).pathname));
-  expect(links).toEqual(['/media/'+film+'.mp4','/examples/'+film+'.html','/media/'+film+'.gif']);
+  // Samplers add a link to this card's own segment of the film (the same MP4 with #t=start,end).
+  expect(links).toEqual(['/media/'+film+'.mp4','/examples/'+film+'.html','/media/'+film+'.gif',...(sampler?['/media/'+film+'.mp4']:[])]);
   for(const path of links) expect((await request.head(path)).ok(),path).toBe(true);
  }
+ // Retired and merged films: the bookmark opens the effect card (shadow-lab, impact-orbit) or the film that replaced it.
+ await page.goto('/#film-shadow-lab');await page.waitForFunction(()=>window.galleryAPI);
+ await expect(page).toHaveURL(/#demo-design-soft-shadow$/);await expect(page.locator('#demo-design-soft-shadow .preview-link a')).toHaveCount(0);
+ await page.goto('/#film-impact-orbit');await page.waitForFunction(()=>window.galleryAPI);
+ await expect(page).toHaveURL(/#demo-signal-freeze-orbit$/);await expect(page.locator('[data-effect-id="studio-freeze-orbit"] select')).toHaveValue('signal-freeze-orbit');
+ await page.goto('/#film-word-forms');await page.waitForFunction(()=>window.galleryAPI);
+ await expect(page).toHaveURL(/#film-titles$/);await expect(page.locator('#film-titles')).toBeVisible();
  await page.goto('/#film-intro');await expect(page.locator('#film-intro')).toHaveAttribute('src',/media\/intro\.mp4/);
- await expect(page.locator('[data-film-index-id="intro"]')).toHaveCount(0);
+ await expect(page.locator('[data-film-index-id="intro"]')).toHaveCount(1);
 });
 test('related samplers follow selected variants without stale film links',async({page})=>{
  await open(page);
  for(const id of ['optical-moire','optical-slit','optical-ribbon','optical-caustic','optical-foil','optical-morph'])await expect(page.locator('[data-effect-id="'+id+'"] .preview-link a').first()).toHaveAttribute('href','media/optical.mp4');
- for(const id of ['stack-rapier','stack-gpu'])await expect(page.locator('[data-effect-id="'+id+'"] .preview-link a').first()).toHaveAttribute('href','media/stacks.mp4');
+ await expect(page.locator('[data-effect-id="stack-gpu"] .preview-link a').first()).toHaveAttribute('href','media/stacks.mp4');
+ await expect(page.locator('[data-effect-id="stack-gpu"] .preview-link a').last()).toHaveAttribute('href','media/stacks.mp4#t=16,24');
+ await page.evaluate(()=>galleryAPI.selectVariant('stack-rapier'));
+ await expect(page.locator('#demo-rigid .preview-link a').first()).toHaveAttribute('href','media/stacks.mp4');
+ await page.evaluate(()=>galleryAPI.selectVariant('rigid'));
+ await expect(page.locator('#demo-rigid .preview-link a')).toHaveCount(0);
  await page.evaluate(()=>galleryAPI.selectVariant('stack-pixi'));
  await expect(page.locator('#demo-liquid .preview-link a').first()).toHaveAttribute('href','media/stacks.mp4');
  await page.evaluate(()=>galleryAPI.selectVariant('liquid'));

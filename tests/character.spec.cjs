@@ -100,7 +100,7 @@ test('character Menu IDs are registered and render through the gallery adapter',
     }
     return out;
   });
-  expect(results.map(r => r.role)).toEqual(['technique', 'variant', 'technique']);
-  expect(results[1].family).toBe('character-rig');
+  expect(results.map(r => r.role)).toEqual(['technique', 'variant', 'variant']);
+  for (const r of results) expect(r.family).toBe('character-rig');
   for (const r of results) { expect(r.canvas).toBe(true); expect(r.ratio).toBeCloseTo(16 / 9); expect(r.error).toBeUndefined(); }
 });

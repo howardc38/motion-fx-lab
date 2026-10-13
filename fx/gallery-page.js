@@ -36,11 +36,11 @@
   function appendFilmLinks(host, film, id) {
     const version=(film.media.mp4.match(/\?.*$/) || [''])[0];
     appendLink(host, film.media.mp4, TILE_FILM_LABELS[film.id] || `Watch the ${film.duration} s film`);
+    appendLink(host, film.page || film.source || 'examples/'+film.id+'.html'+version, 'Scrub timeline');
+    if(film.media.gif) appendLink(host, film.media.gif, 'GIF preview');
     // A sampler plays one segment per effect card: link straight to this card's segment.
     const segment=film.layer==='effect-film' && new Set(film.effects.map(e=>e.id)).size>1 && film.effects.find(e=>e.id===id && e.at);
     if(segment) appendLink(host, `${film.media.mp4}#t=${segment.at[0]},${segment.at[1]}`, `This effect's segment (${segment.at[0]}–${segment.at[1]} s)`);
-    appendLink(host, film.source || 'examples/'+film.id+'.html'+version, 'Scrub timeline');
-    if(film.media.gif) appendLink(host, film.media.gif, 'GIF preview');
   }
   // A film made for a family also covers its variants, unless the selected variant has its own film.
   const filmsFor = (card, d) => { const own=filmsShowing(d.id); return own.length ? own.map(f=>[f,d.id]) : filmsShowing(card.family.id).map(f=>[f,card.family.id]); };
@@ -104,7 +104,7 @@
     document.getElementById('available').textContent=`${demoCount} ${demoCount===1?'demo matches':'demos match'} these filters${variantCount ? `, including ${variantCount} variant${variantCount===1?'':'s'} in the card selectors` : ''}.`;
     document.getElementById('showcase-count').textContent=`${stats.showcases} combined showcases below ↘`;
   }
-  mk(document.getElementById('fKind'),'kind', [['all','All'],...Object.entries(KINDS).filter(([k])=>families.some(f=>f.kind===k))]);
+  mk(document.getElementById('fKind'),'kind', [['all','All'],...Object.entries(KINDS).filter(([k])=>[...families, ...basics].some(f=>f.kind===k))]);
   mk(document.getElementById('fStack'),'stack', [['all','All'],...Object.entries(STACKS)]);
   apply();
   async function instanceFor(card,id) {

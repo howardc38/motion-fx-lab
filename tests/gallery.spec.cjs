@@ -1,27 +1,45 @@
 const {test,expect}=require('@playwright/test');
+const COUNTS=require('./fixtures/expected-counts.json'),C=COUNTS.catalog;
 async function open(page){await page.goto('/');await page.waitForFunction(()=>window.galleryAPI);await page.evaluate(()=>galleryAPI.pause());}
-test('catalogue owns every demo once; variants and showcases do not inflate technique count',async({page})=>{
+const available=f=>`${f.demos} ${f.demos===1?'demo matches':'demos match'} these filters${f.variants?`, including ${f.variants} variant${f.variants===1?'':'s'} in the card selectors`:''}.`;
+async function filter(page,f){
+ await page.locator('#fKind').getByRole('button',{name:f.kind,exact:true}).click();
+ await page.locator('#fStack').getByRole('button',{name:f.stack,exact:true}).click();
+}
+test('catalogue owns every demo once; variants, basics and showcases do not inflate the effect count',async({page})=>{
  await open(page);
- await expect(page.locator('#shown')).toHaveText('71 / 71 effect families shown');
- await expect(page.locator('#available')).toHaveText('92 demos match these filters, including 21 variants in the card selectors.');
- await expect(page.locator('#showcase-count')).toHaveText('5 combined showcases below ↘');
- const p=await page.evaluate(()=>({stats:FXCatalog.stats,ids:FX.DEMOS.map(d=>d.id),groups:FXCatalog.families.map(f=>f.entries.map(d=>d.id)),shows:FXCatalog.showcases.map(f=>f.id),uiIds:[...document.querySelectorAll('#gallery > figure, #showcaseGallery > figure')].flatMap(card=>card.querySelector('select')?[...card.querySelectorAll('option')].map(o=>o.value):[card.dataset.effectId]),built:galleryAPI.cards.reduce((n,c)=>n+c.instances.size,0)}));
- expect(p.stats).toEqual({techniques:71,variants:21,showcases:5,demos:97});
+ const all=COUNTS.filters[0];
+ await expect(page.locator('#shown')).toHaveText(`${C.techniques} / ${C.techniques} effect families shown`);
+ await expect(page.locator('#basics-shown')).toHaveText(`${C.basics} / ${C.basics} motion basics shown`);
+ await expect(page.locator('#available')).toHaveText(available(all));
+ await expect(page.locator('#showcase-count')).toHaveText(`${C.showcases} combined showcases below ↘`);
+ const p=await page.evaluate(()=>({stats:FXCatalog.stats,ids:FX.DEMOS.map(d=>d.id),groups:[...FXCatalog.families,...FXCatalog.basics].map(f=>f.entries.map(d=>d.id)),shows:FXCatalog.showcases.map(f=>f.id),
+  uiIds:[...document.querySelectorAll('#gallery > figure, #basicsGallery > figure, #showcaseGallery > figure')].flatMap(card=>card.querySelector('select')?[...card.querySelectorAll('option')].map(o=>o.value):[card.dataset.effectId]),
+  basicCards:[...document.querySelectorAll('#basicsGallery > figure')].map(f=>f.dataset.effectId).sort(),basicIds:FXCatalog.basics.map(f=>f.id).sort(),
+  tiers:[...FXCatalog.byId.values()].filter(d=>d.role!=='showcase').map(d=>[d.id,d.tier,FXCatalog.byId.get(d.familyId).tier]),
+  effectTiers:FXCatalog.families.map(f=>f.tier),registeredBasics:FX.DEMOS.filter(d=>d.tier==='basic').map(d=>d.id),
+  built:galleryAPI.cards.reduce((n,c)=>n+c.instances.size,0)}));
+ expect(p.stats).toEqual(C);
  const owned=[...p.groups.flat(),...p.shows];expect(new Set(owned).size).toBe(p.ids.length);expect(owned.sort()).toEqual(p.ids.sort());expect(p.built).toBeLessThan(10);expect(p.uiIds.sort()).toEqual(p.ids.sort());
- await page.getByRole('button',{name:'Characters',exact:true}).click();
- await expect(page.locator('#gallery > figure:visible')).toHaveCount(6);
- await expect(page.locator('#available')).toHaveText('9 demos match these filters, including 3 variants in the card selectors.');
- await page.getByRole('button',{name:'Flubber',exact:true}).click();
- await expect(page.locator('#gallery > figure:visible')).toHaveCount(0);
- await expect(page.locator('#available')).toHaveText('0 demos match these filters.');
- await page.locator('#fKind').getByRole('button',{name:'All',exact:true}).click();
- await expect(page.locator('#gallery > figure:visible')).toHaveCount(1);
+ // Motion basics: the tier comes from the lead demo's registration, variants follow their family, and they get their own section.
+ expect(p.basicCards).toEqual(p.basicIds);expect(p.basicIds).toHaveLength(C.basics);
+ expect(new Set(p.effectTiers)).toEqual(new Set(['effect']));
+ for(const [id,tier,family] of p.tiers)expect(tier,id).toBe(family);
+ for(const id of p.registeredBasics)expect(p.tiers.find(t=>t[0]===id)[1],id).toBe('basic');
+ for(const f of COUNTS.filters.slice(1)){
+  await filter(page,f);
+  await expect(page.locator('#gallery > figure:visible'),f.kind+' + '+f.stack).toHaveCount(f.families);
+  await expect(page.locator('#basicsGallery > figure:visible'),f.kind+' + '+f.stack).toHaveCount(f.basics);
+  await expect(page.locator('#available')).toHaveText(available(f));
+ }
+ await filter(page,{kind:'All',stack:'Flubber'});
  await page.evaluate(()=>galleryAPI.draw('morph',2));
  expect(await page.locator('[data-effect-id="optical-morph"] select').inputValue()).toBe('morph');
 });
-test('all 97 registered demos render in undistorted landscape frames, with distinct family previews',async({page})=>{
- test.setTimeout(240000);const errors=[];page.on('pageerror',e=>errors.push(e.message));await open(page);
+test(`all ${C.demos} registered demos render in undistorted landscape frames, with distinct family previews`,async({page})=>{
+ test.setTimeout(300000);const errors=[];page.on('pageerror',e=>errors.push(e.message));await open(page);
  const demos=await page.evaluate(()=>[...FXCatalog.byId.values()].map(d=>({id:d.id,hero:d.hero,period:d.period,role:d.role})));
+ expect(demos).toHaveLength(C.demos);
  const signatures=new Map();
  for(const d of demos){
   const state=await page.evaluate(async d=>{const r=await galleryAPI.draw(d.id,d.hero);const box=r.stage.getBoundingClientRect();return {error:r.stage.querySelector('.oops')?.textContent,ratio:box.width/box.height,canvases:[...r.stage.querySelectorAll('canvas')].map(c=>({ratio:c.width/c.height,display:c.getBoundingClientRect().width/c.getBoundingClientRect().height}))};},d);
@@ -40,15 +58,24 @@ test('landscape gallery remains usable at phone width and filters include charac
  await page.getByRole('button',{name:'Characters',exact:true}).click();
  await page.evaluate(()=>galleryAPI.draw('dithercharacter',2.4));
  const stage=page.locator('.stage[data-demo="dithercharacter"]');const b=await stage.boundingBox();expect(b.width/b.height).toBeCloseTo(16/9,2);
- await expect(page.locator('#shown')).toHaveText('6 / 71 effect families shown');
+ await expect(page.locator('#shown')).toHaveText(`${COUNTS.filters[1].families} / ${C.techniques} effect families shown`);
 });
 
 test('counts include a matching variant when its parent does not match the filter',async({page})=>{
  await open(page);
- await page.getByRole('button',{name:'Type',exact:true}).click();
- await page.getByRole('button',{name:'Three.js',exact:true}).click();
- await expect(page.locator('#shown')).toHaveText('2 / 71 effect families shown');
- await expect(page.locator('#available')).toHaveText('2 demos match these filters, including 1 variant in the card selectors.');
- await expect(page.locator('[data-effect-id="lit3d"] select')).toHaveValue('cjk-solid');
+ const f=COUNTS.filters.find(x=>x.stack==='PixiJS');
+ await filter(page,f);
+ await expect(page.locator('#shown')).toHaveText(`${f.families} / ${C.techniques} effect families shown`);
+ await expect(page.locator('#available')).toHaveText(available(f));
+ await expect(page.locator('[data-effect-id="liquid"] select')).toHaveValue('stack-pixi');
  await expect(page.locator('#showcase-count')).toHaveAttribute('href','#showcases');
+});
+
+test('old demo links for merged or removed effects open the card that replaced them',async({page})=>{
+ for(const [old,card,variant] of [['lit3d','cjk-solid','cjk-solid'],['bounce','toon','halftone'],['ditherpeek','toon','dithercharacter'],['studio-flight','studio-themes','studio-themes'],['tunnel','studio-lowpoly','studio-lowpoly'],['coderain','type','type'],['blueprint','datachart','datachart'],['design-spring-response','timing','timing'],['smoke','fluid-smoke','fluid-smoke']]){
+  await page.goto('/#demo-'+old);await page.waitForFunction(()=>window.galleryAPI);
+  await expect(page,old).toHaveURL(new RegExp('#demo-'+variant+'$'));
+  const fig=page.locator(`[data-effect-id="${card}"]`);await expect(fig,old).toBeVisible();
+  if(await fig.locator('select').count())await expect(fig.locator('select'),old).toHaveValue(variant);
+ }
 });
