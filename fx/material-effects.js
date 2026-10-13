@@ -65,7 +65,7 @@
     [
       "frame-glitch",
       "Whole-frame signal breakup",
-      "shader",
+      "type",
       "glitch",
       null,
       8,

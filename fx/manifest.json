@@ -4,7 +4,7 @@
   "families": [
     {
       "id": "core",
-      "scripts": ["fx/font-helvetiker-subset.js", "fx/demos.js", "fx/pack-light.js"],
+      "scripts": ["fx/demos.js", "fx/pack-light.js"],
       "cacheTag": null,
       "readme": null,
       "anchor": "id: \"{id}\"",
@@ -173,7 +173,7 @@
     {
       "id": "design",
       "scripts": ["fx/design-effects.js", "fx/pack-design.js"],
-      "cacheTag": "design-2",
+      "cacheTag": "design-3",
       "readme": "fx/design/README.md",
       "prefix": "design-",
       "anchor": "id:'{key}'",

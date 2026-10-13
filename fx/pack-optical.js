@@ -22,7 +22,7 @@
       ["canvas"],
       "A",
       "Column x shows the source at time t − (x / W) · Δ. A spinning word and a swinging light become a twisted time ribbon, then snap back into place when Δ returns to zero.",
-      ["Canvas 2D", "64 time slices"],
+      ["Canvas 2D", "one time offset per pixel column"],
       3.2,
     ],
     [

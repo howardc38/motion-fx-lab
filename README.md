@@ -288,4 +288,4 @@ If this saves you an export marathon or a night chasing blank frames, **star the
 
 ## Licence
 
-[0BSD](LICENSE): use, copy, modify and distribute for any purpose, with or without attribution. The Helvetiker glyph subset, the adapted TSL example, fonts, textures and voices keep their own notices; three.js, Matter.js, Flubber, PixiJS, Rapier and the web fonts load from public CDNs under their own licences. See [THIRD_PARTY.md](THIRD_PARTY.md).
+[0BSD](LICENSE): use, copy, modify and distribute for any purpose, with or without attribution. The adapted TSL example, fonts, textures and voices keep their own notices; three.js, Matter.js, Flubber, PixiJS, Rapier and the web fonts load from public CDNs under their own licences. See [THIRD_PARTY.md](THIRD_PARTY.md).

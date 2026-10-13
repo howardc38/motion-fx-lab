@@ -1,7 +1,7 @@
 // Motion FX Lab: every effect is build(stage) -> frame(t, abs), a pure function of time.
 // build() may return the frame function, or { frame, ready } when it waits for fonts.
 // 3D tiles share one WebGL renderer (R3) and copy its canvas into their own tile canvas.
-// Load order: three.js r128 and its examples, fx/font-helvetiker-subset.js, then this file.
+// Load order: three.js r128 and its examples (EffectComposer, RenderPass, ShaderPass, UnrealBloomPass), then this file.
 (() => {
   // ---------- timing helpers ----------
   const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
@@ -361,13 +361,12 @@
   const GW = window.FX_RENDER_SIZE?.w || 480, GH = window.FX_RENDER_SIZE?.h || 600;
   let R3 = null;
   try {
-    if (window.THREE && THREE.EffectComposer && THREE.UnrealBloomPass && THREE.HalftonePass) {
+    if (window.THREE && THREE.EffectComposer && THREE.UnrealBloomPass) {
       R3 = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
       R3.setPixelRatio(1); R3.setSize(GW, GH, false);
       R3.shadowMap.enabled = true; R3.shadowMap.type = THREE.PCFSoftShadowMap;
     }
   } catch (e) { R3 = null; }
-  const FONT = R3 && window.FX_FONT ? new THREE.Font(window.FX_FONT) : null;
 
   function glTile(s, blend) {
     const c = document.createElement("canvas"); c.width = GW; c.height = GH; c.className = "fill glc" + (blend ? " mult" : ""); s.appendChild(c);
@@ -379,10 +378,6 @@
     c.addPass(new THREE.RenderPass(scene, cam));
     if (strength > 0) { c.bloom = new THREE.UnrealBloomPass(new THREE.Vector2(GW / 2, GH / 2), strength, radius, threshold); c.addPass(c.bloom); }
     return c;
-  }
-  function text3d(str, size, depth, mat) {
-    const g = new THREE.TextGeometry(str, { font: FONT, size, height: depth, curveSegments: 10, bevelEnabled: true, bevelThickness: size * 0.05, bevelSize: size * 0.035, bevelSegments: 4 });
-    g.center(); const m = new THREE.Mesh(g, mat); m.castShadow = true; return m;
   }
   function studioLights(scene, spotPos) {
     scene.add(new THREE.AmbientLight(0xffffff, 0.28));
@@ -402,10 +397,10 @@
       cam.position.set(0, 0, 8);
       const comp = composer(scene, cam, 0.9, 0.5, 0.2);
       let ps = null;
-      const ready = document.fonts.load(`900 120px ${LAT}`, "SIGNED BY YOU").then(() => {
+      const ready = document.fonts.load(`900 120px ${LAT}`, "YOUR WORDS").then(() => {
         const cw = 600, ch = 440, c = document.createElement("canvas"); c.width = cw; c.height = ch; const g = c.getContext("2d");
         g.fillStyle = "#fff"; g.textAlign = "center"; g.textBaseline = "middle"; g.font = `900 120px ${LAT}`;
-        g.fillText("SIGNED", cw / 2, ch / 2 - 80); g.fillText("BY YOU", cw / 2, ch / 2 + 80);
+        g.fillText("YOUR", cw / 2, ch / 2 - 80); g.fillText("WORDS", cw / 2, ch / 2 + 80);
         const d = g.getImageData(0, 0, cw, ch).data; let pts = [];
         for (let y = 0; y < ch; y += 4) for (let x = 0; x < cw; x += 4) if (d[(y * cw + x) * 4 + 3] > 120) pts.push([x - cw / 2, ch / 2 - y]);
         if (pts.length > 3800) { const st = pts.length / 3800; pts = Array.from({ length: 3800 }, (_, i) => pts[Math.floor(i * st)]); }
@@ -478,7 +473,7 @@
           <g transform="rotate(10 292 442)"><rect x="262" y="392" width="60" height="100" rx="12" fill="${O}"/><rect x="270" y="404" width="44" height="72" rx="6" fill="#ff90e8" stroke="none"/><path d="M280 440 L289 450 L305 428" stroke="#fff" stroke-width="7" fill="none"/></g>
           <ellipse cx="278" cy="474" rx="22" ry="18" fill="${SK}"/>
         </g>
-        <g class="mf-note"><rect x="232" y="318" width="156" height="46" rx="23" fill="#fff"/><text x="310" y="348" text-anchor="middle" font-size="20" font-weight="900" stroke="none" fill="${O}" font-family='${ZH}'>✅ Approved</text></g>
+        <g class="mf-note"><rect x="232" y="318" width="156" height="46" rx="23" fill="#fff"/><text x="310" y="348" text-anchor="middle" font-size="20" font-weight="900" stroke="none" fill="${O}" font-family='${ZH}'>✓ Done!</text></g>
       </svg>`;
       const all = q(s, ".mf-all"), bodyG = q(s, ".mf-body"), headG = q(s, ".mf-head"), eyes = q(s, ".mf-eyes"), brows = q(s, ".mf-brows"), armG = q(s, ".mf-arm"), note = q(s, ".mf-note");
       return (t) => {
@@ -697,6 +692,6 @@
     } });
 
   // Extension files (fx/pack-*.js) register more effects with FX.demo and reuse these building blocks.
-  window.FX = { DEMOS, demo, R3, GW, GH, FONT, ZH, LAT, NOISE, q, qa, glTile, composer, text3d, studioLights, rng,
+  window.FX = { DEMOS, demo, R3, GW, GH, ZH, LAT, NOISE, q, qa, glTile, composer, studioLights, rng,
     helpers: { clamp, lin, smooth, outCubic, inCubic, inOut, back, hash } };
 })();

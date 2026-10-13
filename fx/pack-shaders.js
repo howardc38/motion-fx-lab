@@ -211,7 +211,7 @@
   const GLYPHS = " .:-=+*#%@";
   demo({ id: "styles", gl: true, name: "One object, five shader styles", kind: "shader", stacks: ["three", "glsl", "canvas"],
     chips: ["WebGLRenderTarget", "post-process ShaderMaterial", "Bayer matrix", "Canvas glyph atlas"], grade: "B",
-    purpose: "A lit torus knot is drawn once into an offscreen target, then one post shader turns it into ordered dither, halftone dots, ASCII, pixel sort or a two-ink risograph. On dense CJK text they wipe out the strokes: see the tile “Halftone type”.",
+    purpose: "A lit torus knot is drawn once into an offscreen target, then one post shader turns it into ordered dither, halftone dots, ASCII, pixel sort or a two-ink risograph. On dense CJK text they wipe out the strokes, so use them on shapes and figures (Character shading applies halftone and dither to a 3D character), not on body text.",
     seen: SEEN, period: STYLES.length * SLOT, hero: 3.75,
     build(s) {
       const blit = glTile(s), g = s.lastElementChild.getContext("2d");

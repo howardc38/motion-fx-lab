@@ -43,6 +43,10 @@ test('type ring: the camera passes through the centre of the ring',async({page})
  await open(page);const p=await page.evaluate(async()=>{const e=await FXDesign.create('type-orbit'),out=[];for(const t of [2.4,4.3,6]){e.frame(t,{labels:false});out.push(e.proof());}return out;});
  expect(p[0].wrap).toBeGreaterThan(.99);expect(p[0].inside).toBe(false);expect(p[1].inside).toBe(true);expect(p[2].inside).toBe(false);
 });
+test('FXDesign.create passes options through: type-orbit takes its own words',async({page})=>{
+ await open(page);const p=await page.evaluate(async()=>{const e=await FXDesign.create('type-orbit',{message:'HELLO RING · '});e.frame(2.4,{labels:false});const d=await FXDesign.create('type-orbit');d.frame(2.4,{labels:false});return [e.proof().message,d.proof().message];});
+ expect(p[0]).toBe('HELLO RING · ');expect(p[1]).not.toBe(p[0]);
+});
 test('dot choreography is continuous and the spring has one sampler',async({page})=>{
  await open(page);const p=await page.evaluate(async()=>{const {dotAt,BEATS}=await import('/fx/design/films.js'),{springPoint,drawSpring}=await import('/fx/design/flat.js');const times=Object.values(BEATS);const jumps=times.map(t=>{const a=dotAt(t-.0001),b=t===BEATS.end?dotAt(0):dotAt(t+.0001);return Math.hypot(a.x-b.x,a.y-b.y,a.r-b.r);});const c=document.createElement('canvas');c.width=1280;c.height=720;const config={damping:.8,x0:100,x1:800,y0:600,target:200,duration:2.4,labels:false};const a=springPoint(1,config),b=drawSpring(c.getContext('2d'),1,config);return{jumps,a,b,BEATS};});
  expect(Math.max(...p.jumps)).toBeLessThan(1);expect(p.a).toEqual(p.b);
