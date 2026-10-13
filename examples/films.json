@@ -1,0 +1,628 @@
+{
+  "version": 1,
+  "films": [
+    {
+      "id": "character-dialogue",
+      "title": "The Final Final",
+      "kind": "Sequence",
+      "section": "sequences",
+      "duration": 22.5,
+      "format": "16:9",
+      "source": "examples/character-dialogue.html",
+      "media": {
+        "mp4": "media/character-dialogue.mp4",
+        "gif": "media/character-dialogue.gif",
+        "poster": "media/character-dialogue.jpg"
+      },
+      "description": "A two-character conversation with speech, gestures, reaction holds and a closing joke.",
+      "effects": [
+        {
+          "id": "dialogue-lipsync",
+          "label": "Speech and expression"
+        }
+      ],
+      "groups": [
+        "all",
+        "showcase",
+        "dialogue"
+      ]
+    },
+    {
+      "id": "style-journey",
+      "title": "One flight. Twenty worlds.",
+      "kind": "Sequence",
+      "section": "sequences",
+      "duration": 40.8,
+      "format": "16:9",
+      "source": "examples/style-journey.html",
+      "media": {
+        "mp4": "media/style-journey.mp4",
+        "gif": "media/style-journey.gif",
+        "poster": "media/style-journey.jpg"
+      },
+      "description": "One character travels through twenty art directions.",
+      "effects": [
+        {
+          "id": "studio-flight",
+          "label": "Courier motion"
+        },
+        {
+          "id": "studio-portal",
+          "label": "Style portal"
+        }
+      ],
+      "groups": [
+        "all",
+        "showcase",
+        "studio"
+      ]
+    },
+    {
+      "id": "dot-story",
+      "title": "One dot. Many roles.",
+      "kind": "Sequence",
+      "section": "sequences",
+      "duration": 19.2,
+      "format": "16:9",
+      "source": "examples/dot-story.html",
+      "media": {
+        "mp4": "media/dot-story.mp4",
+        "gif": "media/dot-story.gif",
+        "poster": "media/dot-story.jpg"
+      },
+      "description": "One orange dot becomes a switch, a letter, a spring trace and a reveal before returning to the start.",
+      "effects": [
+        {
+          "id": "design-letter-flow",
+          "label": "Letter reflow"
+        },
+        {
+          "id": "design-spring-response",
+          "label": "Spring"
+        },
+        {
+          "id": "design-type-orbit",
+          "label": "Spatial type"
+        },
+        {
+          "id": "design-dot-reveal",
+          "label": "Dot reveal"
+        }
+      ],
+      "groups": [
+        "all",
+        "showcase",
+        "design"
+      ]
+    },
+    {
+      "id": "water-forms",
+      "title": "One drop. Many forms.",
+      "kind": "Sequence",
+      "section": "sequences",
+      "duration": 21.6,
+      "format": "16:9",
+      "source": "examples/water-forms.html",
+      "media": {
+        "mp4": "media/water-forms.mp4",
+        "gif": "media/water-forms.gif",
+        "poster": "media/water-forms.jpg"
+      },
+      "description": "Authored drop, splash, morph and underwater chapters.",
+      "effects": [
+        {
+          "id": "water-impact",
+          "label": "Splash"
+        },
+        {
+          "id": "water-morph",
+          "label": "Shape blending"
+        },
+        {
+          "id": "water-material",
+          "label": "Transmission"
+        },
+        {
+          "id": "water-underwater",
+          "label": "Underwater scene"
+        }
+      ],
+      "groups": [
+        "all",
+        "showcase",
+        "materials"
+      ]
+    },
+    {
+      "id": "word-forms",
+      "title": "One word. Many forms.",
+      "kind": "Sequence",
+      "section": "sequences",
+      "duration": 21.6,
+      "format": "16:9",
+      "source": "examples/word-forms.html",
+      "media": {
+        "mp4": "media/word-forms.mp4",
+        "gif": "media/word-forms.gif",
+        "poster": "media/word-forms.jpg"
+      },
+      "description": "A word changes form and returns to a readable title.",
+      "effects": [
+        {
+          "id": "cjk-solid",
+          "label": "Solid type"
+        },
+        {
+          "id": "particles",
+          "label": "Particle type"
+        },
+        {
+          "id": "organic-contours",
+          "label": "Contours"
+        },
+        {
+          "id": "frame-glitch",
+          "label": "Glitch"
+        }
+      ],
+      "groups": [
+        "all",
+        "showcase",
+        "materials"
+      ]
+    },
+    {
+      "id": "dot-battle",
+      "title": "COUNTERFORM",
+      "kind": "Sequence",
+      "section": "sequences",
+      "duration": 19.2,
+      "format": "16:9",
+      "source": "examples/dot-battle.html",
+      "media": {
+        "mp4": "media/dot-battle.mp4",
+        "gif": "media/dot-battle.gif",
+        "poster": "media/dot-battle.jpg"
+      },
+      "description": "A complete fight with authored action and contact timing.",
+      "effects": [
+        {
+          "id": "studio-dot-impact",
+          "label": "Impact"
+        },
+        {
+          "id": "studio-echo",
+          "label": "Echoes"
+        },
+        {
+          "id": "studio-time-remap",
+          "label": "Time control"
+        }
+      ],
+      "groups": [
+        "all",
+        "showcase",
+        "studio"
+      ]
+    },
+    {
+      "id": "reel",
+      "title": "Social clips",
+      "kind": "Use case",
+      "section": "uses",
+      "duration": 12.0,
+      "format": "9:16",
+      "source": "examples/reel.html",
+      "media": {
+        "mp4": "media/reel.mp4",
+        "gif": "media/reel.gif",
+        "poster": "media/reel.jpg"
+      },
+      "description": "Hook, interaction and call to action.",
+      "effects": [
+        {
+          "id": "hook",
+          "label": "Headline reveal"
+        },
+        {
+          "id": "karaoke",
+          "label": "Timed captions"
+        },
+        {
+          "id": "sticker",
+          "label": "Labels"
+        }
+      ],
+      "groups": [
+        "all"
+      ]
+    },
+    {
+      "id": "product",
+      "title": "Product demos",
+      "kind": "Use case",
+      "section": "uses",
+      "duration": 7.2,
+      "format": "16:9",
+      "source": "examples/product.html",
+      "media": {
+        "mp4": "media/product.mp4",
+        "gif": "media/product.gif",
+        "poster": "media/product.jpg"
+      },
+      "description": "One interface interaction, explained.",
+      "effects": [
+        {
+          "id": "uifly",
+          "label": "UI camera"
+        },
+        {
+          "id": "sweep",
+          "label": "Light sweep"
+        }
+      ],
+      "groups": [
+        "all"
+      ]
+    },
+    {
+      "id": "infographic",
+      "title": "Infographics",
+      "kind": "Use case",
+      "section": "uses",
+      "duration": 14.4,
+      "format": "16:9",
+      "source": "examples/infographic.html",
+      "media": {
+        "mp4": "media/infographic.mp4",
+        "gif": "media/infographic.gif",
+        "poster": "media/infographic.jpg"
+      },
+      "description": "Turn figures into a data story.",
+      "effects": [
+        {
+          "id": "count",
+          "label": "Counters"
+        },
+        {
+          "id": "datachart",
+          "label": "Chart drawing"
+        },
+        {
+          "id": "ring",
+          "label": "Progress ring"
+        }
+      ],
+      "groups": [
+        "all"
+      ]
+    },
+    {
+      "id": "broll",
+      "title": "Animated backgrounds",
+      "kind": "Use case",
+      "section": "uses",
+      "duration": 12.0,
+      "format": "16:9",
+      "source": "examples/broll.html",
+      "media": {
+        "mp4": "media/broll.mp4",
+        "gif": "media/broll.gif",
+        "poster": "media/broll.jpg"
+      },
+      "description": "Three reusable background loops.",
+      "effects": [
+        {
+          "id": "orbs",
+          "label": "Colour fields"
+        },
+        {
+          "id": "ridgelines",
+          "label": "Ridgelines"
+        }
+      ],
+      "groups": [
+        "all"
+      ]
+    },
+    {
+      "id": "fight-effects",
+      "title": "Same fight. Eight treatments.",
+      "kind": "Comparison",
+      "section": "comparisons",
+      "duration": 38.4,
+      "format": "16:9",
+      "source": "examples/fight-effects.html",
+      "media": {
+        "mp4": "media/fight-effects.mp4",
+        "gif": "media/fight-effects.gif",
+        "poster": "media/fight-effects.jpg"
+      },
+      "description": "Compare eight operations on the same choreography.",
+      "effects": [
+        {
+          "id": "studio-video-dots",
+          "label": "Dots"
+        },
+        {
+          "id": "studio-freeze-orbit",
+          "label": "Frozen orbit"
+        },
+        {
+          "id": "studio-particle-lens",
+          "label": "Depth scatter"
+        }
+      ],
+      "groups": [
+        "all",
+        "showcase",
+        "studio"
+      ]
+    },
+    {
+      "id": "fluid-smoke",
+      "title": "Find the Form",
+      "kind": "Single-effect render",
+      "section": "studies",
+      "duration": 9.6,
+      "format": "16:9",
+      "source": "examples/fluid-smoke.html",
+      "media": {
+        "mp4": "media/fluid-smoke.mp4",
+        "gif": "media/fluid-smoke.gif",
+        "poster": "media/fluid-smoke.jpg"
+      },
+      "description": "An extended rendered example of volumetric smoke.",
+      "effects": [
+        {
+          "id": "fluid-smoke",
+          "label": "Volumetric smoke"
+        }
+      ],
+      "groups": [
+        "all",
+        "showcase",
+        "fluid"
+      ]
+    },
+    {
+      "id": "fluid-overflow",
+      "title": "Overflow",
+      "kind": "Single-effect render",
+      "section": "studies",
+      "duration": 9.6,
+      "format": "16:9",
+      "source": "examples/fluid-overflow.html?v=liquid-v2",
+      "media": {
+        "mp4": "media/fluid-overflow.mp4?v=liquid-v2",
+        "gif": "media/fluid-overflow.gif?v=liquid-v2",
+        "poster": "media/fluid-overflow.jpg?v=liquid-v2"
+      },
+      "description": "Partly filled bowl \u2192 rising water \u2192 overflow \u2192 settling.",
+      "effects": [
+        {
+          "id": "fluid-overflow",
+          "label": "Liquid flow"
+        }
+      ],
+      "groups": [
+        "all",
+        "showcase",
+        "fluid"
+      ]
+    },
+    {
+      "id": "intro",
+      "title": "Intro",
+      "kind": "Overview",
+      "section": "supporting",
+      "duration": 55.2,
+      "format": "16:9",
+      "source": "video/intro.html",
+      "media": {
+        "mp4": "media/intro.mp4?v=dialogue-73",
+        "gif": "media/intro.gif?v=dialogue-73",
+        "poster": "media/intro.jpg?v=dialogue-73"
+      },
+      "groups": [
+        "all",
+        "showcase"
+      ]
+    },
+    {
+      "id": "ink-city",
+      "title": "One block. A drawn city.",
+      "kind": "Sequence",
+      "section": "supporting",
+      "duration": 19.2,
+      "format": "16:9",
+      "source": "examples/ink-city.html",
+      "media": {
+        "mp4": "media/ink-city.mp4",
+        "gif": "media/ink-city.gif",
+        "poster": "media/ink-city.jpg"
+      },
+      "groups": [
+        "all",
+        "showcase",
+        "design"
+      ]
+    },
+    {
+      "id": "shadow-lab",
+      "title": "One light. Different edges.",
+      "kind": "Single-effect render",
+      "section": "supporting",
+      "duration": 9.6,
+      "format": "16:9",
+      "source": "examples/shadow-lab.html",
+      "media": {
+        "mp4": "media/shadow-lab.mp4",
+        "gif": "media/shadow-lab.gif",
+        "poster": "media/shadow-lab.jpg"
+      },
+      "groups": [
+        "all",
+        "showcase",
+        "design"
+      ]
+    },
+    {
+      "id": "optical",
+      "title": "Six optical treatments",
+      "kind": "Comparison",
+      "section": "supporting",
+      "duration": 18.0,
+      "format": "16:9",
+      "source": "examples/optical.html",
+      "media": {
+        "mp4": "media/optical.mp4",
+        "gif": "media/optical.gif",
+        "poster": "media/optical.jpg"
+      },
+      "groups": [
+        "all",
+        "showcase"
+      ]
+    },
+    {
+      "id": "stacks",
+      "title": "Image distortion, collisions and particles",
+      "kind": "Comparison",
+      "section": "supporting",
+      "duration": 24.0,
+      "format": "16:9",
+      "source": "examples/stacks.html",
+      "media": {
+        "mp4": "media/stacks.mp4",
+        "gif": "media/stacks.gif",
+        "poster": "media/stacks.jpg"
+      },
+      "groups": [
+        "all",
+        "showcase"
+      ]
+    },
+    {
+      "id": "scene-eras",
+      "title": "One scene. Many eras.",
+      "kind": "Comparison",
+      "section": "supporting",
+      "duration": 24.0,
+      "format": "16:9",
+      "source": "examples/scene-eras.html",
+      "media": {
+        "mp4": "media/scene-eras.mp4",
+        "gif": "media/scene-eras.gif",
+        "poster": "media/scene-eras.jpg"
+      },
+      "groups": [
+        "all",
+        "showcase",
+        "materials"
+      ]
+    },
+    {
+      "id": "fluid-viscous",
+      "title": "Slow Gold",
+      "kind": "Single-effect render",
+      "section": "supporting",
+      "duration": 9.6,
+      "format": "16:9",
+      "source": "examples/fluid-viscous.html?v=liquid-v2",
+      "media": {
+        "mp4": "media/fluid-viscous.mp4?v=liquid-v2",
+        "gif": "media/fluid-viscous.gif?v=liquid-v2",
+        "poster": "media/fluid-viscous.jpg?v=liquid-v2"
+      },
+      "groups": [
+        "all",
+        "showcase",
+        "fluid"
+      ]
+    },
+    {
+      "id": "audio-relief",
+      "title": "Pulse / Form",
+      "kind": "Signal-driven study",
+      "section": "supporting",
+      "duration": 12.0,
+      "format": "16:9",
+      "source": "examples/audio-relief.html",
+      "media": {
+        "mp4": "media/audio-relief.mp4",
+        "gif": "media/audio-relief.gif",
+        "poster": "media/audio-relief.jpg"
+      },
+      "groups": [
+        "all",
+        "showcase",
+        "signals"
+      ]
+    },
+    {
+      "id": "motion-fragments",
+      "title": "Motion / Release",
+      "kind": "Signal-driven study",
+      "section": "supporting",
+      "duration": 12.0,
+      "format": "16:9",
+      "source": "examples/motion-fragments.html",
+      "media": {
+        "mp4": "media/motion-fragments.mp4",
+        "gif": "media/motion-fragments.gif",
+        "poster": "media/motion-fragments.jpg"
+      },
+      "groups": [
+        "all",
+        "showcase",
+        "signals"
+      ]
+    },
+    {
+      "id": "impact-orbit",
+      "title": "Impact / Orbit",
+      "kind": "Signal-driven study",
+      "section": "supporting",
+      "duration": 12.0,
+      "format": "16:9",
+      "source": "examples/impact-orbit.html",
+      "media": {
+        "mp4": "media/impact-orbit.mp4",
+        "gif": "media/impact-orbit.gif",
+        "poster": "media/impact-orbit.jpg"
+      },
+      "groups": [
+        "all",
+        "showcase",
+        "signals"
+      ]
+    },
+    {
+      "id": "character-lipsync",
+      "title": "Say it. Mean it.",
+      "kind": "Speech study",
+      "section": "supporting",
+      "duration": 9.6,
+      "format": "16:9",
+      "source": "examples/character-lipsync.html",
+      "media": {
+        "mp4": "media/character-lipsync.mp4",
+        "gif": "media/character-lipsync.gif",
+        "poster": "media/character-lipsync.jpg"
+      },
+      "description": "Recorded speech, expressive mouth shapes and authored gestures.",
+      "effects": [
+        {
+          "id": "dialogue-lipsync",
+          "label": "Speech and expression"
+        }
+      ],
+      "groups": [
+        "all",
+        "showcase",
+        "dialogue"
+      ]
+    }
+  ]
+}

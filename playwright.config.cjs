@@ -15,7 +15,7 @@ module.exports = defineConfig({
     },
   },
   webServer: {
-    command: "python3 -m http.server 8873 --bind 127.0.0.1",
+    command: "node video/serve.cjs 8873",
     url: "http://127.0.0.1:8873",
     reuseExistingServer: false,
     timeout: 10000,

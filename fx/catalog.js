@@ -11,6 +11,7 @@
     'design-letter-flow': 'chars',
     'design-spring-response': 'timing',
     'design-dot-reveal': 'wipe',
+    'character-motion': 'character-rig',
     'fluid-viscous': 'fluid-overflow',
     'water-morph': 'clay',
     'cjk-solid': 'lit3d',

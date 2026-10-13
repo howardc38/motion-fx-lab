@@ -9,8 +9,9 @@
 Publication requires Node.js and the sibling publish.cjs rollback helper.
 
 Audio is limited and then brought to -14 LUFS by a linear gain, with a true peak under -1 dBTP,
-as AAC at 128 kbps and 48 kHz, which is Meta's audio ceiling. Video is BT.709, tagged. Everything
-is made and checked in a scratch folder and moved into out_dir only when every check has passed.
+as AAC within 128 kbps at 48 kHz, with encoding headroom for bitrate overshoot. Video is BT.709, tagged. The files
+carry no edit list, so the sound is delayed to meet the first frame and the offset is measured against the mix.
+Everything is made and checked in a scratch folder and moved into out_dir only when every check has passed.
 """
 import json
 import math
@@ -20,6 +21,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from array import array
 from fractions import Fraction
 
 TARGET_I = -14.0      # LUFS; Meta publishes no target, this is the -14 convention
@@ -29,8 +31,13 @@ I_TOLERANCE = 1.0     # LU either side of TARGET_I, measured on the final file
 LIMIT_DBFS = -2.0     # limiter ceiling before loudnorm
 HQ_MAX_BPS = 25_000_000
 AUDIO_BPS = 128_000
-AAC_OUT = ["-c:a", "aac", "-b:a", str(AUDIO_BPS), "-ar", "48000"]
+# ffmpeg's AAC bitrate is a target, not a ceiling. A stereo film score encoded
+# at 128k measured 135k; reserve headroom and keep checking the actual stream.
+AAC_TARGET_BPS = 120_000
+AAC_OUT = ["-c:a", "aac", "-b:a", str(AAC_TARGET_BPS), "-ar", "48000"]
 CAP = 15_000_000      # web file ceiling in bytes
+AAC_PRIMING = 1024    # samples ffmpeg's AAC encoder writes before the first real sample
+SYNC_TOLERANCE = 0.005  # seconds the delivered sound may lead or trail the picture
 
 
 def run(*args, capture=False):
@@ -106,6 +113,67 @@ def moov_first_without_editlist(path):
     return True, ""
 
 
+def video_start(path):
+    """When the first frame is shown. Without an edit list, B-frame reordering puts it after 0."""
+    v = next(s for s in probe(path)["streams"] if s["codec_type"] == "video")
+    return float(v.get("start_time") or 0)
+
+
+def align_audio(out, audio):
+    """Delay the sound so it starts with the first frame.
+
+    The delivery files keep no edit list (see moov_first_without_editlist), so players show the first
+    frame at its composition time and also play the AAC priming. At 30 fps x264 starts the picture at
+    0.0667 s while AAC adds 1024 samples, and the sound led by 45 ms. Only the sound is encoded again,
+    with the measured difference as leading silence; the video stream is copied unchanged."""
+    pad = round(video_start(out) * 48000) - AAC_PRIMING
+    if pad <= 0:
+        return
+    aligned = out + ".aligned.mp4"
+    run("ffmpeg", "-y", "-loglevel", "error", "-i", out, "-i", audio, "-map", "0:v", "-map", "1:a",
+        "-c:v", "copy", "-af", f"adelay=delays={pad}S:all=1", *AAC_OUT, "-shortest",
+        "-use_editlist", "0", "-movflags", "+faststart", aligned)
+    os.replace(aligned, out)
+
+
+def envelope(path, seconds=30, rate=8000, window=8):
+    """Mean absolute level in 1 ms windows, decoded the way a player decodes the file (priming kept)."""
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-map", "0:a:0", "-t", str(seconds), "-ac", "1",
+                          "-ar", str(rate), "-f", "s16le", "-"], capture_output=True, check=True, timeout=600).stdout
+    s = array("h")
+    s.frombytes(raw[:len(raw) - len(raw) % 2])
+    return [sum(abs(x) for x in s[i:i + window]) / window for i in range(0, len(s) - window + 1, window)]
+
+
+def sync_offset(path, audio, max_delay=0.4, step=0.001):
+    """Seconds the sound trails (+) or leads (-) the first frame, from the level envelope of the
+    delivered track against the mix it was made from. None when the opening has nothing to match."""
+    got, ref = envelope(path), envelope(audio)
+    delays = round(max_delay / step)
+    n = min(len(got) - delays, len(ref))
+    if n <= 0:
+        return None
+    mean_ref = sum(ref[:n]) / n
+    ref = [x - mean_ref for x in ref[:n]]
+    if not any(abs(x) > 1 for x in ref):
+        return None
+    ref_power = math.sqrt(sum(r * r for r in ref))
+    scores = []
+    for delay in range(delays + 1):
+        seg = got[delay:delay + n]
+        mean = sum(seg) / n
+        centred = [g - mean for g in seg]
+        power = math.sqrt(sum(g * g for g in centred))
+        scores.append(sum(g * r for g, r in zip(centred, ref)) / (power * ref_power) if power else 0)
+    best_delay = max(range(len(scores)), key=scores.__getitem__)
+    best = scores[best_delay]
+    rival = max((x for k, x in enumerate(scores) if abs(k - best_delay) > 10), default=-1)
+    # Silence, a steady tone or a short loop matches many delays about equally; report nothing rather than a guess.
+    if best < 0.6 or best - rival < 0.05:
+        return None
+    return best_delay * step - video_start(path)
+
+
 def peak_video_bps(path, fps):
     """Largest one-second sum of video packet sizes, in bits per second."""
     sizes = [int(x) for x in run("ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
@@ -124,7 +192,7 @@ def count_frames(path):
                    "-show_entries", "stream=nb_read_packets", "-of", "csv=p=0", path).strip())
 
 
-def check(path, master, cap=None, max_bps=None):
+def check(path, master, cap=None, max_bps=None, audio=None):
     info = probe(path)
     v = next(s for s in info["streams"] if s["codec_type"] == "video")
     a = next(s for s in info["streams"] if s["codec_type"] == "audio")
@@ -156,9 +224,13 @@ def check(path, master, cap=None, max_bps=None):
     i, tp = loudness(path)
     if abs(i - TARGET_I) > I_TOLERANCE or tp > MAX_TP:
         problems.append(f"loudness {i:.1f} LUFS / {tp:.1f} dBTP")
+    sync = sync_offset(path, audio) if audio else None
+    if sync is not None and abs(sync) > SYNC_TOLERANCE:
+        problems.append(f"sound {'trails' if sync > 0 else 'leads'} the picture by {abs(sync) * 1000:.1f} ms")
     line = (f"{os.path.basename(path)}: {size / 1e6:.2f} MB, {v['codec_name']} {v['width']}x{v['height']} "
             f"{v['r_frame_rate']}, {frames} frames, avg {int(info['format']['bit_rate']) / 1e6:.2f} Mbps, "
-            f"peak 1 s {peak / 1e6:.1f} Mbps, aac {int(a['bit_rate']) // 1000} kbps, {i:.1f} LUFS, {tp:.1f} dBTP")
+            f"peak 1 s {peak / 1e6:.1f} Mbps, aac {int(a['bit_rate']) // 1000} kbps, {i:.1f} LUFS, {tp:.1f} dBTP"
+            + (f", sync {sync * 1000:+.1f} ms" if sync is not None else ""))
     if problems:
         raise SystemExit(f"CHECK FAILED {line}\n  " + "\n  ".join(problems))
     print("ok  " + line)
@@ -194,9 +266,13 @@ def master_for_aac(mix, work):
 
 
 def encode_hq(master, audio, out):
+    # VBV maxrate alone does not cap a one-second burst. The former 40 Mbit buffer
+    # allowed particle/shader cuts to exceed the 25 Mbps delivery check. Keep the
+    # rate plus buffer below that bound, then still measure the encoded packets.
     run("ffmpeg", "-y", "-loglevel", "error", "-i", master, "-i", audio, "-map", "0:v", "-map", "1:a",
         "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-maxrate", "20M", "-bufsize", "4M",
         *COMMON_OUT, out)
+    align_audio(out, audio)
 
 
 def encode_preview(master, audio, out, work, dur):
@@ -208,6 +284,7 @@ def encode_preview(master, audio, out, work, dur):
         run("ffmpeg", "-y", "-loglevel", "error", "-i", master, *v, "-pass", "1", "-an", "-f", "mp4", "/dev/null")
         run("ffmpeg", "-y", "-loglevel", "error", "-i", master, "-i", audio, "-map", "0:v", "-map", "1:a",
             *v, "-pass", "2", *COMMON_OUT, out)
+        align_audio(out, audio)
         size = os.path.getsize(out)
         if size <= CAP:
             return kbps
@@ -234,7 +311,7 @@ def main():
         preview = os.path.join(work, f"{name}.mp4")
         poster = os.path.join(work, f"{name}.jpg")
         encode_hq(master, audio, hq)
-        check(hq, master, max_bps=HQ_MAX_BPS)
+        check(hq, master, max_bps=HQ_MAX_BPS, audio=audio)
         if os.path.getsize(hq) <= CAP:
             # Flat graphics can meet CRF 18 far below the cap; a cap-sized encode would only be bigger.
             shutil.copyfile(hq, preview)
@@ -242,7 +319,7 @@ def main():
         else:
             kbps = encode_preview(master, audio, preview, work, dur)
             print(f"web video {kbps}k two-pass")
-        check(preview, master, cap=CAP, max_bps=HQ_MAX_BPS)
+        check(preview, master, cap=CAP, max_bps=HQ_MAX_BPS, audio=audio)
         run("ffmpeg", "-y", "-loglevel", "error", "-ss", poster_at, "-i", preview, "-frames:v", "1", "-q:v", "3", poster)
         # FFmpeg can exit successfully without producing a frame near EOF.
         if not os.path.isfile(poster) or os.path.getsize(poster) == 0:

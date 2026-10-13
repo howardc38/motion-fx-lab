@@ -1,9 +1,9 @@
 const {test,expect}=require('@playwright/test');
 const fs=require('node:fs'),path=require('node:path'),{execFileSync}=require('node:child_process');
-const films=['intro','reel','product','infographic','broll','optical','stacks','style-journey','dot-battle','fight-effects','water-forms','word-forms','scene-eras','fluid-overflow','fluid-viscous','fluid-smoke','dot-story','ink-city','shadow-lab','audio-relief','motion-fragments','impact-orbit','character-lipsync','character-dialogue'];
+const {films}=require('../examples/films.json');
 const probe=(file,count=false)=>JSON.parse(execFileSync('ffprobe',['-v','error',...(count?['-count_frames']:[]),'-show_streams','-show_format','-of','json',file],{encoding:'utf8',timeout:30000}));
-for(const name of films)test(`published ${name} bundle agrees with its authoring metadata`,async({page})=>{
- await page.goto(`/${name==='intro'?'video':'examples'}/${name}.html`);
+for(const film of films){const name=film.id;test(`published ${name} bundle agrees with its authoring metadata`,async({page})=>{
+ await page.goto('/'+film.source);
  await page.waitForFunction(()=>window.__DUR&&window.__SIZE);
  const spec=await page.evaluate(()=>({duration:__DUR,size:__SIZE,gif:window.__gif||[],poster:window.__poster??__DUR/3}));
  const readme=fs.readFileSync(path.resolve(__dirname,'../README.md'),'utf8');
@@ -27,4 +27,4 @@ for(const name of films)test(`published ${name} bundle agrees with its authoring
   expect(Math.abs(Number(g.nb_read_frames)-Math.round(seconds*12))).toBeLessThanOrEqual(1);
   expect(Math.abs(Number(info.format.duration)-seconds)).toBeLessThan(.12);
  }
-});
+});}

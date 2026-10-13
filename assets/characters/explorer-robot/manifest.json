@@ -1,0 +1,8 @@
+{
+  "name": "Milo · 兩腳探險機械人",
+  "source": "Original AI-generated image parts for the configurable character effect.",
+  "file": "atlas.png",
+  "sha256": "32a43da327007ca61209fa49127996bd4a2e334a7e119acb969cde3ea61eec83",
+  "processing": "Copied original PNG unchanged. Explicit crop rectangles and joints in rig.json; code animates and styles the transparent render.",
+  "scope": "2D cutout asset; does not encode invisible sides, skeletons or automatic motion."
+}

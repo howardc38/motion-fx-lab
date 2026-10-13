@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>角色工作台 · Motion FX Lab</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#e9e8df;color:#243c40;font:16px/1.55 system-ui,sans-serif}main{max-width:1280px;margin:auto;padding:26px}h1{font-size:32px;margin:0 0 8px}p{margin:8px 0 20px;max-width:900px}a{color:#226d6d}#frame{aspect-ratio:16/9;background:#f1eee7;border:1px solid #cbd2c7;border-radius:16px;overflow:hidden}#frame canvas{display:block;width:100%;height:100%}.controls{display:flex;gap:16px;flex-wrap:wrap;align-items:end;background:#f5f4ec;padding:18px;margin:16px 0;border-radius:12px}label{display:grid;gap:4px}select,button{font:inherit;border:1px solid #adbeb6;border-radius:6px;background:#fffdf6;padding:8px 12px;color:inherit}button{cursor:pointer}#seek{width:240px}.links{display:flex;gap:22px;flex-wrap:wrap}#error{color:#a72d36;white-space:pre-wrap}.record main{padding:0;max-width:none}.record header,.record .controls,.record .links,.record #error{display:none}.record #frame{width:1280px;height:720px;border:0;border-radius:0}
+</style></head><body><main>
+<header><h1>角色工作台</h1><p>同一套 2D 程式，換角色分件與關節配置、動作及角色畫法。素材是原創 imagegen 圖像；動作與每幀風格由 code 控制。</p></header>
+<div id="frame"></div>
+<div class="controls">
+<label>角色<select id="character"><option value="cat">Apricot · 四腳貓</option><option value="robot">Milo · 兩腳機械人</option></select></label>
+<label>動作<select id="motion"></select></label>
+<label>角色畫法<select id="style"></select></label>
+<label>畫面配置<select id="layout"><option value="single">單角色</option><option value="pairs">雙角色</option><option value="board">八種畫法比較</option><option value="rig">分件與關節</option><option value="reel">12 秒示範剪輯</option></select></label>
+<label><span>顯示關節</span><input id="skeleton" type="checkbox"></label>
+<button id="play">播放</button><label>時間<input id="seek" type="range" min="0" max="12" step=".01" value="0"></label><output id="clock">0.00 s</output>
+</div>
+<div class="links"><a href="../fx/character/README.md">模組、配置與用法</a><a href="../index.html#demo-character-rig">效果 Gallery</a></div><div id="error" role="alert"></div>
+</main><script type="module">
+import { createStudies } from '../fx/character/studies.js';
+import { STYLE_PRESETS } from '../fx/character/index.js';
+const el=id=>document.getElementById(id),q=new URLSearchParams(location.search);
+let study,t=0,playing=false,recording=false,last=0;
+const state={character:'cat',motion:'walk',style:'original',skeleton:false,layout:q.has('film')?'reel':'single'};
+el('layout').value=state.layout;
+el('style').innerHTML=STYLE_PRESETS.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+function motionOptions(){const keys=Object.keys(study.sources[state.character].rig.definition.motions);if(!keys.includes(state.motion))state.motion=keys[0];el('motion').replaceChildren(...keys.map(k=>new Option(k,k)));el('motion').value=state.motion;}
+function render(at){t=at;study.frame(t,state.layout,state);el('seek').value=t;el('clock').textContent=t.toFixed(2)+' s';}
+window.__SIZE={w:1280,h:720};window.__DUR=12;window.__cues=()=>[];window.__music=[];window.__poster=10;
+window.__ready=createStudies().then(s=>{study=s;el('frame').append(s.canvas);motionOptions();render(0);window.characterWorkbench={study,state,seek(at){playing=false;render(at)},select(next){Object.assign(state,next);for(const key of ['character','style','layout'])el(key).value=state[key];el('skeleton').checked=state.skeleton;motionOptions();render(t)}};});
+window.__record=async()=>{recording=true;playing=false;document.body.classList.add('record');await __ready;state.layout='reel';};
+window.__render=async seconds=>{await __ready;render(seconds)};
+for(const key of ['character','motion','style','layout'])el(key).onchange=()=>{state[key]=el(key).value;if(key==='character')motionOptions();render(t)};
+el('skeleton').onchange=()=>{state.skeleton=el('skeleton').checked;render(t)};
+el('play').onclick=()=>{playing=!playing;el('play').textContent=playing?'暫停':'播放'};
+el('seek').oninput=()=>{playing=false;el('play').textContent='播放';render(Number(el('seek').value))};
+function loop(now){if(recording)return;if(last&&playing)render((t+Math.min(.1,(now-last)/1000))%12);last=now;requestAnimationFrame(loop)}
+__ready.then(()=>requestAnimationFrame(loop)).catch(e=>el('error').textContent=e.stack);
+</script></body></html>

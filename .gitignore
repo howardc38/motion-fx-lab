@@ -11,3 +11,11 @@ __pycache__/
 
 # Rebuildable Blender simulation caches and uncompressed frames
 .blender-cache/
+
+# Local production output is never part of the public effect library.
+/deliverables
+/production
+/local/
+.render/
+# Browser-automation session logs written by local tools.
+.playwright-cli/

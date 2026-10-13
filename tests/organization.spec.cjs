@@ -8,7 +8,7 @@ test("updated pages bypass a cached pre-fluid catalog", async ({ page }) => {
     await page.goto(url);
     await page.waitForFunction(() => window.FXCatalog);
     expect(await page.evaluate(() => FXCatalog.stats)).toEqual({
-      techniques: 71, variants: 22, showcases: 5, demos: 98,
+      techniques: 73, variants: 23, showcases: 5, demos: 101,
     });
   }
 });
@@ -70,7 +70,7 @@ test("a film link reveals its precise variant and clears incompatible filters", 
     "true",
   );
   await expect(page.locator("#shown")).toHaveText(
-    "71 / 71 effect families shown",
+    "73 / 73 effect families shown",
   );
   await page.goto('/#film-scene-eras');
   await expect(page.locator("#composition-presets")).toHaveAttribute("open");

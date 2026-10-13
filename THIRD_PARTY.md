@@ -38,7 +38,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
 | PixiJS 8.22.0 (PixiJS film filter pipeline) | jsDelivr | MIT |
 | Rapier 0.21.0, `@dimforge/rapier3d-compat` (3D domino film effect) | jsDelivr | Apache-2.0 |
 | three.js r180 and `examples/jsm` helpers (film effects and asset tools) | jsDelivr | MIT |
-| Archivo, Instrument Serif, JetBrains Mono, Noto Sans TC | Google Fonts | SIL Open Font License 1.1 |
+| Archivo, Instrument Serif, JetBrains Mono, Noto Sans TC, Roboto Condensed, Space Grotesk, IBM Plex Mono | Google Fonts | SIL Open Font License 1.1 |
 | Playwright (development dependency) | npm | Apache-2.0 |
 
 The WebGPU film effect's TSL implementation follows the three.js r180 attractor
@@ -57,10 +57,10 @@ system font is bundled; renders on other systems use that system's glyphs.
 ## Made here
 
 The intro's music and sound effects are synthesised by `video/music.py` and
-`video/sfx.py`. It also includes a spoken excerpt from the character film, with
-its music ducked underneath. Pictures, models, choreography and scores are
-original code-authored work. Generated character speech and its offline tools
-are described below.
+`video/sfx.py`. It also includes generated character speech, with its music
+ducked underneath. Motion, models and scores are authored in code. The two
+character image atlases and the generated speech are described below; their
+respective offline tools are separate from the browser renderer.
 
 ## Original studio assets
 
@@ -101,6 +101,13 @@ OpenCV-Python headless 4.12.0.88 (Apache-2.0 for OpenCV; package dependencies ke
 their notices). These tools are not loaded by the website. Versions are pinned in
 `tools/signals/requirements.txt`. The score, source image sequence and GLB are
 original repository assets; no reference-post footage or audio is bundled.
+
+## AI-generated character images
+
+`assets/characters/apricot-cat/atlas.png` and `assets/characters/explorer-robot/atlas.png` are original
+images generated with an AI image model for the configurable character effect, as each folder's
+`manifest.json` records. They are used unchanged; the crop rectangles, joints and pivots are in
+`rig.json`, and all motion and styling come from `fx/character/`.
 
 ## Generated character speech and mouth analysis
 

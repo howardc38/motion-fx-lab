@@ -11,18 +11,15 @@
 const path = require("path");
 const fs = require("fs");
 const { spawn, spawnSync, execFileSync } = require("child_process");
-const { pathToFileURL } = require("url");
 const { chromium } = require("@playwright/test");
 
-const { serve, ROOT } = require("./serve.cjs");
+const { serve, ROOT, inside } = require("./serve.cjs");
+const projectRoot = fs.realpathSync(path.resolve(process.env.FX_PROJECT_ROOT || ROOT));
+const externalProject = projectRoot !== ROOT;
+const artifactRoot = externalProject ? path.join(projectRoot, '.render') : __dirname;
 let server;
 const browsers = new Set();
-const url = file => {
-  const absolute = path.resolve(file), relative = path.relative(ROOT, absolute);
-  return server && relative !== ".." && !relative.startsWith(".." + path.sep) && !path.isAbsolute(relative)
-    ? server.origin + "/" + relative.split(path.sep).map(encodeURIComponent).join("/")
-    : pathToFileURL(absolute).href;
-};
+const url = file => server.urlFor(file);
 const MINUTE = 60_000;
 
 // Record every WebGL context the page creates, so each frame can prove none was lost.
@@ -242,7 +239,7 @@ async function video(file, out, fps, n, gpu, verify) {
       const bad = [];
       for (let i = 0; i < count; i++) if (over[i] > MAX_OVER_SHARE || strong[i] > maxStrongShare) bad.push(i);
       if (bad.length) {
-        const dir = path.join(__dirname, "mismatch");
+        const dir = path.join(artifactRoot, "mismatch");
         fs.mkdirSync(dir, { recursive: true });
         for (const i of bad.slice(0, 3)) for (const [src, tag] of [[out, "a"], [again, "b"]]) {
           execFileSync("ffmpeg", ["-nostdin", "-v", "error", "-y", "-i", src, "-vf", `select=eq(n\\,${i})`, "-frames:v", "1",
@@ -250,7 +247,7 @@ async function video(file, out, fps, n, gpu, verify) {
         }
         const px = (s) => Math.round(s * ws[0].size.w * ws[0].size.h);
         const e = new Error(`${bad.length}/${count} frames differ between two renders (first: ${bad.slice(0, 8).map((i) => `${i} [${px(over[i])} px > ${OVER}, ${px(strong[i])} px > ${STRONG}]`).join(", ")}); ` +
-          `the first three are saved in video/mismatch/`);
+          `the first three are saved in ${dir}/`);
         e.exitCode = 3;
         throw e;
       }
@@ -281,7 +278,9 @@ async function video(file, out, fps, n, gpu, verify) {
   if (!["frames", "cues", "video", "measure"].includes(mode)) throw new Error(`usage: node record.cjs frames|cues|video|measure page.html ... (got ${mode})`);
   if (!file || !fs.existsSync(file)) throw new Error(`page not found: ${file} (paths are relative to ${process.cwd()})`);
   if ((mode === "video" || mode === "cues") && !rest[0]) throw new Error(`${mode} needs an output path`);
-  server = await serve();
+  if (externalProject && ['video', 'cues'].includes(mode) && rest[0] && inside(ROOT, path.resolve(rest[0])))
+    throw new Error('An external project cannot write outputs into the effect repository');
+  server = await serve({ projectRoot });
   if (mode === "video") {
     const out = path.resolve(rest[0]);
     // Keep both render passes away from the destination and its .verify sibling.
@@ -299,7 +298,7 @@ async function video(file, out, fps, n, gpu, verify) {
   const w = await open(file, gpu);
   const name = path.basename(file, ".html");
   if (mode === "frames") {
-    const dir = path.join(__dirname, "stills", name);
+    const dir = path.join(artifactRoot, "stills", name);
     fs.rmSync(dir, { recursive: true, force: true });
     fs.mkdirSync(dir, { recursive: true });
     for (const t of rest.map(Number)) {

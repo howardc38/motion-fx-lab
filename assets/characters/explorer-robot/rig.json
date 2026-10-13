@@ -1,0 +1,564 @@
+{
+  "version": 1,
+  "name": "Milo · 兩腳探險機械人",
+  "canvas": {
+    "width": 420,
+    "height": 400,
+    "origin": [
+      210,
+      240
+    ]
+  },
+  "assets": {
+    "atlas": "atlas.png"
+  },
+  "joints": {
+    "body": [
+      0,
+      -25
+    ],
+    "up": [
+      0,
+      -125
+    ],
+    "neck": [
+      0,
+      -88
+    ],
+    "look": [
+      90,
+      -88
+    ],
+    "scarf": [
+      0,
+      -80
+    ],
+    "scarfTip": [
+      100,
+      -80
+    ],
+    "rightHip": [
+      -22,
+      10
+    ],
+    "rightKnee": [
+      -35.02771870189874,
+      48.875166178734176
+    ],
+    "rightFoot": [
+      -26,
+      95
+    ],
+    "rightShoulder": [
+      -44,
+      -71
+    ],
+    "rightElbow": [
+      -68.51963524298347,
+      -34.46525643238968
+    ],
+    "rightHand": [
+      -57,
+      8
+    ],
+    "leftHip": [
+      22,
+      10
+    ],
+    "leftKnee": [
+      35.02771870189875,
+      48.875166178734176
+    ],
+    "leftFoot": [
+      26,
+      95
+    ],
+    "leftShoulder": [
+      44,
+      -71
+    ],
+    "leftElbow": [
+      68.51963524298345,
+      -34.46525643238968
+    ],
+    "leftHand": [
+      57,
+      8
+    ],
+    "pelvis": [
+      0,
+      15
+    ]
+  },
+  "parts": [
+    {
+      "id": "leg-right",
+      "asset": "atlas",
+      "rect": [
+        610,
+        420,
+        340,
+        515
+      ],
+      "layer": 10,
+      "mesh": {
+        "grid": [
+          9,
+          16
+        ],
+        "bindings": [
+          {
+            "from": "rightHip",
+            "to": "rightKnee",
+            "sourceA": [
+              102,
+              60
+            ],
+            "sourceB": [
+              141,
+              230
+            ],
+            "widthScale": -0.24
+          },
+          {
+            "from": "rightKnee",
+            "to": "rightFoot",
+            "sourceA": [
+              141,
+              230
+            ],
+            "sourceB": [
+              177,
+              450
+            ],
+            "widthScale": -0.24
+          }
+        ],
+        "blend": {
+          "axis": "y",
+          "start": 206,
+          "end": 254
+        },
+        "pin": {
+          "joint": "rightFoot",
+          "source": [
+            177,
+            450
+          ],
+          "axis": "y",
+          "start": 410,
+          "end": 446,
+          "scale": [
+            -0.24,
+            0.24
+          ]
+        }
+      },
+      "orientation": {
+        "side": "right",
+        "sourceSide": "left"
+      }
+    },
+    {
+      "id": "arm-right",
+      "asset": "atlas",
+      "rect": [
+        120,
+        420,
+        320,
+        510
+      ],
+      "layer": 30,
+      "mesh": {
+        "grid": [
+          9,
+          16
+        ],
+        "bindings": [
+          {
+            "from": "rightShoulder",
+            "to": "rightElbow",
+            "sourceA": [
+              125,
+              70
+            ],
+            "sourceB": [
+              103,
+              242
+            ],
+            "widthScale": 0.24
+          },
+          {
+            "from": "rightElbow",
+            "to": "rightHand",
+            "sourceA": [
+              103,
+              242
+            ],
+            "sourceB": [
+              164,
+              372
+            ],
+            "widthScale": 0.24
+          }
+        ],
+        "blend": {
+          "axis": "y",
+          "start": 218,
+          "end": 266
+        }
+      },
+      "orientation": {
+        "side": "right",
+        "sourceSide": "right"
+      }
+    },
+    {
+      "id": "leg-left",
+      "asset": "atlas",
+      "rect": [
+        610,
+        420,
+        340,
+        515
+      ],
+      "layer": 10,
+      "mesh": {
+        "grid": [
+          9,
+          16
+        ],
+        "bindings": [
+          {
+            "from": "leftHip",
+            "to": "leftKnee",
+            "sourceA": [
+              102,
+              60
+            ],
+            "sourceB": [
+              141,
+              230
+            ],
+            "widthScale": 0.24
+          },
+          {
+            "from": "leftKnee",
+            "to": "leftFoot",
+            "sourceA": [
+              141,
+              230
+            ],
+            "sourceB": [
+              177,
+              450
+            ],
+            "widthScale": 0.24
+          }
+        ],
+        "blend": {
+          "axis": "y",
+          "start": 206,
+          "end": 254
+        },
+        "pin": {
+          "joint": "leftFoot",
+          "source": [
+            177,
+            450
+          ],
+          "axis": "y",
+          "start": 410,
+          "end": 446,
+          "scale": [
+            0.24,
+            0.24
+          ]
+        }
+      },
+      "orientation": {
+        "side": "left",
+        "sourceSide": "left"
+      }
+    },
+    {
+      "id": "arm-left",
+      "asset": "atlas",
+      "rect": [
+        120,
+        420,
+        320,
+        510
+      ],
+      "layer": 30,
+      "mesh": {
+        "grid": [
+          9,
+          16
+        ],
+        "bindings": [
+          {
+            "from": "leftShoulder",
+            "to": "leftElbow",
+            "sourceA": [
+              125,
+              70
+            ],
+            "sourceB": [
+              103,
+              242
+            ],
+            "widthScale": -0.24
+          },
+          {
+            "from": "leftElbow",
+            "to": "leftHand",
+            "sourceA": [
+              103,
+              242
+            ],
+            "sourceB": [
+              164,
+              372
+            ],
+            "widthScale": -0.24
+          }
+        ],
+        "blend": {
+          "axis": "y",
+          "start": 218,
+          "end": 266
+        }
+      },
+      "orientation": {
+        "side": "left",
+        "sourceSide": "right"
+      }
+    },
+    {
+      "id": "torso",
+      "asset": "atlas",
+      "rect": [
+        555,
+        40,
+        420,
+        405
+      ],
+      "layer": 20,
+      "from": "body",
+      "to": "up",
+      "sourceAngle": -1.5707963267948966,
+      "pivot": [
+        207,
+        240
+      ],
+      "scale": 0.3
+    },
+    {
+      "id": "scarf",
+      "asset": "atlas",
+      "rect": [
+        70,
+        1020,
+        460,
+        360
+      ],
+      "layer": 40,
+      "from": "scarf",
+      "to": "scarfTip",
+      "pivot": [
+        184,
+        130
+      ],
+      "scale": 0.25
+    },
+    {
+      "id": "head",
+      "asset": "atlas",
+      "rect": [
+        85,
+        40,
+        430,
+        390
+      ],
+      "layer": 50,
+      "from": "neck",
+      "to": "look",
+      "pivot": [
+        205,
+        350
+      ],
+      "scale": 0.29
+    },
+    {
+      "id": "pelvis",
+      "asset": "atlas",
+      "rect": [
+        728,
+        1239,
+        101,
+        53
+      ],
+      "layer": 5,
+      "from": "pelvis",
+      "pivot": [
+        50,
+        15
+      ],
+      "scale": 0.6
+    }
+  ],
+  "legs": [
+    {
+      "root": "rightHip",
+      "knee": "rightKnee",
+      "foot": "rightFoot",
+      "upper": 41,
+      "lower": 47,
+      "bend": 1,
+      "phase": 0.5
+    },
+    {
+      "root": "leftHip",
+      "knee": "leftKnee",
+      "foot": "leftFoot",
+      "upper": 41,
+      "lower": 47,
+      "bend": -1,
+      "phase": 0
+    }
+  ],
+  "bones": [
+    [
+      "rightHip",
+      "rightKnee"
+    ],
+    [
+      "rightKnee",
+      "rightFoot"
+    ],
+    [
+      "rightShoulder",
+      "rightElbow"
+    ],
+    [
+      "rightElbow",
+      "rightHand"
+    ],
+    [
+      "leftHip",
+      "leftKnee"
+    ],
+    [
+      "leftKnee",
+      "leftFoot"
+    ],
+    [
+      "leftShoulder",
+      "leftElbow"
+    ],
+    [
+      "leftElbow",
+      "leftHand"
+    ]
+  ],
+  "motions": {
+    "idle": {
+      "type": "keyframes",
+      "duration": 3,
+      "loop": true,
+      "joints": {
+        "look": [
+          {
+            "t": 0,
+            "value": [
+              90,
+              -88
+            ]
+          },
+          {
+            "t": 1.5,
+            "value": [
+              90,
+              -85
+            ]
+          },
+          {
+            "t": 3,
+            "value": [
+              90,
+              -88
+            ]
+          }
+        ],
+        "scarfTip": [
+          {
+            "t": 0,
+            "value": [
+              100,
+              -80
+            ]
+          },
+          {
+            "t": 1.5,
+            "value": [
+              100,
+              -76
+            ]
+          },
+          {
+            "t": 3,
+            "value": [
+              100,
+              -80
+            ]
+          }
+        ]
+      }
+    },
+    "wave": {
+      "type": "wave",
+      "arm": {
+        "root": "leftShoulder",
+        "knee": "leftElbow",
+        "foot": "leftHand",
+        "upper": 44,
+        "lower": 44,
+        "bend": 1
+      },
+      "target": [
+        86,
+        -133
+      ],
+      "duration": 3,
+      "raise": 0.5,
+      "lower": 0.5,
+      "amplitude": 8,
+      "frequency": 2,
+      "loop": true
+    },
+    "jump": {
+      "type": "jump",
+      "height": 45,
+      "distance": 0,
+      "flight": 0.6,
+      "prep": 0.25,
+      "land": 0.35,
+      "crouch": 8,
+      "tuck": 15,
+      "loop": true
+    }
+  },
+  "pairs": [
+    {
+      "id": "arms",
+      "left": "arm-left",
+      "right": "arm-right"
+    },
+    {
+      "id": "legs",
+      "left": "leg-left",
+      "right": "leg-right"
+    }
+  ]
+}

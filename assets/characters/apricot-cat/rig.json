@@ -1,0 +1,568 @@
+{
+  "version": 1,
+  "name": "Apricot · 四腳貓",
+  "canvas": {
+    "width": 420,
+    "height": 360,
+    "origin": [
+      210,
+      220
+    ]
+  },
+  "assets": {
+    "atlas": "atlas.png"
+  },
+  "joints": {
+    "body": [
+      0,
+      0
+    ],
+    "chest": [
+      100,
+      0
+    ],
+    "neck": [
+      44,
+      -30
+    ],
+    "look": [
+      134,
+      -30
+    ],
+    "tail": [
+      -66,
+      -2
+    ],
+    "tailTip": [
+      -166,
+      -2
+    ],
+    "hip0": [
+      -47,
+      7
+    ],
+    "knee0": [
+      -22.775390684128713,
+      36.27743676439934
+    ],
+    "paw0": [
+      -38,
+      70
+    ],
+    "hip1": [
+      43,
+      7
+    ],
+    "knee1": [
+      27.153470094994223,
+      31.287599510238916
+    ],
+    "paw1": [
+      52,
+      70
+    ],
+    "hip2": [
+      -57,
+      7
+    ],
+    "knee2": [
+      -32.77539068412871,
+      36.27743676439934
+    ],
+    "paw2": [
+      -48,
+      70
+    ],
+    "hip3": [
+      49,
+      7
+    ],
+    "knee3": [
+      33.15347009499422,
+      31.287599510238916
+    ],
+    "paw3": [
+      58,
+      70
+    ]
+  },
+  "parts": [
+    {
+      "id": "leg0",
+      "asset": "atlas",
+      "rect": [
+        892,
+        347,
+        266,
+        365
+      ],
+      "layer": 10,
+      "mesh": {
+        "grid": [
+          9,
+          16
+        ],
+        "bindings": [
+          {
+            "from": "hip0",
+            "to": "knee0",
+            "sourceA": [
+              130,
+              74
+            ],
+            "sourceB": [
+              118,
+              174
+            ],
+            "widthScale": 0.24
+          },
+          {
+            "from": "knee0",
+            "to": "paw0",
+            "sourceA": [
+              118,
+              174
+            ],
+            "sourceB": [
+              126,
+              327
+            ],
+            "widthScale": 0.24
+          }
+        ],
+        "blend": {
+          "axis": "y",
+          "start": 150,
+          "end": 198
+        },
+        "pin": {
+          "joint": "paw0",
+          "source": [
+            126,
+            327
+          ],
+          "axis": "y",
+          "start": 287,
+          "end": 323,
+          "scale": [
+            0.24,
+            0.24
+          ]
+        }
+      },
+      "filter": "brightness(.9)"
+    },
+    {
+      "id": "leg1",
+      "asset": "atlas",
+      "rect": [
+        329,
+        360,
+        292,
+        356
+      ],
+      "layer": 10,
+      "mesh": {
+        "grid": [
+          9,
+          16
+        ],
+        "bindings": [
+          {
+            "from": "hip1",
+            "to": "knee1",
+            "sourceA": [
+              125,
+              53
+            ],
+            "sourceB": [
+              125,
+              173
+            ],
+            "widthScale": 0.24
+          },
+          {
+            "from": "knee1",
+            "to": "paw1",
+            "sourceA": [
+              125,
+              173
+            ],
+            "sourceB": [
+              200,
+              331
+            ],
+            "widthScale": 0.24
+          }
+        ],
+        "blend": {
+          "axis": "y",
+          "start": 149,
+          "end": 197
+        },
+        "pin": {
+          "joint": "paw1",
+          "source": [
+            200,
+            331
+          ],
+          "axis": "y",
+          "start": 291,
+          "end": 327,
+          "scale": [
+            0.24,
+            0.24
+          ]
+        }
+      },
+      "filter": "brightness(.9)"
+    },
+    {
+      "id": "leg2",
+      "asset": "atlas",
+      "rect": [
+        892,
+        347,
+        266,
+        365
+      ],
+      "layer": 20,
+      "mesh": {
+        "grid": [
+          9,
+          16
+        ],
+        "bindings": [
+          {
+            "from": "hip2",
+            "to": "knee2",
+            "sourceA": [
+              130,
+              74
+            ],
+            "sourceB": [
+              118,
+              174
+            ],
+            "widthScale": 0.24
+          },
+          {
+            "from": "knee2",
+            "to": "paw2",
+            "sourceA": [
+              118,
+              174
+            ],
+            "sourceB": [
+              126,
+              327
+            ],
+            "widthScale": 0.24
+          }
+        ],
+        "blend": {
+          "axis": "y",
+          "start": 150,
+          "end": 198
+        },
+        "pin": {
+          "joint": "paw2",
+          "source": [
+            126,
+            327
+          ],
+          "axis": "y",
+          "start": 287,
+          "end": 323,
+          "scale": [
+            0.24,
+            0.24
+          ]
+        }
+      }
+    },
+    {
+      "id": "leg3",
+      "asset": "atlas",
+      "rect": [
+        329,
+        360,
+        292,
+        356
+      ],
+      "layer": 20,
+      "mesh": {
+        "grid": [
+          9,
+          16
+        ],
+        "bindings": [
+          {
+            "from": "hip3",
+            "to": "knee3",
+            "sourceA": [
+              125,
+              53
+            ],
+            "sourceB": [
+              125,
+              173
+            ],
+            "widthScale": 0.24
+          },
+          {
+            "from": "knee3",
+            "to": "paw3",
+            "sourceA": [
+              125,
+              173
+            ],
+            "sourceB": [
+              200,
+              331
+            ],
+            "widthScale": 0.24
+          }
+        ],
+        "blend": {
+          "axis": "y",
+          "start": 149,
+          "end": 197
+        },
+        "pin": {
+          "joint": "paw3",
+          "source": [
+            200,
+            331
+          ],
+          "axis": "y",
+          "start": 291,
+          "end": 327,
+          "scale": [
+            0.24,
+            0.24
+          ]
+        }
+      }
+    },
+    {
+      "id": "tail",
+      "asset": "atlas",
+      "rect": [
+        188,
+        715,
+        430,
+        300
+      ],
+      "layer": 25,
+      "from": "tail",
+      "to": "tailTip",
+      "sourceAngle": 3.141592653589793,
+      "pivot": [
+        364,
+        200
+      ],
+      "scale": 0.25
+    },
+    {
+      "id": "head",
+      "asset": "atlas",
+      "rect": [
+        300,
+        0,
+        390,
+        315
+      ],
+      "layer": 35,
+      "from": "neck",
+      "to": "look",
+      "pivot": [
+        130,
+        252
+      ],
+      "scale": 0.23
+    },
+    {
+      "id": "body",
+      "asset": "atlas",
+      "rect": [
+        795,
+        36,
+        600,
+        310
+      ],
+      "layer": 40,
+      "from": "body",
+      "to": "chest",
+      "pivot": [
+        310,
+        170.5
+      ],
+      "scale": [
+        0.25833333333333336,
+        0.25806451612903225
+      ]
+    }
+  ],
+  "legs": [
+    {
+      "root": "hip0",
+      "knee": "knee0",
+      "foot": "paw0",
+      "upper": 38,
+      "lower": 37,
+      "bend": -1,
+      "phase": 0.5
+    },
+    {
+      "root": "hip1",
+      "knee": "knee1",
+      "foot": "paw1",
+      "upper": 29,
+      "lower": 46,
+      "bend": 1,
+      "phase": 0
+    },
+    {
+      "root": "hip2",
+      "knee": "knee2",
+      "foot": "paw2",
+      "upper": 38,
+      "lower": 37,
+      "bend": -1,
+      "phase": 0
+    },
+    {
+      "root": "hip3",
+      "knee": "knee3",
+      "foot": "paw3",
+      "upper": 29,
+      "lower": 46,
+      "bend": 1,
+      "phase": 0.5
+    }
+  ],
+  "bones": [
+    [
+      "hip0",
+      "knee0"
+    ],
+    [
+      "knee0",
+      "paw0"
+    ],
+    [
+      "hip1",
+      "knee1"
+    ],
+    [
+      "knee1",
+      "paw1"
+    ],
+    [
+      "hip2",
+      "knee2"
+    ],
+    [
+      "knee2",
+      "paw2"
+    ],
+    [
+      "hip3",
+      "knee3"
+    ],
+    [
+      "knee3",
+      "paw3"
+    ],
+    [
+      "neck",
+      "look"
+    ],
+    [
+      "tail",
+      "tailTip"
+    ]
+  ],
+  "motions": {
+    "idle": {
+      "type": "keyframes",
+      "duration": 3,
+      "loop": true,
+      "joints": {
+        "look": [
+          {
+            "t": 0,
+            "value": [
+              134,
+              -30
+            ]
+          },
+          {
+            "t": 1.5,
+            "value": [
+              134,
+              -27
+            ]
+          },
+          {
+            "t": 3,
+            "value": [
+              134,
+              -30
+            ]
+          }
+        ],
+        "tailTip": [
+          {
+            "t": 0,
+            "value": [
+              -166,
+              -2
+            ]
+          },
+          {
+            "t": 1.5,
+            "value": [
+              -166,
+              -12
+            ]
+          },
+          {
+            "t": 3,
+            "value": [
+              -166,
+              -2
+            ]
+          }
+        ]
+      }
+    },
+    "walk": {
+      "type": "gait",
+      "speed": 85,
+      "cycle": 0.62,
+      "stance": 0.6,
+      "lift": 23,
+      "bob": 2
+    },
+    "run": {
+      "type": "gait",
+      "speed": 130,
+      "cycle": 0.38,
+      "stance": 0.5,
+      "lift": 30,
+      "bob": 2
+    },
+    "jump": {
+      "type": "jump",
+      "height": 60,
+      "distance": 120,
+      "flight": 0.5,
+      "prep": 0.18,
+      "land": 0.28,
+      "tuck": 20,
+      "loop": true
+    }
+  }
+}

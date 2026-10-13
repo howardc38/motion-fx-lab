@@ -6,11 +6,19 @@
 #   RECORD_ARGS="--cpu --workers 2" bash video/build.sh intro.html   (no Metal GPU: render on SwiftShader)
 set -euo pipefail
 ARG=${1:-intro.html}
+BUILD_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+OUTPUT_ROOT=${FX_OUTPUT_DIR:-${FX_PROJECT_ROOT:-$BUILD_ROOT}/media}
+mkdir -p "$OUTPUT_ROOT"
+OUTPUT_ROOT="$(cd "$OUTPUT_ROOT" && pwd)"
+if [ -n "${FX_PROJECT_ROOT:-}" ] && [ "$(cd "$FX_PROJECT_ROOT" && pwd)" != "$BUILD_ROOT" ]; then
+  case "$OUTPUT_ROOT/" in "$BUILD_ROOT/"*) echo "external project output must be outside the effect repository" >&2; exit 1;; esac
+fi
 if [ -f "$ARG" ]; then PAGE="$(cd "$(dirname "$ARG")" && pwd)/$(basename "$ARG")"; else PAGE=$ARG; fi
 cd "$(dirname "$0")"
 [ -f "$PAGE" ] || { echo "page not found: $ARG" >&2; exit 1; }
 case " ${RECORD_ARGS:-} " in *" --no-verify "*) echo "build.sh always verifies; run record.cjs directly to skip it" >&2; exit 1;; esac
-NAME=$(basename "$PAGE" .html)
+NAME=${FX_FILM_NAME:-$(basename "$PAGE" .html)}
+case "$NAME" in ''|.|..|*/*) echo "invalid film name" >&2; exit 1;; esac
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
 
@@ -41,4 +49,4 @@ if [ -f "$WORK/delivery/$NAME.gif" ]; then
 else
   ARTIFACTS+=(--remove "$NAME.gif")
 fi
-node publish.cjs "$WORK/delivery" ../media "${ARTIFACTS[@]}"
+node publish.cjs "$WORK/delivery" "$OUTPUT_ROOT" "${ARTIFACTS[@]}"
