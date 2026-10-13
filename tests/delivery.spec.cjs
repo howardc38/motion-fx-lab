@@ -21,7 +21,7 @@ spec = importlib.util.spec_from_file_location("delivery", sys.argv[1])
 delivery = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(delivery)
 destination, poster = sys.argv[2:4]
-delivery.probe = lambda _: {"format": {"duration": "1"}}
+delivery.probe = lambda _: {"format": {"duration": "1"}, "streams": [{"codec_type": "video", "r_frame_rate": "30/1"}]}
 delivery.master_for_aac = lambda *_: "normalized.wav"
 def encode(master, audio, output):
     print("ENCODED")

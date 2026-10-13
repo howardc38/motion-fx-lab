@@ -1,6 +1,7 @@
 """Turn a silent lossless master and a mix into the two files people see.
 
     python3 deliver.py master.mkv mix.wav out_dir name [poster_seconds]
+    python3 deliver.py --poster film.mp4 seconds out.jpg     (only the poster, from a delivered film)
 
   out_dir/name_hq.mp4  high quality for upload: H.264 CRF 18, peaks held under 25 Mbps (Meta's Reels limit)
   out_dir/name.mp4     for the web: the high-quality file if it fits in CAP bytes, else two-pass to CAP
@@ -265,6 +266,22 @@ def master_for_aac(mix, work):
     raise SystemExit(f"the AAC true peak stays above {MAX_TP} dBTP: {tp:.1f} dBTP from a {tp_target:.1f} dBTP target")
 
 
+def frame_rate(info):
+    """Frames per second of the first video stream in an ffprobe result."""
+    return float(Fraction(next(s for s in info["streams"] if s["codec_type"] == "video")["r_frame_rate"]))
+
+
+def poster_frame(video, seconds, fps, out):
+    """Write the frame the film shows at `seconds`, frame round(seconds x fps), as a JPEG.
+
+    The delivered files carry no edit list (see align_audio), so their first frame is stamped 0.0667 s
+    at 30 fps, and seeking with -ss to a film time landed two frames early. The frame is chosen by its
+    index in display order instead, which does not depend on the container's timestamps."""
+    n = round(seconds * fps)
+    run("ffmpeg", "-y", "-loglevel", "error", "-i", video, "-map", "0:v:0", "-vf", f"select=eq(n\\,{n})",
+        "-fps_mode", "passthrough", "-frames:v", "1", "-q:v", "3", out)
+
+
 def encode_hq(master, audio, out):
     # VBV maxrate alone does not cap a one-second burst. The former 40 Mbit buffer
     # allowed particle/shader cuts to exceed the 25 Mbps delivery check. Keep the
@@ -298,7 +315,8 @@ def main():
     master, mix, out_dir, name = sys.argv[1:5]
     work = tempfile.mkdtemp(prefix=f".deliver-{name}-", dir=out_dir)
     try:
-        dur = float(probe(master)["format"]["duration"])
+        info = probe(master)
+        dur, fps = float(info["format"]["duration"]), frame_rate(info)
         poster_at = sys.argv[5] if len(sys.argv) > 5 else f"{dur / 3:.2f}"
         try:
             poster_seconds = float(poster_at)
@@ -320,7 +338,7 @@ def main():
             kbps = encode_preview(master, audio, preview, work, dur)
             print(f"web video {kbps}k two-pass")
         check(preview, master, cap=CAP, max_bps=HQ_MAX_BPS, audio=audio)
-        run("ffmpeg", "-y", "-loglevel", "error", "-ss", poster_at, "-i", preview, "-frames:v", "1", "-q:v", "3", poster)
+        poster_frame(preview, poster_seconds, fps, poster)
         # FFmpeg can exit successfully without producing a frame near EOF.
         if not os.path.isfile(poster) or os.path.getsize(poster) == 0:
             raise SystemExit("poster extraction produced no image")
@@ -332,5 +350,25 @@ def main():
         shutil.rmtree(work, ignore_errors=True)
 
 
+def poster_only(video, seconds, out):
+    """Take the poster again from a delivered film, as main() does, without encoding anything."""
+    info = probe(video)
+    seconds = float(seconds)
+    if not math.isfinite(seconds) or not 0 <= seconds < float(info["format"]["duration"]):
+        raise SystemExit("poster_seconds must be a finite number within the film")
+    partial = os.path.join(os.path.dirname(os.path.abspath(out)), "." + os.path.basename(out) + ".partial.jpg")
+    try:
+        poster_frame(video, seconds, frame_rate(info), partial)
+        if not os.path.isfile(partial) or os.path.getsize(partial) == 0:
+            raise SystemExit("poster extraction produced no image")
+        os.replace(partial, out)
+    finally:
+        if os.path.exists(partial):
+            os.remove(partial)
+
+
 if __name__ == "__main__":
-    main()
+    if sys.argv[1:2] == ["--poster"]:
+        poster_only(*sys.argv[2:5])
+    else:
+        main()
