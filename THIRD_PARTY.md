@@ -111,4 +111,13 @@ images generated with an AI image model for the configurable character effect, a
 
 ## Generated character speech and mouth analysis
 
-The original Mira and Pip models, gestures, script and keyboard set are authored in `fx/dialogue/`. No model, voice recording, video or dialogue from the Instagram reference is copied. Included English speech was generated offline with [Kokoro-82M v1.0](https://huggingface.co/hexgrad/Kokoro-82M) (Apache-2.0 model), using `af_heart` and `bm_george`, through [kokoro-onnx 0.5.0](https://github.com/thewh1teagle/kokoro-onnx) (MIT). Its optional phonemizer uses eSpeak NG (GPL-3.0); model weights and executables are not distributed in this repository. [Rhubarb Lip Sync 1.14.0](https://github.com/DanielSWolf/rhubarb-lip-sync) (MIT) produces the bundled mouth-cue JSON. SoundFile 0.13.1 (BSD-3-Clause) and NumPy 2.5.4 (BSD-3-Clause) are offline build dependencies. Browser playback and MP4 export need only the checked-in WAV/JSON assets and existing rendering tools.
+The plush bear (`fx/plush/`), Pip, their gestures, the scripts and the sets are authored in this repository. No model, voice recording, video or dialogue from the Instagram reference is copied. Included English speech was generated offline with [Kokoro-82M v1.0](https://huggingface.co/hexgrad/Kokoro-82M) (Apache-2.0 model), using `af_jessica` (the bear) and `bm_george` (Pip), through [kokoro-onnx 0.5.0](https://github.com/thewh1teagle/kokoro-onnx) (MIT) and [ONNX Runtime 1.31.0](https://github.com/microsoft/onnxruntime) (MIT); `assets/dialogue/manifest.json` records the voices, speeds and generator. Its optional phonemizer uses eSpeak NG (GPL-3.0); model weights and executables are not distributed in this repository. [Rhubarb Lip Sync 1.14.0](https://github.com/DanielSWolf/rhubarb-lip-sync) (MIT) produces the bundled mouth-cue JSON. SoundFile 0.13.1 (BSD-3-Clause) and NumPy 2.5.4 (BSD-3-Clause) are offline build dependencies. Browser playback and MP4 export need only the checked-in WAV/JSON assets and existing rendering tools.
+
+## Plush fur textures (Poly Haven, CC0)
+
+`assets/plush/` holds five 1k texture maps from [Poly Haven](https://polyhaven.com), downloaded unchanged:
+[Curly Teddy Natural](https://polyhaven.com/a/curly_teddy_natural) (colour and normal) for the fur pile and
+[Caban](https://polyhaven.com/a/caban) (colour, normal and roughness) for the felt pads. Photography by
+colormass, processing by Rico Cilliers. They are dedicated to the public domain under
+[CC0 1.0](https://polyhaven.com/license); attribution is not required and is given for credit.
+`assets/plush/manifest.json` lists each file's source URL, authors, licence and SHA-256.

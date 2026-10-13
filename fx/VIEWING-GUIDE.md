@@ -55,20 +55,20 @@ materials. Newness and technical complexity do not determine prominence.
 |---|---|---|---|
 | Intro | Intro | A guided overview that deliberately repeats selected uses and techniques. | Top of the page |
 | This weekend only | Use case | A 9:16 weekend promo for a small shop: hook, product, offer and call to action inside every app’s safe area. | Card in Use cases |
-| This weekend only (bakery) | Use case | bakery version of This weekend only, rendered from the same page. | Film list only |
-| This weekend only (yoga studio) | Use case | yoga studio version of This weekend only, rendered from the same page. | Film list only |
+| This weekend only (bakery) | Use case | Bakery version of This weekend only, rendered from the same page. | Film list only |
+| This weekend only (yoga studio) | Use case | Yoga studio version of This weekend only, rendered from the same page. | Film list only |
 | Feature launch in 15 seconds | Use case | One new feature from problem to result: the pile-up, the feature at work, the time saved and the call to action. | Card in Use cases |
-| Feature launch in 15 seconds (square) | Use case | square version of Feature launch in 15 seconds, rendered from the same page. | Film list only |
+| Feature launch in 15 seconds (square) | Use case | Square version of Feature launch in 15 seconds, rendered from the same page. | Film list only |
 | Year in numbers | Use case | Figures build into counters, a goal ring and charts; every page ends on a sentence computed from the data. | Card in Use cases |
-| Year in numbers (vertical) | Use case | vertical version of Year in numbers, rendered from the same page. | Film list only |
+| Year in numbers (vertical) | Use case | Vertical version of Year in numbers, rendered from the same page. | Film list only |
 | Background loops in place | Use case | Seamless loops shown where they are used: behind an opening title, an interview and a “starting soon” screen. | Card in Use cases |
 | Titles & logo stings | Use case | Three 6-second openers for one name: solid type with light rays, particles flowing into the word, and contour lines with a glitch hit. | Card in Use cases |
-| Titles & logo stings (vertical) | Use case | vertical version of Titles & logo stings, rendered from the same page. | Film list only |
+| Titles & logo stings (vertical) | Use case | Vertical version of Titles & logo stings, rendered from the same page. | Film list only |
 | Event countdown | Use case | A 15-second countdown locked to the beat: a draining ring, info chips, a hard 3-2-1 and a chrome logo reveal on the drop. | Card in Use cases |
-| Event countdown (vertical) | Use case | vertical version of Event countdown, rendered from the same page. | Film list only |
+| Event countdown (vertical) | Use case | Vertical version of Event countdown, rendered from the same page. | Film list only |
 | Product spotlight | Use case | A code-drawn product drops in, gains three callouts, changes colourway and ends on price and call to action. | Card in Use cases |
-| Product spotlight (vertical) | Use case | vertical version of Product spotlight, rendered from the same page. | Film list only |
-| Product spotlight (square) | Use case | square version of Product spotlight, rendered from the same page. | Film list only |
+| Product spotlight (vertical) | Use case | Vertical version of Product spotlight, rendered from the same page. | Film list only |
+| Product spotlight (square) | Use case | Square version of Product spotlight, rendered from the same page. | Film list only |
 | One flight. Twenty worlds. | Demo film | One character travels through twenty art directions. | Card in Demo films |
 | The Final Final | Demo film | The plush bear asks for the launch video; Pip has made one small, dramatic improvement. Nine library effects play a part in the story. | Card in Demo films |
 | Clear | Demo film | A 15-second drinks advert: a drop crowns, rises into a glass bottle, dives underwater and surfaces as the brand. | Card in Demo films |

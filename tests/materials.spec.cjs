@@ -218,10 +218,11 @@ test("transparent external glitch sources do not inherit the previous image", as
   });
   expect(p).toBe(true);
 });
-test("every GIF film card opens its own playable video", async ({ page }) => {
+test("every featured film card opens its own playable video", async ({ page }) => {
   await gallery(page);
   const cards = page.locator(".film-preview");
-  expect(await cards.count()).toBe(7);
+  const { featured } = require("./fixtures/expected-counts.json").films;
+  expect(await cards.count()).toBe(featured["use-case"].length + featured.demo.length);
   for (let i = 0; i < (await cards.count()); i++) {
     const c = cards.nth(i);
     await c.locator("button").click();

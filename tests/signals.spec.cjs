@@ -94,6 +94,8 @@ test('catalogue keeps two signal variants and the motion shatter family, linked 
  const p=await page.evaluate(()=>['signal-audio-relief','signal-motion-fragments','signal-freeze-orbit'].map(id=>{const d=FXCatalog.byId.get(id);return{id,role:d.role,parent:d.familyId};}));
  expect(p).toEqual([{id:'signal-audio-relief',role:'variant',parent:'studio-depth-dots'},{id:'signal-motion-fragments',role:'technique',parent:'signal-motion-fragments'},{id:'signal-freeze-orbit',role:'variant',parent:'studio-freeze-orbit'}]);
  expect(await page.evaluate(()=>FXCatalog.families.find(f=>f.id==='signal-motion-fragments').name)).toBe('Motion shatter and reassemble');
+ // The studio dot impact joined this family as a variant (D3).
+ expect(await page.evaluate(()=>FXCatalog.families.find(f=>f.id==='signal-motion-fragments').entries.map(d=>d.id))).toEqual(['signal-motion-fragments','studio-dot-impact']);
  for(const [demo,parent,film] of [['signal-audio-relief','studio-depth-dots','audio-relief'],['signal-motion-fragments','signal-motion-fragments','motion-fragments'],['signal-freeze-orbit','studio-freeze-orbit','dot-battle']]){await page.evaluate(id=>galleryAPI.selectVariant(id),demo);await expect(page.locator('[data-effect-id="'+parent+'"] .preview-link a').first()).toHaveAttribute('href','media/'+film+'.mp4');}
  await expect(page.locator('[data-film-index-id]')).toHaveCount(require('./fixtures/expected-counts.json').films.total);
 });
