@@ -1,6 +1,9 @@
 // Three more movie effects using the same build -> {ready, frame(t)} contract.
 (() => {
   if (!window.FX || !window.FXStack) return;
+  // Gallery framing per study. The domino chain is shown close to its falling front with the continuous
+  // tracking camera; film pages call FXStack.create directly and pass their own options.
+  const GALLERY_OPTIONS = { rapier: { camera: "track" } };
   for (const study of FXStack.studies)
     FX.demo({
       id: "stack-" + study.id,
@@ -24,7 +27,7 @@
           stage.appendChild(effect.canvas);
           return effect;
         });
-        return { ready, frame: async (t) => (await ready).frame(t) };
+        return { ready, frame: async (t) => (await ready).frame(t, GALLERY_OPTIONS[study.id]) };
       },
     });
 })();

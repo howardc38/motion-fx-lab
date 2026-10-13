@@ -165,7 +165,8 @@
           const t = Math.max(0, Math.min(24, seconds)),
             i = t < 7 ? 0 : t < 16 ? 1 : 2;
           effects.forEach((effect, j) => (effect.canvas.hidden = i !== j));
-          await effects[i].frame(t - starts[i]);
+          // The domino chain is followed close to its falling front, as in the gallery card.
+          await effects[i].frame(t - starts[i], i === 1 ? { camera: "track" } : undefined);
           label.textContent =
             names[i] + " · " + (t - starts[i]).toFixed(2) + " s";
           slider.value = t;

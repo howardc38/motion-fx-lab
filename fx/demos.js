@@ -222,70 +222,6 @@
   }
   const rng = (seed) => () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 
-  demo({ id: "lit3d", gl: true, name: "Lit 3D type + shadow", kind: "shader", stacks: ["three"], chips: ["Three.js TextGeometry", "SpotLight soft shadow", "UnrealBloomPass"], grade: "A+",
-    purpose: "Extruded 3D type on a floor, lit by a spotlight that casts a soft shadow.", period: 6, hero: 1.4,
-    build(s) {
-      const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(40, GW / GH, 0.1, 100);
-      cam.position.set(0, 2.4, 9); cam.lookAt(0, 1.1, 0);
-      const key = studioLights(scene, [-5, 9, 4]); key.target.position.set(0, 1, 0);
-      const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.5 }));
-      floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
-      const six = text3d("6%", 1.6, 0.55, new THREE.MeshStandardMaterial({ color: 0xff3b4e, metalness: 0.55, roughness: 0.3, emissive: 0x330008 })); scene.add(six);
-      const comp = composer(scene, cam, 0.8, 0.55, 0.2);
-      return (t) => {
-        const pop = t < 0.1 ? 0 : t < 0.6 ? back((t - 0.1) / 0.5) : 1;
-        six.scale.setScalar(Math.max(0.001, pop * (1 - smooth(5.6, 6, t))));
-        six.position.set(0, 1.3 + 0.08 * Math.sin(t * 1.4), 0);
-        six.rotation.set(0.08, 0.6 * Math.sin((t / 6) * Math.PI * 2), 0);
-        R3.setClearColor(0x07060b, 1); comp.render(1 / 60); blit();
-      };
-    } });
-
-  demo({ id: "rays", gl: true, name: "Rays + bloom + dust", kind: "shader", stacks: ["three", "canvas"], chips: ["Three.js additive planes", "UnrealBloomPass", "Canvas ray texture"], grade: "A+",
-    purpose: "Light rays fan out behind the scene, with bloom and floating dust.", period: 10, hero: 2,
-    build(s) {
-      const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(50, GW / GH, 0.1, 100), R = rng(9028);
-      cam.position.set(0, 0, 10);
-      const c = document.createElement("canvas"); c.width = 64; c.height = 512; const g = c.getContext("2d");
-      const gy = g.createLinearGradient(0, 0, 0, 512); gy.addColorStop(0, "rgba(255,255,255,0)"); gy.addColorStop(0.5, "rgba(255,255,255,1)"); gy.addColorStop(1, "rgba(255,255,255,0)");
-      g.fillStyle = gy; g.fillRect(0, 0, 64, 512);
-      const gx = g.createLinearGradient(0, 0, 64, 0); gx.addColorStop(0, "rgba(0,0,0,1)"); gx.addColorStop(0.5, "rgba(0,0,0,0)"); gx.addColorStop(1, "rgba(0,0,0,1)");
-      g.globalCompositeOperation = "destination-out"; g.fillStyle = gx; g.fillRect(0, 0, 64, 512);
-      const rays = new THREE.Group(); scene.add(rays);
-      const mat = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, color: 0xffe8f8, opacity: 0.7 });
-      for (let i = 0; i < 18; i++) { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.16 + R() * 0.2, 9 + R() * 8), mat); m.rotation.z = (i / 18) * Math.PI * 2 + R() * 0.2; rays.add(m); }
-      const N = 700, pos = new Float32Array(N * 3);
-      for (let i = 0; i < N; i++) { pos[i * 3] = (R() - 0.5) * 14; pos[i * 3 + 1] = (R() - 0.5) * 18; pos[i * 3 + 2] = -2 - R() * 14; }
-      const dust = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(pos, 3)), new THREE.PointsMaterial({ color: 0xffffff, size: 0.05, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false }));
-      scene.add(dust);
-      const comp = composer(scene, cam, 1.1, 0.55, 0.2);
-      return (t, abs) => {
-        rays.rotation.z = abs * 0.12; rays.scale.setScalar(0.9 + 0.08 * Math.sin(abs * 0.9));
-        dust.rotation.y = abs * 0.03; dust.position.y = (abs * 0.2) % 2;
-        R3.setClearColor(0x07060b, 1); comp.render(1 / 60); blit();
-      };
-    } });
-
-  demo({ id: "smoke", gl: true, name: "Smoke", kind: "shader", stacks: ["three", "glsl"], chips: ["GLSL fbm noise", "ShaderMaterial"], grade: "B",
-    purpose: "Smoke that drifts and curls, computed from noise on every frame; no footage.", period: 20, hero: 6,
-    build(s) {
-      const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-      const u = { uT: { value: 0 } };
-      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({ uniforms: u,
-        vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
-        fragmentShader: `uniform float uT; varying vec2 vUv;
-          float h(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
-          float n2(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(h(i),h(i+vec2(1,0)),f.x), mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x), f.y); }
-          float fbm(vec2 p){ float v=0.0, a=0.5; for(int i=0;i<5;i++){ v+=a*n2(p); p*=2.03; a*=0.5; } return v; }
-          void main(){ vec2 p = vUv*vec2(2.2,2.75);
-            vec2 q = vec2(fbm(p + uT*0.18), fbm(p + vec2(5.2,1.3) - uT*0.14));
-            float f = fbm(p + 2.2*q + vec2(uT*0.06, 0.0));
-            float a = smoothstep(0.42,0.9,f);
-            vec3 col = mix(vec3(0.03,0.02,0.05), vec3(1.0,0.86,0.96), a) + vec3(0.25,0.05,0.2)*q.x*0.4;
-            gl_FragColor = vec4(col, 1.0); }` })));
-      const comp = composer(scene, cam, 0.5, 0.6, 0.35);
-      return (t, abs) => { u.uT.value = abs; comp.render(1 / 60); blit(); };
-    } });
 
   demo({ id: "particles", gl: true, name: "Particles into type", kind: "shader", stacks: ["three", "canvas"], chips: ["Three.js Points", "Canvas-sampled text", "UnrealBloomPass"], grade: "A+",
     purpose: "Scattered points assemble into words. Text in any script is drawn on a canvas and sampled, so it works where 3D fonts have no glyphs.", period: 5.5, hero: 3,
@@ -329,50 +265,6 @@
     float noise3(vec3 x){ vec3 i=floor(x); vec3 f=fract(x); f=f*f*(3.0-2.0*f);
       return mix(mix(mix(hash31(i),hash31(i+vec3(1,0,0)),f.x), mix(hash31(i+vec3(0,1,0)),hash31(i+vec3(1,1,0)),f.x),f.y),
                  mix(mix(hash31(i+vec3(0,0,1)),hash31(i+vec3(1,0,1)),f.x), mix(hash31(i+vec3(0,1,1)),hash31(i+vec3(1,1,1)),f.x),f.y), f.z); }`;
-  demo({ id: "dissolve", gl: true, name: "Noise dissolve", kind: "shader", stacks: ["three", "glsl"], chips: ["onBeforeCompile shader patch", "3D noise", "UnrealBloomPass"], grade: "B",
-    purpose: "Text or a number melts away in noise; in the sample, a figure with no source that will not be sent.", period: 5, hero: 1.7,
-    build(s) {
-      const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(40, GW / GH, 0.1, 100);
-      cam.position.set(0, 0.6, 8); cam.lookAt(0, 0, 0);
-      studioLights(scene, [-5, 7, 6]);
-      const dis = { value: -0.1 }, mat = new THREE.MeshStandardMaterial({ color: 0xff3b4e, metalness: 0.5, roughness: 0.32, emissive: 0x2a0006 });
-      mat.onBeforeCompile = (sh) => {
-        sh.uniforms.uDis = dis;
-        sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nvarying vec3 vObj;").replace("#include <begin_vertex>", "#include <begin_vertex>\nvObj = position;");
-        sh.fragmentShader = sh.fragmentShader.replace("#include <common>", `#include <common>\nvarying vec3 vObj;\nuniform float uDis;\n${NOISE}`)
-          .replace("#include <dithering_fragment>", "#include <dithering_fragment>\nfloat nn = 0.65*noise3(vObj*2.6) + 0.35*noise3(vObj*7.0);\nif (nn < uDis) discard;\nif (nn < uDis + 0.05) gl_FragColor = vec4(1.0, 0.56, 0.91, 1.0) * 3.0;");
-      };
-      const four = text3d("4.5%", 1.0, 0.4, mat); scene.add(four);
-      const comp = composer(scene, cam, 0.9, 0.5, 0.2);
-      return (t) => {
-        dis.value = t < 3.8 ? -0.1 + 1.2 * smooth(1.0, 3.0, t) : 1.1 - 1.2 * smooth(3.8, 4.8, t);
-        four.rotation.set(0.05, -0.3 + 0.3 * Math.sin((t / 5) * Math.PI * 2), 0);
-        four.position.y = 0.06 * Math.sin(t * 2);
-        R3.setClearColor(0x07060b, 1); comp.render(1 / 60); blit();
-      };
-    } });
-
-  demo({ id: "chrome", gl: true, name: "Chrome logo", kind: "shader", stacks: ["three", "canvas"], chips: ["PBR metal", "PMREM environment", "Canvas-painted studio"], grade: "A+",
-    purpose: "A logo in polished chrome, reflecting a studio painted on a canvas.", period: 8, hero: 2.6,
-    build(s) {
-      const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(40, GW / GH, 0.1, 100);
-      cam.position.set(0, 0, 7);
-      const c = document.createElement("canvas"); c.width = 1024; c.height = 512; const g = c.getContext("2d");
-      const bg = g.createLinearGradient(0, 0, 0, 512); bg.addColorStop(0, "#1a1420"); bg.addColorStop(0.5, "#07060b"); bg.addColorStop(1, "#140a14"); g.fillStyle = bg; g.fillRect(0, 0, 1024, 512);
-      g.filter = "blur(10px)"; g.fillStyle = "#ffffff"; g.fillRect(80, 90, 360, 120); g.fillRect(560, 50, 420, 110); g.fillRect(0, 230, 1024, 26);
-      g.fillStyle = "#ff90e8"; g.fillRect(380, 290, 360, 130); g.fillRect(20, 320, 200, 90); g.fillStyle = "#ffe4f8"; g.fillRect(820, 240, 180, 200);
-      const tx = new THREE.CanvasTexture(c); tx.mapping = THREE.EquirectangularReflectionMapping;
-      const pm = new THREE.PMREMGenerator(R3), env = pm.fromEquirectangular(tx).texture; pm.dispose();
-      const logo = text3d("social_ops", 0.46, 0.2, new THREE.MeshStandardMaterial({ color: 0xffe0f7, metalness: 1.0, roughness: 0.1, envMap: env, envMapIntensity: 2.2 }));
-      scene.add(logo);
-      const sweep = new THREE.PointLight(0xffffff, 5, 18, 1.6); scene.add(sweep);
-      const comp = composer(scene, cam, 0.4, 0.5, 0.45);
-      return (t) => {
-        logo.rotation.set(0.12 + 0.06 * Math.sin(t * 0.8), -0.35 * Math.sin((t / 8) * Math.PI * 2), 0);
-        sweep.position.set(-6 + 12 * ((t / 3.2) % 1), 2.2, 2.5);
-        R3.setClearColor(0x07060b, 1); comp.render(1 / 60); blit();
-      };
-    } });
 
   function mascot(scene) {
     const R = rng(515);
@@ -784,43 +676,6 @@
       };
     } });
 
-  demo({ id: "liquid", gl: true, name: "Liquid glass refraction", kind: "shader", stacks: ["three", "glsl", "canvas"], chips: ["custom GLSL refraction", "dispersion"], grade: "B",
-    purpose: "A screen-space glass effect bends and splits a background image. This tile uses UV distortion, rather than a thick 3D transparent body.", period: 8, hero: 2,
-    build(s) {
-      const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-      const bgc = document.createElement("canvas"); bgc.width = GW; bgc.height = GH; const g = bgc.getContext("2d");
-      const tex = new THREE.CanvasTexture(bgc);
-      const paint = () => {
-        g.fillStyle = "#ff90e8"; g.fillRect(0, 0, GW, GH);
-        g.fillStyle = "#ffd400"; for (let i = -GH; i < GW; i += 56) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i + 26, 0); g.lineTo(i + 26 + GH, GH); g.lineTo(i + GH, GH); g.fill(); }
-        g.fillStyle = "#111"; g.textAlign = "center"; g.font = `900 78px ${LAT}`;
-        for (let r = 0; r < 6; r++) g.fillText("social_ops", GW / 2 + (r % 2 ? 40 : -40), 90 + r * 100);
-        tex.needsUpdate = true;
-      };
-      paint(); const ready = document.fonts.load(`900 78px ${LAT}`, "social_ops").then(paint);
-      const u = { uTex: { value: tex }, uT: { value: 0 }, uAspect: {value: GH/GW} };
-      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({ uniforms: u,
-        vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
-        fragmentShader: `uniform sampler2D uTex; uniform float uT, uAspect; varying vec2 vUv;
-          float smin(float a, float b, float k){ float h = clamp(0.5 + 0.5*(b-a)/k, 0.0, 1.0); return mix(b, a, h) - k*h*(1.0-h); }
-          float field(vec2 p){
-            vec2 c1 = vec2(0.5 + 0.2*sin(uT*0.7), 0.62 + 0.18*cos(uT*0.9));
-            vec2 c2 = vec2(0.5 + 0.18*cos(uT*0.5 + 1.0), 0.6 + 0.22*sin(uT*0.6 + 2.0));
-            return smin(length(p - c1) - 0.19, length(p - c2) - 0.13, 0.12); }
-          void main(){
-            vec2 p = vec2(vUv.x, (vUv.y-.5)*uAspect+.625);
-            float d = field(p); vec2 e = vec2(0.002, 0.0);
-            vec2 n = vec2(field(p + e.xy) - field(p - e.xy), field(p + e.yx) - field(p - e.yx)) / (2.0*e.x);
-            float inside = smoothstep(0.004, -0.004, d);
-            float depth = clamp(-d/0.1, 0.0, 1.0);
-            vec2 off = n*(1.0 - depth)*0.08 + n*0.02;
-            vec3 base = texture2D(uTex, vUv).rgb;
-            vec3 glass = vec3(texture2D(uTex, vUv - off).r, texture2D(uTex, vUv - off*1.06).g, texture2D(uTex, vUv - off*1.12).b)*1.04 + 0.05;
-            float rim = smoothstep(0.012, 0.0, abs(d))*0.7;
-            float spec = pow(max(0.0, dot(normalize(vec3(-n, 0.6)), normalize(vec3(-0.5, 0.6, 0.6)))), 30.0)*inside;
-            gl_FragColor = vec4(mix(base, glass, inside) + rim + spec*0.6, 1.0); }` })));
-      return { ready, frame: (t, abs) => { u.uT.value = abs; R3.render(scene, cam); blit(); } };
-    } });
 
   demo({ id: "halftonetype", name: "Halftone type", kind: "type", stacks: ["canvas"], chips: ["Canvas 2D", "dot size from ink coverage"], grade: "A",
     purpose: "A word printed as halftone dots whose size breathes from fine to coarse and back. Once the dots grow, thin and dense strokes, such as small Chinese characters, break up.", period: 4, hero: 2,

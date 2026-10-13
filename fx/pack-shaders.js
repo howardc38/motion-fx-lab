@@ -358,13 +358,13 @@
   const GP_P = 8;
   demo({ id: "gpuparticles", gl: true, name: "200,000 GPU particles", kind: "shader", stacks: ["three", "glsl", "canvas"],
     chips: ["Points + ShaderMaterial", "curl noise in the vertex shader", "Canvas-sampled text", "UnrealBloomPass"], grade: "B",
-    purpose: "About fifty times the points of the CPU particle tile, which caps at 3,800: each vertex works out its own position from t, streaming along a torus knot, then flowing through curl noise into the letters and back. Nothing is stored between frames, so any moment renders on its own.",
+    purpose: "About fifty times the points of the CPU particle tile, which caps at 3,800: each vertex works out its own position from t, streaming along a torus knot, flowing through curl noise into the letters, then bursting outward with trails and streaming home. The letters stay grainy and graded in colour, so they read as particles. Nothing is stored between frames, so any moment renders on its own.",
     seen: SEEN, period: GP_P, hero: 4.7,
     build(s) {
       const N = 200000, blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(40, GW / GH, 0.1, 100);
       const R = rng(4242), tube = new Float32Array(N * 3), seed = new Float32Array(N * 4), text = new Float32Array(N * 3);
       for (let i = 0; i < N; i++) {
-        for (let k = 0; k < 3; k++) tube[i * 3 + k] = (R() + R() + R() - 1.5) * 0.15;
+        for (let k = 0; k < 3; k++) tube[i * 3 + k] = (R() + R() + R() - 1.5) * 0.24;
         for (let k = 0; k < 4; k++) seed[i * 4 + k] = R();
       }
       // Targets: canvas-sampled lettering; a film can supply data-particle-text and width.
@@ -374,6 +374,7 @@
       geo.setAttribute("position", new THREE.BufferAttribute(tube, 3));
       geo.setAttribute("aSeed", new THREE.BufferAttribute(seed, 4));
       geo.setAttribute("aText", new THREE.BufferAttribute(text, 3));
+      const width = +(s.dataset.particleWidth || 3.5);
       const sampleText = () => {
         tg.clearRect(0, 0, cw, ch); tg.fillStyle = "#fff"; tg.textAlign = "center"; tg.textBaseline = "middle";
         tg.font = `900 ${s.dataset.particleText && s.dataset.particleText.length > 2 ? 280 : 440}px ${LAT}`; tg.fillText(s.dataset.particleText || "FX", cw / 2, ch / 2);
@@ -382,7 +383,7 @@
         for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) if (d[(y * cw + x) * 4 + 3] > 127) {
           px.push(x, y); if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
         }
-        const T = rng(99), n = px.length / 2, sc = +(s.dataset.particleWidth || 3.5) / Math.max(1, x1 - x0), cx = (x0 + x1 + 1) / 2, cy = (y0 + y1 + 1) / 2;
+        const T = rng(99), n = px.length / 2, sc = width / Math.max(1, x1 - x0), cx = (x0 + x1 + 1) / 2, cy = (y0 + y1 + 1) / 2;
         for (let i = 0; i < N; i++) {
           const k = Math.floor(T() * n) * 2;
           text[i * 3] = (px[k] + T() - cx) * sc; text[i * 3 + 1] = (cy - px[k + 1] - T()) * sc; text[i * 3 + 2] = (T() - 0.5) * 0.35;
@@ -391,16 +392,19 @@
       };
       sampleText();
       const ready = document.fonts.load(`900 440px ${LAT}`, s.dataset.particleText || "FX").then(sampleText);
-      const u = { uT: { value: 0 }, uP: { value: GP_P }, uSize: { value: Math.sqrt(GW / 480) } };
-      const pts = new THREE.Points(geo, new THREE.ShaderMaterial({ uniforms: u, transparent: true, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending,
+      // uDen keeps the letters' grain and brightness the same at any render size: point area grows with
+      // sqrt(width) while the letters' area grows with width squared.
+      const uniforms = (lag, ghost) => ({ uT: { value: 0 }, uP: { value: GP_P }, uSize: { value: Math.sqrt(GW / 480) }, uDen: { value: GW / 640 }, uW: { value: width }, uLag: { value: lag }, uGhost: { value: ghost } });
+      const material = (u) => new THREE.ShaderMaterial({ uniforms: u, transparent: true, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending,
         vertexShader: `
           attribute vec4 aSeed; attribute vec3 aText;
-          uniform float uT, uP, uSize;
+          uniform float uT, uP, uSize, uDen, uW, uLag, uGhost;
           varying vec3 vCol; varying float vA;
           ${NOISE_D}
           vec3 knot(float s){ float r = 1.0 + 0.45*cos(3.0*s); return vec3(r*cos(2.0*s), r*sin(2.0*s), 0.45*sin(3.0*s)) * 1.2; }
           void main(){
-            float ph = uT / uP * 6.2831853;
+            float T = uT - uLag;                   // trail copies draw the same particles a moment earlier
+            float ph = T / uP * 6.2831853;
             // on the knot: each particle streams once round the curve per loop, while the knot turns
             float s = aSeed.x*6.2831853 + ph;
             vec3 k = knot(s) + position;
@@ -408,29 +412,56 @@
             k = vec3(cz*k.x - sz*k.y, sz*k.x + cz*k.y, k.z);
             k = vec3(cy*k.x + sy*k.z, k.y, -sy*k.x + cy*k.z);
             float dl = aSeed.y*0.7;
-            float m = smoothstep(2.3 + dl, 3.5 + dl, uT) * (1.0 - smoothstep(5.9 + dl, 7.1 + dl, uT));
-            float swirl = 4.0*m*(1.0 - m);
+            float form = smoothstep(2.3 + dl, 3.5 + dl, T);
+            float release = smoothstep(5.95 + 0.15*aSeed.y, 7.4 + 0.4*aSeed.y, T);
+            float m = form * (1.0 - release);
+            float swirl = 4.0*form*(1.0 - form);
             vec3 p = mix(k, aText, m);
+            // the burst: one fast push outward from the letters, decaying while the knot pulls them home
+            float age = T - (5.9 + 0.06*aSeed.y);
+            float burst = age > 0.0 ? (1.0 - exp(-age*7.5))*exp(-age*1.15) : 0.0;
+            float flash = age > 0.0 ? exp(-age*9.0) : 0.0;
+            vec3 dir = normalize(vec3(aText.xy, aText.z*4.0) + (aSeed.zwx - 0.5)*1.3 + 1e-4);
+            p += dir * burst * (0.7 + 4.4*aSeed.x*aSeed.x);
+            // while the letters hold, the grain keeps boiling a little
+            p += vec3(sin(T*6.0 + aSeed.x*40.0), cos(T*5.3 + aSeed.y*40.0), 0.0) * 0.012 * m;
             // three short steps through the curl field, from a start that depends on t alone
             vec3 drift = vec3(cos(ph), sin(ph), 0.0) * 1.2;
-            float amp = (mix(0.045, 0.025, m) + 0.65*swirl) * (0.6 + 0.8*aSeed.z);
+            float amp = (mix(0.045, 0.02, m) + 0.65*swirl + 0.3*burst) * (0.6 + 0.8*aSeed.z);
             for (int i = 0; i < 3; i++) p += curl(p*0.8 + drift) * amp * 0.33;
             vec4 mv = modelViewMatrix * vec4(p, 1.0);
             gl_Position = projectionMatrix * mv;
-            gl_PointSize = (1.1 + 1.2*aSeed.z) * 7.4 / -mv.z * uSize;
-            vec3 pink = vec3(1.0, 0.45, 0.88), violet = vec3(0.5, 0.34, 1.0), pale = vec3(1.0, 0.86, 0.96), cyan = vec3(0.35, 0.88, 1.0);
-            vCol = mix(mix(mix(violet, pink, aSeed.w), mix(pink, pale, aSeed.w), m), cyan, swirl*0.7*aSeed.z);
-            vA = 0.07 + 0.035*m + 0.1*swirl;
+            // size jitter: most points are fine grain, a few are larger sparks
+            gl_PointSize = (0.75 + 2.4*aSeed.z*aSeed.z) * 7.4 / -mv.z * uSize * (1.0 + 0.6*burst);
+            vec3 pink = vec3(1.0, 0.45, 0.88), violet = vec3(0.5, 0.34, 1.0), cyan = vec3(0.2, 0.85, 1.0), coral = vec3(1.0, 0.42, 0.5);
+            // letters: graded left to right, cyan to violet to coral, so the type has a hue range and depth
+            float gx = clamp(aText.x / uW + 0.5, 0.0, 1.0);
+            vec3 letter = mix(mix(cyan, violet, smoothstep(0.0, 0.55, gx)), coral, smoothstep(0.5, 1.0, gx)) * (0.75 + 0.5*aSeed.w);
+            vCol = mix(mix(violet, pink, aSeed.w), letter, m);
+            vCol = mix(vCol, cyan, swirl*0.6*aSeed.z);
+            vCol = mix(vCol, vec3(1.0, 0.88, 0.75), flash*0.7);
+            // a band of light crosses the letters while they hold
+            float sweep = smoothstep(3.9, 5.7, T)*1.5 - 0.25;
+            float glint = exp(-pow((gx - sweep)/0.09, 2.0)) * m;
+            vCol = mix(vCol, vec3(1.0, 0.95, 0.9), glint*0.22);
+            vA = mix(0.07, 0.034*uDen, m)*(1.0 + 0.8*glint) + 0.09*swirl + 0.05*burst + 0.12*flash;
+            if (uLag > 0.0) vA *= uGhost * smoothstep(0.0, 0.06, age) * (1.0 - smoothstep(0.45, 1.1, age));
           }`,
         fragmentShader: `
           varying vec3 vCol; varying float vA;
-          void main(){ vec2 c = gl_PointCoord - 0.5; float r = dot(c, c); if (r > 0.25) discard; gl_FragColor = vec4(vCol, vA*(1.0 - 3.0*r)); }` }));
-      pts.frustumCulled = false; scene.add(pts);
+          void main(){ if (vA <= 0.0) discard; vec2 c = gl_PointCoord - 0.5; float r = dot(c, c); if (r > 0.25) discard; gl_FragColor = vec4(vCol, vA*(1.0 - 3.0*r)); }` });
+      const layers = [[0, 1], [0.035, 0.55], [0.075, 0.3]].map(([lag, ghost]) => {
+        const u = uniforms(lag, ghost), pts = new THREE.Points(geo, material(u));
+        pts.frustumCulled = false; scene.add(pts); return { u, pts, lag };
+      });
       const comp = FX.composer(scene, cam, 0.55, 0.35, 0.45);
       return { ready, frame: (t) => {
-        u.uT.value = t;
+        for (const l of layers) { l.u.uT.value = t; if (l.lag) l.pts.visible = t > 5.85 && t < 7.1; }
         const ph = (t / GP_P) * TAU, yaw = 0.3 * Math.sin(ph);
         cam.position.set(7.4 * Math.sin(yaw), 0.35 * Math.sin(2 * ph), 7.4 * Math.cos(yaw)); cam.lookAt(0, 0, 0);
+        // bloom: softer while the letters hold, so they stay grainy; a spike on the burst
+        const hold = smooth(3.3, 4.0, t) * (1 - smooth(5.8, 6.0, t)), age = t - 5.9;
+        comp.bloom.strength = 0.55 - 0.25 * hold + (age > 0 ? 1.1 * Math.exp(-age * 5) : 0);
         const R3 = FX.R3;
         R3.setRenderTarget(null); R3.setScissorTest(false); R3.autoClear = true; R3.setClearColor(0x07060b, 1);
         comp.render(1 / 60); R3.setRenderTarget(null); blit();
