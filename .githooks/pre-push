@@ -1,0 +1,43 @@
+#!/bin/sh
+# Versioned push guard for this public repository. Install once per clone: npm run setup:hooks
+# (sets core.hooksPath=.githooks; replaces any older local copy in .git/hooks/pre-push).
+#
+# Only commits (to refs/heads/*) and commits or annotated tags (to refs/tags/*) may leave this repo,
+# and remote refs are never deleted. Codex and other tools keep private snapshots under refs/codex/*
+# and similar; a mirror or all-refs push would publish them. Then tools/check-public.cjs must pass.
+# Override for one push only: ALLOW_ANY_PUSH=1 git push ...
+[ "$ALLOW_ANY_PUSH" = 1 ] && exit 0
+
+status=0
+head=$(git rev-parse -q --verify HEAD 2>/dev/null)
+other=
+while read -r local_ref local_sha remote_ref remote_sha; do
+  case "$remote_ref" in
+    refs/heads/*|refs/tags/*) ;;
+    *) echo "pre-push: refusing to push $local_ref -> $remote_ref (only branches and tags may leave this repo)" >&2; status=1; continue ;;
+  esac
+  case "$local_sha" in
+    *[!0]*) ;;
+    *) echo "pre-push: refusing to delete remote $remote_ref" >&2; status=1; continue ;;
+  esac
+  type=$(git cat-file -t "$local_sha" 2>/dev/null)
+  case "$remote_ref:$type" in
+    refs/heads/*:commit|refs/tags/*:commit|refs/tags/*:tag) ;;
+    *) echo "pre-push: refusing to push ${type:-unknown} object $local_sha to $remote_ref" >&2; status=1; continue ;;
+  esac
+  commit=$(git rev-parse -q --verify "$local_sha^{commit}" 2>/dev/null) || {
+    echo "pre-push: refusing to push tag $local_ref: it does not point to a commit" >&2; status=1; continue; }
+  [ "$commit" = "$head" ] || other="$other $local_ref"
+done
+[ "$status" = 0 ] || exit "$status"
+
+top=$(git rev-parse --show-toplevel) || exit 1
+if ! command -v node >/dev/null 2>&1; then
+  echo "pre-push: node not found; cannot run tools/check-public.cjs, so nothing was pushed" >&2; exit 1
+fi
+if [ ! -f "$top/tools/check-public.cjs" ]; then
+  echo "pre-push: $top/tools/check-public.cjs is missing, so nothing was pushed" >&2; exit 1
+fi
+node "$top/tools/check-public.cjs" || { echo "pre-push: public scope check failed; nothing was pushed" >&2; exit 1; }
+[ -z "$other" ] || echo "pre-push: note: the scope check examined this working tree (HEAD), not:$other" >&2
+exit 0
