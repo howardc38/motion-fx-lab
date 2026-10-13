@@ -21,7 +21,8 @@ export const BATTLE_MUSIC = [
   [FREEZE.film + FREEZE.duration, "final"],
   [filmTime(18), "tail"],
 ];
-export const BATTLE_GIF = [
+// The card's silent loop (window.__preview).
+export const BATTLE_PREVIEW = [
   [0, 1],
   [2.05, 3.05],
   [5.5, 6.5],

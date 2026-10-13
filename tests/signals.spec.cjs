@@ -77,10 +77,11 @@ test('impact orbit holds real skeletal pose while moving camera and lights; miss
 
 const SCORES={'audio-relief':'/assets/signals-relief/score.wav','motion-fragments':'/assets/signals-fragments/score.wav','impact-orbit':'/assets/signals/score.wav'};
 for(const id of Object.keys(SCORES))test(`${id} exports a complete final frame and its own analysed score`,async({page})=>{
- await ready(page,id);const p=await page.evaluate(async()=>{await __render(11.99);const a=signalEffect.proof();await __render(12);const b=signalEffect.proof();return{a,b,dur:__DUR,audio:__audio,gif:__gif,poster:__poster,count:signalEffect.data.audioSpec.count};});
+ await ready(page,id);const p=await page.evaluate(async()=>{await __render(11.99);const a=signalEffect.proof();await __render(12);const b=signalEffect.proof();return{a,b,dur:__DUR,audio:__audio,gif:window.__gif,preview:window.__preview,poster:__poster,count:signalEffect.data.audioSpec.count};});
  expect(p.dur).toBe(12);expect(p.audio.src).toBe(SCORES[id]);expect(p.audio.sha256).toMatch(/^[a-f0-9]{64}$/);expect(p.b.audioIndex).toBe(p.count-1);expect(p.a.sourceTime??p.a.sourceIndex).toBeCloseTo(p.b.sourceTime??p.b.sourceIndex,1);
  expect(p.poster).toBeGreaterThan(0);expect(p.poster).toBeLessThan(12);
- for(const [a,b] of p.gif){expect(a).toBeGreaterThanOrEqual(0);expect(b).toBeLessThan(12);expect(b).toBeGreaterThan(a);}
+ // Effect films publish no card loop or GIF (only films with a home-page card have a loop).
+ expect(p.gif).toBeUndefined();expect(p.preview).toBeUndefined();
 });
 test('each signal film plays its own score',async({page})=>{
  const rows=[];for(const id of Object.keys(SCORES)){await ready(page,id);rows.push(await page.evaluate(()=>__audio.sha256));}

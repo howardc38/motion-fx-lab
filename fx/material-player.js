@@ -13,7 +13,7 @@ canvas.height = size.h;
 window.__SIZE = size;
 window.__DUR = config.duration;
 window.__poster = config.poster;
-window.__gif = config.gif;
+window.__preview = config.preview;   // the card's silent loop, for films with a card
 // A timeline may author its own sound; otherwise use the shared bed and cut whooshes.
 window.__music = config.music
   ? config.music.map((x) => [...x])

@@ -42,6 +42,7 @@
     "render:dialogue-films": "node tools/films.cjs build dialogue",
     "render:uses": "node tools/films.cjs build uses",
     "check:films": "node tools/films.cjs --check",
+    "make:previews": "node tools/make-previews.cjs",
     "sync:fx": "node tools/fx-manifest.cjs --write",
     "check:fx": "node tools/fx-manifest.cjs --check",
     "setup:hooks": "node tools/install-hooks.cjs"

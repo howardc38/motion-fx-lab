@@ -53,7 +53,7 @@
       // and, with will-change: transform, the SVG text inside a tile at rest (frames 1297 to 1365 on
       // SwiftShader). Chromium draws such content on a layer of its own, at a scale that depended on what
       // that browser had drawn before. So these elements are never scaled: they slide and fade instead.
-      it.noScale = SCALES.has(it.fx) && !!el.querySelector("canvas, video, [data-demo]");
+      it.noScale = SCALES.has(it.fx) && !!el.querySelector("canvas, video, iframe, [data-demo]");
       if (it.fx === "whip") {
         let defs = document.getElementById("__fxdefs");
         if (!defs) {

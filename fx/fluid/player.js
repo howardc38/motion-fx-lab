@@ -5,7 +5,6 @@ const config = window.fluidFilm,
 window.__SIZE = { w: 1280, h: 720 };
 window.__DUR = 9.6;
 window.__poster = config.poster;
-window.__gif = config.gif;
 window.__music = [
   [0, "intro"],
   [2.4, "drop"],

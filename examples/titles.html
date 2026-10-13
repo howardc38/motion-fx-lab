@@ -74,6 +74,8 @@ const STINGS = {
     stage.appendChild(scene);
   });
   window.__poster = 3.6;   // the first preset's word, just after its impact
+  // The card's silent loop: each preset's build and impact (the whole film when one preset renders).
+  window.__preview = order.length > 1 ? [[0.3, 3.3], [7.0, 9.4], [12.4, 15.0]] : [[0.3, 3.6]];
   window.__music = preset === "all"
     ? [[0, "build"], [2.4, "drop"], [4.8, "break"], [6, "build"], [8.4, "drop"], [10.8, "break"], [12, "build"], [14.4, "drop"], [16.8, "tail"]]
     : [[0, "build"], [2.4, "drop"], [4.8, "tail"]];

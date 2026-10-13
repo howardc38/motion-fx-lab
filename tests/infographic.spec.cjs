@@ -29,51 +29,46 @@ const changedData = {
   drinks: [["Brown sugar", 20, "#ff90e8"], ["Jasmine green", 45, "#ffd400"], ["Oolong milk", 25, "#3b5bff"], ["Other", 10, "#8f8a9c"]],
 };
 
-for (const file of ["examples/infographic.html", "video/intro.html"]) {
-  const intro = file.startsWith("video/");
-  test(`${file}: default figures keep their authored values`, async ({ page }) => {
-    await openFilm(page, file);
-    await render(page, intro ? 12.8 : 6.8);
-    await expect(page.locator("#cups-total")).toHaveText("128,450");
-    await render(page, intro ? 12.8 : 10.4);
-    await expect(page.locator("#leading-share")).toHaveText("38");
-    await expect(page.getByRole("img", { name: "Brown sugar: 38%", exact: true })).toBeVisible();
-    if (!intro) {
-      await expect(page.locator("#quarter-summary")).toHaveText("Every quarter beat the one before.");
-      await render(page, 14);
-      await expect(page.locator("#peak")).toHaveText("Busiest: 3 pm");
-      await expect(page.locator("#dot")).toHaveAttribute("cx", "685");
-      await expect(page.locator("#dot")).toHaveAttribute("cy", "100");
-    }
-  });
+// The intro no longer draws its own chart: it plays examples/infographic.html itself (tests/new-effects.spec.cjs).
+const file = "examples/infographic.html";
+test(`${file}: default figures keep their authored values`, async ({ page }) => {
+  await openFilm(page, file);
+  await render(page, 6.8);
+  await expect(page.locator("#cups-total")).toHaveText("128,450");
+  await render(page, 10.4);
+  await expect(page.locator("#leading-share")).toHaveText("38");
+  await expect(page.getByRole("img", { name: "Brown sugar: 38%", exact: true })).toBeVisible();
+  await expect(page.locator("#quarter-summary")).toHaveText("Every quarter beat the one before.");
+  await render(page, 14);
+  await expect(page.locator("#peak")).toHaveText("Busiest: 3 pm");
+  await expect(page.locator("#dot")).toHaveAttribute("cx", "685");
+  await expect(page.locator("#dot")).toHaveAttribute("cy", "100");
+});
 
-  test(`${file}: changed data updates rendered totals, leading share and annotations`, async ({ page }) => {
-    const data = { ...changedData };
-    if (!intro) data.hours = [[10, 20], [11, 30], [12, 900], [13, 100], [14, 80], [15, 50], [16, 40], [17, 30], [18, 20], [19, 15], [20, 10], [21, 5], [22, 1]];
-    await openFilm(page, file, data);
-    await render(page, intro ? 12.8 : 6.8);
-    await expect(page.locator("#cups-total")).toHaveText("870");
-    await expect(page.locator(intro ? ".qrow .v" : "#bars .v")).toHaveText(["200", "120", "250", "300"]);
-    await render(page, intro ? 12.8 : 10.4);
-    await expect(page.locator("#leading-share")).toHaveText("45");
-    await expect(page.getByRole("img", { name: "Jasmine green: 45%", exact: true })).toBeVisible();
-    await expect(page.locator(intro ? "#legs" : "#legend")).toContainText("Jasmine green");
-    const secondArc = await page.locator("#donut circle").nth(1).getAttribute("stroke-dasharray");
-    expect(Number(secondArc.split(" ")[0])).toBeCloseTo(2 * Math.PI * 80 * 0.45, 2);
-    if (!intro) {
-      await expect(page.locator("#quarter-summary")).toHaveText("Cups sold by quarter.");
-      await render(page, 14);
-      await expect(page.locator("#peak")).toHaveText("Busiest: 12 pm");
-      await expect(page.locator("#dot")).toHaveAttribute("cx", "310");
-      await expect(page.locator("#dot")).toHaveAttribute("cy", "100");
-      expect(await page.locator("#peak").evaluate(el => [el.style.left, el.style.top])).toEqual(["500px", "260px"]);
-    }
-    // Seeking backward must retain the new targets captured by the engine.
-    await render(page, 0);
-    await render(page, intro ? 12.8 : 6.8);
-    await expect(page.locator("#cups-total")).toHaveText("870");
-  });
-}
+test(`${file}: changed data updates rendered totals, leading share and annotations`, async ({ page }) => {
+  const data = { ...changedData };
+  data.hours = [[10, 20], [11, 30], [12, 900], [13, 100], [14, 80], [15, 50], [16, 40], [17, 30], [18, 20], [19, 15], [20, 10], [21, 5], [22, 1]];
+  await openFilm(page, file, data);
+  await render(page, 6.8);
+  await expect(page.locator("#cups-total")).toHaveText("870");
+  await expect(page.locator("#bars .v")).toHaveText(["200", "120", "250", "300"]);
+  await render(page, 10.4);
+  await expect(page.locator("#leading-share")).toHaveText("45");
+  await expect(page.getByRole("img", { name: "Jasmine green: 45%", exact: true })).toBeVisible();
+  await expect(page.locator("#legend")).toContainText("Jasmine green");
+  const secondArc = await page.locator("#donut circle").nth(1).getAttribute("stroke-dasharray");
+  expect(Number(secondArc.split(" ")[0])).toBeCloseTo(2 * Math.PI * 80 * 0.45, 2);
+  await expect(page.locator("#quarter-summary")).toHaveText("Cups sold by quarter.");
+  await render(page, 14);
+  await expect(page.locator("#peak")).toHaveText("Busiest: 12 pm");
+  await expect(page.locator("#dot")).toHaveAttribute("cx", "310");
+  await expect(page.locator("#dot")).toHaveAttribute("cy", "100");
+  expect(await page.locator("#peak").evaluate(el => [el.style.left, el.style.top])).toEqual(["500px", "260px"]);
+  // Seeking backward must retain the new targets captured by the engine.
+  await render(page, 0);
+  await render(page, 6.8);
+  await expect(page.locator("#cups-total")).toHaveText("870");
+});
 
 // Every page of the film ends on one computed sentence whose point is highlighted (mark), and the
 // year fills a goal ring. Both formats read the same data.

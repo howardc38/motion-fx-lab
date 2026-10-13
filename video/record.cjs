@@ -1,6 +1,6 @@
 // Usage (page paths are relative to the current directory):
 //   node record.cjs frames page.html 3.2 10 30.5 ...  -> PNG stills in video/stills/<name>/
-//   node record.cjs cues   page.html out.json         -> sound cues, music sections and GIF clips
+//   node record.cjs cues   page.html out.json         -> sound cues, music sections, preview and GIF clips
 //   node record.cjs video  page.html master.mkv [--fps 30] [--workers 4] [--no-verify]
 //                                                     -> frame-exact lossless silent master, BT.709
 //   node record.cjs measure page.html t "css selector" ...
@@ -305,7 +305,7 @@ async function video(file, out, fps, n, gpu, verify) {
       fs.writeFileSync(path.join(dir, `t${t.toFixed(2).padStart(6, "0")}.png`), await shot(w, t));
     }
   } else if (mode === "cues") {
-    const cues = await w.page.evaluate(() => ({ dur: window.__DUR, cues: window.__cues(), music: window.__music || null, gif: window.__gif || null, poster: window.__poster ?? null, audio: window.__audio ?? null, audioLayers: window.__audioLayers ?? null }));
+    const cues = await w.page.evaluate(() => ({ dur: window.__DUR, cues: window.__cues(), music: window.__music || null, gif: window.__gif || null, preview: window.__preview || null, poster: window.__poster ?? null, audio: window.__audio ?? null, audioLayers: window.__audioLayers ?? null }));
     fs.writeFileSync(rest[0], JSON.stringify(cues, null, 1));
     console.error(`${cues.cues.length} cues`);
   } else if (mode === "measure") {

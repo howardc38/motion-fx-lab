@@ -150,6 +150,7 @@ function drawBottle(id, [, base, dark], hero) {
     `<canvas id="grain" data-effect="grain"></canvas>`;
 
   window.__poster = 2.9;   // the bottle with its three callouts
+  window.__preview = [[0.6, 3.4], [5.0, 6.6], [7.6, 9.6]];   // the card's silent loop: callouts, colours, price
   window.__music = [[0, "build"], [2.4, "drop"], [7.2, "lift"], [8.4, "tail"]];
   window.__effects = [
     { id: "sweep", at: [0.8, 1.6] }, { id: "chars", at: [0.6, 1.2] }, { id: "glass", at: [1.2, 3.9] },

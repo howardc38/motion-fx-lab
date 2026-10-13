@@ -34,7 +34,8 @@ Each entry gives:
 - `tier`: `hero` (the intro at the top of the page), `featured` (a card in the use-case or demo section), `listed`
   (the film list only) or `in-card` (effect films, played inside their effect cards).
 - `title`, a one-line `summary`, `duration` (the page's `__DUR`), `format`, the editable `page`, `media`
-  (`mp4`, `poster`, optional silent `preview` loop and `gif`), `card` copy (`headline`, `description`, `useFor`,
+  (`mp4`, `poster`; `preview`, the silent card loop, for every film with a card and the intro; `gif` only for the intro,
+  the README hero), `card` copy (`headline`, `description`, `useFor`,
   `relation`, optional `guide`), `audience` and the build `groups`.
 - `effects`: the catalogue ids the film's source actually runs, each with an optional `at: [start, end]` in seconds.
   A sampler gives every effect its segment, so each effect card can play its own part. Ids that only inspired the

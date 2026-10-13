@@ -47,7 +47,7 @@ test("all six optical effects move and survive backward seeks and shared-context
     });
 });
 
-test("optical export supplies working audio and GIF contracts to the full build", async ({
+test("optical export supplies working audio and poster contracts to the full build", async ({
   page,
 }) => {
   await page.goto("/examples/optical.html");
@@ -56,6 +56,7 @@ test("optical export supplies working audio and GIF contracts to the full build"
     cues: __cues(),
     music: window.__music,
     gif: window.__gif,
+    preview: window.__preview,
     poster: __poster,
   }));
   const work = fs.mkdtempSync(path.join(os.tmpdir(), "optical-audio-test-"));
@@ -71,12 +72,11 @@ test("optical export supplies working audio and GIF contracts to the full build"
       { timeout: 60000 },
     );
     expect(fs.statSync(audio).size).toBeGreaterThan(48000 * 18);
-    expect(spec.gif).toHaveLength(6);
-    for (const [start, end] of spec.gif) {
-      expect(start).toBeGreaterThanOrEqual(0);
-      expect(end).toBeGreaterThan(start);
-      expect(end).toBeLessThanOrEqual(spec.dur);
-    }
+    // An effect film publishes no card loop or GIF; its poster is the foil's sweep at 1.2 s.
+    expect(spec.gif).toBeUndefined();
+    expect(spec.preview).toBeUndefined();
+    expect(spec.poster).toBeGreaterThan(0);
+    expect(spec.poster).toBeLessThan(spec.dur);
   } finally {
     fs.rmSync(work, { recursive: true, force: true });
   }
@@ -122,28 +122,52 @@ test("optical effects keep their build, hit and aftermath contracts and the samp
   expect(r.segments.at(-1).end).toBeCloseTo(r.dur, 6);
 });
 
-test("intro tells three film stories with native frames and reproducible seeks", async ({page}) => {
+test("intro plays the published use cases, edits a real line and seeks reproducibly", async ({page}) => {
+  await page.setViewportSize({ width: 1920, height: 1080 });
   await page.goto("/video/intro.html");
   await page.evaluate(async()=>{await __ready;await __record();});
+  // Every page the intro plays in a frame is a published film page (a frame checks the page's size when it loads).
+  const published = new Set(JSON.parse(fs.readFileSync(path.join(__dirname, "../examples/films.json"), "utf8")).films.map(f => f.page.split("?")[0]));
+  const frames = await page.evaluate(() => [...document.querySelectorAll("iframe")].map(f => ({ id: f.id, src: f.dataset.src, loaded: !!(f.src || f.srcdoc) })));
+  for (const f of frames) expect(published.has("examples/" + f.src.split("/").pop()), f.src).toBe(true);
+  expect(new Set(frames.filter(f => !/^how-|^titles-/.test(f.id)).map(f => f.src)).size).toBeGreaterThanOrEqual(6);
+  // Pages load only when their scene plays: none is loaded before the first render after the hook.
+  expect(frames.filter(f => f.loaded)).toEqual([]);
   const result=await page.evaluate(async()=>{
     await __render(20.4);const host=document.querySelector('#dialogue-shot').getBoundingClientRect(),canvas=document.querySelector('#dialogue-shot canvas').getBoundingClientRect();const actionFill=[canvas.width/host.width,canvas.height/host.height];
     const samples=[];
-    for(const t of [27,33.1,34,36.7,38,40.3,45.3,46.5,48,49.4]){
+    for(const t of [3.0,5.6,8.0,10.4,13.0,15.2,33.1,34.5,37.2,42.9,43.7,45.0,46.5,49.4]){
       await __render(t);samples.push({t,...await introProof()});
     }
-    await __render(37.8);const first=document.querySelector('#word-shot canvas').toDataURL();
-    await __render(40);await __render(37.8);
-    return {samples,actionFill,repeat:first===document.querySelector('#word-shot canvas').toDataURL(),gpu:__REQUIRES_WEBGPU};
+    const alive=[...document.querySelectorAll("iframe")].filter(f=>f.src||f.srcdoc).map(f=>f.id||f.dataset.src);
+    return {samples,actionFill,alive,gpu:__REQUIRES_WEBGPU,after:document.getElementById('how-after').srcdoc,line:document.querySelector('#code .edit i').textContent,code:document.querySelector('#code .edit code').textContent};
   });
-  expect(result.gpu).toBe(false);expect(result.repeat).toBe(true);expect(result.actionFill).toEqual([1,1]);
-  expect(result.samples.find(s=>s.t===33.1).worlds).toMatchObject({phase:'overview',count:20});
-  expect(result.samples.find(s=>s.t===36.7).word.phase).toBe('contours');
-  expect(result.samples.find(s=>s.t===38).word.phase).toBe('glitch');
-  expect(result.samples.find(s=>s.t===40.3).word.phase).toBe('resolved');
-  expect(result.samples.find(s=>s.t===45.3).chain.fallen).toBe(48);
-  expect(result.samples.find(s=>s.t===46.5).edit.word).toBe('WAVE');
-  expect(result.samples.find(s=>s.t===48).edit.word).toBe('FLOW');
-  expect(result.samples.find(s=>s.t===49.4).edit.exported).toBe(true);
+  const at = t => result.samples.find(s => s.t === t);
+  expect(result.gpu).toBe(false);expect(result.actionFill).toEqual([1,1]);
+  // Use cases: each scene draws its page at the authored time.
+  for (const [t, page, time] of [[3.0, "reel-shot", 2.5], [5.6, "../examples/product.html", 5.2], [8.0, "../examples/infographic.html", 4.4], [10.4, "../examples/spotlight.html", 1.6], [13.0, "../examples/countdown.html", 12.0], [15.2, "../examples/broll.html", 4.6]])
+    expect(at(t).frames[page], `${page} at ${t} s`).toBeCloseTo(time, 6);
+  expect(at(33.1).worlds).toMatchObject({phase:'overview',count:20});
+  expect(at(34.5).frames["titles-shot"]).toBeCloseTo(1.2, 6);
+  expect(at(37.2).frames["titles-shot"]).toBeCloseTo(13.5, 6);
+  expect(at(42.9).chain.fallen).toBe(48);
+  // How: the line shown is the real line of examples/titles.html, and the preview after the edit is that page with only this line changed.
+  const titles = fs.readFileSync(path.join(__dirname, "../examples/titles.html"), "utf8"), lines = titles.split("\n");
+  const n = lines.findIndex(l => l.includes('word: "SLOW SIGNAL"'));
+  expect(result.line).toBe(String(n + 1));
+  expect(result.code).toBe(lines[n].replace("SLOW SIGNAL", "FLOW STATE"));
+  expect(result.after).toContain('word: "FLOW STATE"');
+  expect(result.after.replace(/<base href="[^"]+">/, "").replace('word: "FLOW STATE"', 'word: "SLOW SIGNAL"')).toBe(titles);
+  expect(at(43.7).edit).toEqual({word: "SLOW SIGNAL", edited: false});
+  expect(at(43.7).frames["how-before"]).toBeGreaterThan(9);
+  expect(at(46.5).edit).toEqual({word: "FLOW STATE", edited: true});
+  expect(at(46.5).frames["how-after"]).toBeCloseTo(7.7, 6);
+  expect(at(46.5).frames["how-before"]).toBeUndefined();
+  // At 49.4 s only the edited page is alive; every earlier page has been dropped.
+  expect(result.alive).toEqual(["how-after"]);
+  // Seeking away and back gives the same pixels, across the use-case and edited-page frames.
+  const shot = async t => { await page.evaluate(t => __render(t), t); return page.screenshot({ clip: { x: 0, y: 0, width: 1920, height: 1080 } }); };
+  for (const t of [13.0, 46.5]) { const first = await shot(t); await shot(t - 4); expect((await shot(t)).equals(first), `frame at ${t} s`).toBe(true); }
   // D4: the intro names no exact effect count, so adding or merging an effect never forces a re-render.
   await expect(page.locator('#scLib')).toContainText('Dozens of effect techniques');
   expect(await page.locator('#scLib, #scCta').evaluateAll(els => els.map(e => e.textContent).join(' '))).not.toMatch(/\d+ (effect )?techniques/);

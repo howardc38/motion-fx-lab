@@ -2,7 +2,7 @@
 const treatments=['video-dots','freeze-orbit','echo','particle-lens','dot-impact','time-remap','depth-dots','skin-cloud'];
 const CHAPTER=4.8,canvas=document.getElementById('film'),g=canvas.getContext('2d',{willReadFrequently:true});
 window.__SIZE={w:1280,h:720};window.__DUR=CHAPTER*treatments.length;window.__music=[[0,'build'],[4.8,'drop'],[19.2,'break'],[24,'lift'],[33.6,'final'],[36,'tail']];window.__poster=6.4;
-window.__gif=[[.5,1.4],[5.8,7.2],[10.5,11.5],[16.2,17.5],[20.4,21.5],[25.8,27.4],[29.8,31.2],[34.2,35.4]];
+window.__preview=[[.5,1.4],[5.8,7.2],[10.5,11.5],[16.2,17.5],[20.4,21.5],[25.8,27.4],[29.8,31.2],[34.2,35.4]];
 window.__cues=()=>treatments.slice(1).map((_,i)=>({t:(i+1)*CHAPTER,name:'whoosh',gain:.45}));
 let effects,playing=false,recording=false,time=0,last=0,pending=Promise.resolve();
 window.__ready=Promise.all(treatments.map(id=>FXStudio.preview(id))).then(e=>effects=e);

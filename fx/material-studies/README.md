@@ -33,8 +33,8 @@ from time, so backward seeks require no hidden simulation warm-up.
 
 `timelines.js` owns chapter boundaries, duration, cut cues and (for the advert) its own
 sound cues and music sections. `films.js` exports factories reused by
-`material-player.js` and the intro. HTML entrypoints own the format, poster selection and
-GIF excerpts; keep excerpts within the timeline.
+`material-player.js` and the intro. HTML entrypoints own the format, poster selection and,
+for a film with a home-page card, the `preview` excerpts of its silent card loop; keep excerpts within the timeline.
 
 ### Clear (page `water-forms`, 15 s, 16:9 and 9:16)
 
@@ -73,4 +73,4 @@ historical reconstructions. The intro keeps its 55.2-second timeline, selects au
 at 3× speed.
 
 Use `npm run build:materials` for the bundles, or pass one HTML file to
-`video/build.sh`. Each declares audio cues, music, poster time and GIF excerpts.
+`video/build.sh`. Each declares audio cues, music, poster time and, if it has a card, card-loop excerpts.

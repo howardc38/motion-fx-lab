@@ -1,5 +1,5 @@
 // Page glue for the dialogue films: play with sound, seek, and the recorder hooks
-// (__ready, __render, __record, __DUR, __SIZE, __audio, __poster, __gif). Sound uses the audio clock;
+// (__ready, __render, __record, __DUR, __SIZE, __audio, __poster, __preview). Sound uses the audio clock;
 // capture uses the recorder's clock. The WAV is hashed and must match the manifest its cues came from.
 import {createFilm} from './scene.js';
 const name = window.dialogueFilm;
@@ -11,8 +11,8 @@ function fail(error) { stop(); document.querySelector('#error').textContent = er
 window.__ready = createFilm(name, {width: canvas.width, height: canvas.height}).then(async e => {
   effect = e; window.dialogueEffect = e; spec = e.spec; window.__DUR = spec.duration; seek.max = spec.duration;
   const b = spec.beats;
-  if (name === 'character-dialogue') { window.__poster = b.trailer[0] + 4.25; window.__gif = [[b.trailer[0] + 2.2, b.trailer[0] + 4.6], [b.hook[0], b.hook[1] + 1.2], [e.K.cards - .3, e.K.cards + 2.4]]; }
-  else { window.__poster = e.K.burst + .14; window.__gif = [[e.K.brace - .3, e.K.burstEnd + .2], [e.K.split, e.K.replayEnd + .6]]; }
+  if (name === 'character-dialogue') { window.__poster = b.trailer[0] + 4.25; window.__preview = [[b.trailer[0] + 2.2, b.trailer[0] + 4.6], [b.hook[0], b.hook[1] + 1.2], [e.K.cards - .3, e.K.cards + 2.4]]; }
+  else { window.__poster = e.K.burst + .14; }
   const url = new URL('../../assets/dialogue/' + spec.audio.file, import.meta.url); url.searchParams.set('v', spec.audio.sha256);
   const response = await fetch(url); if (!response.ok) throw new Error('Speech asset failed');
   const bytes = await response.arrayBuffer(), hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(x => x.toString(16).padStart(2, '0')).join('');

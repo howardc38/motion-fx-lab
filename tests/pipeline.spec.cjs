@@ -151,14 +151,14 @@ test("bundle publisher rolls back earlier replacements when a later install fail
   }
 });
 
-test("film build preserves failed bundles and removes a retired GIF only on success", () => {
+test("film build preserves failed bundles and removes a retired preview and GIF only on success", () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "film-bundle-"));
   try {
     for (const sub of ["video", "media", "bin"]) fs.mkdirSync(path.join(dir, sub));
-    for (const file of ["build.sh", "publish.cjs", "gif.py"])
+    for (const file of ["build.sh", "publish.cjs", "gif.py", "preview.py"])
       fs.copyFileSync(path.join(root, "video", file), path.join(dir, "video", file));
     fs.writeFileSync(path.join(dir, "film.html"), "<!doctype html>");
-    const artifacts = ["film.mp4", "film_hq.mp4", "film.jpg", "film.gif"];
+    const artifacts = ["film.mp4", "film_hq.mp4", "film.jpg", "film.preview.mp4", "film.gif"];
     for (const name of artifacts) fs.writeFileSync(path.join(dir, "media", name), "previous " + name);
     fs.writeFileSync(path.join(dir, "media", "other.gif"), "unrelated preview");
     const python = spawnSync("python3", ["-c", "import sys; print(sys.executable)"], { encoding: "utf8" }).stdout.trim();
@@ -174,9 +174,9 @@ if(command==='node') {
 } else if(command==='python3') {
   if(a[0]==='-c') console.log(0);
   else if(a[0]==='deliver.py') { for(const suffix of ['.mp4','_hq.mp4','.jpg']) fs.writeFileSync(path.join(a[3],a[4]+suffix),'new '+a[4]+suffix); }
-  else if(a[0]==='gif.py') {
+  else if(a[0]==='gif.py'||a[0]==='preview.py') {
     if(process.env.NO_GIF==='1') {const r=cp.spawnSync(${JSON.stringify(python)},a,{stdio:'inherit'});process.exit(r.status);}
-    if(process.env.FAIL_GIF==='1') {console.error('injected GIF failure');process.exit(1);}fs.writeFileSync(a[3],'new film.gif');
+    if(process.env.FAIL_GIF==='1'&&a[0]==='gif.py') {console.error('injected GIF failure');process.exit(1);}fs.writeFileSync(a[3],'new '+path.basename(a[3]));
   }
   else fs.writeFileSync(a[2],'audio');
 } else if(command==='ffmpeg') fs.writeFileSync(a.at(-1),'mixed audio');
@@ -194,14 +194,15 @@ if(command==='node') {
     });
     expect(success.status, success.stderr).toBe(0);
     for (const name of artifacts) expect(fs.readFileSync(path.join(dir, "media", name), "utf8")).toBe("new " + name);
-    // Exercise real gif.py with no cues, then the real build/publish removal path.
+    // Exercise real gif.py and preview.py with no clips, then the real build/publish removal path.
     const noGif = spawnSync("bash", ["video/build.sh", "film.html"], {
       cwd: dir, env: { ...env, NO_GIF: "1" }, encoding: "utf8", timeout: 10000,
     });
     expect(noGif.status, noGif.stderr).toBe(0);
     expect(fs.existsSync(path.join(dir, "media", "film.gif"))).toBe(false);
+    expect(fs.existsSync(path.join(dir, "media", "film.preview.mp4"))).toBe(false);
     expect(fs.readFileSync(path.join(dir, "media", "other.gif"), "utf8")).toBe("unrelated preview");
-    for (const name of artifacts.filter(name => !name.endsWith(".gif")))
+    for (const name of artifacts.filter(name => !/\.(gif|preview\.mp4)$/.test(name)))
       expect(fs.readFileSync(path.join(dir, "media", name), "utf8")).toBe("new " + name);
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });

@@ -106,8 +106,8 @@
           "properties": {
             "mp4": { "$ref": "#/$defs/media" },
             "poster": { "$ref": "#/$defs/media" },
-            "preview": { "description": "Silent MP4 loop for cards.", "$ref": "#/$defs/media" },
-            "gif": { "$ref": "#/$defs/media" }
+            "preview": { "description": "Silent MP4 loop (window.__preview clips, at most 2 MB): every film with a card, and the intro.", "$ref": "#/$defs/media" },
+            "gif": { "description": "Only the intro: the README hero (window.__gif clips, at most 3 MB).", "$ref": "#/$defs/media" }
           }
         },
         "card": {

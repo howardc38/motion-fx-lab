@@ -7,11 +7,23 @@
       const loop = preview.querySelector('img, video.film-loop');
       if (loop) { loop.hidden = true; if (loop.pause) loop.pause(); }
       preview.querySelector('button').hidden = true;
-      const video = preview.querySelector('video');
+      const video = preview.querySelector('video[controls]');   // the film with sound, not the silent loop
       video.hidden = false;
       video.play().catch(() => {}); // Native controls remain available if playback is blocked.
     }, {once:true});
   });
+  // Film cards play a silent loop (media/<id>.preview.mp4, preload="none") only while a quarter of it is on
+  // screen; off screen it pauses. With reduced motion it never starts and the card shows its poster.
+  const loops = [...document.querySelectorAll('video.film-loop')], stillMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (loops.length) {
+    const onScreen = new Set();
+    const update = v => { if (onScreen.has(v) && !v.hidden && !stillMotion.matches) v.play().catch(() => {}); else if (!v.paused) v.pause(); };
+    const watch = new IntersectionObserver(entries => {
+      for (const e of entries) { if (e.isIntersecting) onScreen.add(e.target); else onScreen.delete(e.target); update(e.target); }
+    }, { threshold: .25 });
+    loops.forEach(v => watch.observe(v));
+    stillMotion.addEventListener?.('change', () => loops.forEach(update));
+  }
   const { R3 } = window.FX;
   const { families, showcases, stats, byId } = window.FXCatalog, basics = window.FXCatalog.basics || [];
   // Order, preview defaults and labels: fx/gallery-meta.js (order from fx/manifest.json).
@@ -38,7 +50,6 @@
     const version=(film.media.mp4.match(/\?.*$/) || [''])[0];
     appendLink(host, film.media.mp4, TILE_FILM_LABELS[film.id] || `Watch the ${film.duration} s film`);
     appendLink(host, film.page || film.source || 'examples/'+film.id+'.html'+version, 'Scrub timeline');
-    if(film.media.gif) appendLink(host, film.media.gif, 'GIF preview');
     // A sampler plays one segment per effect card: link straight to this card's segment.
     const segment=film.layer==='effect-film' && new Set(film.effects.map(e=>e.id)).size>1 && film.effects.find(e=>e.id===id && e.at);
     if(segment) appendLink(host, `${film.media.mp4}#t=${segment.at[0]},${segment.at[1]}`, `This effect's segment (${segment.at[0]}–${segment.at[1]} s)`);
@@ -215,7 +226,7 @@
     ["Python synth (music.py)", "Music from maths", "A music bed", "100 BPM, Am–F–C–G, sections declared by the video page"],
     ["Rendering"],
     ["Playwright + Chromium", "A headless browser", "Seek to t, capture the frame", "Every frame of every video"],
-    ["ffmpeg", "Audio and video tool", "Import, encode and mix", "RGBA frame import, chroma key, x264, audio mastering, posters and GIFs"],
+    ["ffmpeg", "Audio and video tool", "Import, encode and mix", "RGBA frame import, chroma key, x264, audio mastering, posters, card loops and the README GIF"],
   ];
   const newRows = [
     ["ANGLE Metal (M4 GPU)", "WebGL on the real GPU", "Fast 3D", "The benchmark’s default headless browser used SwiftShader"],

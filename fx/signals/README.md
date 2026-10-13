@@ -1,19 +1,23 @@
 # Measured sound, image motion and held impacts
 
-Three 12-second studies. Each is driven by real measurements of its own source and its
-own original synthesised score; no two studies share a soundtrack.
+Three studies, each driven by real measurements of its own source and its own original
+synthesised score; no two share a soundtrack. Two are published as 12-second effect films
+that also play inside their effect cards. The third, the held-impact orbit, is published as
+the freeze-orbit climax of COUNTERFORM (`examples/dot-battle.html`, 12–13.2 s); its own
+12-second page, `examples/impact-orbit.html`, is kept as a source page for tests and editing
+and is no longer a published film.
 
-| Study | Subject | What actually drives it | Catalogue role |
-|---|---|---|---|
-| [Motion / Release](../../examples/motion-fragments.html) | Apricot the cat (`assets/characters/apricot-cat`) | Measured optical flow decides where the cat breaks, which way the pieces fly and when they return | `signal-motion-fragments`: the **Motion shatter and reassemble** family |
-| [Pulse / Form](../../examples/audio-relief.html) | Milo the explorer robot (`assets/characters/explorer-robot`) | Measured RMS loudness (and one frequency band per row) sets the height of solid image pins | `signal-audio-relief`: variant of `studio-depth-dots` |
-| [Impact / Orbit](../../examples/impact-orbit.html) | Counterform fighters | Measured music attacks cue authored impact poses; camera, lights and surface treatment keep moving | `signal-freeze-orbit`: variant of `studio-freeze-orbit` |
+| Study | Subject | What actually drives it | Catalogue role | Published |
+|---|---|---|---|---|
+| [Motion / Release](../../examples/motion-fragments.html) | Apricot the cat (`assets/characters/apricot-cat`) | Measured optical flow decides where the cat breaks, which way the pieces fly and when they return | `signal-motion-fragments`: the **Motion shatter and reassemble** family | effect film `motion-fragments` |
+| [Pulse / Form](../../examples/audio-relief.html) | Milo the explorer robot (`assets/characters/explorer-robot`) | Measured RMS loudness (and one frequency band per row) sets the height of solid image pins | `signal-audio-relief`: variant of `studio-depth-dots` | effect film `audio-relief` |
+| [Impact / Orbit](../../examples/impact-orbit.html) | Counterform fighters | Measured music attacks cue authored impact poses; camera, lights and surface treatment keep moving | `signal-freeze-orbit`: variant of `studio-freeze-orbit` | inside the demo film `dot-battle` (COUNTERFORM) |
 
 | Bundle | Used by | Contents |
 |---|---|---|
 | `assets/signals-fragments/` | Motion / Release | 321 measured frames of the cat clip (200×90 cells, 30 fps), film cues, own score |
 | `assets/signals-relief/` | Pulse / Form | one measured portrait frame (256×144 cells), own score |
-| `assets/signals/` | Impact / Orbit | Counterform footage measurements and the original Counterform score (unchanged) |
+| `assets/signals/` | Impact / Orbit and the COUNTERFORM freeze-orbit | Counterform footage measurements and the original Counterform score (unchanged) |
 
 Impact / Orbit borrows the energy and visual direction of
 [the reference film](https://www.threads.com/@aicreataro/post/DeQIT_0Ed93), without
@@ -114,7 +118,7 @@ sample data is 200 MB (the cat clip decodes to about 46 MB, 3.4 MB compressed).
 ## Frame contract and edit owners
 
 Pass `audio-relief`, `motion-fragments` or `freeze-orbit` to `FXSignal.create()`.
-Gallery IDs add `signal-`; the cinematic orbit entry page is `impact-orbit.html`.
+Gallery IDs add `signal-`; the orbit's standalone source page is `impact-orbit.html`.
 
 ```js
 const effect = await FXSignal.create('motion-fragments');
@@ -131,8 +135,8 @@ await effect.frame(3.5, { motionGain: 1, labels: false });
 - `orbit.js` owns impact pose selection, held intervals, camera travel and lighting.
 - `performance.js` owns the cat performance, the time remap, the film cues and the
   portrait pose; `tools/signals/source.html` renders them for measurement.
-- `films.js` owns film metadata, poster and GIF selections; `player.js` owns sound
-  playback and recorder hooks. `stage.js` owns the shared renderer and text helper.
+- `films.js` owns film metadata and poster times (effect films publish no card loop or
+  GIF); `player.js` owns sound playback and recorder hooks. `stage.js` owns the shared renderer and text helper.
 
 ## Analysis and geometry boundaries
 

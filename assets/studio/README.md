@@ -63,7 +63,7 @@ and imports it into `fight/frame-*.png` plus `fight/manifest.json`. The shipped
 frames are small enough to check in; a normal film rebuild can reuse them.
 `build:studio` delivers the 40.8-second art-direction film, the 19.8-second
 COUNTERFORM fight and a 38.4-second eight-treatment comparison, with sound, posters
-and GIFs. Use `npm run render:fight-effects` for the comparison alone. The fight uses a separate original
+and the silent card loops. Use `npm run render:fight-effects` for the comparison alone. The fight uses a separate original
 2D illustrated rig in `fx/studio/battle.js`: anticipation, attack, contact holds,
 recoil, kicks and counterattacks. At 12.0–13.2 s story time stops and the camera circles
 the fighters as a 3D point cloud (`fx/signals/orbit.js`, the `signal-freeze-orbit` variant).

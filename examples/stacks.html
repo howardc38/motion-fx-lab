@@ -146,11 +146,6 @@
           { t: 20.5, name: "impact" },
         ];
         window.__poster = 19;
-        window.__gif = [
-          [2, 4],
-          [10, 12],
-          [19, 21],
-        ];
         window.__ready = Promise.all(
           FXStack.studies.map((s) => FXStack.create(s.id)),
         ).then((result) => {

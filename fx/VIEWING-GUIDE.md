@@ -44,7 +44,7 @@ Every published film has one layer. Use cases and demo films get cards in their 
 <!-- films:guide:start -->
 | Film | Layer | Role | Placement |
 |---|---|---|---|
-| Intro | Intro | A guided overview that deliberately repeats selected uses and techniques. | Top of the page |
+| Intro | Intro | A guided overview: six use cases played from their own pages, a voiced character, an effect montage and short stories, then a one-line edit rendered to MP4. | Top of the page |
 | This weekend only | Use case | A 9:16 weekend promo for a small shop: hook, product, offer and call to action inside every app’s safe area. | Card in Use cases |
 | This weekend only (bakery) | Use case | Bakery version of This weekend only, rendered from the same page. | Linked from the This weekend only card |
 | This weekend only (yoga studio) | Use case | Yoga studio version of This weekend only, rendered from the same page. | Linked from the This weekend only card |

@@ -1,7 +1,7 @@
 import {createFilm,FILMS} from './films.js';
 const spec=FILMS[window.designFilm],canvas=document.querySelector('#film'),g=canvas.getContext('2d',{willReadFrequently:true}),seek=document.querySelector('#seek'),play=document.querySelector('#play');
 if(!spec)throw new Error('Unknown design film');
-window.__SIZE={w:1280,h:720};window.__DUR=spec.duration;window.__poster=spec.poster;window.__gif=spec.gif;
+window.__SIZE={w:1280,h:720};window.__DUR=spec.duration;window.__poster=spec.poster;window.__preview=spec.preview;
 window.__music=spec.music??[[0,'intro'],[2.4,'drop'],[spec.duration/2,'lift'],[spec.duration-4.8,'final'],[spec.duration-2.4,'tail']];
 window.__cues=()=>spec.cuts.map(t=>({t,name:'whoosh',gain:.23}));
 let effect,playing=false,recording=false,t=0,last=0,pending=Promise.resolve();

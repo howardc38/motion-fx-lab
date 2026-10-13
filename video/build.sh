@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Render a timeline page to media/<name>.mp4 (web, at most 15 MB), media/<name>_hq.mp4,
-# media/<name>.jpg and, when the page declares window.__gif, media/<name>.gif.
+# media/<name>.jpg, and, when the page declares their clips, media/<name>.preview.mp4 (window.__preview:
+# the silent loop a film card plays, at most 2 MB) and media/<name>.gif (window.__gif: the README hero, at most 3 MB).
 #   bash video/build.sh intro.html          (or video/intro.html; the poster is at window.__poster seconds,
 #                                            POSTER_AT=12 overrides it, and a third of the way in is the default)
 #   RECORD_ARGS="--cpu --workers 2" bash video/build.sh intro.html   (no Metal GPU: render on SwiftShader)
@@ -41,12 +42,11 @@ done
 POSTER=${POSTER_AT:-$(python3 -c 'import json, sys; p = json.load(open(sys.argv[1])).get("poster"); print("" if p is None else p)' "$WORK/cues.json")}
 mkdir "$WORK/delivery"
 python3 deliver.py "$WORK/master.mkv" "$WORK/mix.wav" "$WORK/delivery" "$NAME" ${POSTER:-}
+python3 preview.py "$WORK/cues.json" "$WORK/delivery/$NAME.mp4" "$WORK/delivery/$NAME.preview.mp4"
 python3 gif.py "$WORK/cues.json" "$WORK/delivery/$NAME.mp4" "$WORK/delivery/$NAME.gif"
-# A failed GIF must not leave a new film paired with an old README preview.
+# A failed preview or GIF must not leave a new film paired with an old card loop or README preview.
 ARTIFACTS=("$NAME.mp4" "${NAME}_hq.mp4" "$NAME.jpg")
-if [ -f "$WORK/delivery/$NAME.gif" ]; then
-  ARTIFACTS+=("$NAME.gif")
-else
-  ARTIFACTS+=(--remove "$NAME.gif")
-fi
+for CUT in "$NAME.preview.mp4" "$NAME.gif"; do
+  if [ -f "$WORK/delivery/$CUT" ]; then ARTIFACTS+=("$CUT"); else ARTIFACTS+=(--remove "$CUT"); fi
+done
 node publish.cjs "$WORK/delivery" "$OUTPUT_ROOT" "${ARTIFACTS[@]}"

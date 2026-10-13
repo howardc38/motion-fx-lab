@@ -26,6 +26,9 @@ const cap = s => s[0].toUpperCase() + s.slice(1);
 // one. A version of another film (versionOf: another cut, ratio or brand) is linked from its parent's card.
 const CARD_LAYERS = ['use-case', 'demo', 'comparison'];
 const hasCard = f => f.tier === 'featured' || (f.tier === 'listed' && f.versionOf === undefined && CARD_LAYERS.includes(f.layer));
+// Media policy (D5): a film with a card, and the intro, has a silent loop (media.preview, cut by video/preview.py
+// from window.__preview clips); only the intro keeps a GIF, the README hero. Versions and effect films have neither.
+const needsPreview = f => f.tier === 'hero' || hasCard(f);
 
 // ---------------------------------------------------------------- JSON Schema (the subset the schema uses)
 function schemaErrors(schema, value, at = '$', root = schema) {
@@ -174,6 +177,8 @@ function validateManifest(manifest, { root = ROOT, catalog = loadCatalog(root) }
     if (film.becomes && film.becomes.layer === film.layer) errors.push(where + ': becomes names its current layer');
     if (film.mergeInto && !(film.retire === undefined && film.becomes === undefined)) errors.push(where + ': choose one of mergeInto, retire and becomes');
     if (film.retire && film.becomes) errors.push(where + ': choose one of mergeInto, retire and becomes');
+    if (needsPreview(film) !== (film.media.preview !== undefined)) errors.push(where + (needsPreview(film) ? ': a film with a card (or the intro) needs media.preview, its silent loop' : ': only a film with a card (or the intro) has media.preview'));
+    if (film.media.gif !== undefined && film.tier !== 'hero') errors.push(where + ': only the intro keeps a GIF (the README hero); cards play media.preview');
     const files = [film.page, ...Object.values(film.media), ...(film.card.guide ? [film.card.guide] : [])];
     for (const file of files) {
       const target = path.resolve(root, clean(file));
@@ -305,12 +310,14 @@ const versionLabel = v => {
   return label === v.format || FORMAT_WORDS[label] === v.format ? v.format : `${label}, ${v.format}`;
 };
 // Cards for one layer: tier 'featured' gives the large cards, 'listed' the smaller ones (versions are links on their parent).
+// The card plays its silent loop only while on screen (fx/gallery-page.js); preload="none" keeps the page from
+// fetching loops it never shows, and with reduced motion the loop stays on its poster.
 function renderCards(manifest, layer, root = ROOT, tier = 'featured') {
   const c = context(manifest, root);
   return manifest.films.filter(f => f.layer === layer && f.tier === tier && hasCard(f)).map(f => {
     const meta = `${num(f.duration)} s · ${f.format}`, title = esc(f.card.headline);
-    const loop = f.media.preview ? `<video class="film-loop" muted loop playsinline autoplay preload="metadata" poster="${esc(f.media.poster)}" src="${esc(f.media.preview)}" aria-hidden="true"></video>`
-      : f.media.gif && f.tier === 'featured' ? `<img src="${esc(f.media.gif)}" alt="${title} animated preview" loading="lazy">` : `<img src="${esc(f.media.poster)}" alt="${title} poster" loading="lazy">`;
+    const loop = f.media.preview ? `<video class="film-loop" muted loop playsinline preload="none" poster="${esc(f.media.poster)}" src="${esc(f.media.preview)}" aria-hidden="true"></video>`
+      : `<img src="${esc(f.media.poster)}" alt="${title} poster" loading="lazy">`;
     const guide = f.card.guide ? `<a href="${esc(c.source(f.card.guide))}">Edit guide</a>` : `<a href="${esc(c.source(f.page))}">View source</a>`;
     const explore = f.effects.filter((e, i, all) => all.findIndex(x => x.id === e.id) === i).map(e => `<a href="#demo-${e.id}">${esc(c.label(e))}</a>`).join(' · ');
     const versions = manifest.films.filter(v => v.versionOf === f.id).map(v => `<a href="${esc(v.media.mp4)}">${esc(versionLabel(v))}</a>`).join(' · ');
@@ -357,7 +364,7 @@ function renderReadmeCards(manifest, root = ROOT) {
     const list = manifest.films.filter(f => f.layer === layer.id && hasCard(f));
     if (!list.length) continue;
     const cells = list.map(f => {
-      const still = f.media.gif || f.media.poster, versions = manifest.films.filter(v => v.versionOf === f.id).map(v => `<a href="${esc(v.media.mp4)}">${esc(versionLabel(v))}</a>`).join(' · ');
+      const still = f.media.poster, versions = manifest.films.filter(v => v.versionOf === f.id).map(v => `<a href="${esc(v.media.mp4)}">${esc(versionLabel(v))}</a>`).join(' · ');
       return `<td width="33%" valign="top"><a href="${esc(f.media.mp4)}"><img src="${esc(still)}" alt="${esc(f.card.headline)}" width="100%"></a><br><b>${esc(f.card.headline)}</b> · ${num(f.duration)} s · ${f.format}<br>${esc(f.card.description)}${f.card.useFor ? `<br><sub><b>Use for:</b> ${esc(f.card.useFor)}</sub>` : ''}${versions ? `<br><sub>Also rendered: ${versions}</sub>` : ''}<br><a href="${esc(f.page)}">Source</a>${f.card.guide ? ` · <a href="${esc(f.card.guide)}">edit guide</a>` : ''}</td>`;
     });
     const rows = [];
@@ -458,4 +465,4 @@ if (require.main === module) {
     } else throw new Error('Usage: node tools/films.cjs --check | --write | --verify | --migrate | build <id|group>');
   } catch (error) { console.error(error.message); process.exitCode = 1; }
 }
-module.exports = { films, validate, sync, load, migrate, compareV1, validateManifest, schemaErrors, loadCatalog, closure, evidence, formatJSON, render: { hero: renderHero, cards: renderCards, list: renderList, summary: renderSummary, count: renderCount, readme: renderReadme, readmeCards: renderReadmeCards, guide: renderGuide, data: renderData }, BLOCKS, hasCard };
+module.exports = { films, needsPreview, validate, sync, load, migrate, compareV1, validateManifest, schemaErrors, loadCatalog, closure, evidence, formatJSON, render: { hero: renderHero, cards: renderCards, list: renderList, summary: renderSummary, count: renderCount, readme: renderReadme, readmeCards: renderReadmeCards, guide: renderGuide, data: renderData }, BLOCKS, hasCard };

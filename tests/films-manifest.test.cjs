@@ -91,6 +91,10 @@ test('the checker rejects broken structure and broken film rules', () => {
     [m => { m.films[1].mergeInto = 'no-such-film'; }, /cannot merge into/],
     [m => { m.films[1].page = 'examples/no-such-page.html'; }, /missing or outside file/],
     [m => { m.films[1].media.gif = 'media/no-such.gif'; }, /missing or outside file|media\/ differs/],
+    // D5: a card plays a silent loop; only the intro keeps a GIF (the README hero); versions and effect films have neither.
+    [m => { delete m.films.find(f => f.tier === 'featured').media.preview; }, /needs media.preview/],
+    [m => { m.films.find(f => f.layer === 'effect-film').media.preview = 'media/intro.preview.mp4'; }, /only a film with a card \(or the intro\) has media.preview/],
+    [m => { m.films.find(f => f.tier === 'featured').media.gif = 'media/intro.gif'; }, /only the intro keeps a GIF/],
     [m => { m.films[1].card.description = 'A | B'; }, /does not match/],
     [m => { m.films[1].groups = ['showcase']; }, /must contain "all"/],
     [m => { m.films.find(f => f.versionOf).versionOf = 'no-such-film'; }, /versionOf no-such-film must name a film with a card/],

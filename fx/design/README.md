@@ -28,7 +28,7 @@ The spring-response variant was retired from the gallery. `springPoint` and
 ## Editing and rendering
 
 `design-effects.js` owns gallery metadata and module loading; `pack-design.js`
-adapts it to the gallery. `films.js` owns film durations, poster/GIF windows,
+adapts it to the gallery. `films.js` owns film durations, poster times, card-loop windows (`preview`, for films with a card),
 cues and choreography. `player.js` owns playback, seeking and recorder hooks.
 `ink.js:createCity` owns the city camera and layout. Film copy lives in those
 source modules, not in the player controls.
@@ -37,6 +37,8 @@ source modules, not in the player controls.
 const effect = await FXDesign.create('soft-shadow');
 effect.frame(2.4, {lightSize: 2.8, height: 1.4, labels: false});
 // Use effect.canvas as a 1280 × 720 frame.
+const ring = await FXDesign.create('type-orbit', {message: 'YOUR WORDS HERE · '});
+// The second argument reaches the module's own create(); type-orbit takes the ring's words.
 ```
 
 On a standalone module page, import `create` from the specific module and use the
@@ -50,7 +52,7 @@ npm run render:design-films
 npx playwright test tests/design.spec.cjs
 ```
 
-The build creates sound-enabled MP4s, still posters and silent GIF selections.
+The build creates sound-enabled MP4s, still posters and, for films with a home-page card, a silent card loop.
 HTML timeline previews are silent. Every exported frame is rendered in two
 independent browser passes and compared before delivery.
 

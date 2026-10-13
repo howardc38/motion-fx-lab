@@ -226,8 +226,8 @@ test("every film card opens its own playable video", async ({ page }) => {
   for (let i = 0; i < (await cards.count()); i++) {
     const c = cards.nth(i);
     await c.locator("button").click();
-    await expect(c.locator("video")).toBeVisible();
-    await expect(c.locator("img")).toBeHidden();
+    await expect(c.locator("video[controls]")).toBeVisible();
+    await expect(c.locator("video.film-loop")).toBeHidden();
   }
 });
 

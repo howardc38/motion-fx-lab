@@ -198,7 +198,7 @@ const FILM = {
     `<div class="sticker" data-effect="sticker" style="left:${cx}px;top:${SQ ? 680 : 650}px;background:#fff;color:${C.ink};transform:translateX(-50%) rotate(-3deg)" data-fx="pop" data-at="0.85" data-base="translateX(-50%) rotate(-3deg)" data-sfx="ding">${esc(FILM.end.cta)}</div>` +
     `<div class="a mono" style="left:${SQ ? 60 : 80}px;top:${H - 90}px;font-size:28px;color:rgba(20,22,31,.75);letter-spacing:.04em" data-fx="fade" data-at="1.1">${esc(FILM.end.note)}</div>`);
 
-  window.__gif = [[4.2, 6.9]];   // a short silent preview; the MP4 is the film
+  window.__preview = [[2.0, 4.8], [5.4, 6.9], [7.6, 9.4], [11.0, 12.4]];   // the card's silent loop; the MP4 is the film
   window.__poster = 6.9;   // the drafted reply with its highlight: the film's hero frame
   window.__music = [[0, "build"], [2.4, "drop"], [7.2, "lift"], [12, "tail"]];
   // Library effects this film uses, with the seconds they are on screen (for the film list).

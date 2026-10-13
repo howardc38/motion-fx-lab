@@ -76,9 +76,9 @@ This is generated speech, not a recording or clone of anyone. For a recorded voi
 against that WAV and supply its cues, word spans and clip timing in the manifest, then recompute the
 mix hash. Do not keep old cues after changing the audio.
 
-After changing line lengths, review the beats, poster and GIF windows and any intro excerpt. Every
+After changing line lengths, review the beats, poster and card-loop windows and any intro excerpt. Every
 output frame is rendered twice in independent browsers. Fur layers and dust are left out of the
-depth-of-field depth pass. MP4, poster and GIF are published as a checked bundle; a silent gallery
+depth-of-field depth pass. MP4, poster and (for The Final Final) the silent card loop are published as a checked bundle; a silent gallery
 preview shows the motion and captions; open the film to hear it.
 
 The original Mira design and the earlier faceted look were replaced by the plush bear. Script,

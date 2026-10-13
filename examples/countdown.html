@@ -114,6 +114,7 @@ const EVENT = {
     `<div class="sticker" data-effect="sticker" style="left:${V ? 450 : W / 2}px;top:${L.ctaY}px;transform:translateX(-50%) rotate(-3deg)" data-fx="pop" data-at="1.15" data-base="translateX(-50%) rotate(-3deg)" data-sfx="ding">${esc(EVENT.cta)}</div>`);
 
   window.__poster = 13.4;   // the chrome logo in its rays, with the reminder
+  window.__preview = [[1.0, 2.6], [8.6, 14.0]];   // the card's silent loop: the count, then the reveal
   window.__music = [[0, "intro"], [4.8, "build"], [12, "drop"], [14.4, "tail"]];
   window.__effects = [
     { id: "count", at: [0, 11.4] }, { id: "ring", at: [0, 12] }, { id: "beat", at: [0, 12] },

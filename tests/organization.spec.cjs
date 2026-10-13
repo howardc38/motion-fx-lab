@@ -47,8 +47,9 @@ test("film cards sit in their layer sections, apart from the full film list and 
   // Use cases and demo films come before the effects; comparisons follow them.
   expect(p.groups.map((g) => g.beforeEffects)).toEqual([true, true, false]);
   expect(p.badLinks).toEqual([]);
-  // Every card shows a still or loop: the featured GIF, or the poster when there is no GIF or the card is a small one.
-  await expect(page.locator(".film-preview img")).toHaveCount(Object.values(cards).flat().length);
+  // Every card plays a silent loop (media/<id>.preview.mp4) over its poster; no card shows a GIF.
+  await expect(page.locator(".film-preview video.film-loop")).toHaveCount(Object.values(cards).flat().length);
+  await expect(page.locator(".film-preview img")).toHaveCount(0);
   // Versions of a film are linked from its card.
   await expect(page.locator('#film-reel .film-versions a')).toHaveText(["bakery, 9:16", "yoga studio, 9:16"]);
   await expect(page.locator('#film-water-forms .film-versions a')).toHaveAttribute("href", "media/water-forms-vertical.mp4");
@@ -282,7 +283,7 @@ test('effect-film bookmarks open their effect card with complete playable links'
   const card=page.locator('[data-effect-id="'+parent+'"]');await expect(card).toBeVisible();
   const links=await card.locator('.preview-link a').evaluateAll(as=>as.map(a=>new URL(a.href).pathname));
   // Samplers add a link to this card's own segment of the film (the same MP4 with #t=start,end).
-  expect(links).toEqual(['/media/'+film+'.mp4','/examples/'+film+'.html','/media/'+film+'.gif',...(sampler?['/media/'+film+'.mp4']:[])]);
+  expect(links).toEqual(['/media/'+film+'.mp4','/examples/'+film+'.html',...(sampler?['/media/'+film+'.mp4']:[])]);
   for(const path of links) expect((await request.head(path)).ok(),path).toBe(true);
  }
  // Retired and merged films: the bookmark opens the effect card (shadow-lab, impact-orbit) or the film that replaced it.
