@@ -52,22 +52,29 @@ function spline(keys, t, pick) {
 // Camera keys. `aim` is the look-at point, `dir` points from it to the camera,
 // `fit` is the [width, height] that must fit in frame; `pfit` overrides it in 9:16.
 // `shift` moves the subject on screen (fraction of the frame) for type layouts.
+// The fits keep the whole bottle and its cap in frame (with headroom for the cap
+// dropping on and the hop before the dive), above water and below it.
 const CAMERA = [
   { t: 0, aim: [0, 0.6, 0], dir: [0.12, 0.05, 1], fit: [1.7, 1.3], pfit: [1.1, 1.8] },
   { t: 0.8, aim: [0, 0.5, 0], dir: [0.1, 0.07, 1], fit: [3.2, 1.8], pfit: [2.4, 2.8] },
   { t: 2.0, aim: [0, 0.75, 0], dir: [0.16, 0.12, 1], fit: [4.0, 2.4], pfit: [3.0, 3.4] },
-  { t: 3.2, aim: [0, 1.3, 0], dir: [0.2, 0.1, 1], fit: [3.6, 3.4], pfit: [2.6, 3.8] },
-  { t: 4.5, aim: [0, 1.35, -0.2], dir: [0.05, 0.06, 1], fit: [4.6, 3.4], pfit: [2.6, 3.8] },
-  { t: 5.6, aim: [0, 1.32, -0.6], dir: [-0.24, 0.05, 1], fit: [6.2, 3.7], pfit: [3.0, 4.0] },
-  { t: 7.3, aim: [0, 1.32, -0.6], dir: [0.26, 0.06, 1], fit: [6.2, 3.7], pfit: [3.0, 4.0] },
-  { t: 7.9, aim: [0, 0.6, 0], dir: [0.16, 0.12, 1], fit: [4.4, 3.6], pfit: [2.8, 4.2] },
-  { t: 8.5, aim: [0, -1.5, 0], dir: [0.12, 0.06, 1], fit: [3.6, 3.4], pfit: [2.4, 4.2] },
-  { t: 10.3, aim: [0, -2.4, 0], dir: [-0.22, -0.02, 1], fit: [4.4, 3.9], pfit: [2.8, 4.6] },
-  { t: 11.0, aim: [0, -1.0, 0], dir: [-0.1, -0.12, 1], fit: [3.8, 3.6], pfit: [2.6, 4.4] },
-  { t: 11.7, aim: [0, 1.0, 0], dir: [0.02, 0.05, 1], fit: [4.2, 3.4], pfit: [2.6, 4.4] },
+  { t: 3.2, aim: [0, 1.35, 0], dir: [0.2, 0.1, 1], fit: [3.8, 3.6], pfit: [2.6, 3.8] },
+  { t: 4.5, aim: [0, 1.5, -0.2], dir: [0.05, 0.06, 1], fit: [5.0, 4.0], pfit: [2.8, 3.8] },
+  { t: 5.6, aim: [0, 1.38, -0.6], dir: [-0.24, 0.05, 1], fit: [6.4, 3.9], pfit: [3.4, 4.0] },
+  { t: 7.3, aim: [0, 1.38, -0.6], dir: [0.26, 0.06, 1], fit: [6.4, 3.9], pfit: [3.4, 4.0] },
+  { t: 7.9, aim: [0, 1.15, 0], dir: [0.16, 0.12, 1], fit: [4.6, 4.1], pfit: [2.8, 4.2] },
+  { t: 8.5, aim: [0, -0.85, 0], dir: [0.12, 0.06, 1], fit: [4.0, 4.1], pfit: [2.5, 4.2] },
+  { t: 10.3, aim: [0, -1.85, 0], dir: [-0.22, -0.02, 1], fit: [4.6, 4.5], pfit: [2.8, 4.6] },
+  { t: 11.0, aim: [0, -1.05, 0], dir: [-0.1, -0.12, 1], fit: [4.0, 4.0], pfit: [2.6, 4.4] },
+  { t: 11.7, aim: [0, 1.2, 0], dir: [0.02, 0.05, 1], fit: [4.4, 4.0], pfit: [2.6, 4.4] },
   { t: 12.6, aim: [0, 1.25, 0], dir: [0.06, 0.07, 1], fit: [5.0, 3.5], pfit: [2.9, 5.7], shift: 1 },
   { t: 15, aim: [0, 1.25, 0], dir: [0.14, 0.09, 1], fit: [4.6, 3.3], pfit: [2.8, 5.4], shift: 1 },
 ];
+// The widest the brand word behind the bottle may be (scene units). In 9:16 it is set smaller, so
+// every letter stays inside the narrow frame while the camera swings round the bottle.
+const WORD_WIDTH = { "16:9": 6.4, "9:16": 2.6 };
+// The cap drops onto the bottle from here (bottle space), inside the frame in both formats.
+const CAP_DROP = 3.0;
 
 function bottleBase(t) {
   // Where the bottle stands (y of its base) and how it tilts, from formation to the end card.
@@ -211,6 +218,8 @@ export async function createClearFilm({ format = "16:9", brand = BRAND } = {}) {
   const letterMat = new THREE.MeshPhysicalMaterial({ color: K.PALETTE.accent, roughness: 0.34, clearcoat: 0.6, emissive: K.PALETTE.accent, emissiveIntensity: 0.32 });
   const word = await K.extrudedWord(brand.name, letterMat, { height: 1.45, depth: 0.32 });
   word.group.position.set(0, -2, -2.35);
+  const wordScale = Math.min(1, WORD_WIDTH[format] / word.width);
+  word.group.scale.setScalar(wordScale);
   const LETTER_Y = 0.86; // letter centre: the word stands from the waterline to the bottle shoulder
   scene.add(word.group);
   // water-underwater
@@ -320,7 +329,7 @@ export async function createClearFilm({ format = "16:9", brand = BRAND } = {}) {
     // Spins while it is shown off, then settles with the label facing the camera.
     bottle.rotation.set(base.tilt * 0.6, -Math.PI / 2 + 4 * Math.PI * (1 - smooth((t - 4.5) / 8.7)) + 0.12 * Math.sin(Math.max(0, t - 13.2) * 1.6), base.tilt);
     const capIn = smooth((t - 4.45) / 0.35);
-    cap.position.y = mix(3.3, BOTTLE_CAP, capIn);
+    cap.position.y = mix(CAP_DROP, BOTTLE_CAP, capIn);
     cap.rotation.y = (1 - capIn) * 4;
     // The label stays off while the glass shows the letters through it; it arrives with the end card.
     label.material.opacity = smooth((t - 11.9) / 0.6);
@@ -394,6 +403,21 @@ export async function createClearFilm({ format = "16:9", brand = BRAND } = {}) {
     g.drawImage(renderer.domElement, 0, 0);
     overlays(t);
     const mid = new THREE.Vector3(0, base.y + 0.85, 0).project(camera);
+    // Screen rectangles (pixels) of the cap and the brand letters, so tests can prove nothing is cropped.
+    const rect = (object) => {
+      const box = new THREE.Box3().setFromObject(object),
+        r = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity };
+      for (let i = 0; i < 8; i++) {
+        const p = new THREE.Vector3(i & 1 ? box.max.x : box.min.x, i & 2 ? box.max.y : box.min.y, i & 4 ? box.max.z : box.min.z).project(camera),
+          x = ((p.x + 1) / 2) * W,
+          y = ((1 - p.y) / 2) * H;
+        r.x0 = Math.min(r.x0, x);
+        r.x1 = Math.max(r.x1, x);
+        r.y0 = Math.min(r.y0, y);
+        r.y1 = Math.max(r.y1, y);
+      }
+      return r;
+    };
     proof = {
       chapter: chapter.id,
       bottleScreen: glassOn ? { x: ((mid.x + 1) / 2) * W, y: ((1 - mid.y) / 2) * H } : null,
@@ -406,6 +430,9 @@ export async function createClearFilm({ format = "16:9", brand = BRAND } = {}) {
       cameraDistance: cam.dist,
       bottle: forming ? "liquid" : glassOn ? "glass" : "none",
       lettersVisible: word.group.visible,
+      wordWidth: word.width * wordScale,
+      capRect: glassOn ? rect(cap) : null,
+      wordRect: word.group.visible ? rect(word.group) : null,
       liquidVertices: forming ? liquid.mesh.geometry.drawRange.count : 0,
       liquidSolver: false,
     };

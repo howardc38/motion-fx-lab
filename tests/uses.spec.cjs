@@ -153,6 +153,25 @@ test("titles: one preset exports alone as a 6-second film in either format", asy
 test("b-roll: each loop's last frame matches its first", async ({ page }) => {
   await open(page, "examples/broll.html");
   await expect(page.locator(".seam .d")).toHaveText(["Δ 0.00%", "Δ 0.00%", "Δ 0.00%"]);
+  // The film shows a finished caption instead of the check's thumbnails (the check stays in the page preview).
+  await render(page, 1.0);
+  await expect(page.locator("#s1 .seam")).toBeHidden();
+  await expect(page.locator("#s1 .looptag")).toBeVisible();
+  await expect(page.locator("#s1 .looptag")).toHaveText(/seamless 4-second loop/i);
+});
+
+test("the reel's list of reasons has a clear field: no halo crosses it", async ({ page }) => {
+  for (const shop of ["tea", "bakery", "yoga"]) {
+    await open(page, `examples/reel.html?shop=${shop}`);
+    for (const t of [5.5, 6.5]) {
+      await render(page, t);
+      const crossing = await page.evaluate(() => {
+        const box = (e) => e.getBoundingClientRect(), points = [...document.querySelectorAll("#s3 .pt")].map(box);
+        return [...document.querySelectorAll("#s3 .halo")].map(box).filter((h) => points.some((p) => p.right > h.left && p.left < h.right && p.bottom > h.top && p.top < h.bottom)).length;
+      });
+      expect(crossing, `${shop} at ${t} s`).toBe(0);
+    }
+  }
 });
 
 // Variants render through small wrapper pages, because video/build.sh takes a file rather than a query.

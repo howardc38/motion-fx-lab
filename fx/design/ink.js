@@ -51,6 +51,10 @@ export function create(){
 }
 function box(parent,materials,w,h,d,x,y,z,color,facade=false){const mat=inkMaterial(color,{facade,dimensions:[w,h,d]});materials.push(mat);const m=edges(new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat));m.position.set(x,y,z);parent.add(m);return m;}
 function sign(parent,label,w,h,x,y,z){const c=document.createElement('canvas');c.width=512;c.height=192;const g=c.getContext('2d');g.fillStyle=C.ink;g.fillRect(0,0,512,192);g.fillStyle=C.paper;g.font='900 108px Arial';g.textAlign='center';g.textBaseline='middle';g.fillText(label,256,104);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const p=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:tex}));p.position.set(x,y,z);parent.add(p);}
+// The film's words sit on a printed caption box (paper, ink rule, offset ink shadow), so the towers
+// that grow up behind them never run through the type.
+function caption(g,w,h){g.save();g.fillStyle=C.ink;g.fillRect(38,30,w,h);g.fillStyle=C.paper;g.fillRect(30,22,w,h);g.lineWidth=3;g.strokeStyle=C.ink;g.strokeRect(31.5,23.5,w-3,h-3);g.restore();}
+let measure;const textWidth=(str,size)=>{measure??=document.createElement('canvas').getContext('2d');measure.font=`700 ${size}px Arial`;return Math.ceil(measure.measureText(str).width);};
 export function createCity(){
  const s=stage(C.paper),materials=[],buildings=[],light=new THREE.Vector3(),ground=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshBasicMaterial({color:'#e5dfd1'}));ground.rotation.x=-Math.PI/2;s.scene.add(ground);
  const grid=new THREE.GridHelper(60,60,C.ink,C.ink);grid.position.y=.003;grid.material.transparent=true;grid.material.opacity=.09;s.scene.add(grid);
@@ -72,7 +76,7 @@ export function createCity(){
   buildings.forEach((b,i)=>{const isHero=i===12;const g=isHero?1:phase(t,-.25+hash(i)*1.2,1.1+hash(i)*1.6);b.scale.set(1,Math.max(.001,g),1);b.visible=g>.001;});
   const p=u(Math.min(12,t));s.camera.fov=38+14*phase(t,4.6,5.4)*(1-phase(t,8.4,9.6));s.camera.updateProjectionMatrix();s.camera.position.copy(posCurve.getPoint(p));s.camera.lookAt(aimCurve.getPoint(p));s.camera.updateMatrixWorld();light.set(Math.cos(t*.35)*4,7,Math.sin(t*.35)*4);
   for(const m of materials)setInk(m,s.camera,light,{strength:1,frequency:10});s.render();
-  if(o.labels!==false){if(t<2.6||t>10.4){title(s.g,t<2.6?'A city grows from one block.':'INK / CITY','One block. A drawn city.');}else{s.g.fillStyle=C.paper;s.g.fillRect(32,24,190,48);text(s.g,'INK / CITY',48,57,25);}}
+  if(o.labels!==false){if(t<2.6||t>10.4){const head=t<2.6?'A city grows from one block.':'INK / CITY',sub='One block. A drawn city.';caption(s.g,Math.max(textWidth(head,38),textWidth(sub.toUpperCase(),15))+38,100);title(s.g,head,sub);}else{caption(s.g,textWidth('INK / CITY',25)+38,58);text(s.g,'INK / CITY',48,61,25);}}
   proof={buildings:buildings.filter(b=>b.visible).length,travel,inkStrength:1,camera:s.camera.position.toArray(),street:t>5.2&&t<9,light:[light.x,light.y,light.z]};
  }};
 }

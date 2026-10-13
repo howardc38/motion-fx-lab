@@ -173,6 +173,24 @@ test("Clear: the brand is set in one place and the glass bends the letters behin
  expect(bent.length*.2).toBeGreaterThanOrEqual(2);
 });
 
+test("Clear: the cap and the brand letters stay inside the frame in both formats", async ({ page }) => {
+ for(const url of ['/examples/water-forms.html','/examples/water-forms-vertical.html']){
+  await page.goto(url);
+  const p=await page.evaluate(async()=>{
+   await __ready;await __record();const r={cap:Infinity,left:Infinity,right:-Infinity,capSeen:0,wordSeen:0};
+   // From the glass bottle to the end card, every 0.05 s: the cap's top edge and the letters' sides, in pixels.
+   for(let k=90;k<=252;k++){await __render(k/20);const p=filmEffect.proof();r.w=p.size.w;
+    if(p.capRect){r.capSeen++;r.cap=Math.min(r.cap,p.capRect.y0);}
+    if(p.wordRect&&p.wordRect.y0<p.size.h){r.wordSeen++;r.left=Math.min(r.left,p.wordRect.x0);r.right=Math.max(r.right,p.wordRect.x1);}}
+   return r;
+  });
+  expect(p.capSeen,url).toBeGreaterThan(100);expect(p.wordSeen,url).toBeGreaterThan(40);
+  expect(p.cap,`${url}: the cap's top edge`).toBeGreaterThanOrEqual(24);
+  expect(p.left,`${url}: the letters' left edge`).toBeGreaterThanOrEqual(24);
+  expect(p.right,`${url}: the letters' right edge`).toBeLessThanOrEqual(p.w-24);
+ }
+});
+
 test("water studies: the crown fills about 40% of the frame and loops in four seconds", async ({ page }) => {
  await gallery(page);
  const p=await page.evaluate(async()=>{const s=FXMaterial.studies.find(s=>s.id==='water-impact'),e=await FXMaterial.create('water-impact');e.frame(s.hero,{labels:false});const hero=e.proof();e.frame(0,{labels:false});const a=e.canvas.toDataURL();e.frame(4,{labels:false});return{period:s.duration,hero,loop:a===e.canvas.toDataURL()};});

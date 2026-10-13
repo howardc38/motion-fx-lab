@@ -38,6 +38,11 @@ const PLACES = {
   .seam .bar { grid-column: 1 / 3; height: 8px; border-radius: 4px; background: rgba(244,243,238,.18); overflow: hidden; }
   .seam .bar i { display: block; height: 100%; width: 0; background: var(--paper); }
   .seam .ok { grid-column: 1 / 3; font: 800 28px var(--lat); color: var(--mint); }
+  /* In the film the check gives way to a small finished caption: a ring that fills once per loop. */
+  .looptag { right: 60px; bottom: 54px; display: none; align-items: center; gap: 14px; padding: 10px 22px 10px 12px; border-radius: 999px; background: rgba(14,13,18,.72); font: 700 22px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--paper); white-space: nowrap; }
+  .looptag svg { width: 36px; height: 36px; display: block; }
+  body.record .seam { display: none; }
+  body.record .looptag { display: inline-flex; }
   .tile { position: absolute; top: 150px; width: 700px; height: 478px; border-radius: 28px; overflow: hidden; background: #1b1a24; box-shadow: 0 30px 80px rgba(0,0,0,.45); border: 3px solid rgba(244,243,238,.25); }
   .tile svg { width: 100%; height: 100%; display: block; }
   .name { position: absolute; left: 22px; bottom: 22px; padding: 10px 18px; border-radius: 12px; background: rgba(14,13,18,.8); font: 800 32px var(--lat); }
@@ -122,26 +127,29 @@ const PLACES = {
   // ── What sits on top of each loop: the place it is used.
   const seamPanel = (i) => `<div class="a seam" id="seam${i}" data-fx="up" data-at="2.2"><canvas width="192" height="108"></canvas><canvas width="192" height="108"></canvas>` +
     `<div class="cap">END ${P.toFixed(1)} S</div><div class="cap">START 0.0 S</div><div class="bar"><i></i></div><div class="ok">✓ Seamless · <span class="d"></span></div></div>`;
+  const RING = 2 * Math.PI * 14;
+  const loopTag = () => `<div class="a looptag" data-fx="fade" data-at="0.5"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="14" fill="none" stroke="rgba(244,243,238,.25)" stroke-width="4"/>` +
+    `<circle class="fill" cx="18" cy="18" r="14" fill="none" stroke="#2fd39a" stroke-width="4" stroke-linecap="round" stroke-dasharray="${RING.toFixed(2)} ${RING.toFixed(2)}" transform="rotate(-90 18 18)"/></svg>Seamless ${P}-second loop</div>`;
   const T = PLACES.title, I = PLACES.interview, Wt = PLACES.waiting;
   document.getElementById("s1").innerHTML =
     `<canvas class="loop" width="${W}" height="${H}" data-effect="orbs"></canvas>` +
     `<div class="a use">USE 1 · OPENING TITLE · COLOUR FIELDS</div>` +
     `<div class="a chip" style="left:150px;top:300px;color:var(--paper)" data-fx="fade" data-at="0.1">${esc(T.show)} · ${esc(T.episode)}</div>` +
     T.title.map((l, k) => `<div class="a wide" style="left:140px;top:${400 + k * 150}px;font-size:140px;white-space:nowrap" data-fx="chars" data-at="${0.3 + k * 0.35}" data-stagger="0.025" data-sfx="${k ? "" : "whoosh"}">${esc(l)}</div>`).join("") +
-    seamPanel(0);
+    seamPanel(0) + loopTag();
   document.getElementById("s2").innerHTML =
     `<canvas class="loop" width="${W}" height="${H}" data-effect="ridgelines"></canvas>` +
     `<div class="a use">USE 2 · INTERVIEW BACKDROP · RIDGELINES</div>` +
     I.guests.map(([n, r], k) => `<div class="tile" style="left:${k ? 1100 : 120}px" data-fx="up" data-at="${0.1 + k * 0.15}">${person(k)}<div class="name">${esc(n)}<span>${esc(r)}</span></div></div>`).join("") +
     `<div class="a lower" data-fx="left" data-at="0.6"><b>${esc(I.topic)}</b><span>${esc(I.guests[0][0])} · ${esc(I.guests[0][1])}</span></div>` +
-    seamPanel(1);
+    seamPanel(1) + loopTag();
   document.getElementById("s3").innerHTML =
     `<canvas class="loop" width="${W}" height="${H}" data-effect="network"></canvas>` +
     `<div class="a use">USE 3 · "STARTING SOON" SCREEN · NETWORK</div>` +
     `<div class="a chip live" style="left:150px;top:300px;color:var(--paper)" data-fx="fade" data-at="0.1"><i data-fx="blink" data-at="0.1"></i>${esc(Wt.when)}</div>` +
     Wt.headline.map((l, k) => `<div class="a wide" style="left:140px;top:${400 + k * 190}px;font-size:200px;white-space:nowrap${k ? ";color:var(--pink)" : ""}" data-fx="whip" data-dx="700" data-at="${0.2 + k * 0.15}" data-sfx="${k ? "" : "whoosh"}">${esc(l)}</div>`).join("") +
     `<div class="a" style="left:150px;top:830px;font:700 34px var(--mono);color:var(--sun)" data-fx="up" data-at="0.6">${esc(Wt.handle)}</div>` +
-    seamPanel(2);
+    seamPanel(2) + loopTag();
 
   // Head-and-shoulders drawings for the two call tiles. They breathe on the loop, so the tiles loop too.
   function person(k) {
@@ -165,7 +173,7 @@ const PLACES = {
     let diff = 0;
     for (let k = 0; k < da.length; k++) diff += Math.abs(da[k] - db[k]);
     s.querySelector(".seam .d").textContent = `Δ ${(diff / da.length / 2.55).toFixed(2)}%`;
-    return { bar: s.querySelector(".seam .bar i") };
+    return { bar: s.querySelector(".seam .bar i"), ring: s.querySelector(".looptag .fill") };
   });
   const whos = [...document.querySelectorAll(".who")];
 
@@ -181,6 +189,7 @@ const PLACES = {
     const i = Math.min(2, Math.floor(t / P)), local = t - i * P, u = (local / P) * TAU;
     LOOPS[i](big[i], u);
     seams[i].bar.style.width = `${((local / P) * 100).toFixed(2)}%`;
+    seams[i].ring.setAttribute("stroke-dashoffset", (RING * (1 - local / P)).toFixed(2));
     if (i === 1) whos.forEach((w, k) => w.setAttribute("transform", `translate(0 ${(6 * Math.sin(u * (k + 1) + k)).toFixed(2)}) rotate(${(1.5 * Math.sin(u + k * 2)).toFixed(2)} 410 380)`));
   });
   window.__ready = document.fonts.ready;

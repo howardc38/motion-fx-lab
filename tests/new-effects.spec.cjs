@@ -136,7 +136,7 @@ test("intro plays the published use cases, edits a real line and seeks reproduci
   const result=await page.evaluate(async()=>{
     await __render(20.4);const host=document.querySelector('#dialogue-shot').getBoundingClientRect(),canvas=document.querySelector('#dialogue-shot canvas').getBoundingClientRect();const actionFill=[canvas.width/host.width,canvas.height/host.height];
     const samples=[];
-    for(const t of [3.0,5.6,8.0,10.4,13.0,15.2,33.1,34.5,37.2,42.9,43.7,45.0,46.5,49.4]){
+    for(const t of [3.0,5.6,8.0,10.4,11.6,13.0,15.2,17.5,20.4,29.0,33.1,34.5,37.2,42.9,43.7,45.0,46.5,49.4]){
       await __render(t);samples.push({t,...await introProof()});
     }
     const alive=[...document.querySelectorAll("iframe")].filter(f=>f.src||f.srcdoc).map(f=>f.id||f.dataset.src);
@@ -145,8 +145,12 @@ test("intro plays the published use cases, edits a real line and seeks reproduci
   const at = t => result.samples.find(s => s.t === t);
   expect(result.gpu).toBe(false);expect(result.actionFill).toEqual([1,1]);
   // Use cases: each scene draws its page at the authored time.
-  for (const [t, page, time] of [[3.0, "reel-shot", 2.5], [5.6, "../examples/product.html", 5.2], [8.0, "../examples/infographic.html", 4.4], [10.4, "../examples/spotlight.html", 1.6], [13.0, "../examples/countdown.html", 12.0], [15.2, "../examples/broll.html", 4.6]])
+  for (const [t, page, time] of [[3.0, "reel-shot", 2.5], [5.6, "../examples/product.html", 5.2], [8.0, "../examples/infographic.html", 4.4], [10.4, "../examples/spotlight.html", 1.54], [11.6, "../examples/spotlight.html", 7.5], [13.0, "../examples/countdown.html", 12.0], [15.2, "../examples/broll.html", 4.6]])
     expect(at(t).frames[page], `${page} at ${t} s`).toBeCloseTo(time, 6);
+  // The dialogue line is on the bear's shot only; Pip's close-up has the review screen's words behind it.
+  expect([at(17.5).dialogue.shot, at(17.5).charsTitle]).toEqual(['bear', true]);
+  expect([at(20.4).dialogue.shot, at(20.4).charsTitle]).toEqual(['pip', false]);
+  expect(at(29.0).worlds.phase).toBe('flight');
   expect(at(33.1).worlds).toMatchObject({phase:'overview',count:20});
   expect(at(34.5).frames["titles-shot"]).toBeCloseTo(1.2, 6);
   expect(at(37.2).frames["titles-shot"]).toBeCloseTo(13.5, 6);

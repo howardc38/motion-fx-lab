@@ -65,3 +65,10 @@ test('dot story shows no overshoot readout; ink city starts growing at once and 
  // open sky in the top centre and open road in the bottom centre throughout the street run
  for(const s of p.street){expect(s.inStreet,String(s.t)).toBe(true);expect(s.sky,`sky at ${s.t}`).toBeGreaterThan(.4);expect(s.ground,`road at ${s.t}`).toBeGreaterThan(.6);}
 });
+test('ink city: the title sits on its own caption box, so no tower runs through it',async({page})=>{
+ await page.goto('/');const p=await page.evaluate(async()=>{const {createFilm}=await import('/fx/design/films.js');const city=createFilm('ink-city'),g=city.canvas.getContext('2d'),rows=[];
+  // The caption's left margin (inside the box, left of the words): plain paper while the towers rise behind it.
+  for(const t of [.3,1,1.5,2,2.5,6,10.6,11.2,11.9]){city.frame(t);const d=g.getImageData(34,40,10,30).data;let paper=0;for(let i=0;i<d.length;i+=4)if(Math.abs(d[i]-242)<6&&Math.abs(d[i+1]-238)<6&&Math.abs(d[i+2]-229)<6)paper++;rows.push({t,paper:paper/(d.length/4)});}
+  return rows;});
+ for(const r of p)expect(r.paper,`caption margin at ${r.t} s`).toBeGreaterThan(.98);
+});
