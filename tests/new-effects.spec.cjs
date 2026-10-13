@@ -82,6 +82,46 @@ test("optical export supplies working audio and GIF contracts to the full build"
   }
 });
 
+test("optical effects keep their build, hit and aftermath contracts and the sampler tiles the film", async ({ page }) => {
+  await page.goto("/examples/optical.html");
+  const r = await page.evaluate(() => {
+    opticalDemo.pause();
+    const { frames, modes } = opticalDemo;
+    const f = (m) => frames[modes.indexOf(m)];
+    return {
+      slit: [0.5, 3, 6.5].map((t) => f("slit").proof(t)),
+      moire: [0.5, 2, 3, 4, 5.8, 7.6].map((t) => f("moire").proof(t)),
+      foil: [0.5, 1.2].map((t) => f("foil").proof(t)),
+      segments: opticalDemo.segments,
+      dur: __DUR,
+    };
+  });
+  // Slit-scan: the plain source at 0.5 s and 6.5 s; at 3 s the first letter recurs at
+  // three or more spin angles and the light's trail crosses at least 40% of the frame.
+  expect(r.slit[0].delta).toBe(0);
+  expect(r.slit[2].delta).toBe(0);
+  expect(r.slit[1].tRuns.length).toBeGreaterThanOrEqual(3);
+  expect(new Set(r.slit[1].tRuns.map((run) => run.angle)).size).toBeGreaterThanOrEqual(3);
+  expect(r.slit[1].orbTrailOfWidth).toBeGreaterThanOrEqual(0.4);
+  // Moiré: one layer at 0.5 s; broad fringes (at least 10% of the width) from 2 to 4 s;
+  // aligned and still at 5.8 s, when the hidden word cannot be seen; withdrawn by 7.6 s.
+  expect(r.moire[0].pose[0]).toBeGreaterThan(1.5);
+  for (const p of r.moire.slice(1, 4)) {
+    expect(p.aligned).toBe(false);
+    expect(p.fringePeriodOfWidth).toBeGreaterThanOrEqual(0.1);
+  }
+  expect(r.moire[4].aligned).toBe(true);
+  expect(r.moire[5].presence).toBe(0);
+  // Foil: matte at 0.5 s; the spectral band crosses the card centre near 1.2 s.
+  expect(Math.abs(r.foil[0].sweep)).toBeGreaterThan(0.3);
+  expect(Math.abs(r.foil[1].sweep)).toBeLessThan(0.08);
+  // The sampler's segments tile the whole film, one per effect.
+  expect(r.segments.map((s) => s.id)).toEqual(["optical-foil", "optical-slit", "optical-moire", "optical-ribbon", "optical-caustic", "optical-morph"]);
+  expect(r.segments[0].start).toBe(0);
+  for (let i = 1; i < r.segments.length; i++) expect(r.segments[i].start).toBeCloseTo(r.segments[i - 1].end, 6);
+  expect(r.segments.at(-1).end).toBeCloseTo(r.dur, 6);
+});
+
 test("intro tells three film stories with native frames and reproducible seeks", async ({page}) => {
   await page.goto("/video/intro.html");
   await page.evaluate(async()=>{await __ready;await __record();});
@@ -351,9 +391,10 @@ test("optical gallery frames preserve default strength across absolute-time loop
   await page.waitForFunction(() => window.galleryAPI);
   const proof = await page.evaluate(async () => {
     galleryAPI.pause();
+    // Gallery canvases follow FX_RENDER_SIZE; the reference must use the same size.
     const reference = document.createElement("canvas");
-    reference.width = 1120;
-    reference.height = 630;
+    reference.width = window.FX_RENDER_SIZE?.w || 1120;
+    reference.height = window.FX_RENDER_SIZE?.h || 630;
     const direct = FXOptical.create(reference, "ribbon");
     direct(0.5);
     const expected = reference.toDataURL();

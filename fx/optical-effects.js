@@ -1,9 +1,181 @@
-// Six optical studies. Every draw is a pure function of time and strength.
-// All shader studies share one WebGL context; canvas instances keep no simulation history.
+// Six optical effects. Every draw is a pure function of (time, strength).
+// Canvas 2D effects lay out in 1120 x 630 logical units and scale to the target canvas;
+// the shader effects share one WebGL context that is resized to the target canvas, so
+// line widths, grating periods and sparkle sizes all follow the render size.
 (() => {
   const W = 1120,
     H = 630,
-    TAU = Math.PI * 2;
+    TAU = Math.PI * 2,
+    DEG = Math.PI / 180;
+  const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const smooth = (x) => {
+    x = clamp(x);
+    return x * x * (3 - 2 * x);
+  };
+  const ramp = (a, b, x) => smooth((x - a) / (b - a));
+  const inOutCubic = (x) => {
+    x = clamp(x);
+    return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  };
+  const outCubic = (x) => 1 - Math.pow(1 - clamp(x), 3);
+  const inCubic = (x) => Math.pow(clamp(x), 3);
+  const bump = (a, b, x) => (x <= a || x >= b ? 0 : Math.pow(Math.sin((Math.PI * (x - a)) / (b - a)), 2));
+  // Damped spring step: 0 before t=0, settles at 1 with one visible overshoot.
+  function spring(t, period = 0.34, damping = 0.5) {
+    if (t <= 0) return 0;
+    const w = TAU / period,
+      wd = w * Math.sqrt(1 - damping * damping);
+    return 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t));
+  }
+
+  // ---------------------------------------------------------------- shared WebGL
+  const GLSL_COMMON = `
+    precision highp float;
+    float sdBox(vec2 q, vec2 b, float r){vec2 d=abs(q)-b+r;return length(max(d,0.))+min(max(d.x,d.y),0.)-r;}
+    float hash12(vec2 p){vec3 p3=fract(vec3(p.xyx)*.1031);p3+=dot(p3,p3.yzx+33.33);return fract((p3.x+p3.y)*p3.z);}
+    vec2 hash22(vec2 p){vec3 p3=fract(vec3(p.xyx)*vec3(.1031,.1030,.0973));p3+=dot(p3,p3.yzx+33.33);return fract((p3.xx+p3.yz)*p3.zy);}
+  `;
+  const SHADERS = {
+    // Unchanged look: flowing bands of water light.
+    caustic: `
+      uniform vec2 resolution; uniform float time; uniform float amount;
+      uniform vec3 bg; uniform vec3 fg; uniform vec3 cb;
+      void main(){
+        vec2 uv=gl_FragCoord.xy/resolution;vec2 p=(uv-.5)*vec2(resolution.x/resolution.y,1.);float a=time*6.283185/8.;
+        vec3 light=mix(fg,bg,step(dot(fg,vec3(.299,.587,.114)),dot(bg,vec3(.299,.587,.114))));
+        vec2 q=p*6.;
+        q+=vec2(sin(q.y*.8+a),cos(q.x*.7-a))*.85*amount;
+        float s=sin(q.x*1.9+sin(q.y*2.+a)*1.3)+sin(q.y*2.3-cos(q.x*1.7-a)*1.4);
+        float k=pow(max(0.,1.-abs(s)*.8),12.);
+        float s2=sin(q.x*2.1+cos(q.y*1.6-a))+cos(q.y*2.+sin(q.x*1.5+a));
+        float k2=pow(max(0.,1.-abs(s2)*.9),18.);
+        vec3 col=mix(bg,cb,.60+.1*sin(q.y));col=mix(col,mix(light,cb,.06),min(.98,k*.9+k2*.6));
+        gl_FragColor=vec4(col,1.);
+      }`,
+    // Holographic trading card: perspective card, embossed faceted star, sunburst foil,
+    // a full-spectrum band that follows the reflection angle, and angle-keyed glitter flakes.
+    foil: `
+      uniform vec2 res; uniform vec2 rot; uniform float vel; uniform float amount; uniform float m0; uniform float spill;
+      uniform sampler2D print;
+      const float D=3.0, F=2.0;
+      const vec2 HALF=vec2(.3393,.475);
+      const vec3 LIGHT=vec3(-1.5,1.4,2.8);
+      const vec2 SWEEP=vec2(.9535,.3015);
+      const vec2 STAR=vec2(0.,.065);
+      float sdStar5(vec2 p,float r,float rf){
+        const vec2 k1=vec2(.809016994375,-.587785252292);const vec2 k2=vec2(-k1.x,k1.y);
+        p.x=abs(p.x);p-=2.*max(dot(k1,p),0.)*k1;p-=2.*max(dot(k2,p),0.)*k2;p.x=abs(p.x);p.y-=r;
+        vec2 ba=rf*vec2(-k1.y,k1.x)-vec2(0,1);float h=clamp(dot(p,ba)/dot(ba,ba),0.,r);
+        return length(p-ba*h)*sign(p.y*ba.x-p.x*ba.y);
+      }
+      float star(vec2 c){return sdStar5(c-STAR,.215,.46);}
+      mat3 basis(){float cy=cos(rot.x),sy=sin(rot.x),cx=cos(rot.y),sx=sin(rot.y);
+        return mat3(cy,0.,-sy,0.,1.,0.,sy,0.,cy)*mat3(1.,0.,0.,0.,cx,sx,0.,-sx,cx);}
+      vec3 hit(vec2 p,mat3 R,out vec3 X){vec3 o=vec3(0.,0.,D);vec3 d=normalize(vec3(p,-F));float s=-dot(o,R[2])/dot(d,R[2]);X=o+s*d;return vec3(dot(X,R[0]),dot(X,R[1]),s);}
+      float sweepAt(vec3 X,mat3 R){vec3 V=normalize(vec3(0.,0.,D)-X),L=normalize(LIGHT-X);vec3 Hh=normalize(V+L);return dot(vec2(dot(Hh,R[0]),dot(Hh,R[1])),SWEEP)-m0;}
+      vec3 spectrum(float h){return clamp(.5+.5*cos(6.28318*(h+vec3(0.,.333,.667))),0.,1.);}
+      void main(){
+        vec2 p=(gl_FragCoord.xy-.5*res)/res.y;float px=1./res.y;
+        mat3 R=basis();
+        vec3 col=vec3(.026,.029,.036)+vec3(.085,.088,.10)*exp(-dot(p-vec2(-.12,.14),p-vec2(-.12,.14))*2.4);
+        col*=1.-.22*dot(p,p);
+        vec3 Xs;vec3 hs=hit(p-vec2(.05,-.06),R,Xs);
+        col*=1.-.6*(1.-smoothstep(-.05,.11,sdBox(hs.xy,HALF,.045)));
+        vec3 X;vec3 h=hit(p,R,X);vec2 c=h.xy;
+        float pw=h.z*px/F;
+        float sd=sdBox(c,HALF,.045);
+        float halo=spill*exp(-max(sd,0.)*7.);
+        col+=.16*halo*spectrum(atan(p.y,p.x)/6.28318+.15);
+        float mask=1.-smoothstep(-pw,pw,sd);
+        if(mask>0.){
+          vec3 V=normalize(vec3(0.,0.,D)-X),L=normalize(LIGHT-X);vec3 Hh=normalize(V+L);
+          vec2 Hl=vec2(dot(Hh,R[0]),dot(Hh,R[1]));
+          float st=star(c);float e=.0016;
+          vec2 g=vec2(star(c+vec2(e,0.))-star(c-vec2(e,0.)),star(c+vec2(0.,e))-star(c-vec2(0.,e)))/(2.*e);
+          float inStar=1.-smoothstep(-pw,pw,st);
+          vec2 tilt=g*.24*inStar;
+          float ang=atan(c.y-STAR.y,c.x-STAR.x);
+          float sector=floor((ang+3.14159)/(6.28318/40.));
+          float secOff=(hash12(vec2(sector,7.))-.5)*(1.-inStar);
+          float m=dot(Hl-tilt,SWEEP)-m0+secOff*.035;
+          float sigma=dot(c/HALF,SWEEP);
+          vec3 rb=spectrum(2.4*m-.75*sigma+secOff*.12+.05);
+          float band=exp(-m*m/(.085*.085));
+          float lp=.008;float vis=clamp((lp/pw-2.2)/1.5,0.,1.);
+          float groove=.5+.5*cos(6.28318*dot(c,SWEEP)/lp);
+          vec3 Nw=normalize(R*vec3(-tilt,1.));
+          float diff=max(0.,dot(Nw,L));
+          vec3 fc=vec3(.07,.075,.09)+vec3(.12,.12,.13)*diff;
+          fc+=.07*amount*spectrum(1.1*m+.3*sigma+.4)*(.4+.6*smoothstep(.45,0.,abs(m)));
+          fc+=rb*band*(1.-.22*vis*groove)*1.15*amount;
+          float glint=exp(-pow((m-.018)/.016,2.));
+          fc+=vec3(glint)*(.55+.4*amount);
+          fc+=vec3(.5)*smoothstep(.006,0.,abs(st))*inStar*(.3+.7*diff);
+          float cs=.0185;vec2 cell=floor(c/cs);float spark=0.;float win=.006+vel*.022;
+          float core=max(.0032,pw*1.1),thin=max(.0016,pw*.8);
+          for(int j=-2;j<=2;j++)for(int i=-2;i<=2;i++){
+            vec2 id=cell+vec2(float(i),float(j));
+            if(hash12(id+17.)>.13)continue;
+            vec2 fp=(id+.2+.6*hash22(id+3.))*cs;
+            if(sdBox(fp,HALF-.025,.03)>0.)continue;
+            vec3 Xf=R[0]*fp.x+R[1]*fp.y;
+            float a=(hash12(id+41.)-.5)*.34;
+            float I=exp(-pow((sweepAt(Xf,R)-a)/win,2.))*(.65+.35*hash12(id+9.));
+            if(I<.02)continue;
+            vec2 dv=c-fp;float arm=max(.0075*I,pw*1.5);
+            float cr=exp(-abs(dv.x)/arm)*exp(-dv.y*dv.y/(thin*thin))+exp(-abs(dv.y)/arm)*exp(-dv.x*dv.x/(thin*thin));
+            spark+=I*(exp(-dot(dv,dv)/(core*core))*1.5+cr*.8);
+          }
+          fc+=vec3(1.,.97,.92)*spark*(.4+.6*amount);
+          vec4 ink=texture2D(print,vec2(c.x/HALF.x*.5+.5,.5-c.y/HALF.y*.5));
+          fc=mix(fc,ink.rgb*(.72+.28*diff)+ink.rgb*glint*.3,ink.a);
+          fc+=vec3(.38)*exp(-pow((sd+.004)/.0035,2.))*(.35+.65*diff);
+          col=mix(col,fc,mask);
+        }
+        gl_FragColor=vec4(min(col,1.),1.);
+      }`,
+    // Two line gratings. Layer B (an acetate sheet) repeats layer A's grating: black lines
+    // everywhere except inside the glyphs of a word, where the lines are coloured filters.
+    // Aligned and still, B's lines hide behind A's and neither the sheet nor the word shows.
+    moire: `
+      uniform vec2 res; uniform vec4 pose; uniform float presence; uniform float amount;
+      uniform sampler2D glyph;
+      const float PA=1./42.;
+      const vec2 SHEET=vec2(1.22,.68);
+      const vec2 GH=vec2(.86,.43);
+      vec3 filt(float x){float k=clamp(x/1.6+.5,0.,1.);
+        vec3 a=vec3(1.,.12,.55),b=vec3(1.,.58,.06),c=vec3(.08,.78,1.);
+        return k<.5?mix(a,b,k*2.):mix(b,c,k*2.-1.);}
+      void main(){
+        vec2 p=(gl_FragCoord.xy-.5*res)/res.y;float px=1./res.y;
+        float cs=cos(pose.z),sn=sin(pose.z);mat2 inv=mat2(cs,-sn,sn,cs);
+        vec2 q0=inv*(p-pose.xy)/pose.w;
+        vec2 gu=q0/(2.*GH)+.5;float M=0.;
+        if(gu.x>0.&&gu.y>0.&&gu.x<1.&&gu.y<1.)M=texture2D(glyph,vec2(gu.x,1.-gu.y)).a;
+        vec3 f=mix(vec3(1.),filt(q0.x),amount*.25+.75);
+        vec3 T=vec3(0.);float sheet=0.;
+        for(int j=0;j<4;j++)for(int i=0;i<4;i++){
+          vec2 ps=p+(vec2(float(i),float(j))-1.5)*.25*px;
+          float ga=step(.5,fract(ps.x/PA));
+          vec2 qs=inv*(ps-pose.xy)/pose.w;
+          float inS=step(sdBox(qs,SHEET,0.),0.)*presence;
+          float lb=1.-step(.5,fract(qs.x/PA));
+          T+=ga*mix(vec3(1.),mix(vec3(.05),f,M),lb*inS);
+          sheet+=inS;
+        }
+        T*=1./16.;sheet*=1./16.;
+        vec3 back=vec3(.96,.95,.91)*(.80+.20*exp(-dot(p,p)*1.1));
+        vec3 ink=vec3(.035,.04,.06);
+        vec3 col=ink+(back-ink)*T;
+        col=mix(col,col*vec3(.90,.95,1.),sheet*.9);
+        float se=sdBox(q0,SHEET,0.)*pose.w;
+        col+=vec3(.85,.93,1.)*exp(-pow(se/.0032,2.))*.6*presence;
+        col*=1.-.25*smoothstep(.06,0.,se)*step(0.,se)*presence;
+        gl_FragColor=vec4(col,1.);
+      }`,
+  };
+
   let sharedGPU;
   function makeGPU() {
     const glCanvas = document.createElement("canvas");
@@ -14,130 +186,227 @@
       antialias: false,
       preserveDrawingBuffer: true,
     });
-    let program,
-      locations,
-      glError = "";
-    if (gl) {
-      try {
-        function shader(type, source) {
-          const s = gl.createShader(type);
-          gl.shaderSource(s, source);
-          gl.compileShader(s);
-          if (!gl.getShaderParameter(s, gl.COMPILE_STATUS))
-            throw new Error(gl.getShaderInfoLog(s));
-          return s;
-        }
-        const vs = shader(
-          gl.VERTEX_SHADER,
-          "attribute vec2 p; void main(){gl_Position=vec4(p,0.,1.);}",
-        );
-        const fs = shader(
-          gl.FRAGMENT_SHADER,
-          `
-        precision highp float;
-        uniform vec2 resolution; uniform float time; uniform float amount; uniform int mode;
-        uniform vec3 bg; uniform vec3 fg; uniform vec3 ca; uniform vec3 cb; uniform vec3 cc;
-        const float PI=3.14159265359;
-        vec3 spectrum(float s){float a=.5+.5*sin(s*6.28318);float b=.5+.5*sin(s*6.28318+2.094);return mix(mix(ca,cb,a),cc,b*.7);}
-        void main(){
-          vec2 uv=gl_FragCoord.xy/resolution;vec2 p=(uv-.5)*vec2(resolution.x/resolution.y,1.);float a=time*6.283185/8.; vec3 col=bg;
-          vec3 light=mix(fg,bg,step(dot(fg,vec3(.299,.587,.114)),dot(bg,vec3(.299,.587,.114))));
-          if(mode==0){
-            vec2 o1=vec2(-.23+.08*sin(a),.06*cos(a));vec2 o2=vec2(.23+.10*cos(a),.12*sin(a));
-            float r1=length(p-o1),r2=length(p-o2);float density=140.+40.*amount;
-            float v1=.5+.5*cos(r1*density),v2=.5+.5*cos(r2*density+a*2.);
-            float v=pow(max(v1*v2,.00001),.8);float macro=.5+.5*cos((r1-r2)*density);
-            col=mix(bg,mix(fg,mix(ca,cb,macro),.65),v*.9);
-          }else if(mode==1){
-            vec2 q=p*6.;
-            q+=vec2(sin(q.y*.8+a),cos(q.x*.7-a))*.85*amount;
-            float s=sin(q.x*1.9+sin(q.y*2.+a)*1.3)+sin(q.y*2.3-cos(q.x*1.7-a)*1.4);
-            float k=pow(max(0.,1.-abs(s)*.8),12.);
-            float s2=sin(q.x*2.1+cos(q.y*1.6-a))+cos(q.y*2.+sin(q.x*1.5+a));
-            float k2=pow(max(0.,1.-abs(s2)*.9),18.);
-            col=mix(bg,cb,.60+.1*sin(q.y));col=mix(col,mix(light,cb,.06),min(.98,k*.9+k2*.6));
-          }else{
-            float ang=atan(p.y,p.x),r=length(p);float mask=1.-smoothstep(.363,.368,r);
-            float tilt=sin(a)*.4*amount;float sheen=sin(ang*5.+r*20.-a*2.)*.08;
-            float phase=ang/6.283185+r*1.8+dot(p,vec2(cos(a),sin(a)))*2.*amount+sheen;
-            vec3 foil=spectrum(phase);
-            float grooves=.5+.5*sin(r*1250.);foil=mix(foil,fg,grooves*.12);
-            float highlight=pow(max(0.,cos(ang-a+tilt)),28.)*.8;
-            foil=mix(foil,light,highlight);
-            float edge=pow(clamp(r/.366,0.,1.),30.);foil=mix(foil,light,edge*.7);
-            float hole=smoothstep(.054,.058,r);mask*=hole;
-            col=mix(bg,foil,mask);
-          }
-          gl_FragColor=vec4(col,1.);
-        }
-      `,
-        );
-        program = gl.createProgram();
-        gl.attachShader(program, vs);
-        gl.attachShader(program, fs);
-        gl.linkProgram(program);
-        if (!gl.getProgramParameter(program, gl.LINK_STATUS))
-          throw new Error(gl.getProgramInfoLog(program));
-        gl.useProgram(program);
-        const buffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(
-          gl.ARRAY_BUFFER,
-          new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
-          gl.STATIC_DRAW,
-        );
-        const attr = gl.getAttribLocation(program, "p");
-        gl.enableVertexAttribArray(attr);
-        gl.vertexAttribPointer(attr, 2, gl.FLOAT, false, 0, 0);
-        locations = Object.fromEntries(
-          [
-            "resolution",
-            "time",
-            "amount",
-            "mode",
-            "bg",
-            "fg",
-            "ca",
-            "cb",
-            "cc",
-          ].map((n) => [n, gl.getUniformLocation(program, n)]),
-        );
-      } catch (e) {
-        glError = "GLSL compilation failed: " + e.message;
+    const programs = {},
+      textures = {};
+    let quad = null;
+    function compile(name) {
+      if (programs[name]) return programs[name];
+      function shader(type, source) {
+        const s = gl.createShader(type);
+        gl.shaderSource(s, source);
+        gl.compileShader(s);
+        if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error("GLSL compilation failed: " + gl.getShaderInfoLog(s));
+        return s;
       }
-    } else glError = "WebGL is unavailable for this optical effect.";
-    function render(which, t, amp, palette) {
-      if (gl && gl.isContextLost())
-        throw new Error("Optical WebGL context lost");
-      if (glError) {
-        throw new Error(glError);
+      const p = gl.createProgram();
+      gl.attachShader(p, shader(gl.VERTEX_SHADER, "attribute vec2 p; void main(){gl_Position=vec4(p,0.,1.);}"));
+      gl.attachShader(p, shader(gl.FRAGMENT_SHADER, GLSL_COMMON + SHADERS[name]));
+      gl.linkProgram(p);
+      if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error("GLSL link failed: " + gl.getProgramInfoLog(p));
+      const locs = {};
+      programs[name] = {
+        p,
+        attr: gl.getAttribLocation(p, "p"),
+        loc: (n) => (n in locs ? locs[n] : (locs[n] = gl.getUniformLocation(p, n))),
+      };
+      return programs[name];
+    }
+    function texture(name, build) {
+      if (textures[name]) return textures[name];
+      const source = build();
+      const tex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      return (textures[name] = tex);
+    }
+    function render(name, w, h, uniforms, textureBuilders = {}) {
+      if (!gl) throw new Error("WebGL is unavailable for this optical effect.");
+      if (gl.isContextLost()) throw new Error("Optical WebGL context lost");
+      if (glCanvas.width !== w || glCanvas.height !== h) {
+        glCanvas.width = w;
+        glCanvas.height = h;
       }
-      gl.useProgram(program);
-      gl.uniform2f(locations.resolution, W, H);
-      gl.uniform1f(locations.time, t);
-      gl.uniform1f(locations.amount, amp);
-      gl.uniform1i(locations.mode, which);
-      [
-        ["bg", "bg"],
-        ["fg", "fg"],
-        ["ca", "a"],
-        ["cb", "b"],
-        ["cc", "c"],
-      ].forEach(([u, c]) =>
-        gl.uniform3fv(
-          locations[u],
-          palette[c].map((v) => v / 255),
-        ),
-      );
+      gl.viewport(0, 0, w, h);
+      const prog = compile(name);
+      gl.useProgram(prog.p);
+      if (!quad) {
+        quad = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
+      }
+      gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+      gl.enableVertexAttribArray(prog.attr);
+      gl.vertexAttribPointer(prog.attr, 2, gl.FLOAT, false, 0, 0);
+      for (const [n, v] of Object.entries(uniforms)) {
+        const l = prog.loc(n);
+        if (typeof v === "number") gl.uniform1f(l, v);
+        else if (v.length === 2) gl.uniform2fv(l, v);
+        else if (v.length === 3) gl.uniform3fv(l, v);
+        else gl.uniform4fv(l, v);
+      }
+      Object.entries(textureBuilders).forEach(([n, [key, build]], unit) => {
+        const tex = texture(key, build);
+        gl.activeTexture(gl.TEXTURE0 + unit);
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.uniform1i(prog.loc(n), unit);
+      });
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       return glCanvas;
     }
-
     return { render };
   }
+
+  // ---------------------------------------------------------------- textures
+  // Printed ink on the card face: 1024 x 1024 texels over a 5:7 card, drawn in a
+  // 1024 x 1434 virtual space so the type is not stretched.
+  function cardPrint() {
+    const c = document.createElement("canvas");
+    c.width = c.height = 1024;
+    const g = c.getContext("2d");
+    g.scale(1, 1024 / 1434);
+    const ink = "rgba(9,12,20,0.86)";
+    function rr(x, y, w, h, r) {
+      g.beginPath();
+      g.roundRect(x, y, w, h, r);
+    }
+    g.lineWidth = 11;
+    g.strokeStyle = ink;
+    rr(52, 52, 920, 1330, 34);
+    g.stroke();
+    g.lineWidth = 3;
+    g.strokeStyle = "rgba(240,236,226,0.55)";
+    rr(70, 70, 884, 1294, 24);
+    g.stroke();
+    g.fillStyle = ink;
+    rr(92, 1150, 840, 170, 22);
+    g.fill();
+    g.fillStyle = "#f3efe6";
+    g.textBaseline = "middle";
+    g.font = "900 104px Arial, Helvetica, sans-serif";
+    g.textAlign = "left";
+    if ("letterSpacing" in g) g.letterSpacing = "10px";
+    g.fillText("NOVA", 140, 1238);
+    if ("letterSpacing" in g) g.letterSpacing = "2px";
+    g.font = "700 40px Arial, Helvetica, sans-serif";
+    g.textAlign = "right";
+    g.fillText("07 / 99", 890, 1212);
+    g.font = "500 26px Arial, Helvetica, sans-serif";
+    g.fillStyle = "rgba(243,239,230,0.75)";
+    g.fillText("HOLO RARE", 890, 1266);
+    g.fillStyle = ink;
+    rr(92, 96, 300, 66, 14);
+    g.fill();
+    g.fillStyle = "#f3efe6";
+    g.textAlign = "left";
+    g.font = "700 30px Arial, Helvetica, sans-serif";
+    g.fillText("SERIES 01", 116, 130);
+    g.save();
+    g.translate(880, 130);
+    g.fillStyle = ink;
+    g.beginPath();
+    for (let i = 0; i < 8; i++) {
+      const r = i % 2 ? 11 : 38,
+        a = (i * Math.PI) / 4 - Math.PI / 2;
+      g.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+    }
+    g.closePath();
+    g.fill();
+    g.restore();
+    return c;
+  }
+  function moireGlyphs() {
+    const c = document.createElement("canvas");
+    c.width = 2048;
+    c.height = 1024;
+    const g = c.getContext("2d");
+    g.fillStyle = "#fff";
+    g.textAlign = "center";
+    g.textBaseline = "alphabetic";
+    let size = 400;
+    const font = (s) => "900 " + s + "px 'Arial Black', 'Arial Bold', Arial, Helvetica, sans-serif";
+    g.font = font(size);
+    size *= 1900 / g.measureText("MOIRÉ").width;
+    g.font = font(size);
+    const m = g.measureText("MOIRÉ");
+    const top = m.actualBoundingBoxAscent,
+      bottom = m.actualBoundingBoxDescent;
+    g.fillText("MOIRÉ", 1024, 512 + (top - bottom) / 2);
+    return c;
+  }
+
+  // ---------------------------------------------------------------- timelines
+  const PERIODS = { foil: 6 };
+  // Foil: wrist flick, looping every 6 s. Angles in degrees; band crosses the card centre at the mirror pose.
+  function foilPose(t) {
+    let ry;
+    if (t < 0.8) ry = lerp(-18, -22, smooth(t / 0.8));
+    else if (t < 1.5) ry = lerp(-22, 24, inOutCubic((t - 0.8) / 0.7));
+    else if (t < 1.9) ry = lerp(24, 21, smooth((t - 1.5) / 0.4));
+    else if (t < 4.3) ry = lerp(21, 15, smooth((t - 1.9) / 2.4));
+    else if (t < 5.2) ry = lerp(15, -20, inOutCubic((t - 4.3) / 0.9));
+    else ry = lerp(-20, -18, smooth((t - 5.2) / 0.8));
+    const rx = 2.5 * Math.sin((TAU * t) / 3 + 0.3) + 6 * bump(0.8, 1.7, t) - 4 * bump(4.3, 5.4, t);
+    return { ry: ry * DEG, rx: rx * DEG };
+  }
+  const FOIL_MIRROR = { ry: 9 * DEG, rx: 2 * DEG };
+  // Sweep coordinate at the card centre (mirrors the shader) to place the band and its spill.
+  function foilSweep(pose) {
+    const L = [-1.5, 1.4, 2.8],
+      cy = Math.cos(pose.ry),
+      sy = Math.sin(pose.ry),
+      cx = Math.cos(pose.rx),
+      sx = Math.sin(pose.rx);
+    const u = [cy, 0, -sy],
+      v = [sy * sx, cx, cy * sx];
+    const V = [0, 0, 1],
+      ln = Math.hypot(...L),
+      Lu = L.map((x) => x / ln);
+    let Hh = V.map((x, i) => x + Lu[i]);
+    const hn = Math.hypot(...Hh);
+    Hh = Hh.map((x) => x / hn);
+    const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    return 0.9535 * dot(Hh, u) + 0.3015 * dot(Hh, v);
+  }
+  const FOIL_M0 = foilSweep(FOIL_MIRROR);
+
+  // Moiré: pose of layer B = [offset x, offset y, rotation, scale] in screen-height units,
+  // plus its presence. B slides in fast (impact), pops in scale so fringes burst from the
+  // word, sweeps slowly by rotating a few degrees, settles aligned (the word vanishes), is
+  // tapped once (the word flickers back) and is withdrawn while aligned, which shows nothing.
+  const PA = 1 / 42;
+  function moirePose(t, amp) {
+    let ox = 0,
+      th = 0,
+      s = 1,
+      presence = 1;
+    if (t < 0.9) ox = 2.3;
+    else if (t < 1.45) {
+      const k = (t - 0.9) / 0.55;
+      ox = 2.3 * (1 - outCubic(k));
+      th = -3.5 * DEG * (1 - k);
+    } else {
+      const pop = spring(t - 1.45, 0.5, 0.35);
+      s = 1 + (0.08 * Math.exp(-(t - 1.45) / 0.4) * Math.cos((TAU * (t - 1.45)) / 1.3) + 0.02 * ramp(1.45, 2.0, t)) * (1 - ramp(4.4, 5.6, t)) * pop;
+      // half a period of offset keeps the word centre in a dark fringe while it sweeps
+      const sweep = ramp(1.55, 2.0, t) * (1 - ramp(4.4, 5.6, t));
+      th = (3.4 + 1.4 * Math.sin((TAU * (t - 2)) / 3.2)) * DEG * sweep;
+      ox = (0.5 + 0.3 * Math.sin((TAU * (t - 2)) / 2.8)) * PA * sweep;
+      ox += 0.35 * PA * bump(6.0, 6.6, t);
+      presence = 1 - ramp(6.65, 7.3, t);
+    }
+    return [ox, 0, th * (0.55 + 0.45 * amp), 1 + (s - 1) * (0.55 + 0.45 * amp), presence];
+  }
+
+  // ---------------------------------------------------------------- effect instances
   function create(canvas, mode) {
-    if (!["moire", "slit", "ribbon", "caustic", "foil", "morph"].includes(mode))
-      throw new Error("Unknown optical effect: " + mode);
+    if (!["moire", "slit", "ribbon", "caustic", "foil", "morph"].includes(mode)) throw new Error("Unknown optical effect: " + mode);
     const ctx = canvas.getContext("2d");
     const palette = {
       bg: [10, 15, 20],
@@ -146,119 +415,586 @@
       b: [71, 155, 244],
       c: [255, 156, 94],
     };
+    // The foil loops every 6 s; the other effects every 8 s.
+    const PERIOD = PERIODS[mode] || 8;
     let t = 0,
       amp = 1;
-    function gpu(which) {
+    const sx = () => canvas.width / W,
+      sy = () => canvas.height / H;
+    function gpu(name, uniforms, textures) {
       sharedGPU ||= makeGPU();
-      ctx.drawImage(sharedGPU.render(which, t, amp, palette), 0, 0, W, H);
+      const img = sharedGPU.render(name, canvas.width, canvas.height, uniforms, textures);
+      ctx.drawImage(img, 0, 0, W, H);
     }
     const rgb = (c) => "rgb(" + c.map(Math.round).join(",") + ")";
     const mix = (a, b, k) => a.map((v, i) => v + (b[i] - v) * k);
     const ease = (x) => x * x * (3 - 2 * x);
-    function text(txt, x, y, size, col, align = "left") {
-      ctx.fillStyle = rgb(col);
+    function text(txt, x, y, size, col, align = "left", weight = 500) {
+      ctx.fillStyle = typeof col === "string" ? col : rgb(col);
       ctx.textAlign = align;
-      ctx.font = "500 " + size + "px Arial, sans-serif";
+      ctx.textBaseline = "alphabetic";
+      ctx.font = weight + " " + size + "px Arial, sans-serif";
       ctx.fillText(txt, x, y);
     }
-    function clear() {
+    function clear(color = palette.bg) {
       ctx.globalAlpha = 1;
-      ctx.setTransform(canvas.width / W, 0, 0, canvas.height / H, 0, 0);
-      ctx.fillStyle = rgb(palette.bg);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.filter = "none";
+      ctx.setTransform(sx(), 0, 0, sy(), 0, 0);
+      ctx.fillStyle = rgb(color);
       ctx.fillRect(0, 0, W, H);
     }
-    function label(a, b) {
-      text(a, 40, 48, 17, palette.fg);
-      text(b, W - 40, H - 30, 16, palette.fg, "right");
+    // Small corner captions; a plate keeps them legible over busy frames.
+    function label(a, b, plate = false) {
+      ctx.font = "600 15px Arial, sans-serif";
+      if (plate) {
+        ctx.fillStyle = "rgba(8,11,16,0.78)";
+        const wa = ctx.measureText(a).width,
+          wb = ctx.measureText(b).width;
+        ctx.fillRect(28, 28, wa + 24, 30);
+        ctx.fillRect(W - 40 - wb - 12, H - 52, wb + 24, 30);
+      }
+      text(a, 40, 48, 15, "rgba(240,245,241,0.92)", "left", 600);
+      text(b, W - 40, H - 32, 15, "rgba(240,245,241,0.7)", "right", 500);
     }
-    const source = document.createElement("canvas");
-    source.width = W;
-    source.height = H;
-    const sg = source.getContext("2d");
+
+    // ------------------------------------------------ slit-scan
+    // Output column x shows the source at time t - (x / W) * delta. The source (a word
+    // spinning about its vertical axis and a pendulum light) is a function of time, so every
+    // device column is sampled exactly from pre-rendered sprites; nothing is buffered.
+    // Spin about the vertical axis: ramps up, holds about 1.7 turns per second, then lands
+    // exactly on the front face (7 whole turns) at 5.9 s.
+    const SPIN_A = 0.7,
+      SPIN_R1 = 0.9,
+      SPIN_B = 4.6,
+      SPIN_R2 = 1.3,
+      TURNS = 7;
+    const SPIN_W = (TAU * TURNS) / (SPIN_R1 / 2 + (SPIN_B - SPIN_A - SPIN_R1) + SPIN_R2 / 2);
+    function spin(tau) {
+      if (tau <= SPIN_A) return 0;
+      if (tau < SPIN_A + SPIN_R1) {
+        const u = (tau - SPIN_A) / SPIN_R1;
+        return SPIN_W * SPIN_R1 * (u * u * u - (u * u * u * u) / 2);
+      }
+      const plateau = SPIN_R1 / 2 + (Math.min(tau, SPIN_B) - SPIN_A - SPIN_R1);
+      if (tau < SPIN_B) return SPIN_W * plateau;
+      const v = Math.min(1, (tau - SPIN_B) / SPIN_R2);
+      return SPIN_W * (plateau + SPIN_R2 * (v - (v * v * v - (v * v * v * v) / 2)));
+    }
+    function slitDelta(time) {
+      if (time < 1 || time >= 6.05) return 0;
+      let d = 1.9 * inOutCubic((time - 1) / 1.7);
+      if (time > 2.7) d = 1.9 * (1 + 0.08 * Math.sin((TAU * (time - 2.7)) / 3.1));
+      d += 0.3 * bump(2.7, 3.3, time);
+      if (time > 5.8) d *= 1 - inCubic((time - 5.8) / 0.25);
+      return d * amp;
+    }
+    const PIVOT = [W / 2, -0.3 * H],
+      ROD = 1.0 * H;
+    function orbAt(tau) {
+      const a = 0.62 * Math.sin((TAU * tau) / 4 + 0.2);
+      return [PIVOT[0] + ROD * Math.sin(a), PIVOT[1] + ROD * Math.cos(a)];
+    }
+    // The source is a printed banner, 760 x 240 logical units, spinning in perspective.
+    const BANNER = { hw: 380, hh: 118, cy: 292, dist: 1300 };
+    let slitSprites = null;
+    function makeSlitSprites() {
+      const S = 2,
+        font = "900 230px Arial, Helvetica, sans-serif";
+      const probe = document.createElement("canvas").getContext("2d");
+      probe.font = font;
+      const m = probe.measureText("TIME");
+      const capTop = m.actualBoundingBoxAscent;
+      function banner(back) {
+        const c = document.createElement("canvas");
+        c.width = BANNER.hw * 2 * S;
+        c.height = BANNER.hh * 2 * S;
+        const g = c.getContext("2d");
+        g.scale(S, S);
+        const bg = g.createLinearGradient(0, 0, BANNER.hw * 2, BANNER.hh * 2);
+        if (back) {
+          bg.addColorStop(0, "#ff2f7d");
+          bg.addColorStop(0.55, "#ff7a2f");
+          bg.addColorStop(1, "#ffc93a");
+        } else {
+          bg.addColorStop(0, "#fbf6ec");
+          bg.addColorStop(1, "#dfeaff");
+        }
+        g.fillStyle = bg;
+        g.beginPath();
+        g.roundRect(2, 2, BANNER.hw * 2 - 4, BANNER.hh * 2 - 4, 26);
+        g.fill();
+        g.strokeStyle = back ? "rgba(255,240,225,0.75)" : "rgba(20,28,52,0.85)";
+        g.lineWidth = 5;
+        g.beginPath();
+        g.roundRect(16, 16, BANNER.hw * 2 - 32, BANNER.hh * 2 - 32, 16);
+        g.stroke();
+        g.fillStyle = back ? "#fff4e6" : "#141c34";
+        g.font = font;
+        g.textAlign = "center";
+        g.textBaseline = "alphabetic";
+        g.fillText("TIME", BANNER.hw, BANNER.hh + capTop / 2);
+        return c;
+      }
+      const letters = [];
+      let x = -m.width / 2;
+      for (const ch of "TIME") {
+        const w = probe.measureText(ch).width;
+        letters.push([ch, x, x + w]);
+        x += w;
+      }
+      const R = 92,
+        orb = document.createElement("canvas");
+      orb.width = orb.height = R * 2 * S;
+      const og = orb.getContext("2d");
+      og.scale(S, S);
+      const gr = og.createRadialGradient(R, R, 0, R, R, R);
+      gr.addColorStop(0, "rgba(255,248,226,1)");
+      gr.addColorStop(0.12, "rgba(255,222,150,1)");
+      gr.addColorStop(0.32, "rgba(120,200,255,0.55)");
+      gr.addColorStop(1, "rgba(60,140,255,0)");
+      og.fillStyle = gr;
+      og.fillRect(0, 0, R * 2, R * 2);
+      return { S, letters, R, orb, front: banner(false), back: banner(true) };
+    }
+    // Banner column seen at screen column x when the banner has turned by theta.
+    function bannerColumn(x, theta) {
+      const c = Math.cos(theta),
+        s = Math.sin(theta),
+        dx = x - W / 2,
+        den = BANNER.dist * c + dx * s;
+      if (Math.abs(den) < 1e-6) return null;
+      const xl = (dx * BANNER.dist) / den;
+      if (Math.abs(xl) > BANNER.hw) return null;
+      const depth = BANNER.dist - xl * s;
+      if (depth <= 1) return null;
+      return { xl, c, scale: BANNER.dist / depth, slope: Math.abs((BANNER.dist * BANNER.dist * c) / (den * den)) };
+    }
     function slit() {
-      const a = (t * TAU) / 8;
-      sg.clearRect(0, 0, W, H);
-      sg.fillStyle = rgb(palette.fg);
-      sg.textAlign = "center";
-      sg.font = "500 210px Arial, sans-serif";
-      sg.fillText("FLOW", W / 2, 360);
-      for (let y = 90; y < 480; y += 3) {
-        const phase = a * 2 + (y / H) * 4.5 * amp;
-        const dx = Math.sin(phase) * 125 * amp;
-        const scale = 0.88 + 0.15 * Math.cos(phase + 0.7);
-        ctx.drawImage(
-          source,
-          0,
-          y,
-          W,
-          3,
-          dx + (W * (1 - scale)) / 2,
-          y,
-          W * scale,
-          3,
-        );
-      }
-      ctx.globalAlpha = 0.65;
-      for (let y = 110; y < 470; y += 15) {
-        ctx.fillStyle = rgb(mix(palette.a, palette.b, y / H));
-        ctx.fillRect(45, y, 7, 3);
-      }
-      ctx.globalAlpha = 1;
-      text("TIME / SPACE", 40, 545, 30, palette.a);
-      label("02 / SLIT SCAN", "CANVAS · TIME-OFFSET SLICES");
-    }
-    function ribbon() {
-      const a = (t * TAU) / 8,
-        faces = [];
-      function p(u, v) {
-        let x = (u - 0.5) * 820,
-          y = Math.sin(u * TAU * 1.4 + a) * 55 * amp;
-        const roll = Math.sin(u * TAU - a) * 1.25 * amp + u * 4;
-        y += Math.cos(roll) * v * 110;
-        let z = Math.sin(roll) * v * 110 + Math.cos(u * TAU + a) * 80;
-        const tilt = 0.24;
-        const yy = y * Math.cos(tilt) - z * Math.sin(tilt);
-        const zz = y * Math.sin(tilt) + z * Math.cos(tilt);
-        const s = 900 / (900 - zz);
-        return { x: W / 2 + x * s, y: H / 2 + yy * s, z: zz };
-      }
-      for (let i = 0; i < 86; i++) {
-        let u = i / 86;
-        const v = [p(u, -1), p(u + 1 / 86, -1), p(u + 1 / 86, 1), p(u, 1)];
-        const shade =
-          0.5 + 0.5 * Math.cos(Math.sin(u * TAU - a) * 1.25 * amp + u * 4);
-        faces.push({ v, z: v.reduce((s, p) => s + p.z, 0) / 4, u, shade });
-      }
-      faces.sort((a, b) => a.z - b.z);
-      for (const f of faces) {
-        const base = mix(palette.a, palette.b, f.u);
-        const col = mix(
-          mix(palette.bg, base, 0.55),
-          mix(base, palette.fg, 0.4),
-          f.shade,
-        );
-        ctx.fillStyle = rgb(col);
-        ctx.strokeStyle = rgb(col);
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        f.v.forEach((p, i) =>
-          i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y),
-        );
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-        if (Math.floor(f.u * 86) % 7 === 0) {
-          ctx.strokeStyle = rgb(mix(col, palette.fg, 0.36));
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(f.v[0].x, f.v[0].y);
-          ctx.lineTo(f.v[3].x, f.v[3].y);
-          ctx.stroke();
+      const sp = (slitSprites ||= makeSlitSprites());
+      clear([7, 9, 14]);
+      const bgG = ctx.createRadialGradient(W / 2, 300, 40, W / 2, 300, 700);
+      bgG.addColorStop(0, "rgba(40,52,78,0.55)");
+      bgG.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = bgG;
+      ctx.fillRect(0, 0, W, H);
+      const delta = slitDelta(t);
+      const flash = t >= 2.86 ? Math.exp(-Math.max(0, t - 2.9) / 0.09) * Math.min(1, (t - 2.86) / 0.04) : 0;
+      const orbScale = 1 + 0.5 * flash;
+      const Rv = sp.R * orbScale;
+      const cw = canvas.width,
+        kx = sx(),
+        ky = sy();
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      // delta = 0 is the plain source: every column shares one moment
+      for (let X = 0; X < cw; X++) {
+        const x = (X + 0.5) / kx,
+          tau = t - (x / W) * delta;
+        const col = bannerColumn(x, spin(tau));
+        if (col) {
+          const front = col.c >= 0,
+            img = front ? sp.front : sp.back;
+          const u0 = (front ? col.xl + BANNER.hw : BANNER.hw - col.xl) * sp.S;
+          const du = Math.min(img.width / 4, Math.max(0.5, (sp.S * col.slope) / kx));
+          const u = clamp(u0 - du / 2, 0, img.width - du);
+          const h = BANNER.hh * col.scale;
+          ctx.globalAlpha = 1;
+          ctx.drawImage(img, u, 0, du, img.height, X, (BANNER.cy - h) * ky, 1, 2 * h * ky);
+          const dark = 0.62 * (1 - Math.abs(col.c));
+          if (dark > 0.01) {
+            ctx.fillStyle = "rgba(6,8,14," + dark.toFixed(3) + ")";
+            ctx.fillRect(X, (BANNER.cy - h) * ky, 1, 2 * h * ky);
+          }
+        }
+        const [ox, oy] = orbAt(tau);
+        const dx = x - ox;
+        if (Math.abs(dx) < Rv) {
+          const du = Math.max(0.5, sp.S / kx / orbScale);
+          const u = clamp((dx / orbScale + sp.R) * sp.S - du / 2, 0, sp.orb.width - du);
+          ctx.globalCompositeOperation = "lighter";
+          ctx.drawImage(sp.orb, u, 0, du, sp.orb.height, X, (oy - Rv) * ky, 1, Rv * 2 * ky);
+          ctx.globalCompositeOperation = "source-over";
         }
       }
-      text("FOLD / UNFOLD", 40, 546, 36, palette.fg);
-      label("03 / PAPER RIBBON", "PROJECTED GEOMETRY · NO PHYSICS");
+      ctx.restore();
+      ctx.globalAlpha = 1;
+      if (flash > 0) {
+        ctx.globalCompositeOperation = "lighter";
+        ctx.fillStyle = "rgba(255,240,220," + (0.36 * flash).toFixed(4) + ")";
+        ctx.fillRect(0, 0, W, H);
+        ctx.globalCompositeOperation = "source-over";
+      }
+      // Time ruler: column x shows the moment t - (x / W) * delta.
+      const y = 560,
+        x0 = 60,
+        x1 = W - 60;
+      ctx.strokeStyle = "rgba(240,245,241,0.35)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(x0, y);
+      ctx.lineTo(x1, y);
+      for (let i = 0; i <= 16; i++) {
+        const x = lerp(x0, x1, i / 16),
+          h = i % 4 ? 5 : 10;
+        ctx.moveTo(x, y - h);
+        ctx.lineTo(x, y + h);
+      }
+      ctx.stroke();
+      text("NOW", x0, y + 32, 15, "rgba(240,245,241,0.75)", "left", 600);
+      text(delta > 0 ? "NOW − " + delta.toFixed(2) + " s" : "NOW", x1, y + 32, 15, "rgba(240,245,241,0.75)", "right", 600);
+      label("SLIT-SCAN · TIME DISPLACEMENT", "");
     }
+    // Instances of one printed letter across the frame on a 1280-column grid.
+    function slitLetterRuns(time, letterIndex = 0, columns = 1280) {
+      const sp = (slitSprites ||= makeSlitSprites());
+      const delta = slitDelta(time),
+        [, a, b] = sp.letters[letterIndex];
+      const runs = [];
+      let run = null;
+      for (let X = 0; X < columns; X++) {
+        const x = ((X + 0.5) / columns) * W,
+          tau = time - (x / W) * delta,
+          th = spin(tau);
+        const col = bannerColumn(x, th);
+        // the back print is mirrored in banner space
+        const xl = col ? (col.c >= 0 ? col.xl : -col.xl) : NaN;
+        const inside = col && xl >= a && xl <= b;
+        if (inside && !run) run = { from: X, to: X, angles: [] };
+        if (inside) {
+          run.to = X;
+          run.angles.push(((th % TAU) + TAU) % TAU);
+          run.front = col.c >= 0;
+        }
+        if (!inside && run) {
+          runs.push(run);
+          run = null;
+        }
+      }
+      if (run) runs.push(run);
+      return runs.map((r) => ({ from: r.from, to: r.to, front: r.front, angle: Math.round(r.angles.reduce((s, v) => s + v, 0) / r.angles.length / DEG) }));
+    }
+
+    // ------------------------------------------------ paper ribbon
+    const PANELS = 8,
+      PA_LEN = 156,
+      PB = 120,
+      SUB = 4;
+    function ribbonPrint(back) {
+      const c = document.createElement("canvas");
+      c.width = PANELS * PA_LEN * 2;
+      c.height = PB * 2;
+      const g = c.getContext("2d");
+      g.scale(2, 2);
+      g.fillStyle = back ? "#f0553f" : "#f5efe3";
+      g.fillRect(0, 0, PANELS * PA_LEN, PB);
+      let seed = back ? 91 : 17;
+      const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+      for (let i = 0; i < 2600; i++) {
+        g.fillStyle = rnd() > 0.5 ? "rgba(255,255,255,0.10)" : "rgba(60,40,20,0.07)";
+        g.fillRect(rnd() * PANELS * PA_LEN, rnd() * PB, 1 + rnd() * 2.5, 0.7);
+      }
+      if (back) {
+        g.strokeStyle = "rgba(255,226,200,0.28)";
+        g.lineWidth = 7;
+        for (let x = -PB; x < PANELS * PA_LEN + PB; x += 26) {
+          g.beginPath();
+          g.moveTo(x, PB);
+          g.lineTo(x + PB, 0);
+          g.stroke();
+        }
+        g.fillStyle = "rgba(255,240,226,0.9)";
+        g.fillRect(0, 9, PANELS * PA_LEN, 4);
+        g.fillRect(0, PB - 13, PANELS * PA_LEN, 4);
+      } else {
+        g.fillStyle = "#1f2a4d";
+        g.fillRect(0, 9, PANELS * PA_LEN, 5);
+        g.fillRect(0, PB - 14, PANELS * PA_LEN, 5);
+        g.textBaseline = "middle";
+        g.textAlign = "center";
+        g.font = "900 64px Arial, Helvetica, sans-serif";
+        const words = ["FOLD", "✦", "LOOP", "✦", "FLOAT"];
+        const xs = [190, 360, 590, 820, 1030];
+        words.forEach((w, i) => {
+          g.fillStyle = w === "✦" ? "#f0553f" : "#1f2a4d";
+          g.font = (w === "✦" ? "700 44px" : "900 64px") + " Arial, Helvetica, sans-serif";
+          g.fillText(w, xs[i], PB / 2 + 3);
+        });
+      }
+      if (back) {
+        // The back is seen from behind: mirror it so its pattern runs the right way.
+        const m = document.createElement("canvas");
+        m.width = c.width;
+        m.height = c.height;
+        const mg = m.getContext("2d");
+        mg.translate(c.width, 0);
+        mg.scale(-1, 1);
+        mg.drawImage(c, 0, 0);
+        return m;
+      }
+      return c;
+    }
+    let ribbonTex = null;
+    const shadowCanvas = document.createElement("canvas");
+    // 3x4 affine matrices as arrays [r00,r01,r02,tx, r10,r11,r12,ty, r20,r21,r22,tz]
+    const mul = (A, B) => {
+      const C = new Array(12);
+      for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 4; c++) {
+          let v = c === 3 ? A[r * 4 + 3] : 0;
+          for (let k = 0; k < 3; k++) v += A[r * 4 + k] * B[k * 4 + c];
+          C[r * 4 + c] = v;
+        }
+      }
+      return C;
+    };
+    const apply = (M, p) => [0, 1, 2].map((r) => M[r * 4] * p[0] + M[r * 4 + 1] * p[1] + M[r * 4 + 2] * p[2] + M[r * 4 + 3]);
+    const rotY = (a) => [Math.cos(a), 0, Math.sin(a), 0, 0, 1, 0, 0, -Math.sin(a), 0, Math.cos(a), 0];
+    const rotX = (a) => [1, 0, 0, 0, 0, Math.cos(a), -Math.sin(a), 0, 0, Math.sin(a), Math.cos(a), 0];
+    const rotZ = (a) => [Math.cos(a), -Math.sin(a), 0, 0, Math.sin(a), Math.cos(a), 0, 0, 0, 0, 1, 0];
+    const trans = (x, y, z) => [1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z];
+    const norm = (v) => {
+      const l = Math.hypot(v[0], v[1], v[2]) || 1;
+      return [v[0] / l, v[1] / l, v[2] / l];
+    };
+    const dot3 = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    const CAM = [0, 260, 1500],
+      FOCAL = 1250,
+      PITCH = Math.atan2(CAM[1] - 10, CAM[2]);
+    const LIGHT_DIR = norm([-0.45, 1, 0.42]);
+    const FLOOR = -150;
+    function toCam(p) {
+      const x = p[0] - CAM[0],
+        y = p[1] - CAM[1],
+        z = p[2] - CAM[2];
+      const c = Math.cos(PITCH),
+        s = Math.sin(PITCH);
+      return [x, y * c - z * s, y * s + z * c];
+    }
+    function project(p) {
+      const q = toCam(p);
+      const d = -q[2];
+      return [W / 2 + (FOCAL * q[0]) / d, H / 2 - (FOCAL * q[1]) / d, d];
+    }
+    function ribbonState(time) {
+      // fly in, fold into an octagonal loop, float, drift away
+      const flutterAmp = 17 * (1 - ramp(0.55, 1.05, time)) * amp;
+      const alphas = [];
+      for (let i = 1; i < PANELS; i++) {
+        const start = 0.7 + (i - 1) * 0.068;
+        const fold = 45 * spring(time - start, 0.36, 0.42);
+        // zero-sum weights keep the loop closed while the paper flexes
+        const breathe = 2.4 * [1, -1, 1, -1, 1, -1, 0][i - 1] * Math.sin((TAU * time) / 2.4) * ramp(1.5, 2.2, time) * amp;
+        const flutter = flutterAmp * Math.sin(TAU * 1.6 * time - i * 1.05);
+        alphas.push((fold + breathe + flutter) * DEG);
+      }
+      // frames along the strip (structure space)
+      const frames = [trans(0, 0, 0)];
+      for (let k = 1; k < PANELS; k++) frames.push(mul(mul(frames[k - 1], trans(PA_LEN, 0, 0)), rotY(alphas[k - 1])));
+      let cx = 0,
+        cy = 0,
+        cz = 0;
+      const local = frames.map((F) => {
+        const v = [
+          apply(F, [0, -PB / 2, 0]),
+          apply(F, [PA_LEN, -PB / 2, 0]),
+          apply(F, [PA_LEN, PB / 2, 0]),
+          apply(F, [0, PB / 2, 0]),
+        ];
+        v.forEach((p) => {
+          cx += p[0];
+          cy += p[1];
+          cz += p[2];
+        });
+        return v;
+      });
+      const n = PANELS * 4;
+      const centre = trans(-cx / n, -cy / n, -cz / n);
+      // orientation: flat and facing camera while flying, a tilted loop afterwards
+      const ringK = ramp(0.75, 1.65, time);
+      const spinA = (-24 + 26 * Math.max(0, time - 1.2) * (0.6 + 0.4 * amp) + 40 * ramp(6.5, 8, time) * (time - 6.5)) * DEG;
+      const flyRoll = (14 * (1 - outCubic(time / 0.9)) - 4) * DEG * (1 - ringK);
+      const orient = mul(rotX(lerp(-8, 31, ringK) * DEG), mul(rotZ(flyRoll), rotY(spinA * ringK + (1 - ringK) * -6 * DEG)));
+      // world path
+      const fly = outCubic(time / 0.95);
+      const settle = ramp(0.85, 1.8, time);
+      let px = lerp(-1080, -20, fly) + 20 * settle,
+        py = lerp(240, 70, fly),
+        pz = lerp(-500, 0, fly) + 380 * settle;
+      const bob = 9 * Math.sin((TAU * (time - 1.6)) / 2.8) * ramp(1.4, 2.2, time) * amp;
+      py += bob;
+      const exit = inCubic((time - 6.55) / 1.45);
+      if (time > 6.55) {
+        px += 1180 * exit;
+        py += 240 * exit;
+        pz -= 420 * exit;
+      }
+      const pop = 1 + 0.045 * bump(1.38, 1.72, time);
+      const S = [pop, 0, 0, 0, 0, pop, 0, 0, 0, 0, pop, 0];
+      const M = mul(trans(px, py, pz), mul(orient, mul(S, centre)));
+      const panels = local.map((v, k) => {
+        const w = v.map((p) => apply(M, p));
+        const e1 = w[1].map((x, i) => x - w[0][i]),
+          e2 = w[3].map((x, i) => x - w[0][i]);
+        const nrm = norm([e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]]);
+        const ctr = [0, 1, 2].map((i) => (w[0][i] + w[1][i] + w[2][i] + w[3][i]) / 4);
+        return { k, w, nrm, ctr, depth: -toCam(ctr)[2] };
+      });
+      return { panels, M, local, frames };
+    }
+    function triangle(img, s0, s1, s2, d0, d1, d2) {
+      // affine map from texture triangle s to screen triangle d (logical units), clip slightly enlarged
+      const cxs = (d0[0] + d1[0] + d2[0]) / 3,
+        cys = (d0[1] + d1[1] + d2[1]) / 3;
+      const grow = (p) => {
+        const dx = p[0] - cxs,
+          dy = p[1] - cys,
+          l = Math.hypot(dx, dy) || 1;
+        return [p[0] + (dx / l) * 0.9, p[1] + (dy / l) * 0.9];
+      };
+      const [g0, g1, g2] = [grow(d0), grow(d1), grow(d2)];
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(g0[0], g0[1]);
+      ctx.lineTo(g1[0], g1[1]);
+      ctx.lineTo(g2[0], g2[1]);
+      ctx.closePath();
+      ctx.clip();
+      const den = s0[0] * (s1[1] - s2[1]) + s1[0] * (s2[1] - s0[1]) + s2[0] * (s0[1] - s1[1]);
+      if (Math.abs(den) < 1e-9) {
+        ctx.restore();
+        return;
+      }
+      const a = (d0[0] * (s1[1] - s2[1]) + d1[0] * (s2[1] - s0[1]) + d2[0] * (s0[1] - s1[1])) / den;
+      const b = (d0[1] * (s1[1] - s2[1]) + d1[1] * (s2[1] - s0[1]) + d2[1] * (s0[1] - s1[1])) / den;
+      const c = (d0[0] * (s2[0] - s1[0]) + d1[0] * (s0[0] - s2[0]) + d2[0] * (s1[0] - s0[0])) / den;
+      const d = (d0[1] * (s2[0] - s1[0]) + d1[1] * (s0[0] - s2[0]) + d2[1] * (s1[0] - s0[0])) / den;
+      const e = (d0[0] * (s1[0] * s2[1] - s2[0] * s1[1]) + d1[0] * (s2[0] * s0[1] - s0[0] * s2[1]) + d2[0] * (s0[0] * s1[1] - s1[0] * s0[1])) / den;
+      const f = (d0[1] * (s1[0] * s2[1] - s2[0] * s1[1]) + d1[1] * (s2[0] * s0[1] - s0[0] * s2[1]) + d2[1] * (s0[0] * s1[1] - s1[0] * s0[1])) / den;
+      ctx.transform(a, b, c, d, e, f);
+      ctx.drawImage(img, 0, 0);
+      ctx.restore();
+    }
+    function ribbon() {
+      ribbonTex ||= { front: ribbonPrint(false), back: ribbonPrint(true) };
+      clear([16, 21, 29]);
+      // studio sweep: wall fades into a lit floor
+      const wall = ctx.createLinearGradient(0, 0, 0, H);
+      wall.addColorStop(0, "#1a2230");
+      wall.addColorStop(0.55, "#2a3444");
+      wall.addColorStop(1, "#384354");
+      ctx.fillStyle = wall;
+      ctx.fillRect(0, 0, W, H);
+      const pool = ctx.createRadialGradient(W / 2, 540, 20, W / 2, 540, 560);
+      pool.addColorStop(0, "rgba(140,154,178,0.55)");
+      pool.addColorStop(1, "rgba(120,136,160,0)");
+      ctx.fillStyle = pool;
+      ctx.fillRect(0, 0, W, H);
+      const state = ribbonState(t);
+      // cast shadow on the floor plane, drawn in device pixels and blurred to scale
+      const cw = canvas.width,
+        ch = canvas.height;
+      if (shadowCanvas.width !== cw || shadowCanvas.height !== ch) {
+        shadowCanvas.width = cw;
+        shadowCanvas.height = ch;
+      }
+      const sg = shadowCanvas.getContext("2d");
+      sg.setTransform(1, 0, 0, 1, 0, 0);
+      sg.clearRect(0, 0, cw, ch);
+      sg.setTransform(sx(), 0, 0, sy(), 0, 0);
+      sg.fillStyle = "#000";
+      let lift = 0;
+      for (const p of state.panels) {
+        sg.beginPath();
+        p.w.forEach((q, i) => {
+          const k = (q[1] - FLOOR) / LIGHT_DIR[1];
+          lift += q[1] - FLOOR;
+          const s = project([q[0] - LIGHT_DIR[0] * k, FLOOR, q[2] - LIGHT_DIR[2] * k]);
+          if (i) sg.lineTo(s[0], s[1]);
+          else sg.moveTo(s[0], s[1]);
+        });
+        sg.closePath();
+        sg.fill();
+      }
+      lift /= state.panels.length * 4;
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      const blurPx = (6 + lift * 0.04) * sx();
+      ctx.filter = "blur(" + blurPx.toFixed(2) + "px)";
+      ctx.globalAlpha = clamp(0.8 - lift * 0.0007, 0.3, 0.72);
+      ctx.drawImage(shadowCanvas, 0, 0);
+      ctx.restore();
+      ctx.filter = "none";
+      ctx.globalAlpha = 1;
+      // panels, far to near
+      const toCamera = (p) => norm(CAM.map((c, i) => c - p[i]));
+      const order = [...state.panels].sort((a, b) => b.depth - a.depth);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      for (const p of order) {
+        const view = toCamera(p.ctr);
+        const front = dot3(p.nrm, view) > 0;
+        const n = front ? p.nrm : p.nrm.map((x) => -x);
+        const diff = Math.max(0, dot3(n, LIGHT_DIR));
+        const refl = norm(n.map((x, i) => 2 * dot3(n, LIGHT_DIR) * x - LIGHT_DIR[i]));
+        const spec = Math.pow(Math.max(0, dot3(refl, view)), 24) * 0.22;
+        const img = front ? ribbonTex.front : ribbonTex.back;
+        const scr = p.w.map(project);
+        const tx = (u) => (front ? u : PANELS * PA_LEN * 2 - u);
+        for (let j = 0; j < SUB; j++) {
+          const f0 = j / SUB,
+            f1 = (j + 1) / SUB;
+          const lerp2 = (A, B, k) => [lerp(A[0], B[0], k), lerp(A[1], B[1], k)];
+          const s00 = lerp2(scr[0], scr[1], f0),
+            s10 = lerp2(scr[0], scr[1], f1),
+            s11 = lerp2(scr[3], scr[2], f1),
+            s01 = lerp2(scr[3], scr[2], f0);
+          const u0 = tx((p.k + f0) * PA_LEN * 2),
+            u1 = tx((p.k + f1) * PA_LEN * 2);
+          // texture row 0 is the material edge y = +PB/2
+          triangle(img, [u0, PB * 2], [u1, PB * 2], [u1, 0], s00, s10, s11);
+          triangle(img, [u0, PB * 2], [u1, 0], [u0, 0], s00, s11, s01);
+        }
+        const shade = Math.min(1, 0.46 + 0.5 * diff + 0.18 * Math.max(0, dot3(n, view)));
+        ctx.beginPath();
+        scr.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])));
+        ctx.closePath();
+        ctx.globalCompositeOperation = "multiply";
+        const g = Math.round(255 * shade);
+        ctx.fillStyle = "rgb(" + g + "," + g + "," + Math.round(g * 0.97 + 8) + ")";
+        ctx.fill();
+        if (spec > 0.004) {
+          ctx.globalCompositeOperation = "lighter";
+          ctx.fillStyle = "rgba(255,250,240," + spec.toFixed(4) + ")";
+          ctx.fill();
+        }
+        ctx.globalCompositeOperation = "source-over";
+        // creases: the two short edges of every panel
+        ctx.lineWidth = 1.4;
+        ctx.strokeStyle = front ? "rgba(40,30,20,0.28)" : "rgba(90,20,10,0.35)";
+        ctx.beginPath();
+        if (p.k > 0) {
+          ctx.moveTo(scr[0][0], scr[0][1]);
+          ctx.lineTo(scr[3][0], scr[3][1]);
+        }
+        if (p.k < PANELS - 1) {
+          ctx.moveTo(scr[1][0], scr[1][1]);
+          ctx.lineTo(scr[2][0], scr[2][1]);
+        }
+        ctx.stroke();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "rgba(255,255,255,0.10)";
+        ctx.beginPath();
+        ctx.moveTo(scr[0][0], scr[0][1]);
+        ctx.lineTo(scr[1][0], scr[1][1]);
+        ctx.moveTo(scr[3][0], scr[3][1]);
+        ctx.lineTo(scr[2][0], scr[2][1]);
+        ctx.stroke();
+      }
+      label("PAPER RIBBON", "CANVAS 2D · 7 CREASES · CAST SHADOW");
+    }
+
+    // ------------------------------------------------ path morph (unchanged)
     const shapes = [
       "M-130,-110 L-40,-110 L0,-20 L40,-110 L130,-110 L130,110 L45,110 L45,10 L0,95 L-45,10 L-45,110 L-130,110 Z",
       "M-5,-155 L-135,25 L-25,25 L-55,155 L140,-45 L25,-45 L80,-155 Z",
@@ -285,55 +1021,85 @@
         ctx.save();
         ctx.translate(W / 2 - j * 9 * amp, H / 2 + j * 6 * amp);
         ctx.scale(1.15, 1.15);
-        ctx.fillStyle = rgb(
-          j === 0
-            ? palette.fg
-            : mix(
-                palette.bg,
-                mix(palette.a, palette.b, j / 9),
-                0.9 - j * 0.065,
-              ),
-        );
+        ctx.fillStyle = rgb(j === 0 ? palette.fg : mix(palette.bg, mix(palette.a, palette.b, j / 9), 0.9 - j * 0.065));
         ctx.fill(path);
         ctx.restore();
       }
-      label("06 / SHAPE LANGUAGE", "FLUBBER 0.4.2 · ARBITRARY PATHS");
-      text(
-        ["MONOGRAM → ENERGY", "ENERGY → LOVE", "LOVE → MONOGRAM"][i],
-        40,
-        548,
-        28,
-        palette.a,
-      );
+      label("PATH MORPH", "FLUBBER 0.4.2 · ARBITRARY PATHS");
+      text(["MONOGRAM → ENERGY", "ENERGY → LOVE", "LOVE → MONOGRAM"][i], 40, 548, 28, palette.a);
     }
+
+    const toGL = (c) => c.map((v) => v / 255);
     function draw() {
       clear();
       if (mode === "moire") {
-        gpu(0);
-        label("01 / OPTICAL INTERFERENCE", "GLSL · TWO WAVE FIELDS");
+        const pose = moirePose(t, amp);
+        gpu("moire", { res: [canvas.width, canvas.height], pose: pose.slice(0, 4), presence: pose[4], amount: amp }, { glyph: ["moire-glyphs", moireGlyphs] });
+        label("OPTICAL INTERFERENCE", "GLSL · TWO LINE GRATINGS · HIDDEN WORD", true);
       }
       if (mode === "slit") slit();
       if (mode === "ribbon") ribbon();
       if (mode === "caustic") {
-        gpu(1);
+        gpu("caustic", { resolution: [canvas.width, canvas.height], time: t, amount: amp, bg: toGL(palette.bg), fg: toGL(palette.fg), cb: toGL(palette.b) });
         text("AFTER", W / 2, 295, 88, palette.fg, "center");
         text("THE RAIN", W / 2, 389, 88, palette.fg, "center");
-        label("04 / CAUSTIC LIGHT", "PROCEDURAL WATER LIGHT");
+        label("CAUSTIC LIGHT", "PROCEDURAL WATER LIGHT");
       }
       if (mode === "foil") {
-        gpu(2);
-        text("SPECTRUM", 40, 545, 34, palette.fg);
-        label("05 / HOLOGRAPHIC FOIL", "GLSL · IRIDESCENT DISC");
+        const pose = foilPose(t);
+        const e = 0.01,
+          a = foilPose(t - e),
+          b = foilPose(t + e);
+        const vel = Math.hypot(b.ry - a.ry, b.rx - a.rx) / (2 * e);
+        const m = foilSweep(pose) - FOIL_M0;
+        gpu(
+          "foil",
+          { res: [canvas.width, canvas.height], rot: [pose.ry, pose.rx], vel, amount: amp, m0: FOIL_M0, spill: Math.exp(-(m * m) / 0.012) * amp },
+          { print: ["foil-card", cardPrint] },
+        );
+        label("HOLOGRAPHIC FOIL", "GLSL · ART-DIRECTED DIFFRACTION · GLITTER FLAKES");
       }
       if (mode === "morph") morph();
     }
-    return (time, strength = 1) => {
-      if (!Number.isFinite(time) || !Number.isFinite(strength))
-        throw new Error("Optical time and strength must be finite");
-      t = ((time % 8) + 8) % 8;
+    const frame = (time, strength = 1) => {
+      if (!Number.isFinite(time) || !Number.isFinite(strength)) throw new Error("Optical time and strength must be finite");
+      t = ((time % PERIOD) + PERIOD) % PERIOD;
       amp = Math.max(0.25, Math.min(1.5, strength));
       draw();
     };
+    // Measured facts for tests and review; computed from the same timelines as the pixels.
+    frame.proof = (time, strength = 1) => {
+      const tt = ((time % PERIOD) + PERIOD) % PERIOD,
+        a = Math.max(0.25, Math.min(1.5, strength));
+      if (mode === "slit") {
+        amp = a;
+        const delta = slitDelta(tt);
+        let lo = Infinity,
+          hi = -Infinity;
+        if (delta > 0)
+          for (let X = 0; X < 1280; X++) {
+            const x = ((X + 0.5) / 1280) * W,
+              [ox] = orbAt(tt - (x / W) * delta);
+            if (Math.abs(x - ox) < 30) {
+              lo = Math.min(lo, X);
+              hi = Math.max(hi, X);
+            }
+          }
+        return { delta, spin: spin(tt), columns: delta ? "per device column" : "single source frame", tRuns: slitLetterRuns(tt), orbTrailOfWidth: hi > lo ? (hi - lo) / 1280 : 0 };
+      }
+      if (mode === "moire") {
+        const [ox, oy, th, s, presence] = moirePose(tt, a);
+        const k = [1 - Math.cos(th) / s, -Math.sin(th) / s];
+        const fringe = PA / Math.max(1e-9, Math.hypot(k[0], k[1]));
+        return { pose: [ox, oy, th, s], presence, fringePeriodOfWidth: fringe / (16 / 9), aligned: Math.abs(th) < 1e-9 && Math.abs(s - 1) < 1e-9 && Math.abs(ox - Math.round(ox / PA) * PA) < 1e-9 };
+      }
+      if (mode === "foil") {
+        const pose = foilPose(tt);
+        return { ry: pose.ry / DEG, rx: pose.rx / DEG, sweep: foilSweep(pose) - FOIL_M0 };
+      }
+      return {};
+    };
+    return frame;
   }
-  window.FXOptical = { create };
+  window.FXOptical = { create, periods: { moire: 8, slit: 8, ribbon: 8, caustic: 8, foil: 6, morph: 8 } };
 })();

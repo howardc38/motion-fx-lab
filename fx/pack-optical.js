@@ -1,5 +1,7 @@
 // Load flubber@0.4.2 and optical-effects.js before this pack.
 // Uses the same build(stage) -> frame(t) interface as the original gallery.
+// The canvas follows window.FX_RENDER_SIZE, so a film-size render draws native pixels
+// and the gallery tile draws at its own size; every effect scales its lines to the canvas.
 (() => {
   if (!window.FX) return;
   const studies = [
@@ -9,8 +11,9 @@
       "shader",
       ["canvas", "glsl"],
       "B",
-      "Two moving wave fields interfere to form an optical pattern.",
-      ["shared WebGL", "wave interference"],
+      "A second line grating slides over the first. Their beat bursts into broad fringes and reveals a word hidden in the top layer, which disappears again when the layers rest aligned.",
+      ["GLSL", "two line gratings", "hidden word"],
+      2.6,
     ],
     [
       "slit",
@@ -18,8 +21,9 @@
       "type",
       ["canvas"],
       "A",
-      "Horizontal slices sample different phases of moving type; every slice is recomputed from time.",
-      ["Canvas 2D", "time-offset slices"],
+      "Column x shows the source at time t − (x / W) · Δ. A spinning word and a swinging light become a twisted time ribbon, then snap back into place when Δ returns to zero.",
+      ["Canvas 2D", "64 time slices"],
+      3.2,
     ],
     [
       "ribbon",
@@ -27,8 +31,9 @@
       "motion",
       ["canvas"],
       "A",
-      "A twisting ribbon built from projected faces. Geometric deformation, not a cloth simulation.",
-      ["projected geometry", "depth-sorted faces"],
+      "A printed paper strip flies in, snaps along seven creases into an octagonal loop and floats over its own shadow. Kinematic folds, not cloth physics.",
+      ["Canvas 2D", "folded panels", "cast shadow"],
+      2.3,
     ],
     [
       "caustic",
@@ -38,6 +43,7 @@
       "B",
       "Flowing bands of water light. A procedural approximation, not ray-traced optics.",
       ["GLSL", "procedural water light"],
+      2.1,
     ],
     [
       "foil",
@@ -45,8 +51,9 @@
       "shader",
       ["canvas", "glsl"],
       "B",
-      "A grooved disc with moving spectral highlights. Art-directed interference, not a physical thin-film solver.",
-      ["GLSL", "spectral highlights"],
+      "A holographic trading card flicks in the hand: a full-spectrum band sweeps across embossed facets and glitter flashes at its own angles. Art-directed diffraction, not a thin-film solver.",
+      ["GLSL", "perspective card", "angle-keyed glitter"],
+      1.2,
     ],
     [
       "morph",
@@ -56,9 +63,10 @@
       "C",
       "A concave monogram becomes a lightning bolt, then a heart. Flubber interpolates the outer contours; holes are not supported.",
       ["Flubber 0.4.2", "concave contours"],
+      2.1,
     ],
   ];
-  for (const [mode, name, kind, stacks, grade, purpose, chips] of studies) {
+  for (const [mode, name, kind, stacks, grade, purpose, chips, hero] of studies) {
     FX.demo({
       id: "optical-" + mode,
       name,
@@ -68,12 +76,12 @@
       purpose,
       chips,
       aspect: "16 / 9",
-      period: 8,
-      hero: 2.1,
+      period: FXOptical.periods[mode],
+      hero,
       build(stage) {
         const canvas = document.createElement("canvas");
-        canvas.width = 1120;
-        canvas.height = 630;
+        canvas.width = window.FX_RENDER_SIZE?.w || 1120;
+        canvas.height = window.FX_RENDER_SIZE?.h || 630;
         canvas.className = "fill";
         canvas.setAttribute("role", "img");
         canvas.setAttribute("aria-label", name);
