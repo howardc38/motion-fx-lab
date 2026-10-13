@@ -1,17 +1,19 @@
 const {test,expect}=require('@playwright/test');
 async function open(page){await page.goto('/examples/dot-battle.html');await page.evaluate(async()=>{await __ready;await __record();});}
+// Story (choreography) time → film time: one-beat cold open, 1.2 s freeze insert at 12.6 s.
+const film=t=>Math.round((t<12.6?t-.6:t+.6)*1e6)/1e6;
 test('misses have no impact cues; actual contacts meet the opposing body or guard',async({page})=>{
  await open(page);const p=await page.evaluate(async()=>{await __render(.6);return {events:filmEffect.proof().contacts,cues:__cues()};});
  for(const e of p.events){
-  const at=p.cues.filter(c=>Math.abs(c.t-e.t)<1e-5);
+  const at=p.cues.filter(c=>Math.abs(c.t-film(e.t))<1e-5&&c.name!=='whoosh');
   if(e.kind==='dodge'){expect(e.distance).toBeGreaterThan(80);expect(at).toEqual([]);}
   else {expect(e.distance,`contact at ${e.t}`).toBeLessThan(45);expect(at).toHaveLength(1);}
  }
- for(const t of [4.2,6.6,11.4]){const v=await page.evaluate(async t=>{await __render(t);return filmEffect.proof().activeImpact;},t);expect(v).toBeNull();}
+ for(const t of [4.2,6.6,11.4]){const v=await page.evaluate(async t=>{await __render(t);return filmEffect.proof().activeImpact;},film(t));expect(v).toBeNull();}
 });
 test('contact hold decouples camera time and pose time; limb lengths stay fixed through steps',async({page})=>{
  await open(page);const p=await page.evaluate(async()=>{
-  await __render(7.9);const a=filmEffect.proof();await __render(8.25);const b=filmEffect.proof();
+  await __render(7.3);const a=filmEffect.proof();await __render(7.65);const b=filmEffect.proof();
   const m=await import('/fx/studio/battle.js'),motion=m.createChoreography(),lengths=[];
   for(let t=0;t<18;t+=.11)for(let id=0;id<2;id++){
    const {p}=motion.pose(id,t),d=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
@@ -24,13 +26,40 @@ test('contact hold decouples camera time and pose time; limb lengths stay fixed 
  expect(p.a.sourceTime).toBe(7.8);expect(p.a.poses).toEqual(p.b.poses);expect(p.a.camera).not.toEqual(p.b.camera);
  for(const l of p.lengths)l.forEach((v,i)=>expect(v).toBeCloseTo([105,117,85,85][i],4));
 });
-test('all eight dot demos use the rebuilt fight and keep their distinct temporal or spatial operation',async({page})=>{
+test('cold open starts on the first contact; the climax holds for a 1.2 s 3D freeze-orbit',async({page})=>{
+ await open(page);
+ const p=await page.evaluate(async()=>{
+  const m=await import('/fx/studio/battle.js'),out={};
+  await __render(0);out.first=filmEffect.proof();
+  await __render(11.99);out.before=filmEffect.proof();
+  const held=[];for(const t of [12.05,12.6,13.15]){await __render(t);held.push({...filmEffect.proof(),image:filmEffect.canvas.toDataURL()});}
+  await __render(13.2);out.after=filmEffect.proof();
+  await __render(12.6);out.repeat=filmEffect.canvas.toDataURL();
+  out.held=held;out.cues=__cues();out.music=__music;out.freeze=m.FREEZE;out.glb=m.createChoreography().events.find(e=>e.t===3);
+  out.climax=m.createChoreography().events.find(e=>e.t===12.6);
+  return out;
+ });
+ expect(p.first).toMatchObject({storyTime:.6,activeImpact:.6,freeze:false});
+ expect(p.before.freeze).toBe(false);
+ for(const h of p.held){expect(h.freeze).toBe(true);expect(h.storyTime).toBe(12.6);expect(h.orbit.held).toBe(true);}
+ expect(p.held[0].orbit.sourcePose).toEqual(p.held[2].orbit.sourcePose);
+ expect(p.held[0].orbit.camera).not.toEqual(p.held[1].orbit.camera);
+ expect(new Set(p.held.map(h=>h.image)).size).toBe(3);
+ expect(p.repeat).toBe(p.held[1].image);
+ expect(p.after).toMatchObject({freeze:false,activeImpact:12.6});
+ // The 2D climax repeats the baked 3.0 s kick, so the 3D insert shows the same pose.
+ expect(p.climax).toMatchObject({kind:'hit',actor:0,limb:p.glb.limb,target:p.glb.target});
+ expect(p.climax.from[0]-p.climax.to[0]).toBeCloseTo(p.glb.from[0]-p.glb.to[0],0);
+ expect(p.cues.filter(c=>c.t>=12&&c.t<=13.2).map(c=>c.name)).toEqual(['thump','riser','impact']);
+ expect(p.music).toContainEqual([12,'break']);expect(p.music).toContainEqual([13.2,'final']);
+});
+test('all eight legacy dot treatments use the rebuilt fight and keep their distinct operation',async({page})=>{
  await page.goto('/examples/studio.html');await page.waitForFunction(()=>window.studio?.current);
  const p=await page.evaluate(async()=>{
   const {GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js');const asset=await new GLTFLoader().loadAsync('/assets/studio/fighter.glb');
   const names=[];asset.scene.traverse(o=>{if(o.isSkinnedMesh)names.push(o.name);});
   const ids=['video-dots','freeze-orbit','echo','particle-lens','dot-impact','time-remap','depth-dots','skin-cloud'],out=[];
-  for(const id of ids){const e=await FXStudio.create(id);await e.frame(.7);const first=e.canvas.toDataURL();await e.frame(3.35);const later=e.canvas.toDataURL();await e.frame(.7);out.push({id,moves:first!==later,repeat:first===e.canvas.toDataURL(),proof:e.proof()});}
+  for(const id of ids){const e=await FXStudio.create(id,{legacy:true});await e.frame(.7);const first=e.canvas.toDataURL();await e.frame(3.35);const later=e.canvas.toDataURL();await e.frame(.7);out.push({id,moves:first!==later,repeat:first===e.canvas.toDataURL(),proof:e.proof()});}
   return {names,clips:asset.animations.map(c=>c.name),out};
  });
  expect(p.names.sort()).toEqual(['Amber','Teal']);expect(p.clips.sort()).toEqual(['Amber','Teal']);
@@ -49,6 +78,6 @@ test('the full 3D orbit keeps both fighters inside the camera frame',async({page
 });
 test('screen-space fight treatments keep the wind-up limbs away from frame edges',async({page})=>{
  await page.goto('/examples/studio.html');await page.waitForFunction(()=>window.studio?.current);
- const hits=await page.evaluate(async()=>{const bad=[];for(const id of ['video-dots','echo','dot-impact','time-remap']){const e=await FXStudio.create(id);for(const t of [.3,.5,.7,1.5,2.5,3.5,4.2]){await e.frame(t);const d=e.canvas.getContext('2d').getImageData(0,0,1280,720).data;let dark=0;for(let y=90;y<700;y++)for(const x of [2,5,1274,1277]){const k=(y*1280+x)*4;if(Math.abs(d[k]-245)+Math.abs(d[k+1]-238)+Math.abs(d[k+2]-220)>40)dark++;}if(dark)bad.push({id,t,dark});}}return bad;});
+ const hits=await page.evaluate(async()=>{const bad=[];for(const id of ['video-dots','echo','dot-impact','time-remap']){const e=await FXStudio.create(id,{legacy:true});for(const t of [.3,.5,.7,1.5,2.5,3.5,4.2]){await e.frame(t);const d=e.canvas.getContext('2d').getImageData(0,0,1280,720).data;let dark=0;for(let y=90;y<700;y++)for(const x of [2,5,1274,1277]){const k=(y*1280+x)*4;if(Math.abs(d[k]-245)+Math.abs(d[k+1]-238)+Math.abs(d[k+2]-220)>40)dark++;}if(dark)bad.push({id,t,dark});}}return bad;});
  expect(hits).toEqual([]);
 });

@@ -1,194 +1,70 @@
 // One catalogue for authoring, gallery registration, films and coverage tests.
+// create(id) returns the raw effect shown in the gallery (Apricot, Milo or the
+// procedural dancer Juno as subjects). preview(id) keeps the input/effect
+// comparison on the COUNTERFORM reference fight (studio.html?compare=1 and the
+// "Same fight. Eight treatments." film); create(id, {sourceUrl|modelUrl|legacy})
+// returns the reusable footage/GLB treatment from fx/studio/dots.js.
 (() => {
   const base = new URL("./studio/", document.currentScript.src);
   const studies = [
-    [
-      "flight",
-      "Flying courier and cape",
-      "character",
-      "flight",
-      "flight",
-      6,
-      2,
-      "A",
-      "One pose, layered limbs and a continuously deforming cape.",
-    ],
-    [
-      "portal",
-      "Cross-frame style portal",
-      "motion",
-      "flight",
-      "portal",
-      6,
-      3,
-      "A",
-      "A shared pose is clipped into three independently styled frames.",
-    ],
-    [
-      "themes",
-      "Twenty art directions",
-      "shader",
-      "flight",
-      "themes",
-      24,
-      3.8,
-      "A",
-      "Twenty original poster, typography, texture and figure treatments.",
-    ],
-    [
-      "gallery",
-      "Art-gallery camera journey",
-      "motion",
-      "flight",
-      "journey",
-      40.8,
-      14,
-      "A",
-      "Overview, a tracked flight across twenty artworks, and a closing overview.",
-    ],
-    [
-      "lowpoly",
-      "Low-poly flight course",
-      "shader",
-      "flight",
-      "lowpoly",
-      6,
-      2,
-      "A",
-      "Real 3D city blocks, perspective rings and a scripted forward camera.",
-    ],
-    [
-      "video-dots",
-      "Video to animated dots",
-      "shader",
-      "dots",
-      "video",
-      4.8,
-      0.6,
-      "A",
-      "Fixed-FPS RGBA footage becomes a colored or two-ink screen-space dot field.",
-    ],
-    [
-      "dot-rhythm",
-      "Beat-driven dot styles",
-      "shader",
-      "dots",
-      "rhythm",
-      4.8,
-      0.9,
-      "A",
-      "Dot spacing and ink palettes change on a 100 BPM half-beat grid.",
-    ],
-    [
-      "dot-impact",
-      "Dot impact and recovery",
-      "motion",
-      "dots",
-      "impact",
-      4.8,
-      0.7,
-      "A",
-      "Local compression, deterministic scattering and recovery on a hit cue.",
-    ],
-    [
-      "echo",
-      "Colored temporal echoes",
-      "motion",
-      "dots",
-      "echo",
-      4.8,
-      0.55,
-      "A",
-      "Five actual source times overlap as differently colored motion trails.",
-    ],
-    [
-      "time-remap",
-      "Source-time remapping",
-      "motion",
-      "dots",
-      "ramp",
-      19.2,
-      7.5,
-      "A",
-      "Normal playback, a speed ramp and hold, reverse, and six-step-per-second motion.",
-    ],
-    [
-      "depth-dots",
-      "2.5D dot relief",
-      "shader",
-      "dots",
-      "depth",
-      6,
-      2,
-      "A",
-      "Luminance supplies a shallow depth displacement; this is not recovered 3D anatomy.",
-    ],
-    [
-      "skin-cloud",
-      "Animated skinned point cloud",
-      "shader",
-      "dots",
-      "skin",
-      4.8,
-      0.6,
-      "A+",
-      "Stable surface samples follow a real animated GLB skeleton.",
-    ],
-    [
-      "freeze-orbit",
-      "Frozen action, moving camera",
-      "motion",
-      "dots",
-      "orbit",
-      6,
-      0.4,
-      "A+",
-      "Hold the skeletal pose while the camera travels a complete three-dimensional orbit.",
-    ],
-    [
-      "particle-lens",
-      "Particle rush and depth of field",
-      "shader",
-      "dots",
-      "lens",
-      6,
-      3.35,
-      "A+",
-      "Geometry-bound particles scatter towards a moving camera with depth-dependent bokeh.",
-    ],
-  ].map(([id, name, kind, module, mode, period, hero, grade, purpose]) => ({
-    id,
-    name,
-    kind,
-    module,
-    mode,
-    period,
-    hero,
-    grade,
-    purpose,
-  }));
-  async function create(id, options = {}) {
-    const study =
-      studies.find((s) => s.id === id) ||
-      (id === "dot-battle" ? { module: "battle", mode: "battle" } : null);
+    ["portal", "Cross-frame style portal", "motion", "portal", "portal", 6, 3.2, "A",
+      "Slanted panels with no gaps, each in its own art direction. One courier flies through them, drawn in two styles at once wherever it crosses a seam."],
+    ["themes", "Twenty art directions", "shader", "flight", "themes", 24, 3.8, "A",
+      "Twenty original poster, typography, texture and figure treatments of one flying courier."],
+    ["gallery", "Art-gallery camera journey", "motion", "flight", "journey", 40.8, 14, "A",
+      "Overview, a tracked flight across twenty artworks, and a closing overview."],
+    ["lowpoly", "Low-poly flight course", "shader", "course", "course", 6, 2.75, "A",
+      "Chase a paper glider down a sunset city canyon: exponential fog, lit windows, gates that flash as they pass, speed lines, banking and an FOV kick."],
+    ["video-dots", "Halftone close-up", "shader", "hero2d", "video-dots", 4.8, 2.1, "A",
+      "Apricot under a hard moving key light becomes a two-ink halftone: dot size follows brightness, the palette changes on every beat and the camera pushes in to the eye."],
+    ["dot-rhythm", "Beat-cut halftone", "shader", "hero2d", "dot-rhythm", 4.8, 1.0, "A",
+      "Milo dances while every half beat cuts dot pitch, dot shape, palette and framing at 100 BPM."],
+    ["dot-impact", "Local dot impact and recovery", "motion", "hero2d", "dot-impact", 4.8, 1.85, "A",
+      "A ball hits Milo: dots near the contact compress, scatter and ripple outward, then settle back into the picture."],
+    ["echo", "Time echoes and speed ramps", "motion", "hero2d", "echo", 6, 3.1, "A",
+      "Apricot's pounce drives the playback clock through normal, slow, hold, reverse and ramp. Echoes of real earlier frames grow denser in slow motion, fan out during the hold and retract in reverse."],
+    ["time-remap", "Speed ramp, hold, reverse and steps", "motion", "hero2d", "time-remap", 6, 2.6, "A",
+      "The same pounce with only the source clock changed: the graph shows output time against source time through slow motion, a hold, reverse and six-step playback."],
+    ["depth-dots", "Image relief", "shader", "relief", "depth", 6, 2.15, "A",
+      "A Milo portrait becomes dots with shallow depth from its silhouette and brightness. Drum hits push the relief out in a ripple; silent bars stay flat while the camera sweeps to a grazing angle."],
+    ["skin-cloud", "Skinned point cloud", "shader", "cloud", "skin", 6, 2.3, "B",
+      "A scan line turns the solid dancer into surface points that stay attached to her limbs. On the slam the points rush at the lens as depth-of-field bokeh, then reassemble."],
+    ["freeze-orbit", "Freeze frame and camera orbit", "motion", "freeze", "orbit", 6, 3.4, "A",
+      "The slam is held as the floor breaks: pose, debris, dust and shock ring stop while the camera travels 230° around real 3D geometry, then time resumes."],
+    ["particle-lens", "Particle rush and focus pull", "shader", "cloud", "lens", 6, 3.1, "B",
+      "Surface points stream off the dancing figure towards the lens while focus racks between the near stream and the body."],
+  ].map(([id, name, kind, module, mode, period, hero, grade, purpose]) => ({ id, name, kind, module, mode, period, hero, grade, purpose }));
+  // Footage/GLB treatments in dots.js (COUNTERFORM reference subjects).
+  const legacy = { "video-dots": "video", "dot-rhythm": "rhythm", "dot-impact": "impact", echo: "echo", "time-remap": "ramp", "depth-dots": "depth", "skin-cloud": "skin", "freeze-orbit": "orbit", "particle-lens": "lens" };
+  async function build(id, options) {
+    if (id === "dot-battle") return (await import(new URL("battle.js", base))).createBattle();
+    if (id === "flight") id = "themes"; // retired: the flying courier lives in the art-direction showcase
+    const study = studies.find((s) => s.id === id);
     if (!study) throw new Error("Unknown studio effect: " + id);
+    if (legacy[id] && (options.sourceUrl || options.modelUrl || options.legacy))
+      return (await import(new URL("dots.js", base))).createDots(legacy[id], options);
     const mod = await import(new URL(study.module + ".js", base));
-    const effect =
-      study.module === "battle"
-        ? mod.createBattle()
-        : study.module === "flight"
-          ? mod.createFlight(study.mode)
-          : await mod.createDots(study.mode, options);
-    Object.assign(effect.canvas.style, {
-      width: "100%",
-      height: "100%",
-      display: "block",
-    });
+    switch (study.module) {
+      case "flight": return mod.createFlight(study.mode);
+      case "portal": return mod.createPortal();
+      case "course": return mod.createCourse();
+      case "relief": return mod.createRelief(options);
+      case "cloud": return mod.createCloud(study.mode);
+      case "freeze": return mod.createFreezeOrbit();
+      default:
+        return {
+          "video-dots": mod.createVideoDots, "dot-rhythm": mod.createDotRhythm, "dot-impact": mod.createDotImpact,
+          echo: () => mod.createTimeEcho({ echoes: true }), "time-remap": () => mod.createTimeEcho({ echoes: false }),
+        }[id]();
+    }
+  }
+  async function create(id, options = {}) {
+    const effect = await build(id, options);
+    Object.assign(effect.canvas.style, { width: "100%", height: "100%", display: "block" });
     const render = effect.frame.bind(effect);
     let pending = Promise.resolve();
     effect.frame = (t, options) => {
-      if (!Number.isFinite(t))
-        return Promise.reject(new Error("Frame time must be finite"));
+      if (!Number.isFinite(t)) return Promise.reject(new Error("Frame time must be finite"));
       const work = pending.then(() => render(Math.max(0, t), options));
       pending = work.catch(() => {});
       return work;
@@ -209,7 +85,7 @@
   async function preview(id){
     if(!previews[id])return create(id);
     const mod=await import(new URL('study-preview.js',base));
-    return mod.createPreview(id,previews[id],studies.find(s=>s.id===id).mode);
+    return mod.createPreview(id,previews[id],legacy[id]);
   }
-  window.FXStudio = { studies, create, previews, preview };
+  window.FXStudio = { studies, create, previews, preview, legacy };
 })();

@@ -1,20 +1,34 @@
 // Original joint-space fight choreography; no borrowed footage or motion assets.
-export const BATTLE_DURATION = 19.2;
+// Film time and story (choreography) time differ: the cold open skips one beat
+// so the film starts on the first contact, and at the climax story time holds
+// for a 1.2 s freeze-orbit of the volumetric fighters (fx/signals/orbit.js).
+export const STORY_DURATION = 19.2;
+export const COLD_OPEN = 0.6;
+export const FREEZE = { film: 12.0, story: 12.6, duration: 1.2, pose: 3.05 };
+export const BATTLE_DURATION = Math.round((STORY_DURATION - COLD_OPEN + FREEZE.duration) * 1000) / 1000;
+export function storyTime(f) {
+  if (f < FREEZE.film) return f + COLD_OPEN;
+  if (f < FREEZE.film + FREEZE.duration) return FREEZE.story;
+  return f + COLD_OPEN - FREEZE.duration;
+}
+const filmTime = (s) => Math.round((s < FREEZE.story ? s - COLD_OPEN : s - COLD_OPEN + FREEZE.duration) * 1e6) / 1e6;
 export const BATTLE_MUSIC = [
   [0, "build"],
   [2.4, "drop"],
-  [7.8, "break"],
+  [7.2, "break"],
   [9.6, "final"],
-  [18, "tail"],
+  [FREEZE.film, "break"],
+  [FREEZE.film + FREEZE.duration, "final"],
+  [filmTime(18), "tail"],
 ];
 export const BATTLE_GIF = [
-  [0.35, 1.3],
-  [2.65, 3.65],
-  [6.1, 7.1],
-  [10, 11],
-  [14.6, 15.6],
+  [0, 1],
+  [2.05, 3.05],
+  [5.5, 6.5],
+  [11.8, 13.6],
+  [14.4, 15.4],
 ];
-export const BATTLE_POSTER = 3.04;
+export const BATTLE_POSTER = 2.44;
 // One authored event list drives contact, sound and local particle displacement.
 // A miss has a travelling hand/foot, but no impact sound, shake or burst.
 export const BATTLE_BEATS = [
@@ -22,15 +36,21 @@ export const BATTLE_BEATS = [
   [3, "hit", 0, 10, 2], [4.2, "dodge", 1, 10, 2],
   [5.4, "block", 0, 6, 6], [6.6, "dodge", 1, 10, 10],
   [7.8, "block", 0, 6, 6], [10.2, "block", 0, 10, 6],
-  [11.4, "dodge", 0, 6, 2], [12.6, "hit", 0, 6, 2],
+  [11.4, "dodge", 0, 6, 2], [12.6, "hit", 0, 10, 2],
   [13.2, "block", 0, 6, 6], [13.8, "hit", 1, 6, 2],
   [15, "clash", 0, 10, 10], [16.2, "block", 1, 6, 6],
   [17.4, "block", 0, 6, 6],
 ].map(([t, kind, actor, limb, target]) => ({t, kind, actor, limb, target}));
-export const battleCues = () => BATTLE_BEATS.flatMap(e => [
-  {t:e.t-.18, name:"whoosh", gain:e.kind === "dodge" ? .8 : .5},
-  ...(e.kind === "dodge" ? [] : [{t:e.t, name:e.kind === "block" ? "thump" : "impact", gain:e.kind === "block" ? .45 : .65}]),
-]);
+// Cues are in film time. The climax hit lands when time resumes after the orbit;
+// the freeze itself is marked by a low thump and a riser under the held frame.
+export const battleCues = () => BATTLE_BEATS.flatMap(e => {
+  const climax = e.t === FREEZE.story;
+  return [
+    {t:filmTime(e.t-.18), name:"whoosh", gain:e.kind === "dodge" ? .8 : .5},
+    ...(climax ? [{t:FREEZE.film, name:"thump", gain:.5}, {t:FREEZE.film+.15, name:"riser", gain:.45}] : []),
+    ...(e.kind === "dodge" ? [] : [{t:climax ? FREEZE.film + FREEZE.duration : filmTime(e.t), name:e.kind === "block" ? "thump" : "impact", gain:e.kind === "block" ? .45 : climax ? .8 : .65}]),
+  ];
+}).filter(c => c.t >= 0); // the cold open starts on the first contact, after its wind-up
 
 const mix=(a,b,t)=>a+(b-a)*t;
 const clamp=x=>Math.max(0,Math.min(1,x));
@@ -141,10 +161,12 @@ export function createChoreography() {
     [11.1, "load", 422],
     [11.4, "jab", 480],
     [11.49, "jab", 480],
-    [12, "upperload", 428],
-    [12.6, "upper", 525],
-    [12.69, "upper", 525],
-    [12.96, "guard", 456],
+    // The climax repeats the 3.0 s kick, a pose the volumetric fighters also hold.
+    [12, "kickload", 400],
+    [12.32, "kickload", 412],
+    [12.6, "kick", 454],
+    [12.69, "kick", 454],
+    [12.96, "guard", 440],
     [13.2, "jab", 478],
     [13.29, "jab", 478],
     [13.55, "block", 451],
@@ -198,7 +220,7 @@ export function createChoreography() {
     [11.4, "duck", 820],
     [11.5, "duck", 820],
     [12, "guard", 808],
-    [12.6, "recoil", 650],
+    [12.6, "recoil", 655],
     [12.72, "fall", 685],
     [12.98, "guard", 820],
     [13.2, "block", 811],
@@ -447,14 +469,15 @@ export function createBattle() {
     g.restore();
   }
   const shots = [
-    {at:0,end:2.4,z:1.06,y:386,bg:"#efe7d2",ink:"#142b3a",step:5},
+    // Cream shots use darker, larger dots so the figures hold contrast against the paper.
+    {at:0,end:2.4,z:1.06,y:386,bg:"#efe7d2",ink:"#0d1e2c",step:5,heavy:true},
     {at:2.4,end:4.8,z:1.14,y:365,bg:"#f06c40",ink:"#122c39",step:5},
     {at:4.8,end:7.8,z:1.03,y:389,bg:"#122638",ink:null,step:4},
-    {at:7.8,end:8.4,z:1.28,y:346,bg:"#efe7d2",ink:"#142b3a",step:4},
-    {at:8.4,end:9.6,z:1.05,y:384,bg:"#efe7d2",ink:"#142b3a",step:5},
+    {at:7.8,end:8.4,z:1.28,y:346,bg:"#efe7d2",ink:"#0d1e2c",step:4,heavy:true},
+    {at:8.4,end:9.6,z:1.05,y:384,bg:"#efe7d2",ink:"#0d1e2c",step:5,heavy:true},
     {at:9.6,end:12,z:1.09,y:362,bg:"#eecb52",ink:"#172e3e",step:5},
     {at:12,end:14.4,z:1.13,y:368,bg:"#122638",ink:null,step:4},
-    {at:14.4,end:17.4,z:1.06,y:360,bg:"#efe7d2",ink:"#142b3a",step:5},
+    {at:14.4,end:17.4,z:1.06,y:360,bg:"#efe7d2",ink:"#0d1e2c",step:5,heavy:true},
     {at:17.4,end:19.2,z:1.14,y:375,bg:"#f06c40",ink:"#122c39",step:4},
   ];
   const shotAt=t=>shots.find(s=>t<s.end)||shots.at(-1);
@@ -477,7 +500,7 @@ export function createBattle() {
     fighter(pose(0,poseTime),1,0,poseTime);fighter(pose(1,poseTime),-1,1,poseTime);g.restore();
     return g.getImageData(0,0,W,H).data;
   }
-  function dots(data,t,spacing,solid,alpha=1) {
+  function dots(data,t,spacing,solid,alpha=1,heavy=false) {
     ctx.globalAlpha=alpha;
     const event=impactAt(t),age=event?t-event.t:0;
     const burst=event?Math.sin(clamp(age/.2)*Math.PI):0;
@@ -485,7 +508,7 @@ export function createBattle() {
     for(let y=2;y<H;y+=spacing) for(let x=2;x<W;x+=spacing) {
       const k=(y*W+x)*4;if(data[k+3]<100)continue;
       const lum=(data[k]*.299+data[k+1]*.587+data[k+2]*.114)/255;
-      let r=spacing*(solid?.30+.18*(1-lum):.43),px=x,py=y;
+      let r=spacing*(heavy?.36+.17*(1-lum):solid?.30+.18*(1-lum):.43),px=x,py=y;
       const near=Math.max(0,1-Math.hypot(x-point[0],y-point[1])/90),kick=burst*near;
       px+=Math.sin(k)*kick*17;py+=Math.cos(k)*kick*12;
       ctx.fillStyle=solid||`rgb(${Math.max(70,data[k])},${Math.max(94,data[k+1])},${Math.max(115,data[k+2])})`;
@@ -493,9 +516,8 @@ export function createBattle() {
     }
     ctx.globalAlpha=1;
   }
-  function frame(t) {
-    if(!Number.isFinite(t))throw new Error("Frame time must be finite");
-    t=Math.max(0,Math.min(BATTLE_DURATION,t));
+  function drawStory(t) {
+    t=Math.max(0,Math.min(STORY_DURATION,t));
     const shot=shotAt(t),motionTime=sourceTime(t),poses=[pose(0,motionTime),pose(1,motionTime)];
     const closing=clamp((t-18)/.55);
     ctx.fillStyle=shot.bg;ctx.fillRect(0,0,W,H);
@@ -509,7 +531,7 @@ export function createBattle() {
     // Echoes belong to fast attacks, not every idle breath or held pose.
     const trail=events.some(e=>t>e.t-.18 && t<e.t+.045) && !(t>=7.8&&t<8.4);
     if(trail) for(let n=3;n>0;n--) dots(source(motionTime,n*.055,t),t,shot.step,["#ea9576","#61a5b5","#a4b4b0"][n-1],.17+(3-n)*.06);
-    dots(source(motionTime,0,t),t,shot.step,shot.ink,1-closing*.85);
+    dots(source(motionTime,0,t),t,shot.step,shot.ink,1-closing*.85,shot.heavy);
     const event=impactAt(t);
     if(event) {
       const u=clamp((t-event.t)/.16),[x,y]=project(event.point,t);
@@ -528,6 +550,28 @@ export function createBattle() {
     lastProof={t,sourceTime:motionTime,poses,spacing:shot.step,camera:camera(t),contacts:events,activeImpact:event?.t??null,dimension:"2D illustration",hold:t>=7.8&&t<8.4};
   }
 
+  // The climax insert: the volumetric fighters held at the same kick, as a 3D dot
+  // cloud, while the camera makes one full turn and returns to the film's view.
+  let orbitWork;
+  const orbit = () => (orbitWork ||= import("../signals/orbit.js").then((m) => m.createOrbit()).catch((error) => { orbitWork = undefined; throw error; }));
+  async function freezeFrame(u) {
+    const o = await orbit(), k = clamp(u / FREEZE.duration), e = k * k * (3 - 2 * k);
+    // 2.3 s on the orbit study's clock is inside its held, dot-cloud look; 5.2 s of
+    // its score is silent, so the measured-audio bars and scatter stay at rest.
+    o.frame(2.3, { sourceTime: FREEZE.pose, cameraAngle: Math.PI * 2 * e, lightTime: 1 + u, audioTime: 5.2, labels: false });
+    ctx.drawImage(o.canvas, 0, 0, W, H);
+    ctx.fillStyle = "#123b33"; ctx.font = "600 14px Arial"; ctx.textAlign = "left"; ctx.fillText("COUNTERFORM", 44, 40);
+    ctx.textAlign = "right"; ctx.font = "12px Arial"; ctx.fillText("HELD · " + Math.round(e * 360) + "°", 1236, 40); ctx.textAlign = "left";
+    const p = o.proof();
+    lastProof = { t: FREEZE.story, sourceTime: FREEZE.story, poses: [pose(0, FREEZE.story), pose(1, FREEZE.story)], contacts: events, activeImpact: null, dimension: "3D freeze-orbit insert", hold: true, orbit: { camera: p.camera, sourcePose: p.sourcePose, held: p.held, glbTime: FREEZE.pose } };
+  }
+  async function frame(f) {
+    if(!Number.isFinite(f))throw new Error("Frame time must be finite");
+    f=Math.max(0,Math.min(BATTLE_DURATION,f));
+    const freeze=f>=FREEZE.film&&f<FREEZE.film+FREEZE.duration;
+    if(freeze) await freezeFrame(f-FREEZE.film); else drawStory(storyTime(f));
+    lastProof={...lastProof,filmTime:f,storyTime:storyTime(f),freeze};
+  }
   return {
     canvas: c,
     duration: BATTLE_DURATION,
