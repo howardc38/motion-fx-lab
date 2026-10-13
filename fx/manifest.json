@@ -1,0 +1,391 @@
+{
+  "$comment": "Effect library load order and ownership. families[]: code families in load order; scripts are repo paths or pinned https URLs, cacheTag adds ?v= to the local scripts, sources maps each FX.demo id the family registers to its files (first file = where it is registered; anchor, with {id} or {key} = id without prefix, finds that line), readme is the family guide. catalog loads last. gallery holds the index.html card order and preview defaults. After editing run node tools/fx-manifest.cjs --write; --check verifies it against the code.",
+  "version": 1,
+  "families": [
+    {
+      "id": "core",
+      "scripts": ["fx/font-helvetiker-subset.js", "fx/demos.js"],
+      "cacheTag": null,
+      "readme": null,
+      "anchor": "id: \"{id}\"",
+      "sources": {
+        "whip": ["fx/demos.js"],
+        "chars": ["fx/demos.js"],
+        "mark": ["fx/demos.js"],
+        "count": ["fx/demos.js"],
+        "type": ["fx/demos.js"],
+        "stamp": ["fx/demos.js"],
+        "scan": ["fx/demos.js"],
+        "sweep": ["fx/demos.js"],
+        "glass": ["fx/demos.js"],
+        "orbs": ["fx/demos.js"],
+        "wipe": ["fx/demos.js"],
+        "grain": ["fx/demos.js"],
+        "lit3d": ["fx/demos.js"],
+        "rays": ["fx/demos.js"],
+        "smoke": ["fx/demos.js"],
+        "particles": ["fx/demos.js"],
+        "dissolve": ["fx/demos.js"],
+        "chrome": ["fx/demos.js"],
+        "halftone": ["fx/demos.js"],
+        "toon": ["fx/demos.js"],
+        "flat": ["fx/demos.js"],
+        "tunnel": ["fx/demos.js"],
+        "hook": ["fx/demos.js"],
+        "karaoke": ["fx/demos.js"],
+        "blueprint": ["fx/demos.js"],
+        "drawflow": ["fx/demos.js"],
+        "sticker": ["fx/demos.js"],
+        "beat": ["fx/demos.js"],
+        "gradient": ["fx/demos.js"],
+        "lut": ["fx/demos.js"],
+        "uifly": ["fx/demos.js"],
+        "ring": ["fx/demos.js"],
+        "bounce": ["fx/demos.js"],
+        "liquid": ["fx/demos.js"],
+        "halftonetype": ["fx/demos.js"],
+        "glitch": ["fx/demos.js"]
+      }
+    },
+    {
+      "id": "classic",
+      "scripts": [
+        "https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js",
+        "fx/pack-dither.js",
+        "fx/pack-2d.js",
+        "fx/pack-shaders.js",
+        "fx/pack-sims.js"
+      ],
+      "cacheTag": null,
+      "readme": null,
+      "anchor": "id: \"{id}\"",
+      "sources": {
+        "dithercharacter": ["fx/pack-dither.js"],
+        "dithercards": ["fx/pack-dither.js"],
+        "ditherpeek": ["fx/pack-dither.js"],
+        "ditheravatar": ["fx/pack-dither.js"],
+        "timing": ["fx/pack-2d.js"],
+        "vartype": ["fx/pack-2d.js"],
+        "morph": ["fx/pack-2d.js"],
+        "rhythm": ["fx/pack-2d.js"],
+        "ridgelines": ["fx/pack-2d.js"],
+        "coderain": ["fx/pack-2d.js"],
+        "cardflip": ["fx/pack-2d.js"],
+        "datachart": ["fx/pack-2d.js"],
+        "clay": ["fx/pack-shaders.js"],
+        "domainrep": ["fx/pack-shaders.js"],
+        "styles": ["fx/pack-shaders.js"],
+        "gpuparticles": ["fx/pack-shaders.js"],
+        "reaction": ["fx/pack-sims.js"],
+        "rigid": ["fx/pack-sims.js"]
+      }
+    },
+    {
+      "id": "optical",
+      "scripts": ["https://cdn.jsdelivr.net/npm/flubber@0.4.2/build/flubber.min.js", "fx/optical-effects.js", "fx/pack-optical.js"],
+      "cacheTag": null,
+      "readme": null,
+      "prefix": "optical-",
+      "anchor": "\"{key}\"",
+      "sources": {
+        "optical-moire": ["fx/pack-optical.js", "fx/optical-effects.js"],
+        "optical-slit": ["fx/pack-optical.js", "fx/optical-effects.js"],
+        "optical-ribbon": ["fx/pack-optical.js", "fx/optical-effects.js"],
+        "optical-caustic": ["fx/pack-optical.js", "fx/optical-effects.js"],
+        "optical-foil": ["fx/pack-optical.js", "fx/optical-effects.js"],
+        "optical-morph": ["fx/pack-optical.js", "fx/optical-effects.js"]
+      }
+    },
+    {
+      "id": "stacks",
+      "scripts": ["fx/stack-effects.js", "fx/pack-stacks.js"],
+      "cacheTag": null,
+      "readme": "examples/stack-lab/README.md",
+      "sources": {
+        "stack-pixi": ["fx/pack-stacks.js", "fx/stack-effects.js", "fx/stacks/pixi.js"],
+        "stack-rapier": ["fx/pack-stacks.js", "fx/stack-effects.js", "fx/stacks/rapier.js"],
+        "stack-gpu": ["fx/pack-stacks.js", "fx/stack-effects.js", "fx/stacks/gpu.js"]
+      }
+    },
+    {
+      "id": "studio",
+      "scripts": ["fx/studio-effects.js", "fx/pack-studio.js"],
+      "cacheTag": null,
+      "readme": "assets/studio/README.md",
+      "prefix": "studio-",
+      "anchor": "\"{key}\"",
+      "sources": {
+        "studio-flight": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/flight.js"],
+        "studio-portal": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/flight.js"],
+        "studio-themes": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/flight.js"],
+        "studio-gallery": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/flight.js"],
+        "studio-lowpoly": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/flight.js"],
+        "studio-video-dots": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
+        "studio-dot-rhythm": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
+        "studio-dot-impact": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
+        "studio-echo": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
+        "studio-time-remap": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
+        "studio-depth-dots": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
+        "studio-skin-cloud": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
+        "studio-freeze-orbit": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"],
+        "studio-particle-lens": ["fx/studio-effects.js", "fx/pack-studio.js", "fx/studio/dots.js", "fx/studio/study-preview.js"]
+      }
+    },
+    {
+      "id": "materials",
+      "scripts": ["fx/material-effects.js", "fx/pack-materials.js"],
+      "cacheTag": null,
+      "readme": "fx/material-studies/README.md",
+      "sources": {
+        "water-material": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/water.js"],
+        "water-morph": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/water.js"],
+        "water-impact": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/water.js"],
+        "water-underwater": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/water.js"],
+        "cjk-solid": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/type.js"],
+        "organic-contours": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/contours.js"],
+        "frame-glitch": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/glitch.js"],
+        "scene-eras": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/eras.js"]
+      }
+    },
+    {
+      "id": "fluid",
+      "scripts": ["fx/fluid-effects.js", "fx/pack-fluid.js"],
+      "cacheTag": "liquid-v2",
+      "readme": "tools/blender/README.md",
+      "sources": {
+        "fluid-overflow": [
+          "fx/pack-fluid.js",
+          "fx/fluid-effects.js",
+          "fx/fluid/effects.js",
+          "tools/blender/README.md",
+          "tools/blender/liquid-scenes.py",
+          "tools/blender/finish-mesh.py",
+          "tools/blender/render.py"
+        ],
+        "fluid-viscous": [
+          "fx/pack-fluid.js",
+          "fx/fluid-effects.js",
+          "fx/fluid/effects.js",
+          "tools/blender/README.md",
+          "tools/blender/liquid-scenes.py",
+          "tools/blender/finish-mesh.py",
+          "tools/blender/render.py"
+        ],
+        "fluid-smoke": [
+          "fx/pack-fluid.js",
+          "fx/fluid-effects.js",
+          "fx/fluid/effects.js",
+          "tools/blender/README.md",
+          "tools/blender/scenes.py",
+          "tools/blender/render.py"
+        ]
+      }
+    },
+    {
+      "id": "design",
+      "scripts": ["fx/design-effects.js", "fx/pack-design.js"],
+      "cacheTag": "design-1",
+      "readme": "fx/design/README.md",
+      "prefix": "design-",
+      "anchor": "id:'{key}'",
+      "sources": {
+        "design-type-orbit": ["fx/design-effects.js", "fx/pack-design.js", "fx/design/orbit.js", "fx/design/math.js", "fx/design/common.js", "fx/design/README.md"],
+        "design-soft-shadow": ["fx/design-effects.js", "fx/pack-design.js", "fx/design/lighting.js", "fx/design/math.js", "fx/design/common.js", "fx/design/README.md"],
+        "design-surface-ink": ["fx/design-effects.js", "fx/pack-design.js", "fx/design/ink.js", "fx/design/math.js", "fx/design/common.js", "fx/design/README.md"],
+        "design-letter-flow": ["fx/design-effects.js", "fx/pack-design.js", "fx/design/flat.js", "fx/design/math.js", "fx/design/README.md"],
+        "design-spring-response": ["fx/design-effects.js", "fx/pack-design.js", "fx/design/flat.js", "fx/design/math.js", "fx/design/README.md"],
+        "design-dot-reveal": ["fx/design-effects.js", "fx/pack-design.js", "fx/design/flat.js", "fx/design/math.js", "fx/design/README.md"]
+      }
+    },
+    {
+      "id": "signals",
+      "scripts": ["fx/signal-effects.js", "fx/pack-signals.js"],
+      "cacheTag": "signal-1",
+      "readme": "fx/signals/README.md",
+      "prefix": "signal-",
+      "anchor": "id:'{key}'",
+      "sources": {
+        "signal-audio-relief": [
+          "fx/signal-effects.js",
+          "fx/pack-signals.js",
+          "fx/signals/films.js",
+          "fx/signals/field.js",
+          "fx/signals/data.js",
+          "fx/signals/stage.js",
+          "fx/signals/README.md"
+        ],
+        "signal-motion-fragments": [
+          "fx/signal-effects.js",
+          "fx/pack-signals.js",
+          "fx/signals/films.js",
+          "fx/signals/field.js",
+          "fx/signals/data.js",
+          "fx/signals/stage.js",
+          "fx/signals/README.md"
+        ],
+        "signal-freeze-orbit": [
+          "fx/signal-effects.js",
+          "fx/pack-signals.js",
+          "fx/signals/films.js",
+          "fx/signals/orbit.js",
+          "fx/signals/data.js",
+          "fx/signals/stage.js",
+          "fx/studio/scene.js",
+          "fx/signals/README.md"
+        ]
+      }
+    },
+    {
+      "id": "character",
+      "scripts": ["fx/pack-character.js"],
+      "cacheTag": null,
+      "readme": "fx/character/README.md",
+      "sources": {
+        "character-rig": [
+          "fx/pack-character.js",
+          "fx/character/index.js",
+          "fx/character/rig.js",
+          "fx/character/motion.js",
+          "fx/character/styles.js",
+          "fx/character/palette.js",
+          "fx/character/scene.js",
+          "fx/character/studies.js",
+          "fx/character/README.md"
+        ],
+        "character-motion": [
+          "fx/pack-character.js",
+          "fx/character/index.js",
+          "fx/character/rig.js",
+          "fx/character/motion.js",
+          "fx/character/styles.js",
+          "fx/character/palette.js",
+          "fx/character/scene.js",
+          "fx/character/studies.js",
+          "fx/character/README.md"
+        ],
+        "character-style": [
+          "fx/pack-character.js",
+          "fx/character/index.js",
+          "fx/character/rig.js",
+          "fx/character/motion.js",
+          "fx/character/styles.js",
+          "fx/character/palette.js",
+          "fx/character/scene.js",
+          "fx/character/studies.js",
+          "fx/character/README.md"
+        ]
+      }
+    },
+    {
+      "id": "dialogue",
+      "scripts": ["fx/dialogue-effects.js", "fx/pack-dialogue.js"],
+      "cacheTag": "dialogue-1",
+      "readme": "fx/dialogue/README.md",
+      "sources": {
+        "dialogue-lipsync": [
+          "fx/pack-dialogue.js",
+          "fx/dialogue-effects.js",
+          "fx/dialogue/scene.js",
+          "fx/dialogue/actors.js",
+          "fx/dialogue/player.js",
+          "assets/dialogue/manifest.json",
+          "tools/dialogue/build.py",
+          "fx/dialogue/README.md"
+        ]
+      }
+    }
+  ],
+  "catalog": {
+    "scripts": ["fx/catalog.js"],
+    "cacheTag": "dialogue-character-1"
+  },
+  "pages": ["index.html", "video/intro.html"],
+  "gallery": {
+    "$comment": "order: effect cards curated by visual impact and contrast between neighbouring looks; every gallery family must be listed once. showcaseOrder: the same for collections. previewDefault: the variant a card shows first. previewHero: the frame time shown while motion is paused (gpuparticles shows the flowing form).",
+    "order": [
+      "signal-motion-fragments",
+      "dialogue-lipsync",
+      "gpuparticles",
+      "domainrep",
+      "optical-foil",
+      "fluid-smoke",
+      "liquid",
+      "organic-contours",
+      "studio-depth-dots",
+      "studio-freeze-orbit",
+      "design-type-orbit",
+      "water-material",
+      "optical-ribbon",
+      "reaction",
+      "stack-gpu",
+      "clay",
+      "optical-moire",
+      "optical-caustic",
+      "dithercharacter",
+      "stack-rapier",
+      "lit3d",
+      "toon",
+      "studio-portal",
+      "tunnel",
+      "studio-flight",
+      "vartype",
+      "rhythm",
+      "cardflip",
+      "water-impact",
+      "design-surface-ink",
+      "optical-slit",
+      "optical-morph",
+      "studio-particle-lens",
+      "rays",
+      "ridgelines",
+      "chrome",
+      "studio-echo",
+      "studio-dot-impact",
+      "studio-skin-cloud",
+      "studio-video-dots",
+      "fluid-overflow",
+      "rigid",
+      "smoke",
+      "halftone",
+      "flat",
+      "glitch",
+      "dissolve",
+      "studio-time-remap",
+      "design-soft-shadow",
+      "uifly",
+      "whip",
+      "hook",
+      "chars",
+      "karaoke",
+      "datachart",
+      "timing",
+      "glass",
+      "coderain",
+      "sweep",
+      "stamp",
+      "beat",
+      "sticker",
+      "gradient",
+      "ring",
+      "count",
+      "type",
+      "mark",
+      "scan",
+      "wipe",
+      "lut",
+      "grain",
+      "character-rig",
+      "character-style"
+    ],
+    "showcaseOrder": ["styles", "studio-themes", "studio-gallery", "water-underwater", "scene-eras"],
+    "previewDefault": {
+      "lit3d": "cjk-solid",
+      "tunnel": "studio-lowpoly",
+      "studio-depth-dots": "signal-audio-relief",
+      "studio-freeze-orbit": "signal-freeze-orbit"
+    },
+    "previewHero": {
+      "gpuparticles": 1.5
+    }
+  }
+}
