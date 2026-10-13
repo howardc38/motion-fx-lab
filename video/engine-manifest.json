@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "engine": "video/engine.js",
+  "description": "Timeline primitives accepted by video/engine.js. Every frame is a pure function of t. tests/engine-preview.spec.cjs checks this file against the running engine (window.__enginePrimitives).",
+  "page": {
+    "stage": "#frame > #stage[data-w][data-h][data-dur]",
+    "scene": "section.scene[data-start]",
+    "scene_attributes": {
+      "data-start": "scene start, seconds from the start of the film",
+      "data-trans": "\"cut\" switches without the wipe; any other value or none wipes in from the left"
+    },
+    "wipe_edge": "an optional child .edge of a scene is moved along the wipe",
+    "scene_wipe_sec": 0.5,
+    "render_hooks": "window.__renderHooks: functions called with t after each render",
+    "ready": "window.__ready: a promise the recorder awaits before recording"
+  },
+  "element_attributes": {
+    "data-fx": "one primitive id from primitives below",
+    "data-at": "start, seconds after the scene starts (default 0)",
+    "data-dur": "duration in seconds (default: the primitive's default_duration_sec)",
+    "data-out": "fade out over 0.3 s from this time, seconds after the scene starts",
+    "data-on": "adds class \"on\" from this time, seconds after the scene starts",
+    "data-base": "a transform kept after the primitive's own transform"
+  },
+  "sound_attributes": {
+    "data-sfx": "a cue name from video/sfx.py",
+    "data-sfx-at": "cue time, seconds after the scene starts (default: data-at)",
+    "data-sfx-gain": "cue gain (default 1)",
+    "data-sfx-repeat": "number of repeats",
+    "data-sfx-every": "seconds between repeats (default 0.5)"
+  },
+  "automatic_cues": [
+    { "name": "whoosh", "when": "the start of every scene after the first, also with data-trans=\"cut\"" },
+    { "name": "type", "when": "data-sfx=\"type\" repeats every 0.07 s for the element's data-dur" }
+  ],
+  "fallback_duration_sec": 0.5,
+  "no_scale_rule": "a primitive with scales=true, on an element that holds a canvas, a video or a [data-demo] tile, slides up 40 px instead of scaling",
+  "timing": {
+    "in": "animates over data-dur from data-at, then holds its end state",
+    "pass": "plays over data-dur from data-at and leaves the element as it was before",
+    "continuous": "keeps moving for the whole scene"
+  },
+  "primitives": [
+    { "id": "up", "default_duration_sec": 0.5, "scales": false, "timing": "in", "behavior": "fades in while rising 48 px", "parameters": {} },
+    { "id": "down", "default_duration_sec": 0.5, "scales": false, "timing": "in", "behavior": "fades in while dropping 48 px", "parameters": {} },
+    { "id": "left", "default_duration_sec": 0.5, "scales": false, "timing": "in", "behavior": "fades in from 70 px to the left", "parameters": {} },
+    { "id": "right", "default_duration_sec": 0.5, "scales": false, "timing": "in", "behavior": "fades in from 70 px to the right", "parameters": {} },
+    { "id": "fade", "default_duration_sec": 0.4, "scales": false, "timing": "in", "behavior": "fades in", "parameters": {} },
+    { "id": "zoom", "default_duration_sec": 0.5, "scales": true, "timing": "in", "behavior": "fades in while settling from 112 % to 100 %", "parameters": {} },
+    { "id": "pop", "default_duration_sec": 0.42, "scales": true, "timing": "in", "behavior": "scales up from 60 % with an overshoot", "parameters": {} },
+    { "id": "grow", "default_duration_sec": 0.35, "scales": true, "timing": "in", "behavior": "grows horizontally from its transform origin", "parameters": {} },
+    { "id": "mark", "default_duration_sec": 0.45, "scales": false, "timing": "in", "behavior": "draws a background highlight band across the element", "parameters": { "data-mark-h": { "default": 40, "unit": "% of the element height" } } },
+    { "id": "type", "default_duration_sec": 1, "scales": false, "timing": "in", "behavior": "types the element's text, with class \"caret\" while typing", "parameters": {} },
+    { "id": "count", "default_duration_sec": 1.4, "scales": false, "timing": "in", "behavior": "counts from 0 to data-to, formatted with en-US separators", "parameters": { "data-to": { "required": true, "unit": "number" } } },
+    { "id": "move", "default_duration_sec": 0.6, "scales": false, "timing": "in", "behavior": "moves the element's left/top from one point to another", "parameters": { "data-x0": { "required": true, "unit": "px" }, "data-y0": { "required": true, "unit": "px" }, "data-x1": { "required": true, "unit": "px" }, "data-y1": { "required": true, "unit": "px" } } },
+    { "id": "ring", "default_duration_sec": 0.5, "scales": true, "timing": "pass", "behavior": "expands from 40 % to 170 % while fading out", "parameters": {} },
+    { "id": "chars", "default_duration_sec": 0.34, "scales": false, "timing": "in", "behavior": "splits the text into characters that pop in one after another", "parameters": { "data-stagger": { "default": 0.045, "unit": "s between characters" } } },
+    { "id": "slam", "default_duration_sec": 0.38, "scales": true, "timing": "in", "behavior": "lands from 190 % scale", "parameters": {} },
+    { "id": "drift", "default_duration_sec": 0.5, "scales": true, "timing": "in", "behavior": "slowly scales up over data-dur (a slow push; set a long data-dur)", "parameters": { "data-amt": { "default": 0.05, "unit": "scale gained" } } },
+    { "id": "spin", "default_duration_sec": 0.5, "scales": false, "timing": "continuous", "ignores": ["data-at", "data-dur"], "behavior": "rotates from the scene start", "parameters": { "data-speed": { "default": 12, "unit": "deg/s" } } },
+    { "id": "bgpan", "default_duration_sec": 0.5, "scales": false, "timing": "continuous", "ignores": ["data-at", "data-dur"], "behavior": "pans the background image from the scene start", "parameters": { "data-vx": { "default": 0, "unit": "px/s" }, "data-vy": { "default": 0, "unit": "px/s" } } },
+    { "id": "shake", "default_duration_sec": 0.5, "scales": false, "timing": "pass", "behavior": "shakes with a decaying amplitude", "parameters": { "data-amp": { "default": 14, "unit": "px" } } },
+    { "id": "pulse", "default_duration_sec": 0.5, "scales": true, "timing": "continuous", "ignores": ["data-dur"], "behavior": "breathes in scale from data-at", "parameters": { "data-amp": { "default": 0.04, "unit": "scale" }, "data-period": { "default": 1.1, "unit": "s" } } },
+    { "id": "float", "default_duration_sec": 0.5, "scales": false, "timing": "continuous", "ignores": ["data-at", "data-dur"], "behavior": "bobs up and down from the scene start", "parameters": { "data-amp": { "default": 10, "unit": "px" }, "data-period": { "default": 2.4, "unit": "s" } } },
+    { "id": "flash", "default_duration_sec": 0.35, "scales": false, "timing": "pass", "behavior": "flashes to full opacity and fades out", "parameters": {} },
+    { "id": "blink", "default_duration_sec": 0.5, "scales": false, "timing": "continuous", "ignores": ["data-dur"], "behavior": "hidden before data-at, then switches between full and 35 % opacity every 0.4 s", "parameters": {} },
+    { "id": "pathtext", "default_duration_sec": 0.5, "scales": false, "timing": "in", "behavior": "moves an SVG textPath's startOffset", "parameters": { "data-from": { "default": 100, "unit": "%" }, "data-to": { "default": -100, "unit": "%" }, "data-ease": { "default": "ease-out", "values": ["linear"] } } },
+    { "id": "whip", "default_duration_sec": 0.45, "scales": false, "timing": "in", "behavior": "slides in sideways with horizontal motion blur", "parameters": { "data-dx": { "default": 320, "unit": "px" } } },
+    { "id": "sweep", "default_duration_sec": 0.9, "scales": false, "timing": "pass", "behavior": "a skewed highlight crosses the element", "parameters": {} },
+    { "id": "orb", "default_duration_sec": 1.2, "scales": true, "timing": "pass", "behavior": "expands from 15 % to 405 % and fades out", "parameters": {} },
+    { "id": "blurin", "default_duration_sec": 0.6, "scales": true, "timing": "in", "behavior": "sharpens from a blur while fading in", "parameters": { "data-amt": { "default": 24, "unit": "px blur" } } },
+    { "id": "scan", "default_duration_sec": 0.8, "scales": false, "timing": "pass", "behavior": "moves a background band down the element", "parameters": {} }
+  ]
+}

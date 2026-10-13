@@ -202,20 +202,95 @@
     if (window.__renderHooks) for (const h of window.__renderHooks) await h(t);
   }
 
-  // ---------- local preview (space pauses, click restarts) ----------
+  // ---------- local preview: a scrub bar, Space or the button pauses, a click on the film restarts ----------
+  // The bar is a preview control only and never reaches a frame:
+  // - record.cjs installs window.__gl (its WebGL context watch) before any page script runs, so a page
+  //   it opens never builds the bar and is fitted exactly as before the bar existed (Chromium's raster
+  //   scale can depend on what was drawn earlier; see noScale above);
+  // - __record() called any other way removes the bar and refits the stage without it first.
   const frame = document.getElementById("frame");
   let t0 = performance.now(), paused = false, pausedAt = 0, recording = false;
+  let seekPending = false, resumeAfterScrub = false;
   let previewRender = Promise.resolve();
+  const BAR_SPACE = 56; // the bar (40 px) and its 10 px margin, plus air; kept free above and below the film
+  let bar = null;
+  if (document.body && !Array.isArray(window.__gl)) {
+    const css = document.createElement("style");
+    css.textContent = `
+#fx-preview { position: fixed; z-index: 2147483647; left: 50%; bottom: 10px; transform: translateX(-50%);
+  box-sizing: border-box; width: min(760px, calc(100vw - 24px)); height: 40px; margin: 0; padding: 0 10px;
+  display: flex; align-items: center; gap: 10px; background: rgba(16, 16, 18, .9); color: #f2f1ec;
+  border: 1px solid rgba(255, 255, 255, .16); border-radius: 10px; user-select: none;
+  font: 500 13px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: 0; text-transform: none; }
+#fx-preview button { flex: none; box-sizing: border-box; width: 62px; height: 28px; margin: 0; padding: 0;
+  border: 1px solid rgba(255, 255, 255, .32); border-radius: 6px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+#fx-preview button:focus-visible, #fx-preview input:focus-visible { outline: 2px solid #ffd400; outline-offset: 2px; }
+#fx-preview input { flex: 1 1 auto; min-width: 0; width: auto; height: 20px; margin: 0; padding: 0; accent-color: #ffd400; cursor: pointer; }
+#fx-preview output { flex: none; min-width: 15ch; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+body.record #fx-preview { display: none !important; }`;
+    const box = document.createElement("div");
+    box.id = "fx-preview";
+    box.setAttribute("role", "group");
+    box.setAttribute("aria-label", "Preview timeline");
+    const button = document.createElement("button");
+    button.type = "button";
+    const range = document.createElement("input");
+    range.type = "range";
+    range.min = "0"; range.max = String(DUR); range.step = String(1 / 30); range.value = "0";
+    range.setAttribute("aria-label", "Timeline position in seconds");
+    const out = document.createElement("output");
+    box.append(button, range, out);
+    document.head.appendChild(css);
+    document.body.appendChild(box);
+    bar = { box, css, button, range, out, shown: "" };
+  }
+  const now = () => performance.now();
+  const clock = (at) => (paused ? pausedAt : ((at - t0) / 1000) % (DUR + 1));
+  function showState() {
+    if (bar) bar.button.textContent = paused ? "Play" : "Pause";
+  }
+  function showTime(t) {
+    if (!bar) return;
+    const shown = Math.min(Math.max(t, 0), DUR);
+    const text = `${shown.toFixed(2)} / ${DUR.toFixed(2)} s`;
+    if (text === bar.shown) return;
+    bar.shown = text;
+    bar.out.textContent = text;
+    bar.range.value = String(shown);
+  }
+  function setPaused(p) {
+    if (p === paused) return;
+    if (p) pausedAt = clock(now());
+    else t0 = now() - pausedAt * 1000;
+    paused = p;
+    showState();
+  }
+  // Show t (clamped to the film) at once, paused or playing.
+  function seek(t) {
+    t = Math.min(Math.max(t, 0), DUR);
+    if (paused) { pausedAt = t; seekPending = true; }
+    else t0 = now() - t * 1000;
+  }
+  // Dragging pauses playback; letting go resumes it if it was playing.
+  function holdForScrub() {
+    if (!paused) { resumeAfterScrub = true; setPaused(true); }
+  }
+  function releaseScrub() {
+    if (resumeAfterScrub) { resumeAfterScrub = false; setPaused(false); }
+  }
   function fit() {
     if (recording) return;
-    const s = Math.min((innerWidth - 32) / W, (innerHeight - 32) / H);
+    const s = Math.min((innerWidth - 32) / W, (innerHeight - 32 - (bar ? 2 * BAR_SPACE : 0)) / H);
     frame.style.width = `${W * s}px`; frame.style.height = `${H * s}px`;
     stage.style.transform = `scale(${s})`;
   }
-  async function loop(now) {
+  async function loop(at) {
     if (recording) return;
-    if (!paused) {
-      previewRender = render(((now - t0) / 1000) % (DUR + 1));
+    if (!paused || seekPending) {
+      seekPending = false;
+      const t = clock(at);
+      showTime(t);
+      previewRender = render(t);
       await previewRender;
     }
     if (!recording) requestAnimationFrame(loop);
@@ -223,11 +298,25 @@
   addEventListener("resize", fit);
   addEventListener("keydown", (e) => {
     if (e.code !== "Space") return;
+    // The button toggles itself; a text field keeps its space.
+    const el = e.target;
+    if (bar && el === bar.button) return;
+    if (el && (el.isContentEditable || /^(TEXTAREA|SELECT)$/.test(el.tagName) || (el.tagName === "INPUT" && el !== (bar && bar.range)))) return;
     e.preventDefault();
-    if (paused) { t0 = performance.now() - pausedAt * 1000; paused = false; }
-    else { pausedAt = ((performance.now() - t0) / 1000) % (DUR + 1); paused = true; }
+    setPaused(!paused);
   });
-  frame.addEventListener("click", () => { t0 = performance.now(); paused = false; });
+  frame.addEventListener("click", () => { t0 = now(); paused = false; resumeAfterScrub = false; showState(); });
+  if (bar) {
+    bar.button.addEventListener("click", () => { resumeAfterScrub = false; setPaused(!paused); });
+    bar.range.addEventListener("pointerdown", holdForScrub);
+    // Snap to a 30 fps frame time, i / 30, exactly as record.cjs computes it at its default rate.
+    bar.range.addEventListener("input", () => { holdForScrub(); seek(Math.round(+bar.range.value * 30) / 30); });
+    bar.range.addEventListener("change", releaseScrub);
+    addEventListener("pointerup", releaseScrub);
+    addEventListener("pointercancel", releaseScrub);
+    showState();
+    showTime(0);
+  }
   fit();
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(loop));
 
@@ -235,8 +324,12 @@
   window.__DUR = DUR;
   window.__SIZE = { w: W, h: H };
   window.__cues = () => cues;
+  // What this engine accepts, for tools and for the check against video/engine-manifest.json.
+  window.__enginePrimitives = { fx: [...FX], defaultDur: { ...DEFAULT_DUR }, fallbackDur: 0.5, scales: [...SCALES], wipe: WIPE };
   // Recording shows the stage at its own size: the preview's fit() may have shrunk the frame.
   window.__record = async () => {
+    // Remove the preview bar and fit the stage as the page would be without it, before anything is drawn.
+    if (bar) { bar.box.remove(); bar.css.remove(); bar = null; fit(); }
     recording = true;
     // Stop scheduling previews and let any asynchronous hook finish before frame zero.
     await previewRender;
