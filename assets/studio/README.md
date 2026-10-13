@@ -11,27 +11,27 @@ and [the dot-animation study](https://www.threads.com/@more.yu_/post/DeBkaXOE6y6
 
 ## Effect catalogue
 
-The table lists factory IDs: pass these bare IDs to `FXStudio.create()` or `FXStudio.preview()`. Gallery registrations and `data-demo` attributes add the `studio-` prefix; for example, `FXStudio.create("video-dots")` corresponds to `data-demo="studio-video-dots"`. The main gallery groups
-variants inside technique cards and puts collections in a separate showcase
-section; [the catalogue](../../fx/catalog.js) defines that relationship. Twenty art
-directions are presets of `themes`, not twenty additional techniques.
+The table lists factory IDs: pass these bare IDs to `FXStudio.create()` or `FXStudio.preview()`. Gallery registrations and `data-demo` attributes add the `studio-` prefix; for example, `FXStudio.create("video-dots")` corresponds to `data-demo="studio-video-dots"`. [The catalogue](../../fx/catalog.js) decides which IDs are effects, which are variants inside another effect's card, and which are presets in the site's Comparisons section. Twenty art directions are presets of `themes`, not twenty more effects.
 
-| ID | Film effect | Implementation |
-|---|---|---|
-| `flight` | Flying courier and cape | Shared pose with layered limbs and a deforming cape |
-| `portal` | Cross-frame style portal | One pose clipped into independently styled panels |
-| `themes` | Twenty art directions | Typography, motifs, material texture and figure treatment |
-| `gallery` | Art-gallery camera journey | Layout/scale interpolation, tracked horizontal travel, pull-out |
-| `lowpoly` | Low-poly flight course | Actual 3D city geometry and perspective rings |
-| `video-dots` | Video to animated dots | Deterministic RGBA frame sampling and luminance-dependent dot radius |
-| `dot-rhythm` | Beat-driven dot styles | Palette and spacing changes every 0.3 s at 100 BPM |
-| `dot-impact` | Dot impact and recovery | Compression, seeded offsets and a short recovery envelope |
-| `echo` | Colored temporal echoes | Five distinct earlier source frames, not RGB channel splitting |
-| `time-remap` | Source-time remapping | Normal, ramp/hold, reverse, stepped source clocks |
-| `depth-dots` | 2.5D dot relief | Shallow luminance-derived depth or a supplied depth image |
-| `skin-cloud` | Animated skinned point cloud | 16,000 stable barycentric samples attached to animated GLB geometry |
-| `freeze-orbit` | Frozen action, moving camera | Hold the real 3D pose; orbit the camera through 360 degrees |
-| `particle-lens` | Particle rush and depth of field | Geometry-bound scatter and depth-dependent soft point sprites |
+Gallery cards show the raw effect from `FXStudio.create(id)`. The 2D effects use the public Apricot (cat) and Milo (explorer robot) characters from `fx/character`, drawn by `rig-gl.js`; the 3D effects use Juno, an original procedural dancer (`figure.js`). The input / effect comparisons on the COUNTERFORM fight come from `FXStudio.preview(id)` (see below), and the footage or GLB treatments from `FXStudio.create(id, {legacy | sourceUrl | modelUrl})`.
+
+| ID | On the site | Subject | What it does |
+|---|---|---|---|
+| `portal` | Effect: Cross-frame style portal | Courier | Slanted panels with no gaps, each in its own art direction; the courier crosses a seam and is drawn in two styles at once |
+| `themes` | Preset: Twenty art directions | Courier | Typography, motifs, material texture and figure treatment of one flying courier |
+| `gallery` | Preset: Art-gallery camera journey | Courier | Overview, a tracked flight across twenty artworks and a closing overview |
+| `lowpoly` | Effect: Low-poly flight course | Paper glider | A sunset city canyon with fog, lit windows, flashing gates, speed lines, banking and an FOV kick |
+| `video-dots` | Effect: Image and footage halftone dots | Apricot | A hard moving key light turns the cat into a two-ink halftone; dot size follows brightness and the palette changes on every beat |
+| `dot-rhythm` | Variant of `video-dots` | Milo | Every half beat cuts dot pitch, dot shape, palette and framing at 100 BPM |
+| `dot-impact` | Variant of Motion shatter and reassemble (`signal-motion-fragments`) | Milo | A ball hits; dots near the contact compress, scatter and ripple outward, then settle |
+| `echo` | Effect: Time echoes and speed ramps | Apricot | The pounce runs through normal, slow, hold, reverse and ramp; echoes of real earlier frames grow, fan out and retract |
+| `time-remap` | Variant of `echo` | Apricot | Only the source clock changes, with a graph of output time against source time and a six-step mode |
+| `depth-dots` | Effect: Image relief | Milo | Shallow depth from silhouette and brightness; drum hits push the relief out, silent bars stay flat |
+| `skin-cloud` | Effect: Skinned point cloud | Juno | A scan line turns the solid dancer into surface points that follow her limbs; on the slam they rush the lens as bokeh, then reassemble |
+| `particle-lens` | Variant of `skin-cloud` | Juno | Surface points stream towards the lens while focus racks between the stream and the body |
+| `freeze-orbit` | Effect: Freeze frame and camera orbit | Juno | The slam is held as the floor breaks; debris, dust and shock ring stop while the camera travels 230° round real 3D geometry, then time resumes |
+
+`FXStudio.create("flight")` still works and returns `themes`: the flying courier lives in the art directions.
 
 The twenty treatments are petroglyph, tomb painting, mosaic, stained glass,
 illuminated initial, proportion study, silhouette, ukiyo-e, cross-stitch,
@@ -40,11 +40,11 @@ line printer, handheld pixels, low poly, stencil, and embroidered patch.
 They are stylised procedural interpretations, not automatic historical-style
 transfer for arbitrary photographs.
 
-The dot conversion, temporal echoes, impact, time remapping and relief sample the
-same newly rendered fight excerpt. The skin, orbit and lens demos use the actual
-3D Amber/Teal geometry. The original orbit comparison holds the block at 0.6 s; lens particles leave
-the kick contact while most of the figure remains intact. Every effect keeps its
-own operation instead of replaying the finished fight film.
+In the comparisons and the footage treatments, the dot conversion, temporal echoes, impact,
+time remapping and relief sample the rendered fight excerpt, and the skin, orbit and lens
+treatments use the actual 3D Amber/Teal geometry. The orbit comparison holds the block at 0.6 s;
+lens particles leave the kick contact while most of the figure remains intact. Every effect
+keeps its own operation instead of replaying the finished fight film.
 
 ## Reproduce the assets and films
 
@@ -61,13 +61,14 @@ Amber/Teal animation clips, baked from `createChoreography()` in `battle.js`. It
 renders `examples/fight-source.html` twice at 24 fps, encodes `fight-source.mp4`,
 and imports it into `fight/frame-*.png` plus `fight/manifest.json`. The shipped
 frames are small enough to check in; a normal film rebuild can reuse them.
-`build:studio` delivers the 40.8-second art-direction film, the 19.2-second
+`build:studio` delivers the 40.8-second art-direction film, the 19.8-second
 COUNTERFORM fight and a 38.4-second eight-treatment comparison, with sound, posters
 and GIFs. Use `npm run render:fight-effects` for the comparison alone. The fight uses a separate original
 2D illustrated rig in `fx/studio/battle.js`: anticipation, attack, contact holds,
-recoil, kicks and counterattacks. Its short held shot is a 2D camera push. The dedicated
-`freeze-orbit` technique remains a true orbit around animated GLB geometry.
-`build:showcase` also rebuilds the earlier films and the main intro.
+recoil, kicks and counterattacks. At 12.0–13.2 s story time stops and the camera circles
+the fighters as a 3D point cloud (`fx/signals/orbit.js`, the `signal-freeze-orbit` variant).
+The dedicated `freeze-orbit` effect remains a true orbit around animated 3D geometry.
+`build:showcase` also rebuilds the other effect films and the main intro.
 
 The asset tool uses Three.js r180 GLTFExporter and BufferGeometryUtils; playback
 uses GLTFLoader, SkeletonUtils and AnimationMixer. These are existing Three.js
@@ -126,17 +127,17 @@ each frame. Impact times are authored cues, not an automatic collision detector.
 Depth of field is an art-directed point-sprite approximation, not a physical lens
 solver. Every exported frame remains a function of time and fixed input assets.
 
-## Read the short studies as comparisons
+## Input / effect comparisons
 
-The gallery uses `FXStudio.preview(id)` for the nine dot-related study IDs
-(including the palette/spacing variant). It returns the same awaited
-`{canvas, frame(t), proof()}` contract, but places a reference beside the effect.
-`FXStudio.create(id)` still returns the raw reusable output for authored films.
-The [studio player](../../examples/studio.html?compare=1#video-dots) can switch
-between these presentations. `fx/studio/study-preview.js` owns the comparison
-layout and source-time selections; it is not an additional effect registration.
+`FXStudio.preview(id)` returns the same awaited `{canvas, frame(t), proof()}` contract
+as `create`, but places a reference from the COUNTERFORM fight beside the effect, for the
+nine dot-related IDs (including the palette/spacing variant). The gallery cards show the raw
+effect; the [studio player](../../examples/studio.html?compare=1#video-dots) switches
+between the two presentations, and each card links to its comparison.
+`fx/studio/study-preview.js` owns the comparison layout and source-time selections; it is
+not an additional effect registration.
 
-| Study | What the viewer compares | Why it is a separate operation |
+| ID | What the viewer compares | Why it is a separate operation |
 |---|---|---|
 | Footage dots | Colour footage / dot rendering of the same frame | Samples 2D pixels into dots |
 | Dot rhythm | Original footage / beat-controlled dots | A variant of footage dots, not a new family |
@@ -149,19 +150,19 @@ layout and source-time selections; it is not an additional effect registration.
 | Particle lens | Sharp / scattered soft points with identical camera and pose | Changes spatial scatter and depth-dependent focus |
 
 The long **Same Fight, Eight Treatments** comparison runs for 38.4 seconds:
-eight chapters of 4.8 seconds, using the same comparison factory as the gallery.
+eight chapters of 4.8 seconds, using the same comparison factory as the studio player.
 It excludes the dot-rhythm variant and demonstrates ramp/hold in the time-remap
-chapter; the short study also cycles through normal, reverse and stepped playback.
+chapter; the short comparison also cycles through normal, reverse and stepped playback.
 It deliberately reuses COUNTERFORM choreography. COUNTERFORM itself remains the
-19.2-second authored fight film, rather than a catalogue of processing methods.
+19.8-second authored fight film, rather than a catalogue of processing methods.
 
-## Signal-driven studies
+## Signal-driven variants
 
-The additional [signal studies](../../fx/signals/README.md) reuse these assets.
-`audio-relief` and `motion-fragments` measure the indexed RGBA footage; the cinematic
-`freeze-orbit` variation holds the real rig at a kick (3.2 s) and block (0.6 s),
-with camera and lighting on independent clocks. The original studio factory and
-its input/effect comparison remain available.
+The [signal-driven effects](../../fx/signals/README.md) measure their own sources:
+`signal-motion-fragments` (Apricot) and `signal-audio-relief` (Milo) have their own
+measured bundles, while the cinematic `signal-freeze-orbit` variant reuses this fight
+footage and rig, holding a kick (3.2 s) and a block (0.6 s) with camera and lighting on
+independent clocks. COUNTERFORM's freeze-orbit climax uses the same orbit module.
 
 After regenerating the fight footage, rebuild `assets/signals` with
 `tools/signals/build.py --replace` in the documented analysis environment, then
