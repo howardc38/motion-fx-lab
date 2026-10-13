@@ -374,155 +374,7 @@
       };
     } });
 
-  function mascot(scene) {
-    const R = rng(515);
-    const mat = (c, rough = 0.85) => new THREE.MeshStandardMaterial({ color: c, roughness: rough, metalness: 0 });
-    const skin = mat(0xe4e4e4), hair = mat(0x3c3c3c, 0.95), shirt = mat(0x767676), dark = mat(0x101010, 0.6), paper = mat(0xbdbdbd, 0.7);
-    const S = (rad, m, seg = 40) => new THREE.Mesh(new THREE.SphereGeometry(rad, seg, Math.round(seg * 0.7)), m);
-    const pivot = new THREE.Group(); scene.add(pivot);
-    const bust = new THREE.Group(); bust.position.y = 4.3; pivot.add(bust);
-    const torso = S(2.7, shirt, 56); torso.scale.set(1, 0.72, 0.78); torso.position.y = -2.0; bust.add(torso);
-    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.62, 1.1, 32), skin); neck.position.y = 0.05; bust.add(neck);
-    const head = new THREE.Group(); head.position.y = 1.85; bust.add(head);
-    head.add(S(1.62, skin, 56));
-    for (let i = 0; i < 46; i++) {
-      const th = R() * 1.15, ph = R() * Math.PI * 2, rr = 1.55;
-      if (th > 0.75 && Math.cos(ph) > 0.35) continue;
-      const b = S(0.42 + R() * 0.2, hair, 20);
-      b.position.set(Math.sin(th) * Math.sin(ph) * rr, Math.cos(th) * rr + 0.1, Math.sin(th) * Math.cos(ph) * rr * 0.9 - 0.1); head.add(b);
-    }
-    [-1, 1].forEach((sx) => { const ear = S(0.33, skin, 20); ear.position.set(sx * 1.58, -0.05, 0); head.add(ear); });
-    const eyes = [-1, 1].map((sx) => { const e = S(0.15, dark, 16); e.position.set(sx * 0.52, 0.12, 1.47); head.add(e); return e; });
-    const nose = S(0.2, skin, 16); nose.position.set(0, -0.2, 1.6); head.add(nose);
-    const smile = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.07, 10, 32, Math.PI), dark); smile.rotation.z = Math.PI; smile.position.set(0, -0.48, 1.46); head.add(smile);
-    const shoulder = new THREE.Group(); shoulder.position.set(-2.25, -1.1, 0.35); bust.add(shoulder);
-    const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.58, 2.2, 24), shirt); upper.position.y = -1.1; shoulder.add(upper);
-    const elbow = new THREE.Group(); elbow.position.y = -2.2; shoulder.add(elbow);
-    const fore = new THREE.Mesh(new THREE.CylinderGeometry(0.56, 0.5, 1.9, 24), skin); fore.position.y = -0.95; elbow.add(fore);
-    const hand = S(0.5, skin, 24); hand.position.y = -1.95; elbow.add(hand);
-    const doc = new THREE.Group(); doc.position.set(0, -2.6, 0.3); elbow.add(doc); doc.visible = false;
-    doc.add(new THREE.Mesh(new THREE.BoxGeometry(1.7, 2.2, 0.06), paper));
-    return { pivot, bust, torso, head, eyes, shoulder, elbow };
-  }
-  function mascotScene(s) {
-    const blit = glTile(s, true), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(30, GW / GH, 0.1, 100);
-    cam.position.set(0, 0.2, 21);
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x303030, 0.55));
-    const key = new THREE.DirectionalLight(0xffffff, 1.05); key.position.set(-6, 7, 9); scene.add(key);
-    const fill = new THREE.DirectionalLight(0xffffff, 0.25); fill.position.set(7, -2, 6); scene.add(fill);
-    const comp = new THREE.EffectComposer(R3); comp.setSize(GW, GH); comp.addPass(new THREE.RenderPass(scene, cam));
-    comp.addPass(new THREE.HalftonePass(GW, GH, { shape: 1, radius: 4, rotateR: Math.PI / 12, rotateB: Math.PI / 6, rotateG: Math.PI / 4, scatter: 0, blending: 1, blendingMode: 1, greyscale: true, disable: false }));
-    const m = mascot(scene); m.pivot.position.set(0.4, -4.9, 0);
-    return { m, draw() { R3.setClearColor(0xffffff, 1); comp.render(1 / 60); blit(); } };
-  }
-
-  const halftoneDemo = { id: "halftone", gl: true, host: "mascotRow", name: "Halftone mascot", kind: "character", stacks: ["three"], chips: ["Three.js primitives", "HalftonePass", "mix-blend-mode: multiply"], grade: "A+",
-    purpose: "An original character built from spheres and cylinders, then halftoned; no AI-generated art. The arm has two joints, so it can wave.", period: 5, hero: 2.3,
-    build(s) {
-      s.style.background = "#ff90e8";
-      const { m, draw } = mascotScene(s);
-      return (t) => {
-        m.bust.rotation.set(0, -0.32 + 0.07 * Math.sin(t * 1.2), 0);
-        m.head.rotation.set(0.05 * Math.sin(t * 1.7), 0.12 * Math.sin(t * 0.9), 0.07 * Math.sin(t * 1.3));
-        const blink = [0.6, 3.1].some((b) => t > b && t < b + 0.14);
-        m.eyes.forEach((e) => e.scale.set(1, blink ? 0.12 : 1, 1));
-        const lift = smooth(0.9, 1.4, t) * (1 - smooth(4.2, 4.7, t)), bend = lift * 0.55 * Math.sin(t * 9);
-        m.shoulder.rotation.set(-0.15 * lift, 0, -2.55 * lift + 0.08);
-        m.elbow.rotation.set(0, 0, -0.35 * lift + bend);
-        draw();
-      };
-    } };
-  demo(halftoneDemo);
-
-
-  // The agent from option A as a reusable model. paint(colour, map) makes the material of each lit
-  // surface and accent(colour, opacity) of each flat detail; outline(mesh, geometry), if given,
-  // decorates a mesh. So toon, dither and any other style draw the same character.
-  function agentModel(scene, paint, accent, outline) {
-    const part = (geo, mat, parent, lined = true) => { const m = new THREE.Mesh(geo, mat); parent.add(m); if (lined && outline) outline(m, geo); return m; };
-    const SKIN = 0xf6c9a6, HAIR = 0x2a2230, SUIT = 0x26335c;
-
-    // suit, shirt and tie painted on the jacket; the front of the lathe sits at u = 0.5
-    const c = document.createElement("canvas"); c.width = 1024; c.height = 512; const g = c.getContext("2d");
-    const Y = (v) => (1 - v) * 512;
-    g.fillStyle = "#26335c"; g.fillRect(0, 0, 1024, 512);
-    g.fillStyle = "#ffffff"; g.beginPath(); g.moveTo(452, Y(0.98)); g.lineTo(572, Y(0.98)); g.lineTo(512, Y(0.66)); g.closePath(); g.fill();
-    g.fillStyle = "#ff4f9a"; g.beginPath(); g.moveTo(503, Y(0.95)); g.lineTo(521, Y(0.95)); g.lineTo(527, Y(0.76)); g.lineTo(512, Y(0.71)); g.lineTo(497, Y(0.76)); g.closePath(); g.fill();
-    g.strokeStyle = "#141c36"; g.lineWidth = 9; g.beginPath(); g.moveTo(446, Y(0.99)); g.lineTo(512, Y(0.64)); g.lineTo(578, Y(0.99)); g.stroke();
-    g.fillStyle = "#141c36"; [0.55, 0.45].forEach((v) => { g.beginPath(); g.arc(512, Y(v), 8, 0, Math.PI * 2); g.fill(); });
-    const suitTex = new THREE.CanvasTexture(c);
-
-    const root = new THREE.Group(); root.position.y = -6.0; scene.add(root);
-    const body = new THREE.Group(); body.position.y = 4.4; root.add(body);
-    const prof = [];
-    for (let i = 0; i <= 28; i++) { const u = i / 28; prof.push(new THREE.Vector2(Math.max(0.001, 2.2 * Math.sqrt(Math.max(0, 1 - Math.pow(u, 4)))), -4.4 + u * 5.02)); }
-    const torso = part(new THREE.LatheGeometry(prof, 72, Math.PI, Math.PI * 2), paint(0xffffff, suitTex), body);
-    torso.scale.z = 0.72;
-    const neck = part(new THREE.CylinderGeometry(0.5, 0.55, 0.9, 32), paint(SKIN), body, false); neck.position.y = 0.8;
-
-    const head = new THREE.Group(); head.position.y = 2.55; body.add(head);
-    part(new THREE.SphereGeometry(1.75, 64, 48), paint(SKIN), head).scale.set(1, 1.02, 0.95);
-    const hairMat = paint(HAIR); hairMat.side = THREE.DoubleSide;
-    const cap = part(new THREE.SphereGeometry(1.86, 64, 32, 0, Math.PI * 2, 0, 1.5), hairMat, head); cap.rotation.x = -0.18; cap.scale.set(1.02, 1, 1.02);
-    [-1, 1].forEach((sx) => { const sb = part(new THREE.SphereGeometry(0.5, 24, 16), paint(HAIR), head); sb.scale.set(0.45, 1.0, 0.8); sb.position.set(sx * 1.62, 0.5, 0.25); });
-    const fringe = part(new THREE.SphereGeometry(0.9, 32, 24), paint(HAIR), head); fringe.scale.set(1.7, 0.5, 0.75); fringe.position.set(0.35, 1.22, 1.12); fringe.rotation.set(0.3, 0, -0.25);
-    [-1, 1].forEach((sx) => { part(new THREE.SphereGeometry(0.36, 24, 16), paint(SKIN), head).position.set(sx * 1.7, -0.05, 0); });
-    const eyes = [-1, 1].map((sx) => {
-      const e = new THREE.Mesh(new THREE.SphereGeometry(0.2, 24, 16), accent(0x1a1720)); e.position.set(sx * 0.6, 0.1, 1.58); e.scale.set(1, 1.35, 0.5); head.add(e);
-      const hl = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 8), accent(0xffffff)); hl.position.set(0.07, 0.08, 0.2); e.add(hl);
-      return e;
-    });
-    const brows = [-1, 1].map((sx) => { const b = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.055, 8, 24, Math.PI * 0.8), accent(0x2a2230)); b.position.set(sx * 0.6, 0.55, 1.5); b.rotation.z = Math.PI * 0.1; head.add(b); return b; });
-    part(new THREE.SphereGeometry(0.17, 16, 12), paint(SKIN), head, false).position.set(0, -0.18, 1.68);
-    const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.065, 8, 24, Math.PI), accent(0x7a1f3a)); mouth.rotation.z = Math.PI; mouth.position.set(0, -0.55, 1.56); head.add(mouth);
-    [-1, 1].forEach((sx) => { const b = new THREE.Mesh(new THREE.SphereGeometry(0.28, 16, 12), accent(0xff8fb1, 0.55)); b.scale.set(1, 0.5, 0.25); b.position.set(sx * 1.02, -0.35, 1.32); head.add(b); });
-
-    const capsule = [], r = 0.45, L = 1.9;
-    for (let i = 0; i <= 8; i++) { const a = -Math.PI / 2 + (i / 8) * (Math.PI / 2); capsule.push(new THREE.Vector2(Math.max(0.001, r * Math.cos(a)), -L + r * Math.sin(a))); }
-    for (let i = 1; i <= 8; i++) { const a = (i / 8) * (Math.PI / 2); capsule.push(new THREE.Vector2(Math.max(0.001, r * Math.cos(a)), r * Math.sin(a))); }
-    const arm = (sx) => {
-      const sh = new THREE.Group(); sh.position.set(sx * 1.55, 0.05, 0.1); body.add(sh);
-      part(new THREE.LatheGeometry(capsule, 32), paint(SUIT), sh);
-      const cuff = part(new THREE.CylinderGeometry(0.47, 0.47, 0.2, 24), paint(0xffffff), sh, false); cuff.position.y = -L - 0.05;
-      part(new THREE.SphereGeometry(0.5, 32, 24), paint(SKIN), sh).position.y = -L - 0.45;
-      return sh;
-    };
-    const armL = arm(-1), armR = arm(1);
-    armR.rotation.z = 0.45;
-    return { root, body, torso, neck, head, eyes, brows, mouth, armL, armR };
-  }
-
-  demo({ id: "toon", gl: true, host: "mascotRow", name: "3D toon shading + outline", kind: "character", stacks: ["three", "canvas"], chips: ["MeshToonMaterial", "outline (inverted hull)", "Canvas-painted suit"], grade: "A",
-    purpose: "Smooth shapes, three-step toon shading, a black outline, a big head on a small body, a suit and tie, and eye highlights.", period: 5, hero: 1.3,
-    build(s) {
-      s.style.background = "#ffd400";
-      const blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(30, GW / GH, 0.1, 100);
-      cam.position.set(0, -0.8, 18); cam.lookAt(0, -0.8, 0);
-      scene.add(new THREE.AmbientLight(0xffffff, 0.45));
-      const key = new THREE.DirectionalLight(0xffffff, 0.9); key.position.set(-5, 6, 8); scene.add(key);
-      const grad = new THREE.DataTexture(new Uint8Array([110, 110, 110, 255, 185, 185, 185, 255, 255, 255, 255, 255]), 3, 1, THREE.RGBAFormat);
-      grad.minFilter = grad.magFilter = THREE.NearestFilter; grad.generateMipmaps = false; grad.needsUpdate = true;
-      const toon = (c, map) => new THREE.MeshToonMaterial({ color: c, gradientMap: grad, map: map || null });
-      const basic = (c, o) => new THREE.MeshBasicMaterial(o ? { color: c, transparent: true, opacity: o } : { color: c });
-      const line = new THREE.MeshBasicMaterial({ color: 0x1a1720, side: THREE.BackSide });
-      line.onBeforeCompile = (sh) => { sh.vertexShader = sh.vertexShader.replace("#include <begin_vertex>", "vec3 transformed = position + normal * 0.045;"); };
-      const { root, torso, head, eyes, brows, mouth, armL } = agentModel(scene, toon, basic, (m, geo) => m.add(new THREE.Mesh(geo, line)));
-
-      return (t) => {
-        const hopP = t < 0.6 ? Math.sin((Math.PI * t) / 0.6) : 0, land = Math.exp(-Math.pow((t - 0.62) / 0.07, 2));
-        root.position.y = -6.0 + 0.45 * hopP;
-        root.scale.set(1 + 0.06 * land, 1 - 0.08 * land + 0.03 * hopP, 1 + 0.06 * land);
-        torso.scale.y = 1 + 0.012 * Math.sin((t * 2 * Math.PI) / 2.5);
-        head.rotation.set(0.04 * Math.sin(t * 1.3), 0.18 * Math.sin((t * 2 * Math.PI) / 5), 0.07 * Math.sin((t * 2 * Math.PI) / 5 + 1));
-        const blink = [1.4, 3.9].some((b) => t > b && t < b + 0.13);
-        eyes.forEach((e) => e.scale.set(1, blink ? 0.15 : 1.35, 0.5));
-        const up = smooth(0.4, 0.75, t) * (1 - smooth(2.6, 3.0, t)), wave = t > 0.75 && t < 2.6 ? 0.18 * Math.sin((t - 0.75) * 11) : 0;
-        armL.rotation.z = -0.45 + (-2.5 + 0.45) * up + wave * up;
-        brows.forEach((b) => { b.position.y = 0.55 + 0.08 * up; });
-        mouth.scale.set(1 + 0.15 * up, 1 + 0.25 * up, 1);
-        R3.setClearColor(0xffd400, 1); R3.render(scene, cam); blit();
-      };
-    } });
+  // Toon, halftone and dithered characters: the Character shading family in fx/pack-shading.js.
 
   demo({ id: "flat", host: "mascotRow", name: "2D flat illustration with a rig", kind: "character", stacks: ["svg"], chips: ["SVG curves", "per-part rig", "flat shadows"], grade: "A",
     purpose: "Drawn curve by curve with an outline and flat shadows, like an app mascot; each part is rigged on its own, so it can wave and blink.", period: 5, hero: 1.3,
@@ -761,29 +613,6 @@
       };
     } });
 
-  demo({ id: "bounce", gl: true, host: "mascotRow", name: "Mascot breathing and bounce", kind: "character", stacks: ["three"], chips: ["Three.js", "HalftonePass", "squash and stretch"], grade: "A+",
-    purpose: "The same halftone mascot, breathing and hopping with squash and stretch: a character that feels alive between lines.", period: 4, hero: 0.55,
-    build(s) {
-      s.style.background = "#ffd400";
-      const { m, draw } = mascotScene(s);
-      return (t) => {
-        let y = 0, sy = 1;
-        if (t < 2.4) {
-          const p = (t % 1.2) / 1.2, edge = Math.min(p, 1 - p);
-          y = 1.6 * Math.sin(Math.PI * p);
-          sy = 1 - 0.16 * Math.exp(-(edge * edge) / 0.002) + 0.06 * Math.sin(Math.PI * p) * (p < 0.5 ? 1 : 0.4);
-        } else sy = 1 + 0.018 * Math.sin((t - 2.4) * 5);
-        m.pivot.position.y = -4.9 + y;
-        m.pivot.scale.set(1 + (1 - sy) * 0.8, sy, 1 + (1 - sy) * 0.8);
-        m.bust.rotation.set(0, -0.2 + 0.05 * Math.sin(t * 1.3), 0);
-        m.head.rotation.set(0.06 * Math.sin(t * 2), 0.1 * Math.sin(t * 1.1), 0);
-        const blink = t > 3.1 && t < 3.24;
-        m.eyes.forEach((e) => e.scale.set(1, blink ? 0.12 : 1, 1));
-        m.shoulder.rotation.set(0, 0, 0.08); m.elbow.rotation.set(0, 0, 0);
-        draw();
-      };
-    } });
-
   demo({ id: "liquid", gl: true, name: "Liquid glass refraction", kind: "shader", stacks: ["three", "glsl", "canvas"], chips: ["custom GLSL refraction", "dispersion"], grade: "B",
     purpose: "A screen-space glass effect bends and splits a background image. This tile uses UV distortion, rather than a thick 3D transparent body.", period: 8, hero: 2,
     build(s) {
@@ -876,6 +705,6 @@
     } });
 
   // Extension files (fx/pack-*.js) register more effects with FX.demo and reuse these building blocks.
-  window.FX = { DEMOS, demo, R3, GW, GH, FONT, ZH, LAT, NOISE, q, qa, glTile, composer, text3d, studioLights, rng, mascot, mascotScene, agentModel,
+  window.FX = { DEMOS, demo, R3, GW, GH, FONT, ZH, LAT, NOISE, q, qa, glTile, composer, text3d, studioLights, rng,
     helpers: { clamp, lin, smooth, outCubic, inCubic, inOut, back, hash } };
 })();

@@ -90,6 +90,8 @@ function sandbox() {
     requestAnimationFrame: () => 0, cancelAnimationFrame() {}, setTimeout: () => 0, clearTimeout() {}, setInterval: () => 0, clearInterval() {},
     addEventListener() {}, removeEventListener() {}, fetch: () => new Promise(() => {}),
     Image: inert, HTMLCanvasElement: inert, OffscreenCanvas: inert, ResizeObserver: inert, IntersectionObserver: inert,
+    // Pinned CDN libraries are skipped below; packs that guard on window.THREE etc. still register.
+    THREE: inert, Matter: inert, flubber: inert, PIXI: inert,
   });
   vm.runInContext('var window = globalThis, self = globalThis;', context);
   return { context, documentState };
