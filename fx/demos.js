@@ -21,167 +21,339 @@
   const demo = (o) => DEMOS.push(o);
 
   // ================= 2D effects =================
-  demo({ id: "whip", name: "Whip-in letters + motion blur", kind: "type", stacks: ["svg", "css"], chips: ["SVG feGaussianBlur", "engine.js whip"], grade: "A",
-    purpose: "Big letters whip in from the side, blurred along the direction they move.", period: 3.2, hero: 1.7,
+  // Entries marked tier: "basic" are motion fundamentals for the gallery's Motion basics area; they are not
+  // counted as effect families. Every 2D layout here is authored for a 16:9 stage and centred, and the copy
+  // is fictional and neutral.
+  let UID = 0;
+  const uid = (p) => `${p}-${++UID}`;
+  const decay = (u, k) => (u < 0 ? 0 : Math.exp(-u * k));
+  const TAU = Math.PI * 2;
+  const mixHex = (a, b, k) => {
+    const p = (h, i) => parseInt(h.slice(1 + i * 2, 3 + i * 2), 16);
+    return `rgb(${[0, 1, 2].map((i) => Math.round(p(a, i) + (p(b, i) - p(a, i)) * clamp(k))).join(",")})`;
+  };
+
+  demo({ id: "whip", name: "Whip-in letters + motion blur", kind: "type", stacks: ["svg", "css"], chips: ["SVG feGaussianBlur from velocity", "ghost trail", "spring overshoot + shake"], grade: "A",
+    purpose: "Big letters whip in from the side, blurred and trailed along the direction they travel; each overshoots, snaps back and lands with a jolt.", period: 3.2, hero: 0.54,
     build(s) {
-      s.style.background = "#f4f3ee";
-      s.innerHTML = `<svg class="defs" aria-hidden="true"><defs>${[0, 1, 2, 3, 4].map((i) => `<filter id="fxw${i}" x="-60%" y="-20%" width="220%" height="140%"><feGaussianBlur stdDeviation="0 0"/></filter>`).join("")}</defs></svg>
-        <div class="whip-l1"><span style="filter:url(#fxw0)">I</span><span style="filter:url(#fxw1)">N</span></div>
-        <div class="whip-l2"><span style="filter:url(#fxw2)">B</span><span style="filter:url(#fxw3)">O</span><span style="filter:url(#fxw4)">X</span></div>
-        <div class="whip-badge">12</div><div class="whip-cap">UNREAD</div>`;
-      const sp = qa(s, ".whip-l1 span, .whip-l2 span"), bl = qa(s, "feGaussianBlur"), badge = q(s, ".whip-badge"), cap = q(s, ".whip-cap");
+      s.style.background = "#f4f1ea";
+      const WORD = Array.from("SPRINT"), N = WORD.length, GHOSTS = 4, GAP = 0.012, id = uid("fxw");
+      s.innerHTML = `<svg class="defs" aria-hidden="true"><defs>${WORD.map((_, i) => `<filter id="${id}-${i}" x="-200%" y="-10%" width="500%" height="120%" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="0 0"/></filter>`).join("")}</defs></svg>
+        <div class="wh-streaks">${Array.from({ length: 7 }, () => "<i></i>").join("")}</div>
+        <div class="wh-col"><div class="wh-word">${WORD.map((c, i) => `<span class="wh-l">${Array.from({ length: GHOSTS }, () => `<b class="wh-g" style="filter:url(#${id}-${i})">${c}</b>`).join("")}<b class="wh-m" style="filter:url(#${id}-${i})">${c}</b></span>`).join("")}</div>
+        <div class="wh-bar"></div><div class="wh-cap">STAGE 4 · 182 KM · FLAT FINISH</div></div>`;
+      const col = q(s, ".wh-col"), letters = qa(s, ".wh-l"), blur = qa(s, "feGaussianBlur"), bar = q(s, ".wh-bar"), cap = q(s, ".wh-cap"), streaks = qa(s, ".wh-streaks i");
+      // Each letter is a damped spring released from 118cqw to the right: fast arrival, one small overshoot, settle.
+      // It stretches along its path while fast and squashes against the overshoot.
+      const Z = 0.8, OM = 26, WD = OM * Math.sqrt(1 - Z * Z), X0 = 118;
+      const enter = (u) => (u <= 0 ? X0 : Math.exp(-Z * OM * u) * X0 * (Math.cos(WD * u) + ((Z * OM) / WD) * Math.sin(WD * u)));
+      const leave = (u) => (u < -0.14 ? 0 : u < 0 ? 2.4 * Math.sin(Math.PI * (u + 0.14) / 0.14) : -160 * Math.pow(Math.min(u, 0.34) / 0.34, 3) - 500 * Math.max(0, u - 0.34));
+      const IN = WORD.map((_, i) => 0.05 + i * 0.075), OUT = WORD.map((_, i) => 2.55 + i * 0.045);
+      const pos = (i, t) => enter(t - IN[i]) + leave(t - OUT[i]);
+      const vel = (i, t) => (pos(i, t) - pos(i, t - 1 / 240)) * 240;
+      const shown = (i, t) => t >= IN[i] && t < OUT[i] + 0.42;
+      const shape = (i, t) => { const x = pos(i, t), sq = Math.max(-2.5, Math.min(0, x)) * (t < OUT[i] - 0.15 ? 1 : 0), st = Math.min(0.45, Math.abs(vel(i, t)) / 2600);
+        return `translateX(${x.toFixed(2)}cqw) scale(${((1 + st) * (1 + 0.075 * sq)).toFixed(4)}, ${((1 - 0.25 * st) * (1 - 0.05 * sq)).toFixed(4)})`; };
+      return (t) => {
+        const px = (s.clientWidth || 640) / 100;
+        let fast = 0;
+        letters.forEach((l, i) => {
+          const v = vel(i, t), on = shown(i, t);
+          fast = Math.max(fast, on ? Math.abs(v) : 0);
+          const [m, ...gh] = [l.lastElementChild, ...[...l.children].slice(0, GHOSTS)];
+          m.style.transform = shape(i, t); m.style.opacity = on ? 1 : 0;
+          blur[i].setAttribute("stdDeviation", `${(Math.min(7, Math.abs(v) * 0.0055) * px).toFixed(1)} 0`);
+          gh.forEach((g, j) => {
+            const tg = t - (GHOSTS - j) * GAP, vg = Math.abs(vel(i, tg));
+            g.style.transform = shape(i, tg);
+            g.style.opacity = shown(i, tg) && on ? ((j + 1) / GHOSTS) * 0.5 * clamp((vg - 60) / 420) : 0;
+          });
+        });
+        // Every landing kicks the frame; the last letter kicks hardest.
+        let sx = 0, sy = 0;
+        IN.forEach((a, i) => {
+          const u = t - a - 0.1, amp = i === N - 1 ? 1.5 : 0.35, e = decay(u, 13) * amp;
+          sx += e * Math.sin(u * TAU * 17); sy += e * 0.7 * Math.sin(u * TAU * 13 + 1);
+        });
+        col.style.transform = `translate(calc(-50% + ${sx.toFixed(3)}cqw), calc(-50% + ${sy.toFixed(3)}cqw))`;
+        bar.style.transform = `scaleX(${(outCubic(lin(0.62, 0.9, t)) * (1 - inCubic(lin(2.42, 2.6, t)))).toFixed(4)})`;
+        cap.style.opacity = lin(0.8, 1.05, t) * (1 - lin(2.38, 2.52, t));
+        const sp = clamp((fast - 150) / 700);
+        streaks.forEach((e, j) => { e.style.opacity = (sp * (0.35 + 0.1 * (j % 3))).toFixed(3); e.style.transform = `translateX(${(100 - ((t * 520 + j * 47) % 190)).toFixed(2)}cqw)`; });
+      };
+    } });
+
+  demo({ id: "chars", tier: "basic", name: "Character pop", kind: "type", stacks: ["css"], chips: ["CSS transform", "engine.js chars"], grade: "A",
+    purpose: "One character at a time, so the eye reads along; the key word changes colour once the line is complete.", period: 4, hero: 2.7,
+    build(s) {
+      s.style.background = "radial-gradient(120% 95% at 50% 42%, #2c2018, #110c09)";
+      const lines = ["Fresh bread,", "every morning."], KEY = 6;
+      s.innerHTML = `<div class="ch-box"><div class="ch-lines">${lines.map((l, li) => `<div>${Array.from(l).map((c, ci) => `<span${li === 1 && ci >= KEY ? ' class="ch-k"' : ""}${c === " " ? ' style="white-space:pre"' : ""}>${c}</span>`).join("")}</div>`).join("")}</div><div class="ch-cap">Corner bakery · ovens on at 5:30</div></div>`;
+      const sp = qa(s, ".ch-lines span"), keys = qa(s, ".ch-k"), cap = q(s, ".ch-cap");
       return (t) => {
         sp.forEach((e, i) => {
-          const a = 0.15 + i * 0.13, kin = outCubic(lin(a, a + 0.38, t)), b0 = 2.5 + i * 0.06, kout = inCubic(lin(b0, b0 + 0.3, t));
-          e.style.transform = `translateX(${(1 - kin) * 130 - kout * 160}cqw)`;
-          bl[i].setAttribute("stdDeviation", `${((1 - kin) * 28 + kout * 28).toFixed(1)} 0`);
-          e.style.opacity = t < a ? 0 : 1;
+          const a = 0.05 + i * 0.042, k = lin(a, a + 0.3, t), out = lin(3.5 + i * 0.008, 3.74 + i * 0.008, t);
+          e.style.opacity = Math.min(1, k * 3) * (1 - out);
+          e.style.transform = `translateY(${((1 - k) * 35 - out * 30).toFixed(2)}%) scale(${(0.3 + 0.7 * back(k)).toFixed(4)})`;
         });
-        badge.style.transform = `scale(${Math.max(0, back(lin(0.9, 1.25, t)) * (1 - lin(2.5, 2.7, t)))})`;
-        cap.style.opacity = lin(1.1, 1.4, t) * (1 - lin(2.45, 2.6, t));
+        keys.forEach((e, j) => {
+          const k = lin(1.42 + j * 0.05, 1.58 + j * 0.05, t);
+          e.style.color = mixHex("#f7efe3", "#ffb340", k);
+          e.style.transform += ` translateY(${(-6 * Math.sin(Math.PI * k)).toFixed(2)}%)`;
+        });
+        cap.style.opacity = lin(1.3, 1.6, t) * (1 - lin(3.55, 3.8, t));
       };
     } });
 
-  demo({ id: "chars", name: "Character pop", kind: "type", stacks: ["css"], chips: ["CSS transform", "engine.js chars"], grade: "A",
-    purpose: "One character at a time, so the eye reads along; the key word changes colour.", period: 4, hero: 2.7,
+  demo({ id: "mark", tier: "basic", name: "Highlighter", kind: "type", stacks: ["css"], chips: ["CSS scaleX", "engine.js mark"], grade: "A",
+    purpose: "Draws the eye to one phrase at a time, as a marker pen would; in the sample, the two numbers a baker must not miss.", period: 3.6, hero: 2.5,
     build(s) {
-      s.style.background = "#0f0d14";
-      const lines = ["Every reply,", "signed by", "you."];
-      s.innerHTML = `<div class="chars">${lines.map((l, li) => `<div>${Array.from(l).map((c) => `<span class="${li === 2 ? "pk" : ""}"${c === " " ? ' style="white-space:pre"' : ""}>${c}</span>`).join("")}</div>`).join("")}</div>`;
-      const sp = qa(s, ".chars span");
-      return (t) => sp.forEach((e, i) => {
-        const a = 0.15 + i * 0.08, k = lin(a, a + 0.32, t), out = lin(3.3, 3.7, t);
-        e.style.opacity = Math.min(1, k * 3) * (1 - out);
-        e.style.transform = `translateY(${(1 - k) * 18}%) scale(${0.3 + 0.7 * back(k)})`;
-      });
-    } });
-
-  demo({ id: "mark", name: "Highlighter", kind: "type", stacks: ["css"], chips: ["CSS scaleX", "engine.js mark"], grade: "A",
-    purpose: "Draws the eye to one line, as a marker pen would; in the sample, the line that backs a number.", period: 3.6, hero: 2.5,
-    build(s) {
-      s.style.background = "#e9e6f2";
-      s.innerHTML = `<div class="doc"><div class="doc-h">PLAYBOOK · SAVINGS PLAN A</div><div>Term: <span class="mk"><i></i>5 or 10 years</span></div><div>Yearly: <span class="mk"><i></i>HK$12,000</span></div><div><span class="ph"></span><span class="ph s"></span></div></div>`;
-      const bars = qa(s, ".mk i");
-      return (t) => bars.forEach((b, i) => { const a = 0.5 + i * 0.8; b.style.transform = `scaleX(${outCubic(lin(a, a + 0.45, t)) * (1 - lin(3.2, 3.5, t))})`; });
-    } });
-
-  demo({ id: "count", name: "Counting number", kind: "type", stacks: ["css"], chips: ["JS counter", "tabular-nums"], grade: "A",
-    purpose: "A number counts up to its value; tabular digits keep its width steady.", period: 3.2, hero: 2.4,
-    build(s) {
-      s.style.background = "#101018";
-      s.innerHTML = `<div class="cnt"><div class="cnt-l">Yearly premium</div><div class="cnt-n">HK$<span>0</span></div><div class="cnt-s">Source: Playbook · Savings Plan A</div></div>`;
-      const box = q(s, ".cnt"), n = q(s, ".cnt-n span"), src = q(s, ".cnt-s");
-      return (t) => { n.textContent = Math.round(12000 * outCubic(lin(0.3, 1.6, t))).toLocaleString("en-US"); src.style.opacity = lin(1.6, 1.9, t); box.style.opacity = 1 - lin(2.9, 3.15, t); };
-    } });
-
-  demo({ id: "type", name: "Typewriter", kind: "type", stacks: ["css"], chips: ["JS per character", "CSS caret"], grade: "A",
-    purpose: "Shows a reply being drafted; reads instantly as a chat.", period: 5, hero: 3.6,
-    build(s) {
-      s.style.background = "#fff";
-      const txt = Array.from("Both! 5 or 10 years. Budget per year?");
-      s.innerHTML = `<div class="wrap"><div class="ig-top"><b></b><span>Client</span></div><div class="bub them">5 or 10 years?</div><div class="bub me"><span class="ty"></span><span class="car"></span></div></div>`;
-      const w = q(s, ".wrap"), them = q(s, ".them"), me = q(s, ".me"), ty = q(s, ".ty"), car = q(s, ".car");
+      s.style.background = "#ece6db";
+      s.innerHTML = `<div class="mk-card"><div class="mk-h"><span>RECIPE · COUNTRY SOURDOUGH</span><span>STEP 6 OF 8</span></div>
+        <p>Bake at <span class="mk"><i></i>230 °C for 20 minutes</span>,</p>
+        <p>then <span class="mk"><i></i>lower to 210 °C</span>.</p>
+        <p class="mk-dim">Lid off for the last 25 minutes.</p></div>`;
+      const card = q(s, ".mk-card"), bars = qa(s, ".mk i");
       return (t) => {
-        them.style.opacity = lin(0.1, 0.35, t); me.style.opacity = t > 0.7 ? 1 : 0;
-        const n = Math.floor(clamp((t - 0.8) * 12, 0, txt.length));
+        card.style.transform = `translate(-50%, -50%) scale(${(1 + 0.035 * Math.pow(Math.sin((Math.PI * t) / 3.6), 2)).toFixed(4)})`;
+        bars.forEach((b, i) => {
+          const a = 0.45 + i * 0.8, k = outCubic(lin(a, a + 0.5, t)), out = inCubic(lin(3.12 + i * 0.08, 3.38 + i * 0.08, t));
+          b.style.transform = `scaleX(${(k * (1 - out)).toFixed(4)})`;
+        });
+      };
+    } });
+
+  demo({ id: "count", tier: "basic", name: "Counting number", kind: "type", stacks: ["css"], chips: ["JS counter", "tabular-nums"], grade: "A",
+    purpose: "A number counts up to its value while a bar fills toward the goal; tabular digits keep its width steady.", period: 3.2, hero: 2.4,
+    build(s) {
+      s.style.background = "radial-gradient(110% 90% at 50% 40%, #173226, #0b1711)";
+      s.innerHTML = `<div class="ct-box"><div class="ct-l">Trees planted along the river this year</div><div class="ct-n"><span>0</span></div>
+        <div class="ct-bar"><i></i></div><div class="ct-row"><span>Volunteer planting log · Oct 2026</span><span>Goal 15,000</span></div><div class="ct-chip">+1,120 this month</div></div>`;
+      const box = q(s, ".ct-box"), n = q(s, ".ct-n span"), num = q(s, ".ct-n"), fill = q(s, ".ct-bar i"), chip = q(s, ".ct-chip");
+      return (t) => {
+        const k = outCubic(lin(0.25, 1.75, t));
+        n.textContent = Math.round(12480 * k).toLocaleString("en-US");
+        fill.style.transform = `scaleX(${(k * 12480 / 15000).toFixed(4)})`;
+        num.style.transform = `scale(${(1 + 0.07 * Math.sin(Math.PI * lin(1.75, 1.95, t))).toFixed(4)})`;
+        chip.style.transform = `scale(${Math.max(0, back(lin(1.9, 2.15, t))).toFixed(4)})`;
+        box.style.opacity = 1 - lin(2.95, 3.15, t);
+      };
+    } });
+
+  demo({ id: "type", tier: "basic", name: "Typewriter", kind: "type", stacks: ["css"], chips: ["JS per character", "CSS caret"], grade: "A",
+    purpose: "Shows a reply being written, one character at a time; reads instantly as a chat.", period: 5, hero: 3.6,
+    build(s) {
+      s.style.background = "linear-gradient(160deg, #dfe7ef, #c5d2df)";
+      const txt = Array.from("Yes! Meet at the bridge, I'll bring coffee.");
+      s.innerHTML = `<div class="ty-win"><div class="ty-top"><b>MJ</b><span><strong>Maya</strong><em>Riverside cycling club</em></span></div>
+        <div class="ty-body"><div class="ty-b ty-them">Still on for the 7:30 ride tomorrow?</div><div class="ty-b ty-me"><span class="ty-t"></span><span class="car"></span></div><div class="ty-tick">Delivered</div></div></div>`;
+      const them = q(s, ".ty-them"), me = q(s, ".ty-me"), ty = q(s, ".ty-t"), car = q(s, ".car"), tick = q(s, ".ty-tick");
+      return (t) => {
+        const out = 1 - lin(4.62, 4.9, t);
+        them.style.opacity = lin(0.1, 0.3, t) * out; them.style.transform = `translateY(${((1 - outCubic(lin(0.1, 0.35, t))) * 2).toFixed(2)}cqw)`;
+        me.style.opacity = (t > 0.7 ? 1 : 0) * out;
+        const n = Math.floor(clamp((t - 0.8) * 13, 0, txt.length));
         ty.textContent = txt.slice(0, n).join("");
         car.style.opacity = n < txt.length || Math.floor(t * 2.5) % 2 === 0 ? 1 : 0;
-        w.style.opacity = 1 - lin(4.6, 4.9, t);
+        tick.style.opacity = lin(4.25, 4.4, t) * out;
       };
     } });
 
-  demo({ id: "stamp", name: "Red flash + shake + stamp", kind: "type", stacks: ["css"], chips: ["CSS transform", "engine.js slam / shake / flash"], grade: "A",
-    purpose: "An alarm moment: a red flash, a shake, then a stamp. In the sample, it marks an auto-reply that made up a number.", period: 3.6, hero: 2.2,
+  demo({ id: "stamp", tier: "basic", name: "Red flash + shake + stamp", kind: "type", stacks: ["svg", "css"], chips: ["SVG turbulence ink", "engine.js slam / shake / flash", "dust burst"], grade: "A",
+    purpose: "An alarm beat: the stamp hovers, slams down with a red flash and a shake, and leaves rough ink, spatter and a puff of dust. In the sample, a cancelled boarding pass.", period: 3.6, hero: 1.25,
     build(s) {
-      s.style.background = "#0f0d14";
-      s.innerHTML = `<div class="wrap"><div class="bub auto">Auto-reply<b>Guaranteed 6% return!</b></div><div class="stampx">MADE UP!</div></div><div class="flashx"></div>`;
-      const w = q(s, ".wrap"), b = q(s, ".auto"), st = q(s, ".stampx"), fl = q(s, ".flashx");
+      s.style.background = "radial-gradient(110% 95% at 50% 45%, #2e2924, #110f0d)";
+      const id = uid("stp"), TI = 1.04, F = "Archivo, 'Helvetica Neue', Arial, sans-serif", M = "'JetBrains Mono', Menlo, monospace";
+      const DUST = Array.from({ length: 48 }, (_, i) => {
+        const a = hash(i * 3.1 + 1) * TAU, puff = i < 10;
+        return { x: 790 + Math.cos(a) * 440, y: 500 + Math.sin(a) * 125, dx: Math.cos(a), dy: Math.sin(a) * 0.7, sp: puff ? 60 + hash(i * 7.7) * 80 : 120 + hash(i * 7.7) * 260, r: puff ? 34 + hash(i * 5.3) * 30 : 1.6 + hash(i * 5.3) * 3.2, d: hash(i * 2.9) * 0.06, life: puff ? 0.9 + hash(i * 9.1) * 0.4 : 0.4 + hash(i * 9.1) * 0.5, puff };
+      });
+      const SPLAT = Array.from({ length: 16 }, (_, i) => {
+        const a = hash(i * 4.4 + 2) * TAU, r = 1 + hash(i * 6.2) * 0.32;
+        return { x: Math.cos(a) * 455 * r, y: Math.sin(a) * 135 * r, r: 3 + Math.pow(hash(i * 8.8), 2) * 14 };
+      });
+      const field = (x, label, value) => `<text x="${x}" y="606" font-family="${M}" font-size="22" font-weight="700" fill="#8b8273" letter-spacing="2">${label}</text><text x="${x}" y="652" font-family="${F}" font-size="40" font-weight="800" fill="#1d1b1f">${value}</text>`;
+      s.innerHTML = `<svg class="svgfill" viewBox="0 0 1600 900" aria-hidden="true"><defs>
+          <filter id="${id}-ink" x="-8%" y="-30%" width="116%" height="160%"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" result="d"/><feTurbulence type="fractalNoise" baseFrequency="0.028 0.05" numOctaves="3" seed="11" result="sp"/><feColorMatrix in="sp" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -6 0 0 0 4.5" result="m"/><feComposite in="d" in2="m" operator="in"/></filter>
+          <filter id="${id}-soft"><feGaussianBlur stdDeviation="14"/></filter></defs>
+        <g class="stp-all"><g class="stp-pass">
+          <rect x="230" y="215" width="1140" height="470" rx="30" fill="#f4eee1"/>
+          <path d="M260 215 H1340 A30 30 0 0 1 1370 245 V312 H230 V245 A30 30 0 0 1 260 215 Z" fill="#1f3a56"/>
+          <text x="282" y="278" font-family="${F}" font-size="38" font-weight="800" letter-spacing="6" fill="#f4eee1">BOARDING PASS</text>
+          <text x="1318" y="276" text-anchor="end" font-family="${M}" font-size="24" font-weight="700" letter-spacing="3" fill="#9fc0dd">ECONOMY · ZONE 3</text>
+          <line x1="1088" y1="330" x2="1088" y2="672" stroke="#c8bda9" stroke-width="4" stroke-dasharray="10 12"/>
+          <text x="290" y="372" font-family="${M}" font-size="22" font-weight="700" fill="#8b8273" letter-spacing="2">FROM</text>
+          <text x="282" y="482" font-family="${F}" font-size="124" font-weight="900" fill="#69707d">HKG</text>
+          <text x="290" y="528" font-family="${F}" font-size="30" font-weight="600" fill="#5e574c">Hong Kong</text>
+          <path d="M572 446 H678 M650 420 L682 446 L650 472" fill="none" stroke="#1f3a56" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="728" y="372" font-family="${M}" font-size="22" font-weight="700" fill="#8b8273" letter-spacing="2">TO</text>
+          <text x="720" y="482" font-family="${F}" font-size="124" font-weight="900" fill="#69707d">OSL</text>
+          <text x="728" y="528" font-family="${F}" font-size="30" font-weight="600" fill="#5e574c">Oslo</text>
+          <line x1="290" y1="566" x2="1040" y2="566" stroke="#ddd3c2" stroke-width="3"/>
+          ${field(290, "FLIGHT", "208")}${field(480, "DATE", "18 OCT")}${field(700, "BOARDS", "07:45")}${field(900, "GATE", "23")}
+          <text x="1126" y="372" font-family="${M}" font-size="22" font-weight="700" fill="#8b8273" letter-spacing="2">SEAT</text>
+          <text x="1120" y="470" font-family="${F}" font-size="96" font-weight="900" fill="#1d1b1f">14B</text>
+          <g fill="#1d1b1f">${Array.from({ length: 30 }, (_, i) => `<rect x="${1126 + i * 7.4}" y="560" width="${hash(i * 1.7) > 0.5 ? 4.5 : 2.2}" height="96"/>`).join("")}</g>
+        </g>
+        <g class="stp-st"><g filter="url(#${id}-ink)">
+          <rect x="-440" y="-118" width="880" height="236" rx="26" fill="none" stroke="#d7263d" stroke-width="20"/>
+          <rect x="-412" y="-90" width="824" height="180" rx="14" fill="none" stroke="#d7263d" stroke-width="6"/>
+          <text x="0" y="52" text-anchor="middle" font-family="${F}" font-size="146" font-weight="900" textLength="760" lengthAdjust="spacingAndGlyphs" fill="#d7263d">CANCELLED</text>
+          <g class="stp-splat" fill="#d7263d">${SPLAT.map((p) => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${p.r.toFixed(1)}"/>`).join("")}</g>
+        </g></g></g>
+        <g class="stp-dust" fill="#e9dfcf">${DUST.map((p) => (p.puff ? `<circle filter="url(#${id}-soft)"/>` : "<circle/>")).join("")}</g></svg><div class="stp-flash"></div>`;
+      const all = q(s, ".stp-all"), pass = q(s, ".stp-pass"), st = q(s, ".stp-st"), splat = qa(s, ".stp-splat circle"), dust = qa(s, ".stp-dust circle"), fl = q(s, ".stp-flash"), svg = q(s, "svg");
       return (t) => {
-        b.style.opacity = lin(0.1, 0.35, t);
-        const sh = t > 1.0 && t < 1.6 ? (1 - lin(1.0, 1.6, t)) * 2.2 * Math.sin(t * 90) : 0;
-        b.style.transform = `translateX(${sh}cqw)`;
-        fl.style.opacity = t > 1.0 ? 0.55 * (1 - lin(1.0, 1.35, t)) : 0;
-        const k = lin(1.05, 1.3, t);
-        st.style.opacity = k > 0 ? 1 : 0;
-        st.style.transform = `translate(-50%, -50%) rotate(-11deg) scale(${2.4 - 1.4 * outCubic(k)})`;
-        w.style.opacity = 1 - lin(3.2, 3.5, t);
+        const kin = outCubic(lin(0, 0.35, t)), u = t - TI;
+        // Hover and lift (anticipation), slam, then a small squash.
+        let sc = 1, op = 1;
+        if (t < 0.68) op = 0;
+        else if (t < 0.95) { const k = lin(0.68, 0.95, t); sc = 1.7 + 0.12 * k; op = 0.28 * Math.min(1, k * 3); }
+        else if (t < TI) { const k = inCubic(lin(0.95, TI, t)); sc = 1.82 - 0.82 * k; op = 0.35 + 0.65 * k; }
+        else sc = 1 - 0.035 * Math.sin(Math.PI * lin(TI, TI + 0.12, t));
+        st.setAttribute("transform", `translate(790 500) rotate(-9) scale(${sc.toFixed(4)})`); st.style.opacity = op;
+        const e = decay(u, 8.5) * (u >= 0 ? 1 : 0);
+        pass.setAttribute("transform", `translate(${(16 * e * Math.sin(u * TAU * 15)).toFixed(2)} ${(40 * (1 - kin) + 10 * e * Math.sin(u * TAU * 11 + 1)).toFixed(2)}) rotate(${(0.7 * e * Math.sin(u * TAU * 9)).toFixed(3)} 800 450)`);
+        pass.style.opacity = lin(0, 0.25, t);
+        splat.forEach((c, i) => { const k = lin(TI + i * 0.004, TI + 0.06 + i * 0.004, t), p = SPLAT[i]; c.setAttribute("transform", `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)}) scale(${k.toFixed(3)}) translate(${(-p.x).toFixed(1)} ${(-p.y).toFixed(1)})`); });
+        dust.forEach((c, i) => {
+          const p = DUST[i], v = u - p.d, k = v > 0 && v < p.life ? 1 - v / p.life : 0, dd = p.sp * (1 - Math.exp(-Math.max(0, v) * 4.5));
+          c.setAttribute("cx", (p.x + p.dx * dd).toFixed(1)); c.setAttribute("cy", (p.y + p.dy * dd - 60 * Math.max(0, v)).toFixed(1));
+          c.setAttribute("r", (p.r * (1 + Math.max(0, v) * (p.puff ? 1.4 : 0.3))).toFixed(1)); c.style.opacity = ((p.puff ? 0.22 : 0.85) * k).toFixed(3);
+        });
+        fl.style.opacity = u >= 0 ? (0.55 * decay(u, 6)).toFixed(3) : 0;
+        svg.style.opacity = 1 - lin(3.25, 3.5, t);
+        all.setAttribute("transform", `translate(800 450) scale(${(1 + 0.04 * e).toFixed(4)}) translate(-800 -450)`);
       };
     } });
 
-  demo({ id: "scan", name: "Scan and check", kind: "ui", stacks: ["css"], chips: ["CSS gradient", "engine.js scan"], grade: "A",
-    purpose: "A scan line passes over a list and ticks each item off; in the sample, numbers checked against a source.", period: 4.4, hero: 2.7,
+  demo({ id: "scan", tier: "basic", name: "Scan and check", kind: "ui", stacks: ["css"], chips: ["CSS gradient", "engine.js scan"], grade: "A",
+    purpose: "A scan line passes down a list and ticks each item off as it goes; in the sample, a grocery order checked against stock.", period: 4.4, hero: 2.7,
     build(s) {
-      s.style.background = "#16131d";
-      s.innerHTML = `<div class="wrap"><div class="doc dark"><div class="doc-h">DRAFT</div><div>Terms: <u>5 yrs</u> or <u>10 yrs</u>,</div><div>about <u class="bad">4.5%</u> a year.</div></div><div class="scanbar"></div><div class="chipsx"><span class="ok">✓ 5 yrs</span><span class="ok">✓ 10 yrs</span><span class="no">✗ 4.5%</span></div><div class="warnx">⚠️ Needs your check</div></div>`;
-      const w = q(s, ".wrap"), bar = q(s, ".scanbar"), cs = qa(s, ".chipsx span"), warn = q(s, ".warnx");
+      s.style.background = "radial-gradient(110% 90% at 50% 40%, #232032, #110f18)";
+      const ROWS = [["Oat milk, 1 L", "× 2", 1], ["Sourdough loaf", "× 1", 1], ["Free-range eggs, 12", "× 1", 1], ["Blueberries, 250 g", "× 1", 0]];
+      s.innerHTML = `<div class="sn-card"><div class="sn-h"><span>ORDER #4821</span><span class="sn-st">CHECKING STOCK…</span></div>
+        <div class="sn-rows">${ROWS.map((r) => `<div class="sn-r"><span>${r[0]}</span><em>${r[1]}</em><b class="${r[2] ? "sn-ok" : "sn-no"}">${r[2] ? "✓ In stock" : "✗ Sold out"}</b></div>`).join("")}<div class="sn-bar"></div></div>
+        <div class="sn-warn">Pick a swap for 1 item</div></div>`;
+      const card = q(s, ".sn-card"), bar = q(s, ".sn-bar"), chips = qa(s, ".sn-r b"), rows = qa(s, ".sn-r"), st = q(s, ".sn-st"), warn = q(s, ".sn-warn");
       return (t) => {
-        bar.style.top = `${18 + lin(0.3, 1.8, t) * 42}cqw`; bar.style.opacity = t > 0.3 && t < 1.9 ? 1 : 0;
-        cs.forEach((c, i) => { const a = [0.8, 1.05, 1.5][i]; c.style.transform = `scale(${Math.max(0, back(lin(a, a + 0.25, t)))})`; });
-        warn.style.opacity = lin(2.0, 2.3, t); w.style.opacity = 1 - lin(4.0, 4.3, t);
+        const k = lin(0.3, 1.9, t);
+        bar.style.top = `${(k * 100).toFixed(2)}%`; bar.style.opacity = t > 0.3 && t < 1.95 ? 1 : 0;
+        chips.forEach((c, i) => { const a = 0.3 + 1.6 * ((i + 0.55) / ROWS.length); c.style.transform = `scale(${Math.max(0, back(lin(a, a + 0.25, t))).toFixed(4)})`; rows[i].classList.toggle("sn-lit", t > a && t < a + 0.35); });
+        st.textContent = t < 1.95 ? "CHECKING STOCK…" : "3 OF 4 AVAILABLE";
+        warn.style.opacity = lin(2.0, 2.3, t); warn.style.transform = `translateY(${((1 - outCubic(lin(2.0, 2.3, t))) * 1.5).toFixed(2)}cqw)`;
+        card.style.opacity = 1 - lin(4.05, 4.35, t);
       };
     } });
 
-  demo({ id: "sweep", name: "Light sweep", kind: "ui", stacks: ["css"], chips: ["CSS linear-gradient"], grade: "A",
-    purpose: "A band of light sweeps across a card.", period: 3, hero: 0.95,
+  demo({ id: "sweep", tier: "basic", name: "Light sweep", kind: "ui", stacks: ["css"], chips: ["CSS linear-gradient", "CSS 3D tilt"], grade: "A",
+    purpose: "A band of light sweeps across a card as it tilts, the way light catches a glossy surface.", period: 3, hero: 0.95,
     build(s) {
-      s.style.background = "radial-gradient(120% 80% at 30% 20%, #3b1d4a, #0c0a12)";
-      s.innerHTML = `<div class="gcard"><div class="gc-h"><b>so</b>social_ops bot</div><div class="gc-q">💬 Concern: the plan's return — “HK$20k a year, what do I get back?”</div><i class="shine"></i></div>`;
-      const sh = q(s, ".shine");
-      return (t) => { sh.style.transform = `translateX(${-120 + lin(0.5, 1.4, t) * 280}%) skewX(-20deg)`; };
-    } });
-
-  demo({ id: "glass", name: "Frosted glass card", kind: "ui", stacks: ["css"], chips: ["CSS backdrop-filter"], grade: "A",
-    purpose: "A frosted card blurs the busy background behind it, so the text on it stays clear.", period: 6, hero: 1.4,
-    build(s) {
-      s.style.background = "#1b1530";
-      s.innerHTML = `<i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i><div class="frost"><div class="fr-t">Draft waiting for you</div><div class="fr-k"><span>✏️ Edit</span><span>👤 I'll reply</span></div></div>`;
-      const bs = qa(s, ".blob");
+      s.style.background = "radial-gradient(120% 90% at 50% 30%, #2d2140, #0c0a12)";
+      s.innerHTML = `<div class="sw-wrap"><div class="sw-card"><div class="sw-top"><b>LANTERN</b><span>CINEMA CLUB</span></div><i class="sw-chip"></i>
+        <div class="sw-no">0418 2207 5531</div><div class="sw-bot"><span>MEMBER SINCE 2019</span><span class="sw-tier">GOLD</span></div><i class="sw-shine"></i></div><i class="sw-shadow"></i></div>`;
+      const card = q(s, ".sw-card"), sh = q(s, ".sw-shine"), shadow = q(s, ".sw-shadow");
       return (t) => {
-        const a = (t / 6) * Math.PI * 2;
-        bs[0].style.transform = `translate(${Math.cos(a) * 18}cqw, ${Math.sin(a) * 14}cqw)`;
-        bs[1].style.transform = `translate(${Math.cos(a * 2 + 2) * 16}cqw, ${Math.sin(a + 1) * 20}cqw)`;
-        bs[2].style.transform = `translate(${Math.sin(a + 3) * 20}cqw, ${Math.cos(a * 2) * 12}cqw)`;
+        const ry = -11 * Math.cos((TAU * t) / 3), rx = 4 * Math.sin((TAU * t) / 3);
+        card.style.transform = `translate(-50%, -50%) rotateX(${rx.toFixed(3)}deg) rotateY(${ry.toFixed(3)}deg)`;
+        sh.style.transform = `translateX(${(-130 + inOut(lin(0.45, 1.35, t)) * 300).toFixed(2)}%) skewX(-20deg)`;
+        shadow.style.transform = `translate(calc(-50% + ${(-ry * 0.25).toFixed(3)}cqw), 0) scaleX(${(1 - Math.abs(ry) / 120).toFixed(4)})`;
       };
     } });
 
-  demo({ id: "orbs", name: "Glow orbs", kind: "backdrop", stacks: ["css"], chips: ["CSS radial-gradient", "mix-blend-mode: screen"], grade: "A",
-    purpose: "Soft glowing orbs drift and blend into each other.", period: 8, hero: 2,
+  demo({ id: "glass", tier: "basic", name: "Frosted glass card", kind: "ui", stacks: ["css"], chips: ["CSS backdrop-filter"], grade: "A",
+    purpose: "A frosted card blurs the busy, moving background behind it, so the text on it stays clear.", period: 6, hero: 1.4,
+    build(s) {
+      s.style.background = "#1a1433";
+      const H = [["15:00", "18°"], ["16:00", "17°"], ["17:00", "17°"], ["18:00", "16°"], ["19:00", "15°"]];
+      s.innerHTML = `<div class="gs-bg"><div class="gs-mq"><span>RAIN · 18° · RAIN · 18° · </span><span>RAIN · 18° · RAIN · 18° · </span></div>
+        <i class="gs-b gs-b1"></i><i class="gs-b gs-b2"></i><i class="gs-b gs-b3"></i><i class="gs-b gs-b4"></i></div>
+        <div class="gs-card"><div class="gs-t"><span><small>Harbour district</small>Light rain</span><b>18°</b></div><div class="gs-s">Feels like 16° · wind 12 km/h · umbrella advised</div>
+        <div class="gs-hours">${H.map((h) => `<span><i>${h[0]}</i>${h[1]}</span>`).join("")}</div></div>`;
+      const bs = qa(s, ".gs-b"), mq = q(s, ".gs-mq");
+      return (t) => {
+        const a = (t / 6) * TAU;
+        bs[0].style.transform = `translate(${(Math.cos(a) * 14).toFixed(2)}cqw, ${(Math.sin(a) * 9).toFixed(2)}cqw)`;
+        bs[1].style.transform = `translate(${(Math.cos(a * 2 + 2) * 12).toFixed(2)}cqw, ${(Math.sin(a + 1) * 10).toFixed(2)}cqw) rotate(${(t * 30).toFixed(1)}deg)`;
+        bs[2].style.transform = `translate(${(Math.sin(a + 3) * 16).toFixed(2)}cqw, ${(Math.cos(a * 2) * 7).toFixed(2)}cqw)`;
+        bs[3].style.transform = `translate(${(Math.cos(a + 4) * 10).toFixed(2)}cqw, ${(Math.sin(a * 2 + 1) * 8).toFixed(2)}cqw)`;
+        mq.style.transform = `translateX(${(-50 * (t / 6)).toFixed(3)}%)`;
+      };
+    } });
+
+  demo({ id: "orbs", tier: "basic", name: "Glow orbs", kind: "backdrop", stacks: ["css"], chips: ["CSS radial-gradient", "mix-blend-mode: screen"], grade: "A",
+    purpose: "Soft glowing orbs drift and blend into each other behind a title.", period: 8, hero: 2,
     build(s) {
       s.style.background = "#07060b";
-      s.innerHTML = [0, 1, 2, 3, 4].map((i) => `<i class="orb o${i}"></i>`).join("") + `<div class="orb-t">Every reply,</div>`;
+      s.innerHTML = [0, 1, 2, 3, 4].map((i) => `<i class="orb o${i}"></i>`).join("") + `<div class="ob-t"><b>Deep focus</b><span>Ambient mix · 45 min</span></div>`;
       const os = qa(s, ".orb");
-      return (t) => { const a = (t / 8) * Math.PI * 2; os.forEach((o, i) => { o.style.transform = `translate(${Math.cos(a * (i % 2 ? 1 : -1) + i * 1.3) * 22}cqw, ${Math.sin(a * (i % 3 ? 1 : 2) + i) * 26}cqw) scale(${0.8 + 0.3 * Math.sin(a + i)})`; }); };
+      return (t) => { const a = (t / 8) * TAU; os.forEach((o, i) => { o.style.transform = `translate(${(Math.cos(a * (i % 2 ? 1 : -1) + i * 1.3) * 26).toFixed(2)}cqw, ${(Math.sin(a * (i % 3 ? 1 : 2) + i) * 12).toFixed(2)}cqw) scale(${(0.85 + 0.3 * Math.sin(a + i)).toFixed(4)})`; }); };
     } });
 
-  demo({ id: "wipe", name: "0.5 s wipe", kind: "motion", stacks: ["css"], chips: ["CSS clip-path", "engine.js"], grade: "A",
-    purpose: "Scenes change with a half-second clip-path wipe.", period: 4, hero: 1.62,
+  demo({ id: "wipe", tier: "basic", name: "0.5 s wipe", kind: "motion", stacks: ["css"], chips: ["CSS clip-path", "engine.js"], grade: "A",
+    purpose: "Scenes change with a half-second clip-path wipe; a bright edge leads the cut.", period: 4, hero: 1.62,
     build(s) {
-      s.innerHTML = `<div class="sc scA"><b>DM FLOOD</b><span>12 unread</span></div><div class="sc scB"><b>DRAFTED</b><span>you sign, then it sends</span></div>`;
-      const B = q(s, ".scB");
-      return (t) => { const k1 = inOut(lin(1.4, 1.9, t)), k2 = inOut(lin(3.4, 3.9, t)); B.style.clipPath = t < 3.4 ? `inset(0 ${100 - k1 * 100}% 0 0)` : `inset(0 0 0 ${k2 * 100}%)`; };
+      s.innerHTML = `<div class="wp-sc wp-a"><span class="wp-k">OLD ROUTE · TWO BUSES</span><b>42 min</b><span class="wp-s">Riverside → Old Town</span></div>
+        <div class="wp-sc wp-b"><span class="wp-k">NEW ROUTE · ONE TRAM</span><b>28 min</b><span class="wp-s">Riverside → Old Town</span></div><i class="wp-edge"></i>`;
+      const B = q(s, ".wp-b"), edge = q(s, ".wp-edge");
+      return (t) => {
+        const k1 = inOut(lin(1.4, 1.9, t)), k2 = inOut(lin(3.4, 3.9, t));
+        B.style.clipPath = t < 3.4 ? `inset(0 ${(100 - k1 * 100).toFixed(3)}% 0 0)` : `inset(0 0 0 ${(k2 * 100).toFixed(3)}%)`;
+        const x = t < 3.4 ? k1 * 100 : k2 * 100, moving = (t > 1.4 && t < 1.9) || (t > 3.4 && t < 3.9);
+        edge.style.left = `${x.toFixed(3)}%`; edge.style.opacity = moving ? 1 : 0;
+      };
     } });
 
-  demo({ id: "grain", name: "Film grain", kind: "backdrop", stacks: ["canvas"], chips: ["Canvas 2D", "new grain every 3 frames"], grade: "A",
-    purpose: "Fine grain changes over the image to give an animated film texture. Keep it subtle behind text; dense noise increases video bitrate.", period: 2, hero: 0.5,
+  demo({ id: "grain", tier: "basic", name: "Film grain", kind: "backdrop", stacks: ["canvas"], chips: ["Canvas 2D", "per-pixel grain at display size", "new grain every 2 frames"], grade: "A",
+    purpose: "Fine grain changes over the image to give an animated film texture; it is generated at the display size, so it stays visible in a small preview. Keep it subtle behind text; dense noise increases video bitrate.", period: 4, hero: 1.6,
     build(s) {
       s.style.background = "#000";
-      const wide = s.classList.contains("landscape"), W = wide ? 800 : 360, H = 450;
-      const c = document.createElement("canvas"); c.width = W; c.height = H; c.className = "fill"; s.appendChild(c);
-      const g = c.getContext("2d"), nz = document.createElement("canvas"); nz.width = 180; nz.height = 225;
-      const ng = nz.getContext("2d"), img = ng.createImageData(180, 225);
-      let last = -1;
-      return (t, abs) => {
-        const step = Math.floor((abs ?? t) * 20);
-        if (step === last) return; last = step;
-        const bg = g.createRadialGradient(W/2, 200, 20, W/2, 225, W*.8); bg.addColorStop(0, "#3a2a44"); bg.addColorStop(1, "#050407");
-        g.fillStyle = bg; g.fillRect(0, 0, W, H);
-        g.fillStyle = "#f4eef8"; g.font = `900 34px ${LAT}`; g.textAlign = "center"; g.fillText("In class.", W/2, 205); g.fillText("DMs waiting.", W/2, 252);
-        let seed = step * 9301 + 49297;
-        for (let i = 0; i < img.data.length; i += 4) { seed = (seed * 1103515245 + 12345) & 0x7fffffff; const v = seed >>> 23; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255; }
-        ng.putImageData(img, 0, 0);
-        g.globalAlpha = 0.18; g.globalCompositeOperation = "overlay"; g.drawImage(nz, 0, 0, W, H);
-        g.globalAlpha = 1; g.globalCompositeOperation = "source-over";
+      const c = document.createElement("canvas"); c.className = "fill"; s.appendChild(c);
+      const g = c.getContext("2d", { willReadFrequently: true });
+      let W = 0, H = 0, base = null, img = null, last = null, key = "";
+      const scene = () => {
+        const sky = g.createLinearGradient(0, 0, 0, H * 0.62); sky.addColorStop(0, "#0d1b29"); sky.addColorStop(0.55, "#2b4656"); sky.addColorStop(1, "#d48a52");
+        g.fillStyle = sky; g.fillRect(0, 0, W, H * 0.62);
+        g.fillStyle = "#1b2a33"; g.beginPath(); g.moveTo(0, H * 0.62);
+        for (let i = 0; i <= 24; i++) { const x = (i / 24) * W; g.lineTo(x, H * (0.58 - 0.035 * Math.sin(i * 0.9) - 0.02 * Math.sin(i * 2.3))); }
+        g.lineTo(W, H * 0.62); g.closePath(); g.fill();
+        const sea = g.createLinearGradient(0, H * 0.62, 0, H); sea.addColorStop(0, "#3b4a4f"); sea.addColorStop(1, "#090f13");
+        g.fillStyle = sea; g.fillRect(0, H * 0.62, W, H * 0.38);
+        g.fillStyle = "rgba(255,196,128,.55)";
+        for (let i = 0; i < 26; i++) { const y = H * (0.64 + i * 0.013), w = W * (0.02 + 0.05 * hash(i * 3.3)); g.fillRect(W * 0.7 - w / 2 + W * 0.02 * (hash(i) - 0.5), y, w, Math.max(1, H * 0.004)); }
+        g.fillStyle = "#06090b"; g.beginPath(); g.moveTo(0, H * 0.8); g.lineTo(W * 0.74, H * 0.7); g.lineTo(W * 0.74, H * 0.72); g.lineTo(0, H * 0.9); g.closePath(); g.fill();
+        for (let i = 0; i < 9; i++) { const x = W * (0.04 + i * 0.085), top = H * (0.79 - i * 0.011); g.fillRect(x, top, W * 0.008 * (1 - i * 0.06), H - top); }
+        g.fillRect(W * 0.695, H * 0.38, W * 0.006, H * 0.34);
+        const lamp = g.createRadialGradient(W * 0.698, H * 0.38, 0, W * 0.698, H * 0.38, W * 0.12); lamp.addColorStop(0, "rgba(255,226,170,1)"); lamp.addColorStop(0.12, "rgba(255,200,130,.7)"); lamp.addColorStop(1, "rgba(255,170,90,0)");
+        g.fillStyle = lamp; g.beginPath(); g.arc(W * 0.698, H * 0.38, W * 0.12, 0, TAU); g.fill();
+        g.fillStyle = "#f6eee2"; g.textAlign = "center"; g.textBaseline = "alphabetic";
+        g.font = `italic 400 ${Math.round(W * 0.09)}px "Instrument Serif", Georgia, serif`; g.fillText("Last ferry, 23:40", W / 2, H * 0.36);
+        g.font = `700 ${Math.round(W * 0.017)}px "JetBrains Mono", Menlo, monospace`; g.fillStyle = "rgba(246,238,226,.75)"; g.fillText("PIER 4 · CROSSING TIME 25 MIN", W / 2, H * 0.46);
+        base = g.getImageData(0, 0, W, H); img = g.createImageData(W, H);
       };
+      const frame = (t) => {
+        last = t;
+        const dpr = Math.min(2, window.devicePixelRatio || 1), w = Math.max(160, Math.round((s.clientWidth || 640) * dpr)), h = Math.round((w * 9) / 16);
+        if (w !== W || h !== H || !base) { W = c.width = w; H = c.height = h; scene(); key = ""; }
+        const step = Math.floor(t * 12), reveal = W * (-0.1 + 1.25 * inOut(lin(0.2, 0.9, t))), k2 = `${step}:${Math.round(reveal)}:${W}`;
+        if (k2 === key) return; key = k2;
+        const cell = Math.max(1, Math.round(W / 700)), cw = Math.ceil(W / cell), src = base.data, out = img.data;
+        let seed = (step * 9301 + 49297) | 0;
+        const row = new Float32Array(cw);
+        for (let cy = 0; cy * cell < H; cy++) {
+          for (let i = 0; i < cw; i++) { seed = (Math.imul(seed, 1103515245) + 12345) | 0; const a = (seed >>> 16) & 0xffff; seed = (Math.imul(seed, 1103515245) + 12345) | 0; const b = (seed >>> 16) & 0xffff; row[i] = (a + b) / 65535 - 1; }
+          for (let y = cy * cell; y < Math.min(H, (cy + 1) * cell); y++) for (let x = 0; x < W; x++) {
+            const p = (y * W + x) * 4, edge = clamp((reveal - x) / (W * 0.04)), r = src[p], gg = src[p + 1], bb = src[p + 2];
+            const L = (r * 0.3 + gg * 0.59 + bb * 0.11) / 255, n = row[(x / cell) | 0] * 40 * edge * (0.5 + 2 * L * (1 - L));
+            out[p] = r + n; out[p + 1] = gg + n; out[p + 2] = bb + n; out[p + 3] = 255;
+          }
+        }
+        g.putImageData(img, 0, 0);
+        g.font = `700 ${Math.max(9, Math.round(W * 0.016))}px "JetBrains Mono", Menlo, monospace`; g.textAlign = "left"; g.fillStyle = "rgba(255,255,255,.8)";
+        g.fillText(reveal >= W ? "GRAIN 35% · 12 FPS" : "GRAIN ON →", W * 0.035, H * 0.08);
+      };
+      const ready = Promise.all([`italic 400 64px "Instrument Serif"`, `700 16px "JetBrains Mono"`].map((f) => document.fonts.load(f))).then(() => { base = null; if (last !== null) frame(last); });
+      return { ready, frame };
     } });
 
   // ================= 3D and shader effects (one shared WebGL renderer) =================
@@ -609,155 +781,185 @@
       };
     } });
 
-  // ================= can add =================
-  demo({ id: "hook", name: "3-second headline hook", kind: "type", stacks: ["css"], chips: ["CSS mask reveal", "transform"], grade: "A",
+  // ================= Motion basics, continued (tier: "basic", 16:9, centred) =================
+  demo({ id: "hook", tier: "basic", name: "3-second headline hook", kind: "type", stacks: ["css"], chips: ["CSS mask reveal", "transform"], grade: "A",
     purpose: "A headline revealed by a mask within the first second, with no logo before it.", period: 4, hero: 2.3,
     build(s) {
       s.style.background = "#ffd400";
-      const L = ["12 DMs", "unread.", "Clients ask", "about returns."];
-      s.innerHTML = `<div class="hook">${L.map((l) => `<div class="mask"><span>${l}</span></div>`).join("")}<div class="hook-s">FOR LICENSED AGENTS · 45 S</div></div>`;
-      const w = q(s, ".hook"), sp = qa(s, ".mask span"), sub = q(s, ".hook-s");
-      return (t) => { sp.forEach((e, i) => { e.style.transform = `translateY(${(1 - outCubic(lin(0.1 + i * 0.18, 0.5 + i * 0.18, t))) * 110}%)`; }); sub.style.opacity = lin(1.1, 1.4, t); w.style.opacity = 1 - lin(3.5, 3.8, t); };
-    } });
-
-  demo({ id: "karaoke", name: "Word-synced captions", kind: "type", stacks: ["css"], chips: ["CSS", "hand-made timing"], grade: "A",
-    purpose: "Readable with the sound off: each word lights up as it is spoken. The timing comes from the script, set by hand rather than by speech recognition.", period: 4.6, hero: 1.4,
-    build(s) {
-      s.style.background = "linear-gradient(160deg, #2b2f3a, #0e1015)";
-      const W = [["The", 0.2], ["client", 0.42], ["asks:", 0.75], ["5", 1.1], ["or", 1.3], ["10", 1.5], ["years?", 1.75], ["One", 2.3], ["tap.", 2.6]];
-      s.innerHTML = `<div class="kar-ph">picture</div><div class="kar">${W.map((w) => `<span>${w[0]}</span>`).join("")}</div><div class="kar-tl">${W.map((w) => `<span>${w[1].toFixed(2)}s</span>`).join("")}</div>`;
-      const sp = qa(s, ".kar span"), tl = qa(s, ".kar-tl span");
-      return (t) => W.forEach((w, i) => {
-        const en = i + 1 < W.length ? W[i + 1][1] : 3.4, on = t >= w[1] && t < en, past = t >= en && t < 4.2;
-        sp[i].className = on ? "on" : past ? "past" : ""; tl[i].className = on ? "on" : "";
-      });
-    } });
-
-  demo({ id: "blueprint", name: "Blueprint callouts + dot grid", kind: "ui", stacks: ["svg"], chips: ["SVG stroke-dashoffset", "CSS dot grid"], grade: "A",
-    purpose: "Callouts point at a card item by item, on a dot grid, like a manual.", period: 5.2, hero: 3.6,
-    build(s) {
-      s.style.background = "#0d2744 radial-gradient(rgba(255,255,255,.2) 1px, transparent 1.3px) 0 0 / 5cqw 5cqw";
-      const labels = [["Stage → next stage", 132, 96], ["Client's exact words", 182, 176], ["⚠️ Numbers checked", 222, 256], ["✅ ✏️ 👤 🚫 4 buttons", 322, 344]];
-      s.innerHTML = `<svg class="svgfill" viewBox="0 0 400 500" fill="none" stroke="#fff" stroke-width="2" font-family='${ZH}'>
-        <rect class="dr" pathLength="1" x="30" y="100" width="170" height="270" rx="12"/>
-        <rect class="dr" pathLength="1" x="46" y="122" width="100" height="14" rx="4"/>
-        <rect class="dr" pathLength="1" x="46" y="156" width="138" height="48" rx="6"/>
-        <rect class="dr" pathLength="1" x="46" y="214" width="118" height="14" rx="4"/>
-        <rect class="dr" pathLength="1" x="46" y="298" width="64" height="22" rx="5"/><rect class="dr" pathLength="1" x="120" y="298" width="64" height="22" rx="5"/>
-        <rect class="dr" pathLength="1" x="46" y="328" width="64" height="22" rx="5"/><rect class="dr" pathLength="1" x="120" y="328" width="64" height="22" rx="5"/>
-        ${labels.map((l) => `<g class="ld"><circle cx="196" cy="${l[1]}" r="4" fill="#ffd400" stroke="none"/><path class="ln" pathLength="1" d="M196 ${l[1]} L226 ${l[2]} L240 ${l[2]}" stroke="#ffd400"/><text x="246" y="${l[2] + 5}" fill="#fff" stroke="none" font-size="13" font-weight="700">${l[0]}</text></g>`).join("")}
-        <text x="30" y="440" fill="#9ec3ea" stroke="none" font-size="12" font-family="JetBrains Mono, monospace">FIG. 1 · TELEGRAM CARD</text></svg>`;
-      const dr = qa(s, ".dr"), ld = qa(s, ".ld");
-      dr.forEach((e) => e.setAttribute("stroke-dasharray", "1"));
-      ld.forEach((g) => g.querySelector(".ln").setAttribute("stroke-dasharray", "1"));
+      const L = ["We tested", "12 rain jackets.", "Only <em>3</em> kept us dry."];
+      s.innerHTML = `<div class="hk-box">${L.map((l) => `<div class="hk-m"><span>${l}</span></div>`).join("")}<div class="hk-s">GEAR LAB · EPISODE 14 · 45 S</div></div>`;
+      const sp = qa(s, ".hk-m span"), sub = q(s, ".hk-s"), em = q(s, ".hk-m em");
       return (t) => {
-        const out = 1 - lin(4.7, 5.0, t);
-        dr.forEach((e, i) => { e.setAttribute("stroke-dashoffset", 1 - outCubic(lin(0.1 + i * 0.06, 0.7 + i * 0.06, t))); e.style.opacity = out; });
-        ld.forEach((g, i) => {
-          const a = 1.0 + i * 0.5;
-          g.querySelector(".ln").setAttribute("stroke-dashoffset", 1 - outCubic(lin(a, a + 0.35, t)));
-          g.querySelector("circle").style.opacity = (t > a ? 1 : 0) * out;
-          g.querySelector("text").style.opacity = lin(a + 0.3, a + 0.5, t) * out;
-          g.querySelector(".ln").style.opacity = out;
+        sp.forEach((e, i) => {
+          const kin = outCubic(lin(0.05 + i * 0.18, 0.45 + i * 0.18, t)), kout = inCubic(lin(3.55 + i * 0.06, 3.85 + i * 0.06, t));
+          e.style.transform = `translateY(${((1 - kin) * 110 - kout * 110).toFixed(2)}%)`;
+        });
+        em.style.transform = `scale(${(1 + 0.18 * Math.sin(Math.PI * lin(0.75, 1.0, t))).toFixed(4)})`;
+        sub.style.opacity = lin(1.0, 1.3, t) * (1 - lin(3.5, 3.7, t));
+      };
+    } });
+
+  demo({ id: "karaoke", tier: "basic", name: "Word-synced captions", kind: "type", stacks: ["css", "svg"], chips: ["CSS", "hand-made timing"], grade: "A",
+    purpose: "Readable with the sound off: each word lights up as it is spoken. The timing comes from the script, set by hand rather than by speech recognition.", period: 4.6, hero: 2.3,
+    build(s) {
+      s.style.background = "#141a26";
+      const W = [["Rain", 0.2], ["moved", 0.42], ["in", 0.68], ["just", 0.82], ["after", 1.02], ["six,", 1.3], ["and", 1.78], ["the", 1.95], ["whole", 2.1], ["street", 2.4], ["went", 2.72], ["quiet.", 2.95]], END = 3.6, HOLD = 4.25;
+      const id = uid("kar"), DROPS = Array.from({ length: 70 }, (_, i) => ({ x: hash(i * 1.9) * 1700 - 50, y: hash(i * 4.7) * 1000, l: 30 + hash(i * 7.3) * 40, v: 1000 * (2 + Math.floor(hash(i * 2.2) * 2)) / 4.6 }));
+      const win = (x0, y0, cols, rows, w, h, gx, gy) => { let o = ""; for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const k = hash(x0 * 0.13 + c * 7.1 + r * 3.7); if (k > 0.35) o += `<rect x="${x0 + c * gx}" y="${y0 + r * gy}" width="${w}" height="${h}" fill="${k > 0.8 ? "#ffd38a" : k > 0.6 ? "#f2b36b" : "#6c7aa0"}" opacity="${k > 0.6 ? 0.9 : 0.5}"/>`; } return o; };
+      s.innerHTML = `<svg class="svgfill" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs>
+          <linearGradient id="${id}-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b2440"/><stop offset=".5" stop-color="#45496b"/><stop offset=".72" stop-color="#b9786a"/></linearGradient>
+          <linearGradient id="${id}-road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2f44"/><stop offset="1" stop-color="#0d1019"/></linearGradient>
+          <filter id="${id}-blur"><feGaussianBlur stdDeviation="10 26"/></filter></defs>
+        <rect width="1600" height="900" fill="url(#${id}-sky)"/>
+        <g fill="#141a2b"><rect x="40" y="330" width="250" height="330"/><rect x="300" y="250" width="190" height="410"/><rect x="1120" y="280" width="220" height="380"/><rect x="1350" y="360" width="250" height="300"/><rect x="560" y="430" width="160" height="230"/><rect x="880" y="410" width="200" height="250"/></g>
+        ${win(60, 360, 6, 7, 22, 26, 38, 42)}${win(320, 280, 4, 9, 26, 28, 42, 42)}${win(1140, 310, 5, 8, 24, 26, 40, 42)}${win(1370, 390, 6, 6, 22, 24, 38, 42)}${win(580, 455, 3, 4, 26, 26, 46, 44)}${win(900, 440, 4, 5, 24, 26, 44, 42)}
+        <rect y="660" width="1600" height="240" fill="url(#${id}-road)"/>
+        <g filter="url(#${id}-blur)" opacity=".55"><rect x="90" y="680" width="40" height="160" fill="#f2b36b"/><rect x="380" y="680" width="50" height="190" fill="#ffd38a"/><rect x="1190" y="680" width="50" height="170" fill="#ffd38a"/><rect x="1440" y="680" width="40" height="150" fill="#f2b36b"/><rect x="760" y="680" width="70" height="200" fill="#ff6b5a"/></g>
+        <circle cx="795" cy="640" r="11" fill="#ff6b5a"/><rect x="789" y="560" width="12" height="80" fill="#0d1019"/>
+        <g class="kr-rain" stroke="#c9d6ff" stroke-opacity=".32" stroke-width="2.4" stroke-linecap="round">${DROPS.map(() => "<line/>").join("")}</g></svg>
+        <div class="kr-band"></div><div class="kr-cap">${W.map((w) => `<span>${w[0]}</span>`).join("")}</div>
+        <div class="kr-tl">${W.map((w) => `<i style="left:${((w[1] / END) * 100).toFixed(2)}%"></i>`).join("")}<b class="kr-ph"></b></div><div class="kr-tag">HAND-TIMED · ${W.length} WORDS</div>`;
+      const sp = qa(s, ".kr-cap span"), ticks = qa(s, ".kr-tl i"), ph = q(s, ".kr-ph"), rain = qa(s, ".kr-rain line");
+      return (t) => {
+        W.forEach((w, i) => {
+          const en = i + 1 < W.length ? W[i + 1][1] : END, on = t >= w[1] && t < en, past = t >= en && t < HOLD;
+          sp[i].className = on ? "on" : past ? "past" : ""; ticks[i].className = on ? "on" : t >= w[1] && t < HOLD ? "done" : "";
+        });
+        ph.style.left = `${(clamp(t / END) * 100).toFixed(2)}%`; ph.style.opacity = t < HOLD ? 1 : 0;
+        rain.forEach((l, i) => {
+          const d = DROPS[i], y = ((d.y + t * d.v) % 1000) - 60, x = d.x - (y + 60) * 0.18;
+          l.setAttribute("x1", x.toFixed(1)); l.setAttribute("y1", y.toFixed(1)); l.setAttribute("x2", (x - d.l * 0.18).toFixed(1)); l.setAttribute("y2", (y + d.l).toFixed(1));
         });
       };
     } });
 
-  demo({ id: "drawflow", name: "Self-drawing flow chart", kind: "ui", stacks: ["svg"], chips: ["SVG stroke-dashoffset"], grade: "A",
-    purpose: "A four-step flow chart draws its own lines, one step after another.", period: 5.4, hero: 4.2,
+  demo({ id: "sticker", tier: "basic", name: "Sticker labels", kind: "type", stacks: ["css"], chips: ["CSS transform", "box-shadow"], grade: "A",
+    purpose: "Rounded labels slap on with a white border and a drop shadow that shrinks as they land, like stickers on a laptop lid.", period: 3.4, hero: 2.3,
     build(s) {
-      s.style.background = "#fbfaf7";
-      const N = [[110, 92, "💬", "Client DMs"], [290, 196, "✍️", "Drafted"], [110, 300, "✅", "You approve"], [290, 404, "📤", "Sent"]];
-      const C = [[110, 136, 110, 170, 250, 150, 290, 152], [290, 240, 290, 280, 150, 250, 110, 256], [110, 344, 110, 380, 250, 360, 290, 360]];
-      s.innerHTML = `<svg class="svgfill" viewBox="0 0 400 500" fill="none" stroke="#1a1720" stroke-width="3" stroke-linecap="round" font-family='${ZH}'>
-        ${C.map((c) => `<path class="cn" pathLength="1" d="M${c[0]} ${c[1]} C${c[2]} ${c[3]} ${c[4]} ${c[5]} ${c[6]} ${c[7]}"/>`).join("")}
-        ${N.map((n) => `<g class="nd"><circle pathLength="1" cx="${n[0]}" cy="${n[1]}" r="42" fill="#fff"/><text x="${n[0]}" y="${n[1] + 12}" text-anchor="middle" font-size="32" stroke="none" fill="#1a1720">${n[2]}</text><text class="lb" x="${n[0] < 200 ? n[0] + 52 : n[0] - 52}" y="${n[1] + 6}" text-anchor="${n[0] < 200 ? "start" : "end"}" font-size="17" font-weight="900" stroke="none" fill="#1a1720">${n[3]}</text></g>`).join("")}</svg>`;
-      const nd = qa(s, ".nd"), cn = qa(s, ".cn");
-      nd.forEach((g) => g.querySelector("circle").setAttribute("stroke-dasharray", "1"));
-      cn.forEach((c) => c.setAttribute("stroke-dasharray", "1"));
-      return (t) => {
-        const out = 1 - lin(5.0, 5.3, t);
-        nd.forEach((g, i) => {
-          const a = 0.2 + i * 0.9;
-          g.querySelector("circle").setAttribute("stroke-dashoffset", 1 - outCubic(lin(a, a + 0.4, t)));
-          g.style.opacity = (t > a ? 1 : 0) * out;
-          qa(g, "text").forEach((x) => { x.style.opacity = lin(a + 0.25, a + 0.45, t); });
-        });
-        cn.forEach((c, i) => { const a = 0.6 + i * 0.9; c.setAttribute("stroke-dashoffset", 1 - outCubic(lin(a, a + 0.4, t))); c.style.opacity = (t > a ? 1 : 0) * out; });
-      };
-    } });
-
-  demo({ id: "sticker", name: "Sticker labels", kind: "type", stacks: ["css"], chips: ["CSS transform", "box-shadow"], grade: "A",
-    purpose: "Rounded labels pop on with a white border and a drop shadow, like stickers.", period: 3.4, hero: 2.3,
-    build(s) {
-      s.style.background = "#ff90e8";
-      s.innerHTML = `<div class="stk s1">Spots limited</div><div class="stk s2">Free set-up help</div><div class="stk s3">WhatsApp us</div>`;
-      const st = qa(s, ".stk"), rot = [-6, 4, -3];
+      s.style.background = "radial-gradient(120% 100% at 50% 30%, #efe4d2, #cdbb9f)";
+      const ST = [["SHIP IT", -8], ["night<br>owl", 6], ["TYPE SAFE", 4], ["coffee first", -5], ["v2.0", 10]];
+      s.innerHTML = `<div class="st-lid"><i class="st-sheen"></i>${ST.map((x, i) => `<div class="st-k st-${i + 1}">${x[0]}</div>`).join("")}</div>`;
+      const st = qa(s, ".st-k");
       return (t) => st.forEach((e, i) => {
-        const a = 0.3 + i * 0.35, k = lin(a, a + 0.35, t), out = 1 - lin(3.0, 3.3, t);
-        e.style.opacity = (k > 0 ? 1 : 0) * out;
-        e.style.transform = `rotate(${rot[i] - (1 - k) * 25}deg) scale(${Math.max(0, back(k))})`;
+        const a = 0.25 + i * 0.3, k = lin(a, a + 0.2, t), land = Math.sin(Math.PI * lin(a + 0.2, a + 0.34, t)), out = lin(3.0 + i * 0.03, 3.25 + i * 0.03, t), lift = 1 - outCubic(k);
+        e.style.opacity = (k > 0 ? Math.min(1, k * 5) : 0) * (1 - out);
+        e.style.transform = `rotate(${(ST[i][1] + lift * 14).toFixed(2)}deg) scale(${(1 + 0.5 * lift - 0.05 * land - 0.06 * out).toFixed(4)})`;
+        e.style.boxShadow = `0 ${(0.35 + lift * 2.2).toFixed(2)}cqw ${(0.5 + lift * 3).toFixed(2)}cqw rgba(0,0,0,${(0.3 + 0.15 * lift).toFixed(3)})`;
       });
     } });
 
-  demo({ id: "beat", name: "Beat sync", kind: "motion", stacks: ["css"], chips: ["music.py beat grid", "engine.js"], grade: "A",
+  demo({ id: "beat", tier: "basic", name: "Beat sync", kind: "motion", stacks: ["css"], chips: ["music.py beat grid", "engine.js"], grade: "A",
     purpose: "Pops land on the beat. The music is synthesised here, so every beat time is already known; no audio analysis.", period: 2.4, hero: 1.85,
     build(s) {
-      s.style.background = "#1a1325";
-      s.innerHTML = `<div class="bt-cards"><span>DM in</span><span>Draft</span><span>Approve</span><span>Send</span></div><div class="bt-dots"><i></i><i></i><i></i><i></i></div><div class="bt-bpm">♩ = 100 BPM · 0.6 s a beat</div>`;
-      const cs = qa(s, ".bt-cards span"), ds = qa(s, ".bt-dots i");
+      s.style.background = "radial-gradient(110% 90% at 50% 35%, #261d36, #110d18)";
+      const PADS = [["KICK", "#ff5a1f", [0, 6, 8]], ["SNARE", "#ffd400", [4, 12]], ["HAT", "#41d6c3", [0, 2, 4, 6, 8, 10, 12, 14]], ["CLAP", "#b892ff", [12, 15]]], STEP = 0.15;
+      s.innerHTML = `<div class="bt-box"><div class="bt-pads">${PADS.map((p) => `<div class="bt-pad" style="--c:${p[1]}"><b>${p[0]}</b><i></i></div>`).join("")}</div>
+        <div class="bt-steps">${Array.from({ length: 16 }, (_, i) => `<i class="${i % 4 ? "" : "bt-q"}"></i>`).join("")}</div>
+        <div class="bt-foot"><span class="bt-count">${[1, 2, 3, 4].map((n) => `<b>${n}</b>`).join("")}</span><span>♩ = 100 BPM · 0.6 s a beat</span></div></div>`;
+      const pads = qa(s, ".bt-pad"), steps = qa(s, ".bt-steps i"), counts = qa(s, ".bt-count b");
       return (t) => {
-        const b = Math.floor(t / 0.6), ph = (t % 0.6) / 0.6;
-        cs.forEach((c, i) => { c.style.opacity = b >= i ? 1 : 0.08; c.style.transform = `scale(${b === i ? 1 + 0.14 * Math.exp(-ph * 6) : 1})`; });
-        ds.forEach((d, i) => d.classList.toggle("on", i === b));
+        const st = Math.floor(t / STEP), beat = Math.floor(t / 0.6), ph = t - beat * 0.6;
+        pads.forEach((p, i) => {
+          const hits = PADS[i][2].filter((h) => h * STEP <= t), u = hits.length ? t - hits[hits.length - 1] * STEP : 9, e = decay(u, 9);
+          p.style.transform = `scale(${(1 + 0.1 * e).toFixed(4)})`; p.style.setProperty("--e", e.toFixed(3));
+        });
+        steps.forEach((c, i) => c.classList.toggle("on", i === st));
+        counts.forEach((c, i) => { const on = i === beat; c.classList.toggle("on", on); c.style.transform = `scale(${on ? (1 + 0.35 * decay(ph, 8)).toFixed(4) : 1})`; });
       };
     } });
 
-  demo({ id: "gradient", name: "Low-contrast flowing gradient", kind: "backdrop", stacks: ["css"], chips: ["CSS radial-gradient"], grade: "A",
+  demo({ id: "gradient", tier: "basic", name: "Low-contrast flowing gradient", kind: "backdrop", stacks: ["css"], chips: ["CSS radial-gradient"], grade: "A",
     purpose: "Movement that never fights the text; long copy stays readable on top.", period: 12, hero: 3,
     build(s) {
       s.style.background = "#f3e9f1";
-      s.innerHTML = `<i class="gl-l" style="background:radial-gradient(40% 35% at 30% 30%, #ffc9ee, transparent 70%)"></i><i class="gl-l" style="background:radial-gradient(38% 30% at 70% 60%, #d9ccff, transparent 70%)"></i><i class="gl-l" style="background:radial-gradient(35% 30% at 40% 80%, #ffe6b8, transparent 70%)"></i><div class="gl-t"><b>You sign.<br>Then it sends.</b><span>Every draft waits for one tap from you in Telegram.</span></div>`;
+      s.innerHTML = `<i class="gl-l" style="background:radial-gradient(40% 45% at 30% 30%, #ffc9ee, transparent 70%)"></i><i class="gl-l" style="background:radial-gradient(38% 42% at 70% 60%, #d9ccff, transparent 70%)"></i><i class="gl-l" style="background:radial-gradient(35% 40% at 40% 80%, #ffe6b8, transparent 70%)"></i>
+        <div class="gl-t"><b>Slow down.<br>Breathe in.</b><span>A ten-minute evening stretch, guided step by step.</span></div>`;
       const ls = qa(s, ".gl-l");
-      return (t) => { const a = (t / 12) * Math.PI * 2; ls.forEach((l, i) => { l.style.transform = `translate(${Math.cos(a + i * 2.1) * 12}%, ${Math.sin(a * (i % 2 ? 1 : -1) + i) * 10}%)`; }); };
+      return (t) => { const a = (t / 12) * TAU; ls.forEach((l, i) => { l.style.transform = `translate(${(Math.cos(a + i * 2.1) * 12).toFixed(3)}%, ${(Math.sin(a * (i % 2 ? 1 : -1) + i) * 10).toFixed(3)}%)`; }); };
     } });
 
-  demo({ id: "lut", name: "Warm grade + soft glow", kind: "backdrop", stacks: ["css"], chips: ["CSS colour filters", "background glow"], grade: "A",
-    purpose: "A warm colour grade with a soft glow on the background; the text stays sharp.", period: 6, hero: 1.5,
+  // One street scene, drawn twice: a cool overcast grade on the left and a golden-hour grade on the right.
+  function streetScene(id) {
+    const VX = 820, VY = 520, lerp = (a, b, k) => a + (b - a) * k;
+    const facade = (x0, x1, top0, bot0, fill, win) => {
+      const top = (x) => lerp(top0, VY - 120, (x - x0) / (x1 - x0)), bot = (x) => lerp(bot0, VY + 80, (x - x0) / (x1 - x0));
+      let o = `<polygon points="${x0},${top0} ${x1},${top(x1)} ${x1},${bot(x1)} ${x0},${bot0}" fill="${fill}"/>`;
+      for (let c = 0; c < 6; c++) for (let r = 0; r < 4; r++) {
+        const xa = lerp(x0, x1, 0.06 + c * 0.155), xb = lerp(x0, x1, 0.06 + c * 0.155 + 0.08);
+        const ya = (x) => lerp(top(x), bot(x), 0.12 + r * 0.19), yb = (x) => lerp(top(x), bot(x), 0.12 + r * 0.19 + 0.11);
+        o += `<polygon points="${xa},${ya(xa)} ${xb},${ya(xb)} ${xb},${yb(xb)} ${xa},${yb(xa)}" fill="${win}"/>`;
+      }
+      return o;
+    };
+    return `<svg class="svgfill" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs>
+        <linearGradient id="${id}-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9db3c7"/><stop offset=".55" stop-color="#d9d3c8"/><stop offset=".6" stop-color="#ebdcc4"/></linearGradient>
+        <radialGradient id="${id}-sun"><stop offset="0" stop-color="#fff6e2"/><stop offset=".25" stop-color="#fff0d2" stop-opacity=".9"/><stop offset="1" stop-color="#fff0d2" stop-opacity="0"/></radialGradient></defs>
+      <rect width="1600" height="900" fill="url(#${id}-sky)"/>
+      <circle cx="1010" cy="430" r="230" fill="url(#${id}-sun)"/>
+      <g fill="#8e8a88"><rect x="560" y="330" width="80" height="200"/><rect x="650" y="290" width="70" height="240"/><rect x="730" y="360" width="60" height="170"/><rect x="900" y="340" width="70" height="190"/><rect x="980" y="300" width="60" height="230"/></g>
+      ${facade(0, 600, 60, 900, "#b39c86", "#5d5650")}${facade(1600, 1050, 120, 900, "#9b8f86", "#4f4a47")}
+      <polygon points="260,900 790,600 850,600 1340,900" fill="#6d6966"/>
+      <polygon points="0,900 600,600 790,600 260,900" fill="#a59d93"/><polygon points="1340,900 850,600 1050,600 1600,900" fill="#958d85"/>
+      <g fill="#e8e1d4">${[0, 1, 2, 3, 4].map((i) => { const k0 = 0.08 + i * 0.2, k1 = k0 + 0.1; const y0 = lerp(600, 900, k0 * k0), y1 = lerp(600, 900, k1 * k1), w0 = lerp(2, 18, k0 * k0), w1 = lerp(2, 18, k1 * k1); return `<polygon points="${820 - w0},${y0} ${820 + w0},${y0} ${820 + w1},${y1} ${820 - w1},${y1}"/>`; }).join("")}</g>
+      <rect x="1180" y="420" width="16" height="320" fill="#4a4440"/><circle cx="1188" cy="380" r="120" fill="#6f7a57"/><circle cx="1110" cy="420" r="80" fill="#7c8763"/><circle cx="1260" cy="430" r="90" fill="#66704f"/>
+      <rect x="430" y="380" width="10" height="330" fill="#3c3835"/><rect x="400" y="370" width="60" height="16" rx="6" fill="#3c3835"/>
+      <g fill="#2d2a28"><circle cx="690" cy="690" r="34" fill="none" stroke="#2d2a28" stroke-width="7"/><circle cx="790" cy="690" r="34" fill="none" stroke="#2d2a28" stroke-width="7"/><path d="M690 690 L730 640 L790 690 M730 640 L770 640" fill="none" stroke="#2d2a28" stroke-width="7"/><circle cx="742" cy="590" r="14"/><path d="M738 604 L728 650 L760 650" fill="none" stroke="#2d2a28" stroke-width="11" stroke-linecap="round"/></g>
+    </svg>`;
+  }
+  demo({ id: "lut", tier: "basic", name: "Cool vs warm colour grade", kind: "backdrop", stacks: ["css", "svg"], chips: ["CSS colour filters", "soft-light tint", "background glow"], grade: "A",
+    purpose: "The same street graded two ways: a cool, flat overcast look against a warm golden-hour look with a soft glow; the divider sweeps between them.", period: 6, hero: 3.2,
     build(s) {
-      const scene = () => `<div class="lut-sc"><div class="lut-sun"></div><div class="lut-win"></div><div class="lut-phone"><span>5 or 10 yrs?</span></div></div>`;
-      s.innerHTML = `<div class="wrap">${scene()}</div><div class="wrap lut-r"><div class="wrap lut-warm">${scene()}</div><div class="lut-glow"></div></div><div class="lut-div"></div><span class="lut-lab" style="left:3cqw">Before</span><span class="lut-lab" style="right:3cqw">Warm</span>`;
+      s.style.background = "#000";
+      s.innerHTML = `<div class="wrap lut-l"><div class="wrap lut-cold">${streetScene(uid("lutc"))}</div><i class="wrap lut-ct"></i></div>
+        <div class="wrap lut-r"><div class="wrap lut-warm">${streetScene(uid("lutw"))}</div><i class="wrap lut-wt"></i><i class="lut-glow"></i></div>
+        <div class="lut-div"><b>◂ ▸</b></div><span class="lut-lab lut-lab-l">COOL · OVERCAST</span><span class="lut-lab lut-lab-r">WARM · GOLDEN HOUR</span>`;
       const r = q(s, ".lut-r"), dv = q(s, ".lut-div");
-      return (t) => { const x = 50 + 24 * Math.sin((t / 6) * Math.PI * 2); r.style.clipPath = `inset(0 0 0 ${x}%)`; dv.style.left = `${x}%`; };
+      return (t) => { const x = 50 + 26 * Math.sin((t / 6) * TAU); r.style.clipPath = `inset(0 0 0 ${x.toFixed(3)}%)`; dv.style.left = `${x.toFixed(3)}%`; };
     } });
 
-  demo({ id: "uifly", name: "Camera move over real UI", kind: "ui", stacks: ["css"], chips: ["CSS 3D transform", "perspective"], grade: "A",
-    purpose: "The camera glides over a real interface card in 3D perspective.", period: 6, hero: 2.3,
+  demo({ id: "uifly", tier: "basic", name: "Camera move over real UI", kind: "ui", stacks: ["css"], chips: ["CSS 3D transform", "perspective"], grade: "A",
+    purpose: "The camera glides over a real interface card in 3D perspective, then pushes in on the line that matters.", period: 6, hero: 2.3,
     build(s) {
-      s.style.background = "radial-gradient(90% 70% at 50% 40%, #2a2233, #0b0a0f)";
-      s.style.perspective = "120cqw";
-      s.innerHTML = `<div class="tg3"><div class="tg-h"><b>so</b>social_ops bot<span>TELEGRAM</span></div><div class="tg-q">💬 Concern: the plan's return — “HK$20k a year, what do I get back?”</div><div class="tg-kb"><span>✅ Approve (numbers checked)</span><span>✏️ Edit</span><span>👤 I'll reply</span><span>🚫 Not a lead</span></div></div>`;
-      const c = q(s, ".tg3");
+      s.style.background = "radial-gradient(90% 80% at 50% 40%, #27303a, #0b0e12)";
+      s.style.perspective = "110cqw";
+      s.innerHTML = `<div class="uf-card"><div class="uf-h"><b></b><span>Order #4821</span><em>On its way</em></div>
+        <div class="uf-eta"><small>Arriving</small><b>14:20 – 14:40</b></div>
+        <div class="uf-track"><i class="on"></i><i class="on"></i><i class="on cur"></i><i></i></div>
+        <div class="uf-steps"><span>Placed</span><span>Packed</span><span>On the way</span><span>Delivered</span></div>
+        <div class="uf-kb"><span>Track live</span><span>Message rider</span><span>Leave at door</span><span>Change time</span></div></div>`;
+      const c = q(s, ".uf-card");
       return (t) => {
         const k = inOut(lin(0.2, 2.0, t)), z = inOut(lin(3.0, 4.2, t)) * (1 - inOut(lin(5.0, 5.8, t)));
-        const rx = 55 * (1 - k), ry = -35 * (1 - k);
-        c.style.transform = `translateY(${-30 * z}cqw) translateZ(${-60 * (1 - k)}cqw) rotateX(${rx}deg) rotateY(${ry}deg) scale(${1 + 0.55 * z})`;
-        c.style.opacity = Math.min(1, t * 4) * (1 - lin(5.6, 5.95, t));
+        c.style.transform = `translate(-50%, -50%) translateY(${(9 * z).toFixed(3)}cqw) translateZ(${(-60 * (1 - k)).toFixed(3)}cqw) rotateX(${(52 * (1 - k)).toFixed(3)}deg) rotateY(${(-34 * (1 - k)).toFixed(3)}deg) scale(${(1 + 0.5 * z).toFixed(4)})`;
+        c.style.opacity = Math.min(1, t * 5) * (1 - lin(5.7, 5.95, t));
       };
     } });
 
-  demo({ id: "ring", name: "24-hour countdown ring", kind: "ui", stacks: ["svg"], chips: ["SVG stroke-dasharray", "tabular-nums"], grade: "A",
-    purpose: "A deadline at a glance: the ring empties as time runs out. In the sample, Meta's 24-hour window for replying to a DM.", period: 5, hero: 2.6,
+  demo({ id: "ring", tier: "basic", name: "24-hour countdown ring", kind: "ui", stacks: ["svg"], chips: ["SVG stroke-dasharray", "tabular-nums"], grade: "A",
+    purpose: "A deadline at a glance: the ring empties as time runs out and turns red in the final hours.", period: 5, hero: 2.6,
     build(s) {
-      s.style.background = "#101018";
-      s.innerHTML = `<svg class="svgfill" viewBox="0 0 400 500"><circle cx="200" cy="220" r="120" fill="none" stroke="#2a2733" stroke-width="18"/><circle class="arc" cx="200" cy="220" r="120" fill="none" stroke="#ff90e8" stroke-width="18" stroke-linecap="round" pathLength="1" stroke-dasharray="1" transform="rotate(-90 200 220)"/><text class="hms" x="200" y="232" text-anchor="middle" fill="#fff" font-size="40" font-weight="900" font-family="JetBrains Mono, monospace">23:54</text><text x="200" y="266" text-anchor="middle" fill="#9a96a6" font-size="15" font-family='${ZH}'>left to reply</text><text x="200" y="420" text-anchor="middle" fill="#fff" font-size="20" font-weight="900" font-family='${ZH}'>Client DM'd at 23:02</text></svg>`;
-      const arc = q(s, ".arc"), txt = q(s, ".hms");
+      s.style.background = "radial-gradient(100% 90% at 40% 45%, #1d1a2a, #0d0c14)";
+      const F = "Archivo, 'Helvetica Neue', Arial, sans-serif", M = "'JetBrains Mono', Menlo, monospace";
+      s.innerHTML = `<svg class="svgfill" viewBox="0 0 1600 900" aria-hidden="true">
+        <circle cx="520" cy="450" r="300" fill="none" stroke="#2a2733" stroke-width="46"/>
+        <g transform="rotate(-90 520 450)"><circle class="rg-arc" cx="520" cy="450" r="300" fill="none" stroke="#ff90e8" stroke-width="46" stroke-linecap="round" pathLength="1" stroke-dasharray="1 1"/></g>
+        <circle class="rg-dot" r="16" fill="#fff"/>
+        <text class="rg-hms" x="520" y="488" text-anchor="middle" fill="#fff" font-size="128" font-weight="700" font-family="${M}">23:54</text>
+        <text x="520" y="556" text-anchor="middle" fill="#9a96a6" font-size="34" font-weight="600" font-family="${F}">hours : minutes left</text>
+        <text class="rg-k" x="930" y="318" fill="#ff90e8" font-size="30" font-weight="700" letter-spacing="4" font-family="${M}">PRE-SALE ENDS IN</text>
+        <text x="926" y="420" fill="#fff" font-size="92" font-weight="900" font-family="${F}">Riverside</text>
+        <text x="926" y="515" fill="#fff" font-size="92" font-weight="900" font-family="${F}">Folk Night</text>
+        <text x="930" y="585" fill="#b9b4c6" font-size="34" font-weight="600" font-family="${F}">Pier 7 Hall · Saturday 18 October</text>
+        <text class="rg-sold" x="930" y="650" fill="#b9b4c6" font-size="28" font-weight="700" font-family="${M}">EARLY-BIRD SEATS LEFT: 88</text></svg>`;
+      const arc = q(s, ".rg-arc"), txt = q(s, ".rg-hms"), dot = q(s, ".rg-dot"), key = q(s, ".rg-k"), sold = q(s, ".rg-sold");
       return (t) => {
-        const rem = 23.9 - 22.8 * outCubic(lin(0.2, 4.2, t)), frac = rem / 24;
-        arc.setAttribute("stroke-dashoffset", 1 - frac);
-        arc.setAttribute("stroke", rem > 6 ? "#ff90e8" : rem > 2 ? "#ffd400" : "#ff3b4e");
+        const rem = 23.9 - 22.8 * outCubic(lin(0.2, 4.2, t)), frac = rem / 24, col = rem > 6 ? "#ff90e8" : rem > 2 ? "#ffd400" : "#ff3b4e";
+        const pulse = rem <= 2 ? 0.5 + 0.5 * Math.cos(TAU * 2.5 * t) : 0;
+        arc.setAttribute("stroke-dasharray", `${frac.toFixed(4)} 1`); arc.setAttribute("stroke", col); arc.setAttribute("stroke-width", (46 + 10 * pulse).toFixed(2));
+        const a = -Math.PI / 2 + frac * TAU; dot.setAttribute("cx", (520 + 300 * Math.cos(a)).toFixed(1)); dot.setAttribute("cy", (450 + 300 * Math.sin(a)).toFixed(1));
         const h = Math.floor(rem), m = Math.floor((rem - h) * 60);
-        txt.textContent = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+        txt.textContent = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`; txt.setAttribute("fill", rem <= 2 ? col : "#fff");
+        key.setAttribute("fill", col); sold.textContent = `EARLY-BIRD SEATS LEFT: ${Math.max(3, Math.round(88 * frac + 2))}`;
       };
     } });
 
