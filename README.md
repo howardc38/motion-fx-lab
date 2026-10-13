@@ -10,6 +10,8 @@ GitHub does not play video files from a repository inline, so the loop above is 
 
 ## What it is for
 
+This repo has two jobs. It shows which effects exist, what videos they can make and which use cases they suit. It also gives you the means to write the animation as web code and render it, frame by frame, to an MP4 with sound. Production work (briefs, prompts, client material) stays outside it.
+
 Describe the video to an AI coding assistant, or write it yourself. It becomes a web page, and this repo renders it to MP4, frame by frame. Motion is rendered by code. Original image assets can be supplied separately; text, data and the animation timeline remain editable. The dialogue films include generated speech with analysed mouth cues.
 
 <table>
