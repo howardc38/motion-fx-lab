@@ -19,8 +19,6 @@
     halftone: 'toon',
     dithercharacter: 'toon',
     'studio-dot-rhythm': 'studio-video-dots',
-    blueprint: 'datachart',
-    drawflow: 'datachart',
     particles: 'gpuparticles',
     morph: 'optical-morph',
     'studio-lowpoly': 'tunnel',
@@ -38,7 +36,7 @@
     glitch: "Signal breakup",
     toon: 'Character shading',
     'studio-video-dots': 'Image and footage halftone dots',
-    datachart: 'Stroke reveal and diagrams',
+    datachart: 'Stroke reveal',
     gpuparticles: 'Particle flow into type',
     'optical-morph': 'Shape morphing',
     tunnel: 'Camera flythrough',
@@ -62,7 +60,7 @@
     glitch: "Displace slices and colour channels. Choose a text-only treatment or a full-frame image effect.",
     toon: 'One 3D explorer robot jumps, turns to camera and lands; then the key light circles it so the shading sweeps across its body. Choose toon bands with an outline, a two-colour halftone print or a two-ink dither.',
     'studio-video-dots': 'Sample an image into a screen-space dot field. Compare footage, rhythmic palettes or letter shapes; changing the source does not add a new family.',
-    datachart: 'Progressive stroke reveals, shown as a data chart, annotated diagram or process flow.',
+    datachart: 'Progressive stroke reveals, shown as a self-drawing data chart.',
     gpuparticles: 'Particles flow into sampled lettering. Compare the dense curl-field version with the lighter point animation.',
     'optical-morph': 'Interpolate shape contours. Compare arbitrary concave paths with a spring-driven polar morph.',
     tunnel: 'Travel through a three-dimensional scene. Choose a line tunnel or a low-poly city course.',
@@ -73,7 +71,6 @@
     const entry = { ...demo, role: collections.has(demo.id) ? 'showcase' : variants[demo.id] ? 'variant' : 'technique', familyId: variants[demo.id] || demo.id };
     if (['studio-video-dots', 'studio-dot-rhythm', 'studio-dot-impact', 'studio-echo', 'studio-time-remap'].includes(demo.id)) entry.stacks = ['canvas'];
     if (['studio-skin-cloud', 'studio-freeze-orbit', 'studio-particle-lens'].includes(demo.id)) entry.stacks = ['canvas', 'three', 'glsl'];
-    if (demo.id === 'lut') { entry.grade = 'A'; entry.chips = ['CSS colour filters', 'background glow']; }
     byId.set(entry.id, entry);
   }
   for (const [id, parent] of Object.entries(variants)) {

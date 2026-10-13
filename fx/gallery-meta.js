@@ -14,8 +14,8 @@
       "studio-echo", "studio-dot-impact", "studio-skin-cloud", "studio-video-dots",
       "fluid-overflow", "rigid", "flat", "glitch", "dissolve", "studio-time-remap",
       "design-soft-shadow", "uifly", "whip", "hook", "chars", "karaoke", "datachart", "timing",
-      "glass", "coderain", "sweep", "stamp", "beat", "sticker", "gradient", "ring", "count", "type",
-      "mark", "scan", "wipe", "lut", "grain", "character-rig", "character-style",
+      "glass", "sweep", "stamp", "beat", "sticker", "gradient", "ring", "count", "type", "mark",
+      "scan", "wipe", "lut", "grain", "character-rig", "character-style",
     ],
     showcaseOrder: [
       "styles", "studio-themes", "studio-gallery", "water-underwater", "scene-eras",

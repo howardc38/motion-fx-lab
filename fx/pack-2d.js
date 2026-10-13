@@ -26,10 +26,6 @@
   .p2-vt-word span { display: inline-block; }
   .p2-vt-read { position: absolute; left: 6cqw; right: 6cqw; bottom: 5cqw; display: flex; justify-content: space-between; font: 500 3.1cqw var(--mono); color: #f2efe8; letter-spacing: .04em; }
   .p2-vt-read b { font-weight: 700; color: #ffd400; font-variant-numeric: tabular-nums; }
-  .p2-cr-h { position: absolute; left: 8cqw; right: 6cqw; top: 50%; transform: translateY(-58%); font: 900 15cqw/.98 var(--lat); font-stretch: 108%; letter-spacing: -.01em; color: #f2efe8; white-space: pre; }
-  .p2-cr-h em { font-style: normal; color: #ff5a1f; }
-  .p2-cr-car { display: inline-block; width: .09em; height: .82em; background: #ff5a1f; vertical-align: -.06em; margin-left: .04em; }
-  .p2-cr-sub { position: absolute; left: 8cqw; top: 76cqw; font: 500 3.3cqw var(--mono); color: #ffd400; letter-spacing: .02em; }
   .p2-cf-head { position: absolute; left: 11cqw; right: 11cqw; top: 6cqw; display: flex; justify-content: space-between; align-items: baseline; color: #111016; }
   .p2-cf-head b { font: italic 400 8.5cqw/1 "Instrument Serif", Georgia, serif; }
   .p2-cf-head span { font: 500 2.8cqw var(--mono); letter-spacing: .06em; color: #5b5750; }
@@ -79,12 +75,12 @@
   }
 
   // ---------- 1. Timing: a bouncing ball and its height curve ----------
-  demo({ id: "timing", name: "Timing: squash and stretch with its graph", kind: "motion", stacks: ["svg"], chips: ["SVG graph + playhead", "closed-form bounce", "squash and stretch"], grade: "A",
+  demo({ id: "timing", tier: "basic", name: "Timing: squash and stretch with its graph", kind: "motion", stacks: ["svg"], chips: ["SVG graph + playhead", "closed-form bounce", "squash and stretch"], grade: "A",
     purpose: "Shows why timing matters: the bounce and its height curve play side by side, and the playhead marks the frame you see.",
     seen: SEEN, period: 4.8, hero: 1.28,
     build(s) {
       s.style.background = CREAM;
-      const P = 4.8, M0 = 0.25, TOT = 3.2, H0 = 150, R = 20, FLOOR = 214, X0 = 58, X1 = 342, RATIO = 0.42, NB = 6;
+      const P = 4.8, M0 = 0.25, TOT = 3.2, H0 = 200, R = 27, FLOOR = 330, X0 = 72, X1 = 352, RATIO = 0.42, NB = 6;
       // Bounce in closed form: a fall from H0, then NB arcs, each apex RATIO times the last.
       const qq = Math.sqrt(RATIO);
       let sum = 1; for (let i = 1; i <= NB; i++) sum += 2 * Math.pow(qq, i);
@@ -116,8 +112,8 @@
         const u = clamp(tm / at);
         return { x: X0 + (X1 - X0) * (1 - Math.pow(1 - u, 1.7)), h, he: h * (1 - c), sx: (1 + 0.9 * sq) / (1 + str), sy: (1 - sq) * (1 + str) };
       };
-      // Graph editor: time 0..P across, height 0..H0 up.
-      const GX0 = 44, GX1 = 364, GY0 = 398, GY1 = 298;
+      // A 16:9 layout: the bounce on the left, its graph editor on the right. Graph: time 0..P across, height 0..H0 up.
+      const GX0 = 448, GX1 = 748, GY0 = 304, GY1 = 124, MF = MONO.replace(/"/g, "'");
       const gx = (t) => GX0 + (GX1 - GX0) * (t / P), gy = (h) => GY0 - (GY0 - GY1) * (h / H0);
       let d = "";
       for (let i = 0; i <= 480; i++) { const t = (i / 480) * P; d += `${i ? "L" : "M"}${f2(gx(t))} ${f2(gy(heightAt(t - M0)[0]))}`; }
@@ -126,26 +122,26 @@
       lands.forEach((L) => keys.push([M0 + L.at, 0]));
       const clip = nid("tmclip");
       const ticks = [0, 24, 48, 72, 96, 120, 144];
-      s.innerHTML = `<svg class="p2-fill" viewBox="0 0 400 500" aria-hidden="true">
-        <defs><clipPath id="${clip}"><rect class="p2-tm-cr" x="${GX0 - 4}" y="${GY1 - 12}" width="0" height="${GY0 - GY1 + 24}"/></clipPath></defs>
-        <text x="372" y="40" text-anchor="end" font-family="${MONO.replace(/"/g, "'")}" font-size="10" font-weight="700" letter-spacing="1.4" fill="${INK}" opacity=".55">BALL · 144 FRAMES @ 30 FPS</text>
-        <line x1="24" y1="${FLOOR}" x2="376" y2="${FLOOR}" stroke="${INK}" stroke-width="2"/>
-        <ellipse class="p2-tm-sh" cx="0" cy="${FLOOR + 1}" rx="18" ry="3.5" fill="${INK}" opacity=".2"/>
-        ${[3, 2, 1].map(() => `<g class="p2-tm-gh"><circle cy="${-R}" r="${R}" fill="none" stroke="${INK}" stroke-width="1.4" stroke-dasharray="3 3"/></g>`).join("")}
+      s.innerHTML = `<svg class="p2-fill" viewBox="0 0 800 450" aria-hidden="true">
+        <defs><clipPath id="${clip}"><rect class="p2-tm-cr" x="${GX0 - 4}" y="${GY1 - 14}" width="0" height="${GY0 - GY1 + 28}"/></clipPath></defs>
+        <text x="34" y="44" font-family="${MF}" font-size="12" font-weight="700" letter-spacing="1.6" fill="${INK}" opacity=".55">BALL · 144 FRAMES @ 30 FPS</text>
+        <line x1="30" y1="${FLOOR}" x2="392" y2="${FLOOR}" stroke="${INK}" stroke-width="2.5"/>
+        <ellipse class="p2-tm-sh" cx="0" cy="${FLOOR + 1}" rx="25" ry="4.5" fill="${INK}" opacity=".2"/>
+        ${[3, 2, 1].map(() => `<g class="p2-tm-gh"><circle cy="${-R}" r="${R}" fill="none" stroke="${INK}" stroke-width="1.8" stroke-dasharray="4 4"/></g>`).join("")}
         <g class="p2-tm-ball"><circle cy="${-R}" r="${R}" fill="${ORANGE}"/></g>
-        <rect x="20" y="244" width="360" height="182" rx="14" fill="${INK}"/>
-        <text x="36" y="268" font-family="${MONO.replace(/"/g, "'")}" font-size="9.5" font-weight="700" letter-spacing="1.2" fill="${CREAM}" opacity=".55">GRAPH EDITOR</text>
-        <rect x="302" y="260" width="8" height="8" rx="1.5" fill="${ORANGE}"/>
-        <text x="316" y="268" font-family="${MONO.replace(/"/g, "'")}" font-size="9.5" fill="${CREAM}" opacity=".8">ball.y</text>
+        <rect x="416" y="58" width="360" height="292" rx="16" fill="${INK}"/>
+        <text x="436" y="86" font-family="${MF}" font-size="12" font-weight="700" letter-spacing="1.4" fill="${CREAM}" opacity=".55">GRAPH EDITOR</text>
+        <rect x="692" y="76" width="10" height="10" rx="2" fill="${ORANGE}"/>
+        <text x="708" y="86" font-family="${MF}" font-size="12" fill="${CREAM}" opacity=".8">ball.y</text>
         ${[0, 0.5, 1].map((k) => `<line x1="${GX0}" x2="${GX1}" y1="${f2(GY0 - (GY0 - GY1) * k)}" y2="${f2(GY0 - (GY0 - GY1) * k)}" stroke="${CREAM}" stroke-opacity=".1" stroke-dasharray="2 4"/>`).join("")}
-        ${ticks.map((f) => `<line x1="${f2(gx(f / 30))}" x2="${f2(gx(f / 30))}" y1="${GY0 + 2}" y2="${GY0 + 6}" stroke="${CREAM}" stroke-opacity=".35"/><text x="${f2(gx(f / 30))}" y="${GY0 + 18}" text-anchor="middle" font-family="${MONO.replace(/"/g, "'")}" font-size="9.5" fill="${CREAM}" fill-opacity=".5">${f}</text>`).join("")}
-        <path d="${d}" fill="none" stroke="${CREAM}" stroke-opacity=".22" stroke-width="2" stroke-linejoin="round"/>
-        <path d="${d}" fill="none" stroke="${ORANGE}" stroke-width="2.6" stroke-linejoin="round" clip-path="url(#${clip})"/>
-        ${keys.map(([kt, kh]) => `<rect x="-3.2" y="-3.2" width="6.4" height="6.4" fill="${CREAM}" transform="translate(${f2(gx(kt))} ${f2(gy(kh))}) rotate(45)"/>`).join("")}
-        <line class="p2-tm-ph" y1="${GY1 - 12}" y2="${GY0 + 2}" stroke="${YELLOW}" stroke-width="1.4"/>
-        <path class="p2-tm-pt" d="M-5 ${GY1 - 18} L5 ${GY1 - 18} L0 ${GY1 - 11} Z" fill="${YELLOW}"/>
-        <circle class="p2-tm-pd" r="5" fill="${YELLOW}" stroke="${INK}" stroke-width="2"/>
-        <text class="p2-tm-cap" x="200" y="474" text-anchor="middle" font-family="'Instrument Serif', Georgia, serif" font-style="italic" font-size="40" fill="${INK}">Timing is everything.</text>
+        ${ticks.map((f) => `<line x1="${f2(gx(f / 30))}" x2="${f2(gx(f / 30))}" y1="${GY0 + 2}" y2="${GY0 + 7}" stroke="${CREAM}" stroke-opacity=".35"/><text x="${f2(gx(f / 30))}" y="${GY0 + 24}" text-anchor="middle" font-family="${MF}" font-size="12" fill="${CREAM}" fill-opacity=".5">${f}</text>`).join("")}
+        <path d="${d}" fill="none" stroke="${CREAM}" stroke-opacity=".22" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="${d}" fill="none" stroke="${ORANGE}" stroke-width="3.2" stroke-linejoin="round" clip-path="url(#${clip})"/>
+        ${keys.map(([kt, kh]) => `<rect x="-4" y="-4" width="8" height="8" fill="${CREAM}" transform="translate(${f2(gx(kt))} ${f2(gy(kh))}) rotate(45)"/>`).join("")}
+        <line class="p2-tm-ph" y1="${GY1 - 14}" y2="${GY0 + 2}" stroke="${YELLOW}" stroke-width="1.8"/>
+        <path class="p2-tm-pt" d="M-6 ${GY1 - 21} L6 ${GY1 - 21} L0 ${GY1 - 13} Z" fill="${YELLOW}"/>
+        <circle class="p2-tm-pd" r="6" fill="${YELLOW}" stroke="${INK}" stroke-width="2.4"/>
+        <text class="p2-tm-cap" x="400" y="414" text-anchor="middle" font-family="'Instrument Serif', Georgia, serif" font-style="italic" font-size="44" fill="${INK}">Timing is everything.</text>
       </svg>`;
       const bg = q(s, ".p2-tm-ball"), gh = qa(s, ".p2-tm-gh"), sh = q(s, ".p2-tm-sh"), cr = q(s, ".p2-tm-cr");
       const ph = q(s, ".p2-tm-ph"), pt = q(s, ".p2-tm-pt"), pd = q(s, ".p2-tm-pd"), cap = q(s, ".p2-tm-cap");
@@ -154,7 +150,7 @@
         const vis = lin(0, 0.15, t) * (1 - lin(4.4, 4.7, t)), b = ball(t);
         place(bg, b); bg.style.opacity = vis;
         gh.forEach((g, i) => { const k = 3 - i, bt = t - k * 0.07; place(g, ball(bt)); g.style.opacity = (t - k * 0.07 > M0 && t - M0 < at + 0.2 ? 0.5 - k * 0.12 : 0) * vis; });
-        sh.setAttribute("cx", f2(b.x)); sh.setAttribute("rx", f2(18 * (0.45 + 0.55 * (1 - b.he / H0)))); sh.style.opacity = vis;
+        sh.setAttribute("cx", f2(b.x)); sh.setAttribute("rx", f2(25 * (0.45 + 0.55 * (1 - b.he / H0)))); sh.style.opacity = vis;
         const x = gx(t);
         cr.setAttribute("width", f2(Math.max(0, x - GX0 + 4)));
         ph.setAttribute("x1", f2(x)); ph.setAttribute("x2", f2(x)); pt.setAttribute("transform", `translate(${f2(x)} 0)`);
@@ -310,8 +306,8 @@
 
   // ---------- 5. Noise ridgelines ----------
   demo({ id: "ridgelines", name: "Noise ridgelines", kind: "backdrop", stacks: ["canvas"], chips: ["Canvas 2D", "seeded Perlin noise", "painter's order"], grade: "A",
-    purpose: "Stacked lines of noise read as terrain or a sound wave; a calm, endless backdrop for a single word.",
-    seen: SEEN, period: 8, hero: 1.6,
+    purpose: "Stacked lines of noise read as terrain or a sound wave; a calm, endless backdrop for a single word, with one swell that can sit on a beat.",
+    seen: SEEN, period: 8, hero: 2.5,
     build(s) {
       s.style.background = INK;
       const W = s.classList.contains("landscape") ? 8000 / 9 : 400;
@@ -323,12 +319,17 @@
         g.fillStyle = INK; g.fillRect(0, 0, W, 500);
         // Time runs around a circle in two noise dimensions, so t = 0 and t = P meet exactly.
         const a = (TAU * t) / P, cy = Math.cos(a) * 0.85, cz = Math.sin(a) * 0.85;
-        g.lineWidth = 1.25; g.lineJoin = "round"; g.strokeStyle = CREAM;
+        // One swell per loop (attack 0.35 s, slow release) that returns to rest before t = P.
+        const swell = t < 2 ? 0 : t < 2.35 ? inOut(lin(2, 2.35, t)) : Math.exp(-(t - 2.35) / 0.7), amp = 1 + 0.95 * swell;
+        // Keep every line at least about 1.1 display pixels wide, so small previews do not break it into dashes.
+        const shown = g.canvas.getBoundingClientRect().width || s.clientWidth || W;
+        g.lineWidth = Math.max(1.25, (1.1 * W) / shown); g.lineJoin = "round";
+        const w = 0.65 * swell; g.strokeStyle = `rgb(${Math.round(242 + 13 * w)},${Math.round(239 - 149 * w)},${Math.round(232 - 201 * w)})`;
         for (let i = 0; i < LINES; i++) {
           const y = Y0 + (Y1 - Y0) * (i / (LINES - 1));
           for (let j = 0; j <= NS; j++) {
             const x = xs[j], n = noise(x * 0.021, i * 0.17 + cy, cz) + 0.5 * noise(x * 0.05 + 17.3, i * 0.29 + cy * 1.4, cz * 1.4 + 3.1);
-            py[j] = y - (env[j] * 70 * Math.max(0, n + 0.18) + 2.2 * n);
+            py[j] = y - (env[j] * 70 * amp * Math.max(0, n + 0.18) + 2.2 * n);
           }
           g.beginPath(); g.moveTo(xs[0], py[0]);
           for (let j = 1; j <= NS; j++) g.lineTo(xs[j], py[j]);
@@ -338,7 +339,7 @@
           for (let j = 1; j <= NS; j++) g.lineTo(xs[j], py[j]);
           g.stroke();
         }
-        g.font = `italic 400 104px ${SERIF}`; g.textAlign = "center"; g.textBaseline = "alphabetic";
+        g.font = `italic 400 ${(104 * (1 + 0.08 * swell)).toFixed(1)}px ${SERIF}`; g.textAlign = "center"; g.textBaseline = "alphabetic";
         g.lineWidth = 14; g.strokeStyle = INK; g.strokeText("flow", W/2, 296);
         g.fillStyle = ORANGE; g.fillText("flow", W/2, 296);
         g.font = `700 9px ${MONO}`; g.fillStyle = "rgba(242,239,232,.55)";
@@ -349,58 +350,7 @@
       return withFonts([`italic 400 104px ${SERIF}`, `700 9px ${MONO}`], paint);
     } });
 
-  // ---------- 6. Code-rain backdrop ----------
-  demo({ id: "coderain", name: "Code-rain backdrop", kind: "backdrop", stacks: ["canvas", "css"], chips: ["Canvas 2D text", "looping scroll", "typed headline"], grade: "A",
-    purpose: "Lines of code scroll behind a headline that types itself.",
-    seen: SEEN, period: 6, hero: 2.4,
-    build(s) {
-      s.style.background = INK;
-      const W = s.classList.contains("landscape") ? 8000 / 9 : 400, NC = W > 400 ? 15 : 7;
-      const g = canvas2d(s, 800, 1000), P = 6, R = rng(4242);
-      const WORDS = ["frame(t)", "render(t)", "t => f(t)", "pure", "0x1F", "lerp(a, b)", "ease(t)", "return", "const t", "spring()", "clamp(x)", "draw()", "t % 6", "noise(x, t)", "30 fps", "seed = 7", "0xFF5A1F", "=> {", "}", "sin(t)", "f(t) = f(t)", "no state"];
-      // Seven columns; each picks only fragments that fit its width (JetBrains Mono advances 0.6 em a character).
-      const cols = [], CW = W / NC;
-      for (let k = 0; k < NC; k++) {
-        const size = [8, 9, 10, 11.5][Math.floor(R() * 4)], lh = size * 2.1, n = Math.ceil(500 / lh) + 3;
-        const fit = WORDS.filter((w) => w.length * (0.6 * size + 0.4) <= CW - 8);
-        const items = Array.from({ length: n }, () => {
-          const r = R();
-          return { w: fit[Math.floor(R() * fit.length)], col: r < 0.08 ? ORANGE : r < 0.13 ? YELLOW : CREAM, a: (r < 0.13 ? 0.42 : 0.1 + (size - 8) * 0.03) + R() * 0.08 };
-        });
-        cols.push({ x: k * CW + 5, size, lh, H: n * lh, loops: 1 + Math.floor(R() * 3), items });
-      }
-      s.insertAdjacentHTML("beforeend", `<div class="p2-cr-h"><span class="p2-cr-t"></span><em class="p2-cr-d"></em><i class="p2-cr-car"></i></div><div class="p2-cr-sub">// every frame is f(t)</div>`);
-      const head = q(s, ".p2-cr-h"), tx = q(s, ".p2-cr-t"), dot = q(s, ".p2-cr-d"), car = q(s, ".p2-cr-car"), sub = q(s, ".p2-cr-sub");
-      const TEXT = "Written\nin code.";
-      const paint = (t) => {
-        g.setTransform(2, 0, 0, 2, 0, 0);
-        g.fillStyle = INK; g.fillRect(0, 0, W, 500);
-        g.textAlign = "left"; g.textBaseline = "top";
-        g.letterSpacing = "0.4px"; // any letter spacing turns off JetBrains Mono's ligatures, so "=>" stays two characters
-        for (const c of cols) {
-          g.font = `500 ${c.size}px ${MONO}`;
-          const off = ((t / P) * c.loops * c.H) % c.H;
-          c.items.forEach((it, j) => {
-            const y = ((j * c.lh + off) % c.H) - c.lh;
-            if (y < -c.lh || y > 500) return;
-            g.globalAlpha = it.a; g.fillStyle = it.col; g.fillText(it.w, c.x, y);
-          });
-        }
-        g.globalAlpha = 1; g.letterSpacing = "0px";
-        const band = g.createLinearGradient(0, 140, 0, 420);
-        band.addColorStop(0, "rgba(17,16,22,0)"); band.addColorStop(0.3, "rgba(17,16,22,.9)"); band.addColorStop(0.72, "rgba(17,16,22,.9)"); band.addColorStop(1, "rgba(17,16,22,0)");
-        g.fillStyle = band; g.fillRect(0, 140, W, 280);
-        const n = Math.floor(clamp((t - 0.5) * 13, 0, TEXT.length)), typed = TEXT.slice(0, n), done = n === TEXT.length;
-        tx.textContent = typed.endsWith(".") ? typed.slice(0, -1) : typed; dot.textContent = typed.endsWith(".") ? "." : "";
-        car.style.opacity = !done || Math.floor(t * 2.5) % 2 === 0 ? 1 : 0;
-        const out = 1 - lin(5.4, 5.8, t);
-        head.style.opacity = (t >= 0.35 ? 1 : 0) * out;
-        sub.style.opacity = lin(2.0, 2.4, t) * out;
-      };
-      return withFonts([`500 12px ${MONO}`], paint);
-    } });
-
-  // ---------- 7. 3D card flip grid ----------
+  // ---------- 6. 3D card flip grid ----------
   demo({ id: "cardflip", name: "3D card flip grid", kind: "ui", stacks: ["css"], chips: ["CSS 3D transform", "backface-visibility", "diagonal stagger"], grade: "A",
     purpose: "Reveals nine items in turn without changing the layout: each card shows its other side, then flips back.",
     seen: SEEN, period: 5, hero: 1.05,
@@ -419,8 +369,8 @@
       });
     } });
 
-  // ---------- 8. Self-drawing data chart ----------
-  demo({ id: "datachart", name: "Self-drawing data chart", kind: "ui", stacks: ["svg"], chips: ["SVG stroke-dashoffset", "gradient area", "stroke-dasharray ring"], grade: "A",
+  // ---------- 7. Self-drawing data chart ----------
+  demo({ id: "datachart", tier: "basic", name: "Self-drawing data chart", kind: "ui", stacks: ["svg"], chips: ["SVG stroke-dashoffset", "gradient area", "stroke-dasharray ring"], grade: "A",
     purpose: "Builds a line, its bars and a goal ring in order, so the eye reads the numbers in the order they matter.",
     seen: SEEN, period: 6, hero: 3.6,
     build(s) {
