@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Signal source renderer</title><link rel="icon" href="data:,"></head>
+<body style="margin:0;background:#888">
+<canvas id="stage"></canvas>
+<script type="module">
+// Renders the transparent RGBA sources analysed by tools/signals/build.py.
+import {STAGE,PORTRAIT,createCat,createPortrait,fragmentCues,sourceTime} from '../../fx/signals/performance.js';
+const canvas=document.querySelector('#stage'),g=canvas.getContext('2d');
+let cat,portrait;
+window.sourceReady=(async()=>{[cat,portrait]=await Promise.all([createCat(),createPortrait()]);})();
+window.renderCat=async tau=>{await sourceReady;canvas.width=STAGE.width;canvas.height=STAGE.height;g.clearRect(0,0,canvas.width,canvas.height);cat.draw(g,tau);return canvas.toDataURL('image/png');};
+window.renderPortrait=async()=>{await sourceReady;canvas.width=PORTRAIT.width;canvas.height=PORTRAIT.height;g.clearRect(0,0,canvas.width,canvas.height);portrait.draw(g);return canvas.toDataURL('image/png');};
+window.sourceSpec=()=>({stage:STAGE,portrait:PORTRAIT,cues:fragmentCues(),sourceEnd:sourceTime(12)});
+</script></body></html>

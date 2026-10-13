@@ -7,6 +7,7 @@
     'signal-freeze-orbit': 'studio-freeze-orbit',
     'studio-time-remap': 'studio-echo',
     'studio-particle-lens': 'studio-skin-cloud',
+    'studio-dot-impact': 'signal-motion-fragments',
     'stack-pixi': 'liquid',
     halftonetype: 'studio-video-dots',
     orbs: 'gradient',

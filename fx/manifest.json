@@ -191,7 +191,7 @@
     {
       "id": "signals",
       "scripts": ["fx/signal-effects.js", "fx/pack-signals.js"],
-      "cacheTag": "signal-1",
+      "cacheTag": "signal-2",
       "readme": "fx/signals/README.md",
       "prefix": "signal-",
       "anchor": "id:'{key}'",
@@ -200,7 +200,7 @@
           "fx/signal-effects.js",
           "fx/pack-signals.js",
           "fx/signals/films.js",
-          "fx/signals/field.js",
+          "fx/signals/relief.js",
           "fx/signals/data.js",
           "fx/signals/stage.js",
           "fx/signals/README.md"
@@ -209,7 +209,8 @@
           "fx/signal-effects.js",
           "fx/pack-signals.js",
           "fx/signals/films.js",
-          "fx/signals/field.js",
+          "fx/signals/fragments.js",
+          "fx/signals/performance.js",
           "fx/signals/data.js",
           "fx/signals/stage.js",
           "fx/signals/README.md"
@@ -327,7 +328,6 @@
       "ridgelines",
       "chrome",
       "studio-echo",
-      "studio-dot-impact",
       "studio-skin-cloud",
       "studio-video-dots",
       "fluid-overflow",

@@ -1,33 +1,91 @@
 # Measured sound, image motion and held impacts
 
-Three 12-second studies use the original Counterform footage/rig and an original
-synthesised score. They borrow the energy and visual direction of
+Three 12-second studies. Each is driven by real measurements of its own source and its
+own original synthesised score; no two studies share a soundtrack.
+
+| Study | Subject | What actually drives it | Catalogue role |
+|---|---|---|---|
+| [Motion / Release](../../examples/motion-fragments.html) | Apricot the cat (`assets/characters/apricot-cat`) | Measured optical flow decides where the cat breaks, which way the pieces fly and when they return | `signal-motion-fragments`: the **Motion shatter and reassemble** family |
+| [Pulse / Form](../../examples/audio-relief.html) | Milo the explorer robot (`assets/characters/explorer-robot`) | Measured RMS loudness (and one frequency band per row) sets the height of solid image pins | `signal-audio-relief`: variant of `studio-depth-dots` |
+| [Impact / Orbit](../../examples/impact-orbit.html) | Counterform fighters | Measured music attacks cue authored impact poses; camera, lights and surface treatment keep moving | `signal-freeze-orbit`: variant of `studio-freeze-orbit` |
+
+| Bundle | Used by | Contents |
+|---|---|---|
+| `assets/signals-fragments/` | Motion / Release | 321 measured frames of the cat clip (200×90 cells, 30 fps), film cues, own score |
+| `assets/signals-relief/` | Pulse / Form | one measured portrait frame (256×144 cells), own score |
+| `assets/signals/` | Impact / Orbit | Counterform footage measurements and the original Counterform score (unchanged) |
+
+Impact / Orbit borrows the energy and visual direction of
 [the reference film](https://www.threads.com/@aicreataro/post/DeQIT_0Ed93), without
 bundling its footage, artwork or music.
 
-| Study | What actually drives it | Catalogue role |
-|---|---|---|
-| [Pulse / Form](../../examples/audio-relief.html) | Measured RMS and 32 frequency bands raise solid image cells | `signal-audio-relief`: variant of `studio-depth-dots` |
-| [Motion / Release](../../examples/motion-fragments.html) | Measured optical-flow direction/speed emits and directs solid fragments; audio adds depth | `signal-motion-fragments`: one new motion family |
-| [Impact / Orbit](../../examples/impact-orbit.html) | Measured music attacks cue authored impact poses; camera, lights and surface treatment keep moving | `signal-freeze-orbit`: variant of `studio-freeze-orbit` |
+## Motion shatter and reassemble
 
-These are linked from effect cards and the README source archive, outside the main film shortlist. The existing dot-relief and simple freeze comparisons remain
-selectable. Intro excerpts demonstrate the cached source studies under the intro's
-own soundtrack; each full study plays the score used for its measurements.
+**Still is whole, fast motion breaks, stillness rebuilds.** `fragments.js` precomputes a
+fragment history once from the measured cache, so every frame is still a pure function
+of film time:
+
+- Each subject cell's measured speed (stage px per source frame) is compared with
+  `RULES.lo/hi`. Slow walking stays below `lo`, so the cat walks without breaking; the
+  sprinting legs, the take-off and the tail whip exceed it.
+- A sudden speed increase (`burst`) releases most pieces. When most of the body moves
+  together, the leading edge (the head on the leap) holds and the rear breaks away.
+- Each released cell becomes four solid shards in its own colour, launched along its
+  measured velocity with drag, so the pieces trail the movement. A share of the cut
+  faces carries the single accent colour.
+- Every piece keeps a *home*: the same material point, advanced frame by frame with
+  the measured flow. When the measured speed at the home falls below `RULES.settle`
+  (the cat has landed or the tail is still) the piece flies straight back and snaps in;
+  the hole it left closes. The distance to home only decreases during a return.
+- The leap's apex is a time-remap (`performance.js` `REMAP`, 0.25×). Fragments are
+  evaluated in source time, so they hang in the air with the cat.
+- The background changes only on the measured impact (±2 frames); the score's shatter
+  attack is placed on the same frame.
+
+The cat's pose comes from `fx/character` (read-only). `performance.js` authors the
+performance (idle → sprint → leap → land → tail flick → slow walk) and the film's time
+remap; the same function renders the measured RGBA clip and the full-resolution cat
+shown in the browser.
+
+## Audio-driven solid relief
+
+Every visible cell of the Milo portrait is a lit solid column (`relief.js`). Its height is
+`RELIEF.height × audioGain × measured envelope × shape × band`, where shape mixes the
+cell's brightness with its distance inside the silhouette, and band is the measured
+frequency band for that row (low at the bottom, high at the top). With silence the
+picture is exactly flat; the camera swings to a grazing angle at the drop so the depth
+reads. A small waveform of the same measured envelope sits bottom right.
 
 ## Rebuild or replace the inputs
 
-The shipped score is centred stereo PCM. Mono replacements are converted to centred stereo; existing stereo recordings keep both channels. Analysis is limited to 300 seconds of audio.
-
-Normal playback and MP4 export use checked-in assets; OpenCV is only needed when
-rebuilding measurements. The browser renderer remains Three.js r180/GLSL/Canvas.
+Normal playback and MP4 export use checked-in assets; Playwright and OpenCV are only
+needed when rebuilding measurements. The browser renderer remains Three.js r180/GLSL/Canvas.
 
 ```sh
 python3 -m venv /tmp/motion-signal-env
 /tmp/motion-signal-env/bin/pip install -r tools/signals/requirements.txt
-/tmp/motion-signal-env/bin/python tools/signals/build.py --replace
-npm run render:signal-films
+W=$(mktemp -d)
+# Motion / Release: render the cat clip (PNG-in-MOV with alpha) and its film cues,
+# import it at fixed FPS, then measure flow and synthesise the score on those cues.
+node tools/signals/render-source.cjs fragments "$W"
+python3 video/import-clip.py "$W/cat.mov" "$W/cat-frames" --fps 30 --width 800 --height 360
+/tmp/motion-signal-env/bin/python tools/signals/build.py --source "$W/cat-frames" \
+  --period 10.7 --grid-width 200 --analysis-width 400 --score fragments \
+  --cues "$W/cues.json" --output assets/signals-fragments --replace
+# Pulse / Form: one portrait frame and the relief score.
+node tools/signals/render-source.cjs relief "$W"
+python3 video/import-clip.py "$W/portrait.mov" "$W/portrait-frames" --fps 24 --width 1280 --height 720
+/tmp/motion-signal-env/bin/python tools/signals/build.py --source "$W/portrait-frames" \
+  --period 0.041666 --grid-width 256 --analysis-width 640 --score relief \
+  --output assets/signals-relief --replace
+bash video/build.sh examples/motion-fragments.html
+bash video/build.sh examples/audio-relief.html
 ```
+
+`build.py` without `--score` keeps the Counterform defaults (`assets/studio/fight`,
+160-cell grid, original score) used by `assets/signals/`. Change `performance.js`, the
+rules or the score together with the bundle: the fragments film reads its impact,
+landing and walk cues from the bundle's `source.cues`.
 
 To analyse your own indexed RGBA footage and score:
 
@@ -38,24 +96,20 @@ python3 video/import-clip.py my-source.mp4 assets/my-source --fps 24
   --output assets/my-signals
 ```
 
-Set `window.signalOptions = {signalsUrl:'../assets/my-signals/manifest.json'}` before
-loading the player, or pass that option to `FXSignal.create(id, options)`. `--period`
-is the intended source-loop duration and must fit its frame manifest. The bundled
-film timelines are 12 seconds: replacement audio must be at least 12 seconds; longer
-scores are trimmed to the film duration in preview and export. For the impact
-study, edit `orbitClock()`'s cue windows/pose choices when changing the soundtrack.
-Its actor loading and framing are authored for Amber/Teal; adapt `createOrbit()`
-along with the pose choices when substituting a different rig. It rejects a score without measured attacks in its two cue windows, rather
-than substituting a pretend detected beat. The supplied score has attacks at 1.2 s
-and 6.0 s. Impact poses are authored choices, not automatic collision detection.
+Pass `{signalsUrl:'../assets/my-signals/manifest.json'}` to `FXSignal.create(id, options)`
+(or set `window.signalOptions` before loading the player). `--period` is the intended
+source duration and must fit its frame manifest. The fragments study additionally needs
+`--cues` (impact, land, walk, …) in film seconds. Film timelines are 12 seconds: a
+replacement score must be at least 12 seconds; longer scores are trimmed. For the
+impact study, edit `orbitClock()`'s cue windows/pose choices when changing the
+soundtrack; it rejects a score without measured attacks in its two cue windows, and its
+actor loading and framing are authored for Amber/Teal.
 
 `build.py` writes a complete temporary bundle and publishes it atomically. Existing
 output requires `--replace`. A failed analysis leaves the previous bundle intact.
 The manifest records source-image fingerprints, producer fingerprint, score hash,
-compressed/decoded sample hashes, frame rate, period, grid and units. The compressed
-cache is about 1.4 MB and decodes to about 13.4 MB for the supplied source; it is shared
-between instances. Maximum decoded sample data is 200 MB. Regenerate the signals
-when changing the source footage, score or analysis code.
+compressed/decoded sample hashes, frame rate, period, grid and units. Maximum decoded
+sample data is 200 MB (the cat clip decodes to about 46 MB, 3.4 MB compressed).
 
 ## Frame contract and edit owners
 
@@ -63,58 +117,47 @@ Pass `audio-relief`, `motion-fragments` or `freeze-orbit` to `FXSignal.create()`
 Gallery IDs add `signal-`; the cinematic orbit entry page is `impact-orbit.html`.
 
 ```js
-const effect = await FXSignal.create('audio-relief');
-await effect.frame(2.4, {
-  sourceTime: .6, audioTime: 2.4,
-  audioGain: 1.55, cameraAngle: .4, labels: false
-});
-// effect.canvas is 1280×720; effect.proof() describes clocks and measurements.
+const effect = await FXSignal.create('motion-fragments');
+await effect.frame(3.5, { motionGain: 1, labels: false });
+// effect.canvas is 1280×720; effect.proof() reports particles, holes, returns,
+// background, measured flow and clocks; effect.timeline() lists births per source frame.
 ```
 
-- `data.js` validates and loads the cache; source time and audio time are independent.
-- `field.js` owns solid-cell relief and the bounded history of moving fragments.
-  Both support `sourceTime`, `audioTime`, `audioGain`, `cameraAngle`, `labels`.
-  `motionGain` scales motion emission/velocity; zero suppresses emitted fragments.
-  `audioGain` is a visual gain, not an audio-volume control.
+- `data.js` validates and loads a cache; source time and audio time are independent.
+- `fragments.js`: `sourceTime` overrides the remapped source clock; `motionGain` scales
+  release probability and launch speed, zero suppresses fragments.
+- `relief.js`: `audioTime`, `audioGain` (visual gain, not volume) and `cameraAngle`
+  (fixed yaw) allow separate checks.
 - `orbit.js` owns impact pose selection, held intervals, camera travel and lighting.
-  `sourceTime`, `cameraAngle`, `lightTime`, `audioTime`, `labels` allow separate checks.
-  The old studio comparison remains independent of this cinematic variation.
+- `performance.js` owns the cat performance, the time remap, the film cues and the
+  portrait pose; `tools/signals/source.html` renders them for measurement.
 - `films.js` owns film metadata, poster and GIF selections; `player.js` owns sound
-  playback and recorder hooks. These authored stories end at 12 seconds; retiming
-  them requires updating their shot timing and metadata together.
-- `stage.js` owns shared rendering and graphic overlays. Every frame is derived
-  from fixed assets and explicit time; no elapsed-time particle simulation is kept.
+  playback and recorder hooks. `stage.js` owns the shared renderer and text helper.
 
 ## Analysis and geometry boundaries
 
 Audio RMS is measured directly from decoded PCM. A 2048-sample Hann FFT supplies 32
-logarithmic bands on one shared −50 dB..0 dB scale, preserving relative spectral
-energy. Positive energy changes locate attacks. This is not speech recognition or
-a general beat/downbeat classifier. No microphone input or live FFT is required.
+logarithmic bands on one shared −50 dB..0 dB scale. Positive energy changes locate
+attacks. This is not speech recognition or a general beat/downbeat classifier.
 
 OpenCV Farneback estimates current-to-previous image motion; its negation is used
 as a current-position velocity estimate. Vectors are stored at 1/256 of a source
-pixel per frame and converted using source FPS and image scale. Transparent
-background samples are suppressed. Faster visible regions emit fragments from a
-bounded 0.8-second history of source samples. This measures apparent pixel movement,
-including camera motion; it does not infer joints, forces or true 3D trajectories.
-Cuts, occlusion and low-texture areas can produce imperfect flow.
+pixel per frame. Transparent background samples are suppressed. This measures
+apparent pixel movement; it does not infer joints, forces or true 3D trajectories.
+Fragment homes follow the measured flow, so tracking drift can return a piece a few
+pixels from where it left; the hole closes when it arrives.
 
-Relief and motion fragments use real solid geometry but remain 2.5D reconstructions
-of image samples. Brightness/energy determines depth, not recovered anatomy. The
-freeze study uses the actual skinned GLB and can show its sides and back. Its contact
-ellipses are graphic staging, not physically solved shadows.
+Relief and fragments use real solid geometry but remain 2.5D reconstructions of image
+samples: brightness and silhouette distance give depth, not recovered anatomy. The
+freeze study uses the actual skinned GLB and can show its sides and back.
 
 ## Export the same score
 
 The pages declare `__audio = {src, sha256}` using their manifest-relative score URL.
 `record.cjs` carries that metadata to `prepare-audio.py`, which verifies the local
 file hash and sufficient duration before passing it to the normal delivery chain.
-It trims to the authored duration and adds a silent guard tail, preserving the
-recorder’s endpoint frame when delivery uses `-shortest`.
 Mastering may change overall loudness/dynamics; the source recording and timing
-are the ones analysed. Pages without `__audio` retain generated music and SFX.
-MP4, poster and GIF are published together only after the normal frame verification.
+are the ones analysed.
 
 ```sh
 /tmp/motion-signal-env/bin/python tools/signals/test_analysis.py
