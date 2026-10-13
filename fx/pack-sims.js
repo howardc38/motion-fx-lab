@@ -7,7 +7,7 @@
   const FX = window.FX;
   if (!FX) return;
   const { demo, R3, GW, GH, LAT, rng, glTile } = FX;
-  const { lin, smooth, inOut } = FX.helpers;
+  const { lin, smooth, hash } = FX.helpers;
   const SEEN = "Threads · @designer.riven";
 
   // ================= Gray–Scott reaction–diffusion on the GPU =================
@@ -107,112 +107,167 @@
     } });
 
   // ================= Rigid bodies with Matter.js =================
-  const RB_HZ = 240, RB_PERIOD = 8, RB_W = 480, RB_H = 600;
-  const INK = "#111016", CREAM = "#f2efe8", ORANGE = "#ff5a1f", BLUE = "#2b4bff", YELLOW = "#ffd400";
+  // STACK: five heavy letters drop in one by one and stand as a word; a heavy ball smashes it apart.
+  // The physics world is a 1280×720 frame drawn at the render size; letter bodies are the convex hulls
+  // of the bundled outlines in assets/type/motion-cjk.json (Noto Sans TC, SIL OFL 1.1).
+  const RB_HZ = 240, RB_PERIOD = 8, RB_W = 1280, RB_H = 720, RB_FLOOR = 600;
+  const INK = "#111016", CREAM = "#f2efe8", ORANGE = "#ff5a1f";
   const MONO = '"JetBrains Mono", monospace';
-  const RB_FONT = 110;   // glyph boxes below are Archivo 900 ink boxes at this size; physics never measures a font
-  // Spawned in this order at these times (seconds), just above the tile.
-  const RB_SPAWN = [
-    { k: "M", x: 118, at: 0.15 }, { k: "circle", r: 30, x: 350, at: 0.35, col: ORANGE }, { k: "O", x: 250, at: 0.5 },
-    { k: "tri", r: 42, x: 400, at: 0.7, col: BLUE }, { k: "T", x: 170, at: 0.85 }, { k: "circle", r: 22, x: 62, at: 1.0, col: YELLOW },
-    { k: "I", x: 300, at: 1.15 }, { k: "tri", r: 34, x: 205, at: 1.3, col: ORANGE }, { k: "O", x: 395, at: 1.45 },
-    { k: "circle", r: 26, x: 250, at: 1.6, col: BLUE }, { k: "N", x: 110, at: 1.75 }, { k: "tri", r: 30, x: 340, at: 1.9, col: YELLOW },
-  ];
-  const FLOOR_L = 540, FLOOR_T = 24, HINGE = { x: -8, y: 500 }, TILT = 0.6, TILT_AT = 5.0;
-  const tiltAt = (t) => TILT * (inOut(lin(TILT_AT, TILT_AT + 1.2, t)) - inOut(lin(7.1, 7.7, t)));
+  const RB_CAP = 214, RB_GAP = 16, RB_WORD = "STACK";
+  const RB_DROP = [0, 0.3, 0.6, 0.9, 1.2];                                   // when each letter is released
+  const RB_BALL = { at: 2.7, x: -150, y: 380, vx: 40, vy: 8, r: 84, density: 0.02 };   // thrown in from the left; velocity in px per 1/60 s (Matter's unit)
+  const RB_WIPE = 7.6;
+  const OUTLINES = new URL("../assets/type/motion-cjk.json", document.currentScript.src);
+  // Every on-curve and flattened point of an outline, in font units (y up). Enough for a hull and a box.
+  function outlinePoints(d) {
+    const tok = d.match(/[MLHVQCZ]|-?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?/gi), pts = [];
+    let cmd = null, x = 0, y = 0, i = 0;
+    const num = () => +tok[i++];
+    while (i < tok.length) {
+      if (/[a-z]/i.test(tok[i])) cmd = tok[i++].toUpperCase();
+      if (cmd === "Z") { cmd = null; continue; }
+      if (cmd === "M") { x = num(); y = num(); cmd = "L"; }
+      else if (cmd === "L") { x = num(); y = num(); }
+      else if (cmd === "H") x = num();
+      else if (cmd === "V") y = num();
+      else if (cmd === "Q") {
+        const cx = num(), cy = num(), ex = num(), ey = num();
+        for (const s of [0.25, 0.5, 0.75]) pts.push({ x: (1 - s) * (1 - s) * x + 2 * (1 - s) * s * cx + s * s * ex, y: (1 - s) * (1 - s) * y + 2 * (1 - s) * s * cy + s * s * ey });
+        x = ex; y = ey;
+      } else throw new Error("Unsupported outline command: " + cmd);
+      pts.push({ x, y });
+    }
+    return pts;
+  }
+  const rbEase = (x) => x * x * (3 - 2 * x);
 
   demo({ id: "rigid", name: "Rigid bodies with Matter.js", kind: "sim", stacks: ["physics", "canvas"],
-    chips: ["Matter.js 0.20.0", "fixed 240 Hz steps", "Canvas 2D"], grade: "C",
-    purpose: "Letters and shapes fall, collide and pile up with real weight, then the floor tips and everything slides away. Physics you never keyframe by hand.",
-    seen: SEEN, period: RB_PERIOD, hero: 4.6,
+    chips: ["Matter.js 0.20.0", "fixed 240 Hz steps", "convex hulls of real glyphs", "Canvas 2D"], grade: "C",
+    purpose: "Five heavy letters drop in one by one and stand as STACK; then a heavy ball smashes the word apart. Weight, collisions and the last letter's wobble all come from the simulation, never from keyframes.",
+    seen: SEEN, period: RB_PERIOD, hero: 3.2,
     build(s) {
       if (!window.Matter) throw new Error("Matter.js did not load");
-      const { Engine, Bodies, Body, Composite } = window.Matter;
+      const { Engine, Bodies, Body, Composite, Events, Vertices } = window.Matter;
       s.style.background = CREAM;
-      const wide = s.classList.contains("landscape"), width = wide ? Math.round(RB_H * 16 / 9) : RB_W;
-      const c = document.createElement("canvas"); c.width = width; c.height = RB_H; c.className = "fill"; s.appendChild(c);
-      const g = c.getContext("2d");
-      const floorLength = wide ? width + 60 : FLOOR_L;
-      const mat = { friction: 0.35, frictionStatic: 0.6, restitution: 0.15, density: 0.0012 };
-
-      const letterBody = (k, x, y) => {
-        if (k === "O") return Bodies.circle(x, y, 40, mat);
-        if (k === "T") {   // a compound body: the bar and the stem
-          const bar = Bodies.rectangle(x, y - 38 + 10.5, 74, 21, mat), stem = Bodies.rectangle(x, y + 10.5, 24, 55, mat);
-          return Body.create({ ...mat, parts: [bar, stem] });
+      const c = document.createElement("canvas"); c.width = GW; c.height = GH; c.className = "fill"; s.appendChild(c);
+      const g = c.getContext("2d"), k = GW / RB_W;
+      let letters = null, sim = null, lastT = null;
+      const mat = { friction: 0.55, frictionStatic: 0.9, restitution: 0.1, density: 0.002 };
+      // Glyph geometry is fixed by the bundled outlines, so the simulation never depends on font loading.
+      const prepare = (data) => {
+        const glyphs = Array.from(RB_WORD).map((ch) => {
+          const gl = data.glyphs[ch], pts = outlinePoints(gl.path);
+          let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+          for (const p of pts) { x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y); }
+          return { ch, path: new Path2D(gl.path), pts, x0, x1, y0, y1 };
+        });
+        const sc = RB_CAP / Math.max(...glyphs.map((q) => q.y1 - q.y0));
+        let total = -RB_GAP;
+        for (const q of glyphs) { q.w = (q.x1 - q.x0) * sc; q.h = (q.y1 - q.y0) * sc; total += q.w + RB_GAP; }
+        let x = (RB_W - total) / 2;
+        for (const q of glyphs) {
+          const bx = (q.x0 + q.x1) / 2, by = (q.y0 + q.y1) / 2;
+          q.hull = Vertices.hull(q.pts.map((p) => ({ x: (p.x - bx) * sc, y: -(p.y - by) * sc })));
+          q.centre = Vertices.centre(q.hull);         // where Matter puts the body position, relative to the box centre
+          q.restX = x + q.w / 2; q.restY = RB_FLOOR - q.h / 2; x += q.w + RB_GAP;
+          q.sc = sc; q.bx = bx; q.by = by;
         }
-        const w = { M: 91, I: 24, N: 75 }[k];
-        return Bodies.rectangle(x, y, w, 76, mat);
+        return glyphs;
       };
       // Every body, in a fixed order, from a fixed initial state. Called at step 0 and whenever t goes backwards.
       const reset = () => {
         const engine = Engine.create({ gravity: { x: 0, y: 2, scale: 0.001 }, positionIterations: 10, velocityIterations: 8, enableSleeping: false });
         engine.timing.timeScale = 1; engine.timing.timestamp = 0;
-        const wall = (x, bottom) => Bodies.rectangle(x, (bottom - 900) / 2, 60, bottom + 900, { isStatic: true, friction: 0.1 });
-        const floor = Bodies.rectangle(HINGE.x + floorLength / 2, HINGE.y, floorLength, FLOOR_T, { isStatic: true, friction: 0.25, frictionStatic: 0.3 });
-        Composite.add(engine.world, [wall(-30, HINGE.y - FLOOR_T / 2), wall(width + 30, HINGE.y - FLOOR_T / 2), floor]);
-        const R = rng(8111), items = RB_SPAWN.map((o) => {
-          const y = -70, x = wide ? 80 + o.x / RB_W * (width - 160) : o.x;
-          const b = o.k === "circle" ? Bodies.circle(x, y, o.r, mat) : o.k === "tri" ? Bodies.polygon(x, y, 3, o.r, mat) : letterBody(o.k, x, y);
-          const glyph = { x: x - b.position.x, y: y - b.position.y };   // where the glyph's ink centre sits, in body space
-          Body.setAngle(b, (R() - 0.5) * 0.7);
-          Body.setVelocity(b, { x: (R() - 0.5) * 1.2, y: 2 + R() * 2 });
-          Body.setAngularVelocity(b, (R() - 0.5) * 0.04);
-          return { o, b, glyph, step: Math.round(o.at * RB_HZ), live: false };
+        const floor = Bodies.rectangle(RB_W / 2, RB_FLOOR + 100, RB_W + 1200, 200, { isStatic: true, friction: 0.6, frictionStatic: 0.9 });
+        const right = Bodies.rectangle(RB_W + 40, RB_FLOOR - 700, 80, 1600, { isStatic: true, friction: 0.2 });
+        const left = Bodies.rectangle(-300, RB_FLOOR - 700, 80, 1600, { isStatic: true, friction: 0.2 });
+        Composite.add(engine.world, [floor, right, left]);
+        const items = letters.map((q, i) => {
+          const b = Bodies.fromVertices(q.restX + q.centre.x, -q.h / 2 - 20 + q.centre.y, [q.hull], mat);
+          Body.setVelocity(b, { x: 0, y: 6 });
+          return { q, b, step: Math.round(RB_DROP[i] * RB_HZ), live: false, landed: null };
         });
-        return { engine, floor, items, n: 0 };
+        const ball = { b: Bodies.circle(RB_BALL.x, RB_BALL.y, RB_BALL.r, { density: RB_BALL.density, friction: 0.08, frictionStatic: 0.2, restitution: 0.35 }), step: Math.round(RB_BALL.at * RB_HZ), live: false };
+        const sim = { engine, floor, items, ball, n: 0, impact: null, events: [] };
+        Events.on(engine, "collisionStart", (ev) => {
+          for (const pair of ev.pairs) {
+            const a = pair.bodyA.parent, b = pair.bodyB.parent;
+            for (const it of items) {
+              if (it.landed === null && ((a === it.b && b === floor) || (b === it.b && a === floor))) {
+                it.landed = sim.n; sim.events.push({ n: sim.n, x: it.b.position.x, y: RB_FLOOR, size: 1 });
+              }
+              if (!sim.impact && ((a === it.b && b === ball.b) || (b === it.b && a === ball.b))) {
+                sim.impact = { n: sim.n, x: ball.b.position.x + RB_BALL.r * 0.7, y: ball.b.position.y };
+                sim.events.push({ n: sim.n, x: sim.impact.x, y: sim.impact.y, size: 2.6 });
+              }
+            }
+          }
+        });
+        return sim;
       };
       const stepOnce = (sim) => {
         for (const it of sim.items) if (!it.live && it.step === sim.n) { Composite.add(sim.engine.world, it.b); it.live = true; }
-        const a = tiltAt((sim.n + 1) / RB_HZ);
-        sim.floor.friction = sim.n >= TILT_AT * RB_HZ ? 0 : 0.25;   // Matter's friction is sticky on slopes; an icy floor lets the pile slide
-        Body.setAngle(sim.floor, a, true);
-        Body.setPosition(sim.floor, { x: HINGE.x + Math.cos(a) * floorLength / 2, y: HINGE.y + Math.sin(a) * floorLength / 2 }, true);
+        if (!sim.ball.live && sim.ball.step === sim.n) { Composite.add(sim.engine.world, sim.ball.b); Body.setVelocity(sim.ball.b, { x: RB_BALL.vx, y: RB_BALL.vy }); Body.setAngularVelocity(sim.ball.b, 0.25); sim.ball.live = true; }
         Engine.update(sim.engine, 1000 / RB_HZ);
         sim.n++;
       };
-
-      let sim = null, lastT = null, glyphBox = null;
-      const ready = Promise.all([document.fonts.load(`900 ${RB_FONT}px ${LAT}`, "MOTION"), document.fonts.load(`700 15px ${MONO}`, "MATTER.JS · 240 HZ")])
-        .then(() => { glyphBox = null; if (lastT !== null) frame(lastT); });   // drawing waits for the fonts; the physics never does
-      const glyphs = () => {   // ink centres from the loaded font; used for drawing only
-        g.font = `900 ${RB_FONT}px ${LAT}`;
-        const out = {};
-        for (const ch of "MOTIN") { const m = g.measureText(ch); out[ch] = { x: (m.actualBoundingBoxRight - m.actualBoundingBoxLeft) / 2, y: (m.actualBoundingBoxDescent - m.actualBoundingBoxAscent) / 2 }; }
-        return out;
-      };
-      const path = (vs) => { g.beginPath(); g.moveTo(vs[0].x, vs[0].y); for (let i = 1; i < vs.length; i++) g.lineTo(vs[i].x, vs[i].y); g.closePath(); };
-      const draw = () => {
-        g.fillStyle = CREAM; g.fillRect(0, 0, width, RB_H);
-        g.fillStyle = "rgba(17,16,22,0.45)"; g.font = `700 15px ${MONO}`; g.textAlign = "left"; g.textBaseline = "alphabetic";
-        g.fillText("MATTER.JS · 240 HZ", 24, 40);
-        if (!glyphBox) glyphBox = glyphs();
-        g.font = `900 ${RB_FONT}px ${LAT}`; g.textAlign = "left"; g.textBaseline = "alphabetic";
-        for (const it of sim.items) {
-          if (!it.live) continue;
-          const b = it.b;
-          if (b.position.y > RB_H + 200) continue;
-          if (it.o.k === "circle") { g.fillStyle = it.o.col; g.beginPath(); g.arc(b.position.x, b.position.y, it.o.r, 0, Math.PI * 2); g.fill(); continue; }
-          if (it.o.k === "tri") {
-            g.fillStyle = it.o.col; g.lineJoin = "round"; g.lineWidth = 6; g.strokeStyle = it.o.col;
-            path(b.vertices); g.fill(); g.stroke(); continue;
-          }
-          const gb = glyphBox[it.o.k];
-          g.save(); g.translate(b.position.x, b.position.y); g.rotate(b.angle); g.translate(it.glyph.x, it.glyph.y);
-          g.fillStyle = INK; g.fillText(it.o.k, -gb.x, -gb.y); g.restore();
+      const airborne = () => sim ? sim.items.filter((it) => it.live && it.landed !== null && it.b.bounds.max.y < RB_FLOOR - 8 && Math.hypot(it.b.velocity.x, it.b.velocity.y) > 0.5).length : 0;
+      // The simulation's measured state, for tests and reviews: letters in the air, landing and impact times, boxes.
+      c.proof = () => ({ step: sim && sim.n, airborne: airborne(), landed: sim && sim.items.map((it) => it.landed === null ? null : it.landed / RB_HZ), impact: sim && sim.impact && sim.impact.n / RB_HZ,
+        boxes: sim && sim.items.map((it) => ({ x0: it.b.bounds.min.x, x1: it.b.bounds.max.x, y0: it.b.bounds.min.y, y1: it.b.bounds.max.y })) });
+      const puff = (e, t) => {   // dust from a landing or the impact: soft grey puffs that spread and fade
+        const age = t - e.n / RB_HZ, life = 0.45 + 0.35 * e.size;
+        if (age < 0 || age > life) return;
+        const f = age / life;
+        for (let j = 0; j < 9 + 7 * e.size; j++) {
+          const h1 = hash(e.n * 13.1 + j * 7.7), h2 = hash(e.n * 3.7 + j * 1.9), side = j % 2 ? 1 : -1;
+          const dx = side * (20 + 90 * h1) * e.size * Math.pow(f, 0.5), dy = -(10 + 60 * h2) * e.size * Math.pow(f, 0.6);
+          g.fillStyle = `rgba(150,138,124,${(0.2 * (1 - f) * (0.5 + 0.5 * h2)).toFixed(3)})`;
+          g.beginPath(); g.arc(e.x + dx, e.y + dy - 6, (10 + 18 * h1) * (0.6 + f) * Math.sqrt(e.size), 0, Math.PI * 2); g.fill();
         }
-        const f = sim.floor;
-        g.save(); g.translate(f.position.x, f.position.y); g.rotate(f.angle);
-        g.fillStyle = INK; g.fillRect(-floorLength / 2, -FLOOR_T / 2, floorLength, FLOOR_T); g.restore();
-        g.fillStyle = CREAM; g.beginPath(); g.arc(HINGE.x + 30 * Math.cos(f.angle), HINGE.y + 30 * Math.sin(f.angle), 5, 0, Math.PI * 2); g.fill();
+      };
+      const glyph = (q, x, y, angle) => {
+        g.save(); g.translate(x, y); g.rotate(angle); g.translate(-q.centre.x, -q.centre.y);
+        g.scale(q.sc, -q.sc); g.translate(-q.bx, -q.by); g.fill(q.path); g.restore();
+      };
+      const stage = () => {
+        g.fillStyle = CREAM; g.fillRect(0, 0, RB_W, RB_H);
+        g.fillStyle = INK; g.fillRect(-20, RB_FLOOR, RB_W + 40, RB_H - RB_FLOOR + 20);
+        g.fillStyle = "rgba(17,16,22,0.42)"; g.font = `700 17px ${MONO}`; g.textAlign = "left"; g.textBaseline = "alphabetic";
+        g.fillText("MATTER.JS · 240 HZ", 40, 52);
+      };
+      const draw = (t) => {
+        const wipeIn = rbEase(lin(RB_WIPE, RB_WIPE + 0.16, t)), wipeOut = rbEase(lin(RB_WIPE + 0.24, RB_PERIOD, t));
+        g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, GW, GH);
+        let sx = 0, sy = 0;
+        if (sim.impact) { const a = t - sim.impact.n / RB_HZ; if (a > 0) { const e = 4 * Math.exp(-a * 9); sx = e * Math.sin(a * 95); sy = 0.75 * e * Math.sin(a * 120 + 1); } }
+        for (const it of sim.items) if (it.landed !== null) { const a = t - it.landed / RB_HZ; if (a > 0 && a < 0.3) sy += 1.5 * Math.exp(-a * 18) * Math.sin(a * 110); }
+        g.setTransform(k, 0, 0, k, sx * k, sy * k);
+        stage();
+        if (wipeOut === 0) {
+          for (const e of sim.events) puff(e, t);
+          g.fillStyle = INK;
+          for (const it of sim.items) if (it.live && it.b.position.y < RB_H + 300) glyph(it.q, it.b.position.x, it.b.position.y, it.b.angle);
+          if (sim.ball.live) {
+            const b = sim.ball.b, r = RB_BALL.r, hg = g.createRadialGradient(b.position.x - r * 0.35, b.position.y - r * 0.4, r * 0.1, b.position.x, b.position.y, r);
+            hg.addColorStop(0, "#ff9a66"); hg.addColorStop(0.55, ORANGE); hg.addColorStop(1, "#c93a0c");
+            g.fillStyle = hg; g.beginPath(); g.arc(b.position.x, b.position.y, r, 0, Math.PI * 2); g.fill();
+          }
+        }
+        // reset: an orange panel sweeps across and leaves an empty stage for the next drop
+        if (t >= RB_WIPE) { g.fillStyle = ORANGE; g.fillRect(RB_W * (1 - wipeIn) - (RB_W + 2) * wipeOut, 0, RB_W + 2, RB_H); }
       };
       const frame = (t) => {
         lastT = t;
-        const n = Math.max(0, Math.round(t * RB_HZ));
+        if (!letters) { g.setTransform(k, 0, 0, k, 0, 0); stage(); return; }
+        const n = Math.max(0, Math.round(Math.min(t, RB_WIPE + 0.2) * RB_HZ));
         if (!sim || n < sim.n) sim = reset();
         while (sim.n < n) stepOnce(sim);
-        draw();
+        draw(t);
       };
+      const ready = Promise.all([fetch(OUTLINES).then((r) => { if (!r.ok) throw new Error("Outline asset failed to load: assets/type/motion-cjk.json"); return r.json(); }),
+        document.fonts.load(`700 17px ${MONO}`, "MATTER.JS · 240 HZ")])
+        .then(([data]) => { letters = prepare(data); sim = null; if (lastT !== null) frame(lastT); });
       return { ready, frame };
     } });
 })();

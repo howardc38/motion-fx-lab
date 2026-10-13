@@ -168,6 +168,13 @@ export async function create() {
       return 1 - 2 * (q.x * q.x + q.z * q.z) < 0.65;
     }).length;
   }
+  // fallen() with partial credit for a domino that is still tipping: continuous in time.
+  function progress() {
+    return bodies.reduce((sum, b) => {
+      const q = b.rotation();
+      return sum + Math.max(0, Math.min(1, (2 * (q.x * q.x + q.z * q.z)) / 0.35));
+    }, 0);
+  }
   return {
     canvas: renderer.domElement,
     async frame(seconds, options = {}) {
@@ -191,6 +198,26 @@ export async function create() {
         const u=Math.max(0,Math.min(1,(seconds-7.2)/2.2)),blend=u*u*(3-2*u);
         camera.position.set((lead.x+2)*(1-blend)+13*blend,7*(1-blend)+17*blend,(lead.z+11)*(1-blend)+19*blend);
         camera.lookAt(lead.x*(1-blend),.3,lead.z*(1-blend));
+      } else if (options.camera === "track") {
+        // Like "follow", but continuous: the target slides along the path by how far each domino has
+        // tipped, so the camera glides instead of stepping once per fallen domino. It eases in during
+        // the first second, then pulls back to the whole chain at the end. ("follow" is unchanged.)
+        const p = progress(),
+          i = Math.min(path.length - 1, Math.floor(p)),
+          f = Math.min(1, p - i),
+          a0 = path[i],
+          a1 = path[Math.min(path.length - 1, i + 1)];
+        const lx = a0.x + (a1.x - a0.x) * f,
+          lz = a0.z + (a1.z - a0.z) * f;
+        const ease = (x) => x * x * (3 - 2 * x),
+          back = ease(Math.max(0, Math.min(1, (seconds - 7.2) / 2.2))),
+          near = 1 - ease(Math.max(0, Math.min(1, seconds / 1.4)));
+        camera.position.set(
+          (lx + 2.6 + 1.5 * near) * (1 - back) + 13 * back,
+          (5.4 + 1.4 * near) * (1 - back) + 17 * back,
+          (lz + 9.2 + 2.4 * near) * (1 - back) + 19 * back,
+        );
+        camera.lookAt(lx * (1 - back), 0.35, lz * (1 - back));
       } else camera.lookAt(0, 0.3, 0);
       renderer.render(scene, camera);
     },

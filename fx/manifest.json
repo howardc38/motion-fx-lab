@@ -4,7 +4,7 @@
   "families": [
     {
       "id": "core",
-      "scripts": ["fx/font-helvetiker-subset.js", "fx/demos.js"],
+      "scripts": ["fx/font-helvetiker-subset.js", "fx/demos.js", "fx/pack-light.js"],
       "cacheTag": null,
       "readme": null,
       "anchor": "id: \"{id}\"",
@@ -21,12 +21,10 @@
         "orbs": ["fx/demos.js"],
         "wipe": ["fx/demos.js"],
         "grain": ["fx/demos.js"],
-        "lit3d": ["fx/demos.js"],
-        "rays": ["fx/demos.js"],
-        "smoke": ["fx/demos.js"],
+        "rays": ["fx/pack-light.js", "fx/demos.js"],
         "particles": ["fx/demos.js"],
-        "dissolve": ["fx/demos.js"],
-        "chrome": ["fx/demos.js"],
+        "dissolve": ["fx/pack-light.js", "fx/demos.js"],
+        "chrome": ["fx/pack-light.js", "fx/demos.js"],
         "flat": ["fx/demos.js"],
         "tunnel": ["fx/demos.js"],
         "hook": ["fx/demos.js"],
@@ -39,7 +37,7 @@
         "lut": ["fx/demos.js"],
         "uifly": ["fx/demos.js"],
         "ring": ["fx/demos.js"],
-        "liquid": ["fx/demos.js"],
+        "liquid": ["fx/pack-light.js", "fx/demos.js"],
         "halftonetype": ["fx/demos.js"],
         "glitch": ["fx/demos.js"]
       }
@@ -319,8 +317,7 @@
       "optical-moire",
       "optical-caustic",
       "toon",
-      "stack-rapier",
-      "lit3d",
+      "cjk-solid",
       "studio-portal",
       "tunnel",
       "studio-flight",
@@ -341,7 +338,6 @@
       "studio-video-dots",
       "fluid-overflow",
       "rigid",
-      "smoke",
       "flat",
       "glitch",
       "dissolve",
@@ -374,7 +370,6 @@
     ],
     "showcaseOrder": ["styles", "studio-themes", "studio-gallery", "water-underwater", "scene-eras"],
     "previewDefault": {
-      "lit3d": "cjk-solid",
       "tunnel": "studio-lowpoly",
       "studio-depth-dots": "signal-audio-relief",
       "studio-freeze-orbit": "signal-freeze-orbit"
