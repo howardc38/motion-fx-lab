@@ -7,7 +7,7 @@ export function stage(){
   const canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;
   // Mixed WebGL/Canvas frames use one consistent GPU-backed compositor.
   const g=canvas.getContext('2d',{willReadFrequently:false}),scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(43,W/H,.1,100);
-  return{canvas,g,scene,camera,render(){if(renderer.getContext().isContextLost())throw new Error('Signal renderer lost its context');renderer.setRenderTarget(null);renderer.render(scene,camera);g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;g.clearRect(0,0,W,H);g.drawImage(renderer.domElement,0,0);}};
+  return{canvas,g,scene,camera,renderer,render(){if(renderer.getContext().isContextLost())throw new Error('Signal renderer lost its context');renderer.setRenderTarget(null);renderer.render(scene,camera);g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;g.clearRect(0,0,W,H);g.drawImage(renderer.domElement,0,0);}};
 }
 const texts=new Map();
 export function text(g,value,x,y,size=24,color='#ffffff',weight=800,align='left'){

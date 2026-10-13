@@ -1,7 +1,8 @@
 """Build an original score and measured audio / image-motion caches.
 
 python tools/signals/build.py [--replace] [--source assets/studio/fight]
-Use --audio input.wav to analyse an existing score instead of synthesising one.
+Use --audio input.wav to analyse an existing score instead of synthesising one, or
+--score fragments|relief (see scores.py) for the scores written for those two studies.
 """
 import argparse
 import gzip
@@ -153,7 +154,7 @@ def current_flow(previous, current):
     return flow
 
 
-def analyse_frames(source, target, grid_width=160, period=4.8):
+def analyse_frames(source, target, grid_width=160, period=4.8, analysis_width=320):
     manifest_path = source / 'manifest.json'
     spec = json.loads(manifest_path.read_text())
     width, height, count, fps = (spec[k] for k in ['width', 'height', 'count', 'fps'])
@@ -164,7 +165,7 @@ def analyse_frames(source, target, grid_width=160, period=4.8):
     gh = round(grid_width * height / width)
     if grid_width < 1 or gh < 1 or count * gh * grid_width * 8 > 200_000_000:
         raise ValueError('Measured sample cache exceeds the 200MB working budget')
-    aw = min(width, 320)
+    aw = min(width, analysis_width)
     ah = round(aw * height / width)
     dtype = np.dtype([('rgba', 'u1', (4,)), ('flow', '<i2', (2,))])
     records = np.zeros((count, gh, grid_width), dtype=dtype)
@@ -206,6 +207,10 @@ def main():
     p.add_argument('--audio', type=Path)
     p.add_argument('--output', type=Path, default=ROOT/'assets/signals')
     p.add_argument('--period', type=float, default=4.8)
+    p.add_argument('--grid-width', type=int, default=160)
+    p.add_argument('--analysis-width', type=int, default=320, help='optical-flow working width in pixels')
+    p.add_argument('--score', choices=['counterform', 'fragments', 'relief'], default='counterform')
+    p.add_argument('--cues', type=Path, help='film cue JSON written by render-source.cjs (fragments score)')
     p.add_argument('--replace', action='store_true')
     args = p.parse_args()
     output = args.output.resolve()
@@ -226,19 +231,29 @@ def main():
                 raise ValueError('Use a mono or stereo source score')
             filters = ['-af', 'pan=stereo|c0=c0|c1=c0'] if channels == 1 else []
             subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(args.audio), '-map', '0:a:0', *filters, '-ar', '48000', '-c:a', 'pcm_s16le', str(score)], check=True)
-        else:
+        elif args.score == 'counterform':
             original_score(score)
+        else:
+            import scores
+            cues = json.loads(args.cues.read_text()) if args.cues else None
+            if args.score == 'fragments' and not cues:
+                p.error('--score fragments needs --cues from render-source.cjs')
+            getattr(scores, args.score)(score, cues)
         y, sr = read_audio(score)
         audio = audio_features(y, sr)
         audio.update({'file': 'score.wav', 'sha256': digest(score), 'sampleRate': sr, 'channels': 2,
                       'analysis': '2048-sample Hann FFT, shared -50dB spectral scale, RMS and positive energy-change peaks'})
-        source = analyse_frames(args.source.resolve(), bundle/'samples.bin', period=args.period)
+        source = analyse_frames(args.source.resolve(), bundle/'samples.bin', grid_width=args.grid_width, period=args.period, analysis_width=args.analysis_width)
         packed = bundle/'samples.bin.gz'
         raw = bundle/'samples.bin'
         source['decodedBytes'] = raw.stat().st_size
         packed.write_bytes(gzip.compress(raw.read_bytes(), mtime=0))
         source['compressedSha256'] = digest(packed)
         raw.unlink()
+        if args.score != 'counterform' and not args.audio:
+            audio['score'] = args.score
+        if args.cues:
+            source['cues'] = json.loads(args.cues.read_text())
         manifest = {'version': 1, 'audio': audio, 'source': source,
                     'samples': 'samples.bin.gz', 'producerSha256': digest(__file__)}
         (bundle/'manifest.json').write_text(json.dumps(manifest, separators=(',', ':'))+'\n')

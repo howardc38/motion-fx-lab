@@ -11,6 +11,8 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 spec = importlib.util.spec_from_file_location('analysis', HERE/'build.py')
 a = importlib.util.module_from_spec(spec);spec.loader.exec_module(a)
+spec = importlib.util.spec_from_file_location('scores', HERE/'scores.py')
+sc = importlib.util.module_from_spec(spec);spec.loader.exec_module(sc)
 spec = importlib.util.spec_from_file_location('prepare', ROOT/'video/prepare-audio.py')
 p = importlib.util.module_from_spec(spec);spec.loader.exec_module(p)
 
@@ -69,5 +71,26 @@ class SignalsTest(unittest.TestCase):
             failed=subprocess.run([sys.executable,str(HERE/'build.py'),'--source',str(work/'missing-source'),'--output',str(dest),'--replace'],capture_output=True)
             self.assertNotEqual(failed.returncode,0);self.assertEqual((dest/'sentinel').read_text(),'keep')
             self.assertEqual(sorted(x.name for x in dest.iterdir()),['sentinel'])
+
+    def test_fragments_score_attack_lands_on_the_impact_frame(self):
+        cues=json.loads((ROOT/'assets/signals-fragments/manifest.json').read_text())['source']['cues']
+        with tempfile.TemporaryDirectory() as folder:
+            out=Path(folder)/'score.wav';sc.fragments(out,cues)
+            features=a.audio_features(*a.read_audio(out))
+        nearest=min(abs(x-cues['impact']) for x in features['onsets'])
+        self.assertLessEqual(nearest,1/30+1e-6)
+
+    def test_relief_score_has_true_silences(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out=Path(folder)/'score.wav';sc.relief(out)
+            features=a.audio_features(*a.read_audio(out))
+        rms=features['rms']
+        for start,end in [(.05,.95),(9.5,10.15)]:
+            self.assertEqual(max(rms[round(start*60):round(end*60)]),0)
+        self.assertGreater(max(rms[355:370]),0.3*max(rms))
+
+    def test_each_study_bundle_has_its_own_score(self):
+        hashes=[json.loads((ROOT/f'assets/{name}/manifest.json').read_text())['audio']['sha256'] for name in ['signals','signals-fragments','signals-relief']]
+        self.assertEqual(len(set(hashes)),3)
 
 if __name__=='__main__':unittest.main()
