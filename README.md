@@ -2,9 +2,9 @@
 
 **Code-made motion graphics → MP4 with sound.** Write the animation as a web page, yourself or with an AI coding assistant, and this repository renders it frame by frame to a checked MP4 with sound. Licence: [0BSD](LICENSE), no conditions.
 
-[![Highlights from the intro video (no sound). Click for the full video with sound.](media/intro.gif?v=intro-2)](media/intro.mp4?v=intro-2)
+[![Highlights from the intro video (no sound). Click for the full video with sound.](media/intro.gif?v=intro-4)](media/intro.mp4?v=intro-4)
 
-▶ **[Intro video, with sound](media/intro.mp4?v=intro-2)** · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · No build step · Editable motion and sound
+▶ **[Intro video, with sound](media/intro.mp4?v=intro-4)** · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · No build step · Editable motion and sound
 
 GitHub does not play repository videos inline, so the loop above is a short GIF (the only GIF in the repository); the film cards below are posters. The live gallery plays silent loops on its cards, the real videos with sound and every effect.
 
@@ -138,7 +138,7 @@ page.html ─ record.cjs cues ─► cues.json ─► sfx.py + music.py ─► m
 
 | Layer | Film | Authored length | Format | Preview | Source |
 |---|---|---:|---|---|---|
-| Intro | [Intro](media/intro.mp4?v=intro-2) | 55.2 s | 16:9 | [loop](media/intro.preview.mp4) · [GIF](media/intro.gif?v=intro-2) · [poster](media/intro.jpg?v=intro-2) | [HTML](video/intro.html) |
+| Intro | [Intro](media/intro.mp4?v=intro-4) | 55.2 s | 16:9 | [loop](media/intro.preview.mp4) · [GIF](media/intro.gif?v=intro-4) · [poster](media/intro.jpg?v=intro-4) | [HTML](video/intro.html) |
 | Use case | [This weekend only](media/reel.mp4) | 12 s | 9:16 | [loop](media/reel.preview.mp4) · [poster](media/reel.jpg) | [HTML](examples/reel.html) |
 | Use case | [This weekend only (bakery)](media/reel-bakery.mp4) | 12 s | 9:16 | [poster](media/reel-bakery.jpg) | [HTML](examples/reel-bakery.html) |
 | Use case | [This weekend only (yoga studio)](media/reel-yoga.mp4) | 12 s | 9:16 | [poster](media/reel-yoga.jpg) | [HTML](examples/reel-yoga.html) |

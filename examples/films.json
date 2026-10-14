@@ -29,10 +29,10 @@
       "format": "16:9",
       "page": "video/intro.html",
       "media": {
-        "mp4": "media/intro.mp4?v=intro-2",
-        "poster": "media/intro.jpg?v=intro-2",
+        "mp4": "media/intro.mp4?v=intro-4",
+        "poster": "media/intro.jpg?v=intro-4",
         "preview": "media/intro.preview.mp4",
-        "gif": "media/intro.gif?v=intro-2"
+        "gif": "media/intro.gif?v=intro-4"
       },
       "card": {
         "headline": "Intro",
@@ -47,15 +47,19 @@
         {"id": "sweep", "at": [2.4, 4.8], "label": "Light sweep", "proof": ["examples/reel.html", "id: \"sweep\""]},
         {"id": "sticker", "at": [2.4, 4.8], "label": "Price sticker", "proof": ["examples/reel.html", "id: \"sticker\""]},
         {"id": "stamp", "at": [2.4, 4.8], "label": "Price slam", "proof": ["examples/reel.html", "id: \"stamp\""]},
-        {"id": "type", "at": [4.8, 6.85], "label": "Typed reply", "proof": ["examples/product.html", "id: \"type\""]},
+        {"id": "type", "at": [5.1, 6.85], "label": "Typed reply", "proof": ["examples/product.html", "id: \"type\""]},
         {"id": "mark", "at": [6.65, 7.15], "label": "Highlighted result", "proof": ["examples/product.html", "id: \"mark\""]},
         {"id": "count", "at": [7.2, 9.6], "label": "Counters", "proof": ["examples/infographic.html", "id: \"count\""]},
         {"id": "ring", "at": [7.2, 9.6], "label": "Goal ring", "proof": ["examples/infographic.html", "id: \"ring\""]},
-        {"id": "glass", "at": [10, 12], "label": "Glass shine", "proof": ["examples/spotlight.html", "id: \"glass\""]},
+        {"id": "chars", "at": [9.9, 10.14], "label": "Letter pop", "proof": ["examples/spotlight.html", "id: \"chars\""]},
+        {"id": "sweep", "at": [9.9, 10.45], "label": "Light sweep", "proof": ["examples/spotlight.html", "id: \"sweep\""]},
+        {"id": "glass", "at": [10.14, 11.1], "label": "Glass shine", "proof": ["examples/spotlight.html", "id: \"glass\""]},
+        {"id": "stamp", "at": [11.2, 12], "label": "Price slam", "proof": ["examples/spotlight.html", "id: \"stamp\""]},
+        {"id": "sticker", "at": [11.6, 12.25], "label": "Discount sticker", "proof": ["examples/spotlight.html", "id: \"sticker\""]},
         {"id": "particles", "at": [12, 14.4], "label": "Particles into a logo", "proof": ["examples/countdown.html", "id: \"particles\""]},
         {"id": "chrome", "at": [12, 14.4], "label": "Chrome logo", "proof": ["examples/countdown.html", "id: \"chrome\""]},
         {"id": "rays", "at": [12, 14.4], "label": "Light rays", "proof": ["examples/countdown.html", "id: \"rays\""]},
-        {"id": "ridgelines", "at": [14.6, 16.8], "label": "Ridgelines", "proof": ["examples/broll.html", "id: \"ridgelines\""]},
+        {"id": "ridgelines", "at": [14.7, 16.8], "label": "Ridgelines", "proof": ["examples/broll.html", "id: \"ridgelines\""]},
         {
           "id": "dialogue-lipsync",
           "at": [16.8, 21.6],
@@ -309,7 +313,7 @@
         "headline": "Background loops in place",
         "description": "Seamless loops behind a title, an interview and a “starting soon” screen.",
         "useFor": "Title backgrounds, interview backdrops and stream holding screens.",
-        "relation": "Each loop is checked for a seamless join between its last and first frame."
+        "relation": "Each loop is checked for a seamless join between its last and first frame; the film shows a loop caption in place of the check."
       },
       "audience": "Editors who need looping backgrounds under titles, interviews or streams.",
       "effects": [
