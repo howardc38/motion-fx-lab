@@ -47,7 +47,7 @@
         "fx/pack-shaders.js",
         "fx/pack-sims.js"
       ],
-      "cacheTag": null,
+      "cacheTag": "classic-2",
       "readme": null,
       "anchor": "id: \"{id}\"",
       "sources": {
@@ -361,7 +361,7 @@
         "fx/graphic-effects.js",
         "fx/pack-graphic.js"
       ],
-      "cacheTag": "graphic-1",
+      "cacheTag": "graphic-2",
       "readme": "fx/graphic/README.md",
       "sources": {
         "graphic-field": [

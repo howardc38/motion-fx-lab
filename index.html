@@ -61,6 +61,8 @@
   :root[data-theme="dark"] .cta-button.primary { color: #17141d; }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cta-button.primary { color: #17141d; } }
   .cta-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .gallery-shortcut { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 16px 0; font-size: 14px; }
+  .gallery-shortcut span { color: var(--muted); }
   .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; color: var(--muted); align-items: center; }
   .legend b { color: var(--ink); font-weight: 700; }
   video.intro { width: 100%; max-width: 960px; aspect-ratio: 16 / 9; border-radius: 12px; background: #000; display: block; }
@@ -136,7 +138,6 @@
   .tile h3 { font: 900 17px/1.3 var(--body); }
   .tile p:empty {display:none;}
   .tile p { font-size: 14px; line-height: 1.55; color: var(--muted); }
-  .tile p.seen { font: 500 12px var(--mono); letter-spacing: .02em; }
   .chips { display: flex; flex-wrap: wrap; gap: 4px; }
   .chips code { font: 500 11.5px var(--mono); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; }
   .note { font-size: 14px; color: var(--muted); max-width: 72ch; }
@@ -313,7 +314,7 @@
 <tr id="film-graphic-fill" data-film-index-id="graphic-fill" data-film-layer="effect-film" data-film-tier="in-card"><td>Effect card: Animated glyph interiors</td><td><b>Inside the letters.</b><span class="film-meta">9.6 s · 16:9</span><p>One glyph silhouette contains moving stripes, an authored liquid level and a two-tone boundary.</p><p class="film-effects">Effects: <a href="#demo-graphic-fill">Animated glyph interiors</a></p></td><td><a href="media/graphic-fill.mp4">Play MP4</a> · <a href="examples/graphic-fill.html">Scrub timeline</a></td></tr>
 <tr id="film-graphic-network" data-film-index-id="graphic-network" data-film-layer="effect-film" data-film-tier="in-card"><td>Effect card: Proximity particle connections</td><td><b>Near enough to connect.</b><span class="film-meta">9.6 s · 16:9</span><p>Distance changes which particles connect; pulses travel along the surviving links.</p><p class="film-effects">Effects: <a href="#demo-graphic-network">Proximity particle connections</a></p></td><td><a href="media/graphic-network.mp4">Play MP4</a> · <a href="examples/graphic-network.html">Scrub timeline</a></td></tr>
 <tr id="film-graphic-shadow" data-film-index-id="graphic-shadow" data-film-layer="effect-film" data-film-tier="in-card"><td>Effect card: Graphic long-shadow type</td><td><b>A different kind of depth.</b><span class="film-meta">9.6 s · 16:9</span><p>The same flat word gains a long graphic shadow whose direction and length keep changing.</p><p class="film-effects">Effects: <a href="#demo-graphic-shadow">Graphic long-shadow type</a></p></td><td><a href="media/graphic-shadow.mp4">Play MP4</a> · <a href="examples/graphic-shadow.html">Scrub timeline</a></td></tr>
-<tr id="film-graphic-extensions" data-film-index-id="graphic-extensions" data-film-layer="effect-film" data-film-tier="in-card"><td>Effect cards: 3D card flip grid, Counting number, Staggered letter animation, Type in three-dimensional space, Bauhaus tile rhythm, Image and footage halftone dots, Time echoes and speed ramps</td><td><b>Type. Flip. Flow.</b><span class="film-meta">33.6 s · 16:9</span><p>Split-flap letters, rolling reels, counter-moving bands, three spatial arrangements, grid choreography, LED type and temporal echoes.</p><p class="film-effects">Effects: <a href="#demo-graphic-flap">Split-flap lettering</a> <a href="media/graphic-extensions.mp4#t=0,4.8">0–4.8 s</a> · <a href="#demo-graphic-reels">Rolling numbers and word reels</a> <a href="media/graphic-extensions.mp4#t=4.8,9.6">4.8–9.6 s</a> · <a href="#demo-graphic-bands">Counter-moving text bands</a> <a href="media/graphic-extensions.mp4#t=9.6,14.4">9.6–14.4 s</a> · <a href="#demo-graphic-spatial">Cylinder, tunnel and corridor type</a> <a href="media/graphic-extensions.mp4#t=14.4,21.6">14.4–21.6 s</a> · <a href="#demo-graphic-tiles">Fill, shift and turn a grid</a> <a href="media/graphic-extensions.mp4#t=21.6,26.4">21.6–26.4 s</a> · <a href="#demo-graphic-led">LED matrix lettering</a> <a href="media/graphic-extensions.mp4#t=26.4,30">26.4–30 s</a> · <a href="#demo-graphic-echo">Temporal lettering echoes</a> <a href="media/graphic-extensions.mp4#t=30,33.6">30–33.6 s</a></p></td><td><a href="media/graphic-extensions.mp4">Play MP4</a> · <a href="examples/graphic-extensions.html">Scrub timeline</a></td></tr>
+<tr id="film-graphic-extensions" data-film-index-id="graphic-extensions" data-film-layer="effect-film" data-film-tier="in-card"><td>Effect cards: 3D card flip grid, Counting number, Staggered letter animation, Type in three-dimensional space, Bauhaus tile rhythm, Image and footage halftone dots, Time echoes and speed ramps; watch link above Effects</td><td><b>Type. Flip. Flow.</b><span class="film-meta">33.6 s · 16:9</span><p>Split-flap letters, rolling reels, counter-moving bands, three spatial arrangements, grid choreography, LED type and temporal echoes.</p><p class="film-effects">Effects: <a href="#demo-graphic-flap">Split-flap lettering</a> <a href="media/graphic-extensions.mp4#t=0,4.8">0–4.8 s</a> · <a href="#demo-graphic-reels">Rolling numbers and word reels</a> <a href="media/graphic-extensions.mp4#t=4.8,9.6">4.8–9.6 s</a> · <a href="#demo-graphic-bands">Counter-moving text bands</a> <a href="media/graphic-extensions.mp4#t=9.6,14.4">9.6–14.4 s</a> · <a href="#demo-graphic-spatial">Cylinder, tunnel and corridor type</a> <a href="media/graphic-extensions.mp4#t=14.4,21.6">14.4–21.6 s</a> · <a href="#demo-graphic-tiles">Fill, shift and turn a grid</a> <a href="media/graphic-extensions.mp4#t=21.6,26.4">21.6–26.4 s</a> · <a href="#demo-graphic-led">LED matrix lettering</a> <a href="media/graphic-extensions.mp4#t=26.4,30">26.4–30 s</a> · <a href="#demo-graphic-echo">Temporal lettering echoes</a> <a href="media/graphic-extensions.mp4#t=30,33.6">30–33.6 s</a></p></td><td><a href="media/graphic-extensions.mp4">Play MP4</a> · <a href="examples/graphic-extensions.html">Scrub timeline</a></td></tr>
 </tbody></table></div></section>
 <!-- films:end -->
     </details>
@@ -323,6 +324,9 @@
     <span class="eyebrow">Effects</span>
     <h2 id="effects-title">Effects to reuse</h2>
     <p class="note">Each card is one effect, drawn live in your browser from code. Choose a variant in its selector, or filter by what you want to make; where an effect has its own effect film, the card links to it. The strongest looks come first. <a href="https://github.com/howardc38/motion-fx-lab/blob/main/fx/VIEWING-GUIDE.md">How effects are grouped</a>.</p>
+    <!-- films:gallery-shortcuts:start -->
+<p class="gallery-shortcut" data-sampler-id="graphic-extensions"><a class="cta-button" href="media/graphic-extensions.mp4">▶ Watch all 7 motion variations</a><span>Type. Flip. Flow. · 33.6 s · with sound</span><a href="examples/graphic-extensions.html">Scrub timeline</a></p>
+    <!-- films:gallery-shortcuts:end -->
     <div class="toolbar">
       <div class="group" id="fKind"><span>Kind</span></div>
       <div class="group" id="fStack"><span>Drawn with</span></div>
@@ -331,7 +335,7 @@
     </div>
     <p class="note" id="catalog-availability"><span id="available" aria-live="polite"></span> <a href="#comparisons" id="showcase-count"></a></p>
     <div class="gallery" id="gallery"></div>
-    <details class="implementation"><summary>Rendering notes</summary><p class="note">Browser effects run from code; the Blender effects replay baked frames and keep their editable source recipes. “Seen in” credits a visual reference rebuilt with original content. The colour-grade technique uses CSS filters and a separate glow; it is not a LUT implementation. The original 3D and shader tiles share one WebGL canvas; the three optical shaders share a second context. Reaction–diffusion draws the same pixels every time on one GPU, but not the same pattern on every GPU.</p></details>
+    <details class="implementation"><summary>Rendering notes</summary><p class="note">Browser effects run from code; the Blender effects replay baked frames and keep their editable source recipes. The colour-grade technique uses CSS filters and a separate glow; it is not a LUT implementation. The original 3D and shader tiles share one WebGL canvas; the three optical shaders share a second context. Reaction–diffusion draws the same pixels every time on one GPU, but not the same pattern on every GPU.</p></details>
   </section>
 
   <section id="comparisons" class="film-group" aria-labelledby="comparisons-title">
@@ -435,11 +439,11 @@
 <script src="fx/demos.js"></script>
 <script src="fx/pack-light.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
-<script src="fx/pack-dither.js"></script>
-<script src="fx/pack-shading.js"></script>
-<script src="fx/pack-2d.js"></script>
-<script src="fx/pack-shaders.js"></script>
-<script src="fx/pack-sims.js"></script>
+<script src="fx/pack-dither.js?v=classic-2"></script>
+<script src="fx/pack-shading.js?v=classic-2"></script>
+<script src="fx/pack-2d.js?v=classic-2"></script>
+<script src="fx/pack-shaders.js?v=classic-2"></script>
+<script src="fx/pack-sims.js?v=classic-2"></script>
 <script src="https://cdn.jsdelivr.net/npm/flubber@0.4.2/build/flubber.min.js"></script>
 <script src="fx/optical-effects.js"></script>
 <script src="fx/pack-optical.js"></script>
@@ -461,13 +465,13 @@
 <script src="fx/pack-plush.js?v=plush-1"></script>
 <script src="fx/mechanical-effects.js?v=mechanical-1"></script>
 <script src="fx/pack-mechanical.js?v=mechanical-1"></script>
-<script src="fx/graphic-effects.js?v=graphic-1"></script>
-<script src="fx/pack-graphic.js?v=graphic-1"></script>
+<script src="fx/graphic-effects.js?v=graphic-2"></script>
+<script src="fx/pack-graphic.js?v=graphic-2"></script>
 <script src="fx/catalog.js?v=catalog-graphic-1"></script>
 <!-- fx:scripts:end -->
 <script src="fx/gallery-layout.js"></script>
 <script src="fx/films-data.js?v=graphic-1"></script>
 <script src="fx/gallery-meta.js?v=graphic-1"></script>
-<script src="fx/gallery-page.js"></script>
+<script src="fx/gallery-page.js?v=copy-1"></script>
 </body>
 </html>

@@ -1,7 +1,6 @@
 // Motion FX Lab: three-ink ordered dither, a building block for the dithered variant of the
 // Character shading family (fx/pack-shading.js) and any other scene that wants a pixel-ink look.
-// The idea of a 3D character dithered to a few inks was seen in a TixFox promo by Berlin
-// (@ox8erlin on Threads); this is our own shader. It registers no tiles itself.
+// It registers no tiles itself.
 //
 // A scene is first drawn into a low-resolution "tone" target: red = tone (0 paper, 0.5 ink A,
 // 1 ink B), green = solid line, alpha = 0 where nothing was drawn. quantizeMaterial() then maps

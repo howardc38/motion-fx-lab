@@ -19,10 +19,6 @@ and is no longer a published film.
 | `assets/signals-relief/` | Pulse / Form | one measured portrait frame (256×144 cells), own score |
 | `assets/signals/` | Impact / Orbit and the COUNTERFORM freeze-orbit | Counterform footage measurements and the original Counterform score (unchanged) |
 
-Impact / Orbit borrows the energy and visual direction of
-[the reference film](https://www.threads.com/@aicreataro/post/DeQIT_0Ed93), without
-bundling its footage, artwork or music.
-
 ## Motion shatter and reassemble
 
 **Still is whole, fast motion breaks, stillness rebuilds.** `fragments.js` precomputes a

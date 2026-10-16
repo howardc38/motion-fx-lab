@@ -8,7 +8,6 @@
   if (!FX) return;
   const { demo, R3, GW, GH, LAT, rng, glTile } = FX;
   const { lin, smooth, hash } = FX.helpers;
-  const SEEN = "Threads · @designer.riven";
 
   // ================= Gray–Scott reaction–diffusion on the GPU =================
   const RD_W = 240, RD_H = Math.round(RD_W * GH / GW), RD_SPS = 900, RD_PERIOD = 10;
@@ -18,7 +17,7 @@
   demo({ id: "reaction", gl: true, name: "Reaction–diffusion growing from text", kind: "sim", stacks: ["three", "glsl", "canvas"],
     chips: ["Gray–Scott on the GPU", "ping-pong half-float targets", `fixed ${RD_SPS} steps/s`], grade: "B",
     purpose: "A word grows into coral: two chemicals react and diffuse on a seeded simulation grid seeded by the letters. Organic texture from maths, no footage.",
-    seen: SEEN, period: RD_PERIOD, hero: 6,
+    period: RD_PERIOD, hero: 6,
     build(s) {
       const blit = glTile(s), cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), geo = new THREE.PlaneGeometry(2, 2);
       const target = () => new THREE.WebGLRenderTarget(RD_W, RD_H, { type: THREE.HalfFloatType, format: THREE.RGBAFormat,
@@ -144,7 +143,7 @@
   demo({ id: "rigid", name: "Rigid bodies with Matter.js", kind: "sim", stacks: ["physics", "canvas"],
     chips: ["Matter.js 0.20.0", "fixed 240 Hz steps", "convex hulls of real glyphs", "Canvas 2D"], grade: "C",
     purpose: "Five heavy letters drop in one by one and stand as STACK; then a heavy ball smashes the word apart. Weight, collisions and the last letter's wobble all come from the simulation, never from keyframes.",
-    seen: SEEN, period: RB_PERIOD, hero: 3.2,
+    period: RB_PERIOD, hero: 3.2,
     build(s) {
       if (!window.Matter) throw new Error("Matter.js did not load");
       const { Engine, Bodies, Body, Composite, Events, Vertices } = window.Matter;

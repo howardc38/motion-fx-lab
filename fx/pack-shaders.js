@@ -1,12 +1,11 @@
 // Motion FX Lab: shader effects. Registers tiles with FX.demo; see fx/demos.js for the building blocks.
-// Four GPU tiles after effects seen in a Threads video by @designer.riven: clay shapes ray-marched from
+// Four GPU tiles: clay shapes ray-marched from
 // distance functions, an endless lattice made by domain repetition, one object in five post-shader styles,
 // and 200,000 particles placed by the vertex shader. Each frame is a pure function of t, like every tile.
 (() => {
   const FX = window.FX;
   const { demo, glTile, rng, GW, GH, LAT } = FX;
   const { lin, smooth, inOut } = FX.helpers;
-  const SEEN = "Threads · @designer.riven";
   const MONO = '"JetBrains Mono", Menlo, monospace';
   const TAU = Math.PI * 2;
 
@@ -45,7 +44,7 @@
   demo({ id: "clay", gl: true, name: "Clay 3D by ray marching", kind: "shader", stacks: ["three", "glsl"],
     chips: ["GLSL ray marching", "signed distance fields", "smooth union", "soft shadow + AO"], grade: "B",
     purpose: "Soft, hand-made-looking 3D with no model at all: every pixel marches a ray through distance functions, so shapes morph and melt into each other for free.",
-    seen: SEEN, period: CLAY_P, hero: 7.9,
+    period: CLAY_P, hero: 7.9,
     build(s) {
       const blit = glTile(s), g = s.lastElementChild.getContext("2d");
       const u = { uRes: { value: new THREE.Vector2(GW, GH) }, uCam: { value: new THREE.Vector3() }, uTgt: { value: new THREE.Vector3(0, -0.2, 0) },
@@ -141,7 +140,7 @@
   demo({ id: "domainrep", gl: true, name: "Infinite grid by domain repetition", kind: "shader", stacks: ["three", "glsl"],
     chips: ["GLSL ray marching", "mod() domain repetition", "thin-film iridescence", "distance fog"], grade: "B",
     purpose: "One rounded box, repeated forever by a single mod(), and a camera flying through the lattice. The colours are thin-film interference, like soap or a beetle shell, and shift with the viewing angle.",
-    seen: SEEN, period: GRID_P, hero: 2.2,
+    period: GRID_P, hero: 2.2,
     build(s) {
       const blit = glTile(s);
       const u = { uRes: { value: new THREE.Vector2(GW, GH) }, uCam: { value: new THREE.Vector3() }, uView: { value: new THREE.Matrix3() } };
@@ -212,7 +211,7 @@
   demo({ id: "styles", gl: true, name: "One object, five shader styles", kind: "shader", stacks: ["three", "glsl", "canvas"],
     chips: ["WebGLRenderTarget", "post-process ShaderMaterial", "Bayer matrix", "Canvas glyph atlas"], grade: "B",
     purpose: "A lit torus knot is drawn once into an offscreen target, then one post shader turns it into ordered dither, halftone dots, ASCII, pixel sort or a two-ink risograph. On dense CJK text they wipe out the strokes, so use them on shapes and figures (Character shading applies halftone and dither to a 3D character), not on body text.",
-    seen: SEEN, period: STYLES.length * SLOT, hero: 3.75,
+    period: STYLES.length * SLOT, hero: 3.75,
     build(s) {
       const blit = glTile(s), g = s.lastElementChild.getContext("2d");
       const rt = new THREE.WebGLRenderTarget(GW, GH, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter });
@@ -359,7 +358,7 @@
   demo({ id: "gpuparticles", gl: true, name: "200,000 GPU particles", kind: "shader", stacks: ["three", "glsl", "canvas"],
     chips: ["Points + ShaderMaterial", "curl noise in the vertex shader", "Canvas-sampled text", "UnrealBloomPass"], grade: "B",
     purpose: "About fifty times the points of the CPU particle tile, which caps at 3,800: each vertex works out its own position from t, streaming along a torus knot, flowing through curl noise into the letters, then bursting outward with trails and streaming home. The letters stay grainy and graded in colour, so they read as particles. Nothing is stored between frames, so any moment renders on its own.",
-    seen: SEEN, period: GP_P, hero: 4.7,
+    period: GP_P, hero: 4.7,
     build(s) {
       const N = 200000, blit = glTile(s), scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(40, GW / GH, 0.1, 100);
       const R = rng(4242), tube = new Float32Array(N * 3), seed = new Float32Array(N * 4), text = new Float32Array(N * 3);

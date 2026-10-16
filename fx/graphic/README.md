@@ -73,7 +73,4 @@ the seeded pattern; `spatial.js` owns the 3D scenes; `app.js` owns the study and
 sampler timing; `player.js` provides the recorder contract. Film metadata and
 publication placement belong only to `examples/films.json`.
 
-The visual research is the author's [40 text treatments](https://www.threads.com/@ai_yunon_ai/post/DeihhttDe26)
-and [40 backgrounds](https://www.threads.com/@ai_yunon_ai/post/DejRnDMAeNJ).
-The compositions, animation, geometry and sound here are newly authored; no
-reference footage, music, prompts or source code is bundled.
+The compositions, animation, geometry and sound are authored in this repository.

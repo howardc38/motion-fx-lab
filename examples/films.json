@@ -1147,6 +1147,7 @@
       "id": "graphic-extensions",
       "layer": "effect-film",
       "tier": "in-card",
+      "galleryShortcut": true,
       "title": "Type. Flip. Flow.",
       "summary": "Split-flap letters, rolling reels, counter-moving bands, three spatial arrangements, grid choreography, LED type and temporal echoes.",
       "duration": 33.6,

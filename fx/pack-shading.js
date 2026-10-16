@@ -379,8 +379,7 @@
     } });
 
   demo({ ...SHARED, id: "dithercharacter", gl: true, grade: "B", stacks: ["three", "glsl"],
-    name: "Two-ink ordered dither", seen: "Threads · @ox8erlin (TixFox)",
-    chips: ["4×4 Bayer dither, paper + two inks", "160 × 90 cell grid at any size", "1-cell outline", ...CHIPS],
+    name: "Two-ink ordered dither", chips: ["4×4 Bayer dither, paper + two inks", "160 × 90 cell grid at any size", "1-cell outline", ...CHIPS],
     purpose: "A night scene in two inks on dark paper: the key light carves the robot out of the dark in cross-hatched cells, and the turntable glows in a dithered pool around its shadow.",
     hero: 3.0,
     build(s) {

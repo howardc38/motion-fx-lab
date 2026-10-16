@@ -223,7 +223,7 @@ Source: [intro.html](video/intro.html) and [intro-stories.js](fx/intro-stories.j
 
 ## Graphic motion
 
-Four distinct operations cover force-field dots, animated glyph interiors, proximity connections and flat long-shadow type. [The graphic guide](fx/graphic/README.md) documents editable controls and the seven extensions to existing cards: split-flap letters, rolling reels, text bands, spatial lettering, grid choreography, LED lettering and temporal echoes. The four effect films and the segmented extension sampler play from those cards. All export at 1080p60 using Canvas 2D and the existing three.js core.
+Four distinct operations cover force-field dots, animated glyph interiors, proximity connections and flat long-shadow type. [The graphic guide](fx/graphic/README.md) documents editable controls and the seven extensions to existing cards: split-flap letters, rolling reels, text bands, spatial lettering, grid choreography, LED lettering and temporal echoes. The four effect films and the segmented extension sampler play from those cards; the sampler also has a watch link above the effect gallery. All export at 1080p60 using Canvas 2D and the existing three.js core.
 
 ## Mechanical and technical films
 
@@ -288,15 +288,6 @@ References checked on 2026-10-03: [Remotion licence](https://github.com/remotion
 - Solid lettering uses a bundled subset of CJK outlines plus Latin capitals and digits; other characters require rebuilding that asset.
 - The reaction–diffusion effect gives the same pixels every time on one GPU, but a different pattern on SwiftShader than on Metal. The recorder never mixes the two in one run.
 - Browser tests cover effect contracts, gallery framing, film metadata, asynchronous recording and publication rollback. There is no CI yet; full video builds and visual review are done locally.
-
-## "Seen in" credits
-
-When a reel shows an effect this library did not have, it is rebuilt from scratch with original content, and the effect's card names the video under "Seen in". No code or artwork was taken from these videos.
-
-| Video, on Threads | What was rebuilt |
-|---|---|
-| A TixFox promo by Berlin (@ox8erlin) | A character in flat colour and light, dithered to two inks with an ordered matrix (now the dither variant of Character shading) |
-| Two motion-design reels by @designer.riven | Squash and stretch with its graph, variable-font type, polar morph, Bauhaus rhythm, ridgelines, card flip, data chart, ray-marched clay, domain repetition, five shader styles, GPU particles, reaction–diffusion and rigid bodies |
 
 ## Help wanted
 

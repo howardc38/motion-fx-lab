@@ -72,7 +72,6 @@
     const d = byId.get(card.selected);
     card.caption.querySelector('.pills').innerHTML = `<span class="pill kind">${card.showcase ? 'Preset' : KINDS[d.kind]}</span><span class="grade" title="${NEEDS[d.grade][1]}">${NEEDS[d.grade][0]}</span>`;
     card.caption.querySelector('.chips').innerHTML = d.chips.map(c => `<code>${c}</code>`).join('');
-    card.caption.querySelector('.seen').textContent = d.seen ? 'Seen in: ' + d.seen : '';
     card.caption.querySelector('.variant-description').textContent = card.family.entries.length > 1 ? d.purpose : '';
     const link=card.caption.querySelector('.preview-link');link.replaceChildren();
     for (const [film, id] of filmsFor(card, d)) appendFilmLinks(link, film, id);
@@ -94,7 +93,7 @@
       const preview = document.createElement('div'); preview.className = 'preview';
       const placeholder = document.createElement('div'); placeholder.className = 'stage'; placeholder.innerHTML = '<span class="loading">Preview loads when visible</span>'; preview.appendChild(placeholder);
       const caption = document.createElement('figcaption');
-      caption.innerHTML = `<h3>${family.name}</h3><p>${family.purpose}</p><p class="variant-description"></p><p class="seen"></p><p class="preview-link"></p><details class="implementation"><summary>Drawing details</summary><div class="pills"></div><div class="chips"></div></details>`;
+      caption.innerHTML = `<h3>${family.name}</h3><p>${family.purpose}</p><p class="variant-description"></p><p class="preview-link"></p><details class="implementation"><summary>Drawing details</summary><div class="pills"></div><div class="chips"></div></details>`;
       if (basic) fig.dataset.tier = 'basic';
       const card = {family, fig, preview, placeholder, caption, showcase, basic, selected: PREVIEW_DEFAULT[family.id] || family.id, instances:new Map(), work:Promise.resolve(), busy:false, visible:false, dirty:true};
       if (family.entries.length > 1) {

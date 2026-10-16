@@ -89,6 +89,7 @@
         "id": { "$ref": "#/$defs/id" },
         "layer": { "$ref": "#/$defs/layer" },
         "tier": { "$ref": "#/$defs/tier" },
+        "galleryShortcut": { "description": "Offer this in-card effect film as an additional watch link above the effect gallery. The generator reads its title, media, duration and catalogue roles from their existing sources.", "type": "boolean" },
         "versionOf": { "description": "Another cut, ratio or brand of the named film in the same layer, rendered from the same page; linked from that film's card.", "$ref": "#/$defs/id" },
         "title": { "$ref": "#/$defs/text" },
         "summary": { "description": "One line for the film list, README and viewing guide.", "$ref": "#/$defs/text" },

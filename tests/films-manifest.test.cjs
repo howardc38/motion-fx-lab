@@ -144,6 +144,23 @@ test('generated blocks are current and cover every film', () => {
   for (const f of manifest.films.filter(x => x.tier === 'featured')) assert.ok(cards.includes(`data-film-id="${f.id}"`), f.id);
 });
 
+test('gallery shortcuts use film metadata and do not change a film into another card', () => {
+  const m=copy(manifest),f=film(m,'graphic-extensions');
+  assert.equal(f.galleryShortcut,true);
+  const html=tool.render.galleryShortcuts(m);
+  assert.match(html,/Watch all 7 motion variations/);
+  assert.ok(html.includes('href="'+f.media.mp4+'"'));
+  assert.ok(html.includes(f.title+' · '+f.duration+' s · with sound'));
+  assert.ok(!html.includes('<figure'));
+  f.title='Renamed sampler';f.duration=27.5;f.media.mp4='media/renamed.mp4';
+  const updated=tool.render.galleryShortcuts(m);
+  assert.ok(updated.includes('Renamed sampler · 27.5 s'));
+  assert.ok(updated.includes('href="media/renamed.mp4"'));
+  assert.ok(!updated.includes('Type. Flip. Flow.'));
+  f.galleryShortcut=false;assert.equal(tool.render.galleryShortcuts(m),'');
+  assert.match(errorsAfter(m=>{film(m,'reel').galleryShortcut=true}),/galleryShortcut is only for an in-card effect film/);
+});
+
 test('every film is reachable from its layer: the hero, a card, a version link on a card, or an effect card', () => {
   const cards = tool.render.cards(manifest, 'use-case') + tool.render.cards(manifest, 'demo') + tool.render.cards(manifest, 'demo', undefined, 'listed') + tool.render.cards(manifest, 'comparison', undefined, 'listed');
   for (const f of manifest.films) {

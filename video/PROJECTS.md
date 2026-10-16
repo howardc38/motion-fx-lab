@@ -33,6 +33,8 @@ Each entry gives:
   `comparison` (one input, different treatments) or `effect-film` (a full render of one effect).
 - `tier`: `hero` (the intro at the top of the page), `featured` (a card in the use-case or demo section), `listed`
   (the film list only) or `in-card` (effect films, played inside their effect cards).
+- Optional `galleryShortcut: true` for an in-card effect film: add a visible watch link above the effect gallery.
+  The generator derives its label, title, duration and URL from the film entry and catalogue; it adds no card, film or effect count.
 - `title`, a one-line `summary`, `duration` (the page's `__DUR`), `format`, the editable `page`, `media`
   (`mp4`, `poster`; `preview`, the silent card loop, for every film with a card and the intro; `gif` only for the intro,
   the README hero), `card` copy (`headline`, `description`, `useFor`,
@@ -56,7 +58,7 @@ node tools/films.cjs --verify           # print where each film's source runs ea
 npm run check:public                    # fail if a private or unregistered file would be committed
 ```
 
-The generated blocks are `films:hero`, `films:uses`, `films:demos`, `films:summary`, `films:count` and `films` in
+The generated blocks are `films:hero`, `films:gallery-shortcuts`, `films:uses`, `films:demos`, `films:summary`, `films:count` and `films` in
 `index.html`, `films` in `README.md` and `films:guide` in `fx/VIEWING-GUIDE.md`. `fx/films-data.js` defines
 `window.FXFilms` (id, layer, tier, title, duration, format, media and effects) for the gallery's effect → film
 links. Counts name films only; no generated text states an exact number of effects.

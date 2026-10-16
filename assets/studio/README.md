@@ -1,13 +1,8 @@
 # Original studio assets and effect factories
 
 The courier artwork, twenty poster treatments, Amber/Teal fighter geometry and 4.8-second
-skeletal fight excerpt are original procedural assets. No reference-post images,
-characters, downloaded motion capture, generated-human footage or external music
-are bundled. The results demonstrate the techniques, not a shot-for-shot copy of
-the reference videos. The code and original assets use the repository's 0BSD licence.
-
-Technique references: [the art-direction journey](https://www.threads.com/@ai_cpocoder/post/Dd_nuqND8R-)
-and [the dot-animation study](https://www.threads.com/@more.yu_/post/DeBkaXOE6y6).
+skeletal fight excerpt are original procedural assets. The code and original assets use
+the repository's 0BSD licence.
 
 ## Effect catalogue
 

@@ -32,7 +32,7 @@ Copyright (c) 2026 Air Supply Technologies Inc. (Airsup), under MIT. Its full no
 [`fx/mechanical/NOTICE`](fx/mechanical/NOTICE). The project's 0BSD licence does not replace this notice.
 The source runtime clock, UI and back-face section shader are not copied. The closed shell halves,
 profile-derived section triangles, absolute-time motion, geared demonstrator and geometric checker
-are authored here. No reference-post footage, recording or downloaded product model is bundled.
+are authored here.
 
 [Anatomy's verification and motion references](https://github.com/wheresryan22/anatomy/tree/e9488296a44211c42701ff71705b7901470ec78f/references)
 informed the method: register what is drawn, check motion between poses, and test the checker with
@@ -69,8 +69,7 @@ respective offline tools are separate from the browser renderer.
 are produced by `tools/build-studio-assets.cjs`, `fx/studio/fighter-asset.js` and
 `examples/fight-source.html`. The geometry, rig and animation are original.
 The courier, twenty art-direction backgrounds and figure treatments are drawn
-by `fx/studio/themes.js`. No artwork, character models or motion data from the
-reference posts is bundled. Three.js r180 add-ons used by the asset/film tools
+by `fx/studio/themes.js`. Three.js r180 add-ons used by the asset/film tools
 include GLTFLoader, GLTFExporter, SkeletonUtils and BufferGeometryUtils, under
 the same MIT licence as the existing runtime dependency.
 
@@ -101,7 +100,7 @@ The signal-study preprocessing optionally installs NumPy 2.2.6 (BSD-3-Clause) an
 OpenCV-Python headless 4.12.0.88 (Apache-2.0 for OpenCV; package dependencies keep
 their notices). These tools are not loaded by the website. Versions are pinned in
 `tools/signals/requirements.txt`. The score, source image sequence and GLB are
-original repository assets; no reference-post footage or audio is bundled.
+original repository assets.
 
 ## AI-generated character images
 

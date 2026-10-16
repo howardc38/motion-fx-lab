@@ -166,6 +166,7 @@ function validateManifest(manifest, { root = ROOT, catalog = loadCatalog(root), 
     byId.set(film.id, film);
     if ((film.layer === 'intro') !== (film.tier === 'hero')) errors.push(where + ': only the intro uses the hero tier, and the intro is the hero');
     if ((film.layer === 'effect-film') !== (film.tier === 'in-card')) errors.push(where + ': effect films, and only they, play in-card');
+    if (film.galleryShortcut && film.layer !== 'effect-film') errors.push(where + ': galleryShortcut is only for an in-card effect film');
     if (film.tier === 'featured' && !['use-case', 'demo'].includes(film.layer)) errors.push(where + ': only use cases and demo films have featured cards');
     if (film.tier === 'featured' && !(film.card.useFor && film.card.relation)) errors.push(where + ': a featured card needs useFor and relation');
     if (film.versionOf !== undefined && film.tier !== 'listed') errors.push(where + ': only a listed film can be a version of another film');
@@ -306,7 +307,7 @@ function context(manifest, root = ROOT) {
     const base = f.tier === 'hero' ? 'Top of the page' : hasCard(f) ? `Card in ${layers.get(f.layer).title}` : f.versionOf ? `Linked from the ${byId.get(f.versionOf).title} card`
       : f.tier === 'listed' ? (inList ? 'This list only' : 'Film list only')
       : (cards => `Effect card${cards.length > 1 ? 's' : ''}: ${cards.join(', ')}`)([...new Set(f.effects.map(e => catalog.byId.get(e.id).card))]);
-    return base + (plan(f) ? '; ' + plan(f) : '');
+    return base + (f.galleryShortcut ? '; watch link above Effects' : '') + (plan(f) ? '; ' + plan(f) : '');
   };
   const parts = grouped.map(([l, list]) => `${list.length} ${list.length === 1 ? l.singular : l.title.toLowerCase()}`);
   return { catalog, layers, byId, source, label, span, grouped, plan, placement, parts };
@@ -350,6 +351,15 @@ function renderList(manifest, root = ROOT) {
       return `<tr${ownElement ? '' : ` id="film-${f.id}"`} data-film-index-id="${f.id}" data-film-layer="${f.layer}" data-film-tier="${f.tier}"><td>${esc(c.placement(f, true))}</td><td><b>${esc(f.title)}</b><span class="film-meta">${num(f.duration)} s · ${f.format}</span><p>${esc(f.summary)}</p>${listed}${related ? `<p class="film-effects">Related, not in this film: ${related}</p>` : ''}</td><td>${watch}</td></tr>`;
     }).join('\n');
     return `<section class="film-index-group" data-film-kind="${layer.id}"><h3>${esc(layer.title)} · ${list.length}</h3><p class="note">${esc(layer.description)}</p>\n<div class="scroll"><table><thead><tr><th>Where</th><th>Film and purpose</th><th>Watch / edit</th></tr></thead><tbody>\n${rows}\n</tbody></table></div></section>`;
+  }).join('\n');
+}
+function renderGalleryShortcuts(manifest, root = ROOT) {
+  const catalog = loadCatalog(root);
+  return manifest.films.filter(f => f.galleryShortcut).map(f => {
+    const ids = [...new Set(f.effects.map(e => e.id))];
+    const variants = ids.every(id => catalog.byId.get(id)?.role === 'variant');
+    const action = variants ? 'Watch all ' + ids.length + ' motion variations' : 'Watch ' + f.title;
+    return '<p class="gallery-shortcut" data-sampler-id="' + esc(f.id) + '"><a class="cta-button" href="' + esc(f.media.mp4) + '">▶ ' + esc(action) + '</a><span>' + esc(f.title) + ' · ' + num(f.duration) + ' s · with sound</span><a href="' + esc(f.page) + '">Scrub timeline</a></p>';
   }).join('\n');
 }
 function renderHero(manifest) {
@@ -405,6 +415,7 @@ ${rows.join(',\n')}
 }
 const BLOCKS = [
   { file: 'index.html', name: 'films:hero', render: renderHero },
+  { file: 'index.html', name: 'films:gallery-shortcuts', render: renderGalleryShortcuts },
   { file: 'index.html', name: 'films:uses', render: (m, r) => renderCards(m, 'use-case', r) },
   { file: 'index.html', name: 'films:demos', render: (m, r) => renderCards(m, 'demo', r) },
   { file: 'index.html', name: 'films:demos-more', render: (m, r) => renderCards(m, 'demo', r, 'listed') },
@@ -478,4 +489,4 @@ if (require.main === module) {
     } else throw new Error('Usage: node tools/films.cjs --check | --write | --verify | --migrate | build <id|group>');
   } catch (error) { console.error(error.message); process.exitCode = 1; }
 }
-module.exports = { films, needsPreview, recordArgs, validate, sync, load, migrate, compareV1, validateManifest, schemaErrors, loadCatalog, closure, evidence, formatJSON, render: { hero: renderHero, cards: renderCards, list: renderList, summary: renderSummary, count: renderCount, readme: renderReadme, readmeCards: renderReadmeCards, guide: renderGuide, data: renderData }, BLOCKS, hasCard };
+module.exports = { films, needsPreview, recordArgs, validate, sync, load, migrate, compareV1, validateManifest, schemaErrors, loadCatalog, closure, evidence, formatJSON, render: { galleryShortcuts: renderGalleryShortcuts, hero: renderHero, cards: renderCards, list: renderList, summary: renderSummary, count: renderCount, readme: renderReadme, readmeCards: renderReadmeCards, guide: renderGuide, data: renderData }, BLOCKS, hasCard };

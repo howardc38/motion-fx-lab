@@ -1,10 +1,9 @@
 // Motion FX Lab: 2D effects. Registers tiles with FX.demo; see fx/demos.js for the building blocks.
-// Ideas seen in a Threads video by @designer.riven, rebuilt from scratch. Every frame is a pure function of t:
+// Every frame is a pure function of t:
 // seeded randomness is drawn once in build(), and each canvas tile repaints everything on every frame.
 (() => {
   const { demo, q, qa, rng, LAT, helpers } = window.FX;
   const { clamp, lin, outCubic, inOut, back } = helpers;
-  const SEEN = "Threads · @designer.riven";
   const INK = "#111016", CREAM = "#f2efe8", ORANGE = "#ff5a1f", BLUE = "#2b4bff", YELLOW = "#ffd400";
   const SERIF = '"Instrument Serif", Georgia, serif';
   const MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
@@ -77,7 +76,7 @@
   // ---------- 1. Timing: a bouncing ball and its height curve ----------
   demo({ id: "timing", tier: "basic", name: "Timing: squash and stretch with its graph", kind: "motion", stacks: ["svg"], chips: ["SVG graph + playhead", "closed-form bounce", "squash and stretch"], grade: "A",
     purpose: "Shows why timing matters: the bounce and its height curve play side by side, and the playhead marks the frame you see.",
-    seen: SEEN, period: 4.8, hero: 1.28,
+    period: 4.8, hero: 1.28,
     build(s) {
       s.style.background = CREAM;
       const P = 4.8, M0 = 0.25, TOT = 3.2, H0 = 200, R = 27, FLOOR = 330, X0 = 72, X1 = 352, RATIO = 0.42, NB = 6;
@@ -163,7 +162,7 @@
   // ---------- 2. Variable-font kinetic type ----------
   demo({ id: "vartype", name: "Variable-font kinetic type", kind: "type", stacks: ["css"], chips: ["font-stretch 62–125%", "font-weight 400–900", "-webkit-text-stroke"], grade: "A",
     purpose: "Moves one word by changing its width and weight, so the type carries the motion without any extra graphics.",
-    seen: SEEN, period: 4, hero: 0.7,
+    period: 4, hero: 0.7,
     build(s) {
       s.style.background = BLUE;
       const P = 4, M = 6, ROWS = 9;
@@ -189,7 +188,7 @@
   // ---------- 3. Polar shape morph with a spring ----------
   demo({ id: "morph", name: "Polar shape morph with a spring", kind: "motion", stacks: ["svg"], chips: ["polar resampling, N = 180", "closed-form spring", "SVG path"], grade: "A",
     purpose: "Turns one shape into the next without tangled edges, because every shape is sampled at the same angles; the spring adds the overshoot.",
-    seen: SEEN, period: 6, hero: 2.05,
+    period: 6, hero: 2.05,
     build(s) {
       s.style.background = INK;
       const P = 6, SEG = 1.5, HOLD = 0.35, DUR = SEG - HOLD, N = 180, CX = 200, CY = 236, Z = 0.36, W = 12, WD = W * Math.sqrt(1 - Z * Z);
@@ -254,7 +253,7 @@
   // ---------- 4. Bauhaus tile rhythm ----------
   demo({ id: "rhythm", name: "Bauhaus tile rhythm", kind: "backdrop", stacks: ["canvas"], chips: ["Canvas 2D", "diagonal stagger", "seeded motifs"], grade: "A",
     purpose: "A pattern that turns in waves from corner to corner; a lively backdrop that still leaves room for one word.",
-    seen: SEEN, period: 6, hero: 0.72,
+    period: 6, hero: 0.72,
     build(s) {
       s.style.background = INK;
       const W = s.classList.contains("landscape") ? 8000 / 9 : 400;
@@ -307,7 +306,7 @@
   // ---------- 5. Noise ridgelines ----------
   demo({ id: "ridgelines", name: "Noise ridgelines", kind: "backdrop", stacks: ["canvas"], chips: ["Canvas 2D", "seeded Perlin noise", "painter's order"], grade: "A",
     purpose: "Stacked lines of noise read as terrain or a sound wave; a calm, endless backdrop for a single word, with one swell that can sit on a beat.",
-    seen: SEEN, period: 8, hero: 2.5,
+    period: 8, hero: 2.5,
     build(s) {
       s.style.background = INK;
       const W = s.classList.contains("landscape") ? 8000 / 9 : 400;
@@ -353,7 +352,7 @@
   // ---------- 6. 3D card flip grid ----------
   demo({ id: "cardflip", name: "3D card flip grid", kind: "ui", stacks: ["css"], chips: ["CSS 3D transform", "backface-visibility", "diagonal stagger"], grade: "A",
     purpose: "Reveals nine items in turn without changing the layout: each card shows its other side, then flips back.",
-    seen: SEEN, period: 5, hero: 1.05,
+    period: 5, hero: 1.05,
     build(s) {
       s.style.background = CREAM;
       const L = ["EASE", "SPRING", "TYPE", "DEPTH", "FRAME", "RHYTHM", "GRID", "LOOP", "GLITCH"];
@@ -372,7 +371,7 @@
   // ---------- 7. Self-drawing data chart ----------
   demo({ id: "datachart", tier: "basic", name: "Self-drawing data chart", kind: "ui", stacks: ["svg"], chips: ["SVG stroke-dashoffset", "gradient area", "stroke-dasharray ring"], grade: "A",
     purpose: "Builds a line, its bars and a goal ring in order, so the eye reads the numbers in the order they matter.",
-    seen: SEEN, period: 6, hero: 3.6,
+    period: 6, hero: 3.6,
     build(s) {
       s.style.background = INK;
       const DATA = [22, 30, 27, 38, 35, 46, 44, 55, 52, 63, 70, 78], VOL = [40, 52, 45, 60, 48, 66, 58, 72, 64, 70, 80, 74];

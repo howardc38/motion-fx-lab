@@ -43,7 +43,7 @@ Some similar-looking previews stay separate for a reason:
 
 ## Where each film lives
 
-Every published film has one layer. Use cases and demo films get cards in their own sections, comparisons have a section after the effects, and effect films play from their effect cards. Versions of a film (another ratio or brand from the same page) are linked from their parent's card. The full list on the site groups every film by layer and links each effect to the seconds where it appears.
+Every published film has one layer. Use cases and demo films get cards in their own sections, comparisons have a section after the effects, and effect films play from their effect cards. Versions of a film (another ratio or brand from the same page) are linked from their parent's card. An effect film can also have a visible watch link above the gallery when its film entry sets `galleryShortcut`; this does not change its layer or add a second film. The full list on the site groups every film by layer and links each effect to the seconds where it appears.
 
 <!-- films:guide:start -->
 | Film | Layer | Role | Placement |
@@ -88,7 +88,7 @@ Every published film has one layer. Use cases and demo films get cards in their 
 | Inside the letters. | Effect film | One glyph silhouette contains moving stripes, an authored liquid level and a two-tone boundary. | Effect card: Animated glyph interiors |
 | Near enough to connect. | Effect film | Distance changes which particles connect; pulses travel along the surviving links. | Effect card: Proximity particle connections |
 | A different kind of depth. | Effect film | The same flat word gains a long graphic shadow whose direction and length keep changing. | Effect card: Graphic long-shadow type |
-| Type. Flip. Flow. | Effect film | Split-flap letters, rolling reels, counter-moving bands, three spatial arrangements, grid choreography, LED type and temporal echoes. | Effect cards: 3D card flip grid, Counting number, Staggered letter animation, Type in three-dimensional space, Bauhaus tile rhythm, Image and footage halftone dots, Time echoes and speed ramps |
+| Type. Flip. Flow. | Effect film | Split-flap letters, rolling reels, counter-moving bands, three spatial arrangements, grid choreography, LED type and temporal echoes. | Effect cards: 3D card flip grid, Counting number, Staggered letter animation, Type in three-dimensional space, Bauhaus tile rhythm, Image and footage halftone dots, Time echoes and speed ramps; watch link above Effects |
 <!-- films:guide:end -->
 
 The effect links on a film name the catalogue effects its source actually runs; `tools/films.cjs --check` finds each one in the film's code. Effects that only inspired a film are listed as related, not as effects.

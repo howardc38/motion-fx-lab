@@ -47,6 +47,12 @@ test("film cards sit in their layer sections, apart from the full film list and 
   // Use cases and demo films come before the effects; comparisons follow them.
   expect(p.groups.map((g) => g.beforeEffects)).toEqual([true, true, false]);
   expect(p.badLinks).toEqual([]);
+  // An in-card sampler remains an effect film, with a discoverable watch link.
+  const shortcut=page.locator('#effects [data-sampler-id="graphic-extensions"]');
+  await expect(shortcut).toBeVisible();
+  await expect(shortcut.locator('a').first()).toHaveText('▶ Watch all 7 motion variations');
+  await expect(shortcut.locator('a').first()).toHaveAttribute('href','media/graphic-extensions.mp4');
+  await expect(page.locator('.seen')).toHaveCount(0);
   // Every card plays a silent loop (media/<id>.preview.mp4) over its poster; no card shows a GIF.
   await expect(page.locator(".film-preview video.film-loop")).toHaveCount(Object.values(cards).flat().length);
   await expect(page.locator(".film-preview img")).toHaveCount(0);

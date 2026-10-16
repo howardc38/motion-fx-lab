@@ -89,9 +89,4 @@ independent browser passes and compared before delivery.
   screen-space halftone/ASCII/poster filters. It does not add global illumination
   or cast shadows to the city. `debugPattern` fixes density for attachment tests.
 
-The direction was inspired by the motion sequence in
-[@ai.finds_daily's post](https://www.threads.com/@ai.finds_daily/post/DeM1yjVkiHR)
-and the ink/lighting examples in
-[@__laochen's post](https://www.threads.com/@__laochen/post/DeMxZIVE-__). The lettering,
-city, timings, shaders and synthesized soundtrack here are original code; no
-reference footage or assets are bundled.
+The lettering, city, timings, shaders and synthesised soundtrack are authored in this repository.

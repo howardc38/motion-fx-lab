@@ -1,7 +1,6 @@
 import {font as loadFont,create as createSolidType} from './material-studies/type.js?v=engraved-1';
-/* An original drawing, using the public library's Noto Sans TC outline asset.
- * References: the supplied Threads film's construction sheets, ember pen,
- * engraved spaces and changes of scale. No source video, lyrics or music used. */
+/* Drawing, ember tracing, camera travel and engraved type, using the
+ * public library's Noto Sans TC outline asset. */
 (() => {
 'use strict';
 const W=1920,H=1080,D=16.8,TAU=Math.PI*2;
