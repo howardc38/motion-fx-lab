@@ -28,6 +28,10 @@ An effect demonstrates a distinct visible operation or material response with a 
 
 Some similar-looking previews stay separate for a reason:
 
+- **Glyph interiors / image displacement:** one keeps the glyph silhouette and moves its fill; the other warps image coordinates through a moving lens.
+- **Graphic long shadow / soft cast shadow:** one extends a flat silhouette in a chosen direction; the other computes occlusion from geometry and a light source.
+- **Proximity connections / orbital particles:** one changes graph edges by measured distance; the other moves particles along orbital trajectories.
+- **Force-field lattice / image displacement:** one moves registered points away from their rest positions and recovers them; the other samples a distorted image.
 - **2D image displacement / 3D transmission:** one moves image coordinates; the other shows refraction, thickness and reflection on three-dimensional geometry.
 - **Image halftone / shaded character:** sampled source pixels versus a shading response on a three-dimensional figure.
 - **2.5D relief / skinned surface points:** brightness displaces a shallow plane; real rigged geometry supplies the sides, back and moving limbs of the latter.
@@ -44,7 +48,7 @@ Every published film has one layer. Use cases and demo films get cards in their 
 <!-- films:guide:start -->
 | Film | Layer | Role | Placement |
 |---|---|---|---|
-| Intro | Intro | A guided overview: editable use cases, a voiced character, distinct effects, art direction, Spark / Form and mechanical inspection, then a one-line edit rendered to MP4. | Top of the page |
+| Intro | Intro | A guided overview: editable use cases, a voiced character, force fields, glyph fills, connected particles, graphic shadows and spatial lettering, art direction, Spark / Form and mechanical inspection, then a one-line edit rendered to MP4. | Top of the page |
 | This weekend only | Use case | A 9:16 weekend promo for a small shop: hook, product, offer and call to action inside every app’s safe area. | Card in Use cases |
 | This weekend only (bakery) | Use case | Bakery version of This weekend only, rendered from the same page. | Linked from the This weekend only card |
 | This weekend only (yoga studio) | Use case | Yoga studio version of This weekend only, rendered from the same page. | Linked from the This weekend only card |
@@ -80,6 +84,11 @@ Every published film has one layer. Use cases and demo films get cards in their 
 | Apart. Together. | Effect film | A detailed turbofan opens into seven service assemblies and returns along their ordered paths. | Effect card: Exploded assembly and reassembly |
 | Inside the machine. | Effect film | A section plane opens closed housings while the detailed core keeps moving; real cap geometry preserves wall thickness. | Effect card: Solid longitudinal cutaway |
 | One turn. Everything moves. | Effect film | A 20:40 gear pair drives a crank, rod, piston and tachometer from one analytic model. | Effect card: Geared slider-crank mechanism |
+| Pull. Warp. Return. | Effect film | A dot lattice pulls into an authored force field, recovers, then becomes a perspective wave floor. | Effect card: Force-field dot deformation |
+| Inside the letters. | Effect film | One glyph silhouette contains moving stripes, an authored liquid level and a two-tone boundary. | Effect card: Animated glyph interiors |
+| Near enough to connect. | Effect film | Distance changes which particles connect; pulses travel along the surviving links. | Effect card: Proximity particle connections |
+| A different kind of depth. | Effect film | The same flat word gains a long graphic shadow whose direction and length keep changing. | Effect card: Graphic long-shadow type |
+| Type. Flip. Flow. | Effect film | Split-flap letters, rolling reels, counter-moving bands, three spatial arrangements, grid choreography, LED type and temporal echoes. | Effect cards: 3D card flip grid, Counting number, Staggered letter animation, Type in three-dimensional space, Bauhaus tile rhythm, Image and footage halftone dots, Time echoes and speed ramps |
 <!-- films:guide:end -->
 
 The effect links on a film name the catalogue effects its source actually runs; `tools/films.cjs --check` finds each one in the film's code. Effects that only inspired a film are listed as related, not as effects.

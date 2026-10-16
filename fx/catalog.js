@@ -5,6 +5,13 @@
 // listed separately (FXCatalog.basics) and not counted as effect families.
 (() => {
   const variants = {
+    'graphic-flap': 'cardflip',
+    'graphic-reels': 'count',
+    'graphic-bands': 'chars',
+    'graphic-spatial': 'design-type-orbit',
+    'graphic-tiles': 'rhythm',
+    'graphic-led': 'studio-video-dots',
+    'graphic-echo': 'studio-echo',
     'signal-audio-relief': 'studio-depth-dots',
     'signal-freeze-orbit': 'studio-freeze-orbit',
     'studio-time-remap': 'studio-echo',

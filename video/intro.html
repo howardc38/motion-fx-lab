@@ -158,13 +158,13 @@
   <!-- Effect montage: five shots of 0.96 s; each tile starts at its own effect time (-data-t0 at the start of its shot). -->
   <section class="scene ink" data-start="21.6" id="scLib">
     <div class="edge"></div>
-    <div class="a wide" style="left:135px;top:95px;font-size:76px">Dozens of effect techniques.</div>
+    <div class="a wide" style="left:135px;top:95px;font-size:76px">Type. Patterns. Motion.</div>
     <div class="a mono" id="montage-label" style="left:140px;top:210px;font-size:28px;color:var(--pink)">Light splits into colour</div>
-    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-foil" data-shot="0" data-t0="-0.7"></div></div>
-    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="signal-motion-fragments" data-shot="1" data-t0="-2.45"></div></div>
-    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="design-type-orbit" data-shot="2" data-t0="-1.3"></div></div>
-    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="mechanical-linkage" data-shot="3" data-t0="-5.2"></div></div>
-    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="fluid-smoke" data-shot="4" data-t0="-3.4"></div></div>
+    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="graphic-field" data-shot="0" data-t0="-1.7"></div></div>
+    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="graphic-fill" data-shot="1" data-t0="-4.1"></div></div>
+    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="graphic-network" data-shot="2" data-t0="-1.8"></div></div>
+    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="graphic-shadow" data-shot="3" data-t0="-1.2"></div></div>
+    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="graphic-spatial" data-shot="4" data-t0="-4.2"></div></div>
   </section>
 
   <section class="scene" data-start="26.4" id="scStyle">
@@ -252,7 +252,9 @@
 <script src="../fx/pack-plush.js?v=plush-1"></script>
 <script src="../fx/mechanical-effects.js?v=mechanical-1"></script>
 <script src="../fx/pack-mechanical.js?v=mechanical-1"></script>
-<script src="../fx/catalog.js?v=catalog-2"></script>
+<script src="../fx/graphic-effects.js?v=graphic-1"></script>
+<script src="../fx/pack-graphic.js?v=graphic-1"></script>
+<script src="../fx/catalog.js?v=catalog-graphic-1"></script>
 <!-- fx:scripts:end -->
 <script>
 (() => {
@@ -261,10 +263,10 @@
   window.__music = [[0, "build"], [2.4, "drop"], [16.8, "break"], [21.6, "final"], [26.4, "lift"], [33.6, "drop"], [38.4, "final"], [43.2, "break"], [50.4, "final"], [52.8, "tail"]];
   // The poster is the opening title: what the repository makes, in one line.
   window.__poster = 2.0;
-  // README hero (at most 3 MB): the hook, two use cases, the montage, the flight and the edit.
-  window.__gif = [[0.3, 1.5], [3.2, 4.2], [17.1, 18.1], [28.8, 29.8], [35.5, 36.5], [39, 40.2], [46.4, 48.0]];
+  // README hero (at most 3 MB): the hook, a use case, the new graphic montage, flight, title story, mechanics and edit.
+  window.__gif = [[0.3, 1.3], [3.2, 4.2], [21.8, 23.4], [24.55, 25.35], [28.8, 29.8], [35.5, 36.3], [39, 39.8], [46.4, 47.4]];
   // Silent loop (media/intro.preview.mp4) for the film list: the same moments, a little longer.
-  window.__preview = [[0.2, 1.8], [3.0, 4.4], [17.0, 18.4], [28.9, 30.3], [35.2, 37.6], [38.8, 42.4], [45.0, 49.2]];
+  window.__preview = [[0.2, 1.8], [3.0, 4.4], [17.0, 18.4], [21.7, 26.3], [28.9, 30.3], [35.2, 37.6], [38.8, 40.4], [45.0, 46.6]];
 
   const START = Object.fromEntries([...document.querySelectorAll(".scene")].map((el) => [el.id, +el.dataset.start]));
   const SHOT = 0.96;   // montage shot length: five shots in the 4.8 s scene
@@ -390,7 +392,7 @@
     const scene = el.closest(".scene");
     return { el, d, frame: typeof built === "function" ? built : built.frame, ready: built && built.ready, scene, s0: +scene.dataset.start + SHOT * +(el.dataset.shot || 0), t0: +(el.dataset.t0 || 0), rate: +(el.dataset.rate || 1) };
   });
-  const montageLabels = ["Light splits into colour", "Fast motion breaks apart", "Words take up space", "One turn drives every part", "Smoke reveals the form"];
+  const montageLabels = ["Pull a field of dots", "Animate inside the letters", "Connect by distance", "Give type a graphic shadow", "Travel through the words"];
   const mount=(id,effect)=>{document.getElementById(id).appendChild(effect.canvas);return effect;};
   // The Final Final, from the bear's start to Pip's "…more dramatic." (source 0.72–5.52 s).
   const DIALOGUE = { at: 16.8, offset: 0.72, duration: 4.8 };

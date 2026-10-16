@@ -354,82 +354,138 @@
           "fx/mechanical/player.js"
         ]
       }
+    },
+    {
+      "id": "graphic",
+      "scripts": [
+        "fx/graphic-effects.js",
+        "fx/pack-graphic.js"
+      ],
+      "cacheTag": "graphic-1",
+      "readme": "fx/graphic/README.md",
+      "sources": {
+        "graphic-field": [
+          "fx/pack-graphic.js",
+          "fx/graphic-effects.js",
+          "fx/graphic/app.js",
+          "fx/graphic/fields.js",
+          "fx/graphic/common.js",
+          "fx/graphic/player.js",
+          "fx/graphic/README.md"
+        ],
+        "graphic-fill": [
+          "fx/pack-graphic.js",
+          "fx/graphic-effects.js",
+          "fx/graphic/app.js",
+          "fx/graphic/type.js",
+          "fx/graphic/common.js",
+          "fx/graphic/player.js",
+          "fx/graphic/README.md"
+        ],
+        "graphic-network": [
+          "fx/pack-graphic.js",
+          "fx/graphic-effects.js",
+          "fx/graphic/app.js",
+          "fx/graphic/fields.js",
+          "fx/graphic/common.js",
+          "fx/graphic/player.js",
+          "fx/graphic/README.md"
+        ],
+        "graphic-shadow": [
+          "fx/pack-graphic.js",
+          "fx/graphic-effects.js",
+          "fx/graphic/app.js",
+          "fx/graphic/type.js",
+          "fx/graphic/common.js",
+          "fx/graphic/player.js",
+          "fx/graphic/README.md"
+        ],
+        "graphic-flap": [
+          "fx/pack-graphic.js",
+          "fx/graphic-effects.js",
+          "fx/graphic/app.js",
+          "fx/graphic/type.js",
+          "fx/graphic/common.js",
+          "fx/graphic/player.js",
+          "fx/graphic/README.md"
+        ],
+        "graphic-reels": [
+          "fx/pack-graphic.js",
+          "fx/graphic-effects.js",
+          "fx/graphic/app.js",
+          "fx/graphic/type.js",
+          "fx/graphic/common.js",
+          "fx/graphic/player.js",
+          "fx/graphic/README.md"
+        ],
+        "graphic-bands": [
+          "fx/pack-graphic.js",
+          "fx/graphic-effects.js",
+          "fx/graphic/app.js",
+          "fx/graphic/type.js",
+          "fx/graphic/common.js",
+          "fx/graphic/player.js",
+          "fx/graphic/README.md"
+        ],
+        "graphic-spatial": [
+          "fx/pack-graphic.js",
+          "fx/graphic-effects.js",
+          "fx/graphic/app.js",
+          "fx/graphic/spatial.js",
+          "fx/graphic/common.js",
+          "fx/graphic/player.js",
+          "fx/graphic/README.md"
+        ],
+        "graphic-tiles": [
+          "fx/pack-graphic.js",
+          "fx/graphic-effects.js",
+          "fx/graphic/app.js",
+          "fx/graphic/tiles.js",
+          "fx/graphic/common.js",
+          "fx/graphic/player.js",
+          "fx/graphic/README.md"
+        ],
+        "graphic-led": [
+          "fx/pack-graphic.js",
+          "fx/graphic-effects.js",
+          "fx/graphic/app.js",
+          "fx/graphic/type.js",
+          "fx/graphic/common.js",
+          "fx/graphic/player.js",
+          "fx/graphic/README.md"
+        ],
+        "graphic-echo": [
+          "fx/pack-graphic.js",
+          "fx/graphic-effects.js",
+          "fx/graphic/app.js",
+          "fx/graphic/type.js",
+          "fx/graphic/common.js",
+          "fx/graphic/player.js",
+          "fx/graphic/README.md"
+        ]
+      }
     }
   ],
   "catalog": {
     "scripts": ["fx/catalog.js"],
-    "cacheTag": "catalog-2"
+    "cacheTag": "catalog-graphic-1"
   },
   "pages": ["index.html", "video/intro.html"],
   "gallery": {
     "$comment": "order: effect cards curated by visual impact (judged on tile screenshots) and contrast between neighbouring looks, then the Motion basics; every gallery family must be listed once. showcaseOrder: the same for the comparison and scene presets. previewDefault: the variant a card shows first. previewHero: the frame time shown while motion is paused (gpuparticles shows the flowing form). previewWindow: [start, end] of the demo time a card loops, where a shared film timeline starts or ends with a long calm stretch (films and the intro still play the whole timeline).",
     "order": [
-      "optical-foil",
-      "mechanical-cutaway",
-      "domainrep",
-      "plush-fur",
-      "fluid-smoke",
-      "reaction",
-      "mechanical-assembly",
-      "studio-lowpoly",
-      "gpuparticles",
-      "studio-freeze-orbit",
-      "organic-contours",
-      "dissolve",
-      "mechanical-linkage",
-      "dialogue-lipsync",
-      "studio-skin-cloud",
-      "studio-echo",
-      "rays",
-      "stack-gpu",
-      "design-type-orbit",
-      "studio-video-dots",
-      "chrome",
-      "optical-slit",
-      "clay",
-      "water-material",
-      "toon",
-      "signal-motion-fragments",
-      "cjk-solid",
-      "studio-depth-dots",
-      "optical-moire",
-      "studio-portal",
-      "optical-caustic",
-      "optical-morph",
-      "water-impact",
-      "rhythm",
-      "vartype",
-      "optical-ribbon",
-      "glitch",
-      "cardflip",
-      "fluid-overflow",
-      "liquid",
-      "ridgelines",
-      "rigid",
-      "character-rig",
-      "design-surface-ink",
-      "whip",
-      "uifly",
-      "hook",
-      "chars",
-      "karaoke",
-      "datachart",
-      "timing",
-      "glass",
-      "sweep",
-      "stamp",
-      "beat",
-      "sticker",
-      "gradient",
-      "ring",
-      "count",
-      "type",
-      "mark",
-      "scan",
-      "wipe",
-      "lut",
-      "design-soft-shadow",
-      "grain"
+      "optical-foil", "graphic-field", "mechanical-cutaway", "domainrep", "graphic-fill",
+      "plush-fur", "fluid-smoke", "reaction", "mechanical-assembly", "graphic-shadow",
+      "studio-lowpoly", "gpuparticles", "studio-freeze-orbit", "organic-contours", "dissolve",
+      "graphic-network", "mechanical-linkage", "dialogue-lipsync", "studio-skin-cloud",
+      "studio-echo", "rays", "stack-gpu", "design-type-orbit", "studio-video-dots", "chrome",
+      "optical-slit", "clay", "water-material", "toon", "signal-motion-fragments", "cjk-solid",
+      "studio-depth-dots", "optical-moire", "studio-portal", "optical-caustic", "optical-morph",
+      "water-impact", "rhythm", "vartype", "optical-ribbon", "glitch", "cardflip",
+      "fluid-overflow", "liquid", "ridgelines", "rigid", "character-rig", "design-surface-ink",
+      "whip", "uifly", "hook", "chars", "karaoke", "datachart", "timing", "glass", "sweep",
+      "stamp", "beat", "sticker", "gradient", "ring", "count", "type", "mark", "scan", "wipe",
+      "lut", "design-soft-shadow", "grain"
     ],
     "showcaseOrder": ["styles", "studio-themes", "studio-gallery", "water-underwater", "scene-eras"],
     "previewDefault": {

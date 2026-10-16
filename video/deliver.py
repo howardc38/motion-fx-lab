@@ -278,7 +278,9 @@ def poster_frame(video, seconds, fps, out):
     at 30 fps, and seeking with -ss to a film time landed two frames early. The frame is chosen by its
     index in display order instead, which does not depend on the container's timestamps."""
     n = round(seconds * fps)
-    run("ffmpeg", "-y", "-loglevel", "error", "-i", video, "-map", "0:v:0", "-vf", f"select=eq(n\\,{n})",
+    # Delivered films are BT.709; JPEG decoders assume BT.601. Merely relabelling
+    # the YUV samples shifts saturated colours, so convert the matrix explicitly.
+    run("ffmpeg", "-y", "-loglevel", "error", "-i", video, "-map", "0:v:0", "-vf", f"select=eq(n\\,{n}),scale=in_color_matrix=bt709:out_color_matrix=bt601",
         "-fps_mode", "passthrough", "-frames:v", "1", "-q:v", "3", out)
 
 

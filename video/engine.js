@@ -245,7 +245,9 @@ body.record #fx-preview { display: none !important; }`;
     bar = { box, css, button, range, out, shown: "" };
   }
   const now = () => performance.now();
-  const clock = (at) => (paused ? pausedAt : ((at - t0) / 1000) % (DUR + 1));
+  // A first RAF timestamp can precede the performance.now() sampled while this
+  // script was loading. Preview hooks must never receive that negative time.
+  const clock = (at) => (paused ? pausedAt : Math.max(0, (at - t0) / 1000) % (DUR + 1));
   function showState() {
     if (bar) bar.button.textContent = paused ? "Play" : "Pause";
   }

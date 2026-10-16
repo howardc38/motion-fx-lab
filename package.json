@@ -47,7 +47,8 @@
     "check:fx": "node tools/fx-manifest.cjs --check",
     "setup:hooks": "node tools/install-hooks.cjs",
     "check:mechanical": "node tools/check-mechanical.cjs",
-    "render:mechanical-films": "node tools/films.cjs build mechanical"
+    "render:mechanical-films": "node tools/films.cjs build mechanical",
+    "render:graphic-films": "node tools/films.cjs build graphic"
   },
   "devDependencies": {
     "@playwright/test": "1.59.1"

@@ -24,15 +24,15 @@
       "layer": "intro",
       "tier": "hero",
       "title": "Intro",
-      "summary": "A guided overview: editable use cases, a voiced character, distinct effects, art direction, Spark / Form and mechanical inspection, then a one-line edit rendered to MP4.",
+      "summary": "A guided overview: editable use cases, a voiced character, force fields, glyph fills, connected particles, graphic shadows and spatial lettering, art direction, Spark / Form and mechanical inspection, then a one-line edit rendered to MP4.",
       "duration": 55.2,
       "format": "16:9",
       "page": "video/intro.html",
       "media": {
-        "mp4": "media/intro.mp4?v=intro-5",
-        "poster": "media/intro.jpg?v=intro-5",
-        "preview": "media/intro.preview.mp4?v=intro-5",
-        "gif": "media/intro.gif?v=intro-5"
+        "mp4": "media/intro.mp4?v=intro-6",
+        "poster": "media/intro.jpg?v=intro-6",
+        "preview": "media/intro.preview.mp4?v=intro-6",
+        "gif": "media/intro.gif?v=intro-6"
       },
       "card": {
         "headline": "Intro",
@@ -66,11 +66,6 @@
           "label": "Speech and expression",
           "proof": ["video/intro.html", "FXDialogue.create(\"character-dialogue\")"]
         },
-        {"id": "optical-foil", "at": [21.6, 22.56], "label": "Holographic foil"},
-        {"id": "signal-motion-fragments", "at": [22.56, 23.52], "label": "Motion fragments"},
-        {"id": "design-type-orbit", "at": [23.52, 24.48], "label": "Spatial type"},
-        {"id": "mechanical-linkage", "at": [24.48, 25.44], "label": "Geared mechanism"},
-        {"id": "fluid-smoke", "at": [25.44, 26.4], "label": "Volumetric smoke"},
         {"id": "studio-themes", "at": [26.4, 33.6], "label": "Twenty art directions", "proof": ["fx/intro-stories.js", "poster(id)"]},
         {"id": "particles", "at": [43.2, 50.4], "label": "Particles into type", "proof": ["examples/titles.html", "id: \"particles\""]},
         {"id": "type", "at": [43.2, 50.4], "label": "Typewriter"},
@@ -96,7 +91,12 @@
           "at": [40.8, 43.2],
           "label": "Solid longitudinal section",
           "proof": ["examples/mechanical-cutaway.html", "data-film=\"mechanical-cutaway\""]
-        }
+        },
+        {"id": "graphic-field", "at": [21.6, 22.56], "label": "Pull. Warp. Return."},
+        {"id": "graphic-fill", "at": [22.56, 23.52], "label": "Inside the letters."},
+        {"id": "graphic-network", "at": [23.52, 24.48], "label": "Near enough to connect."},
+        {"id": "graphic-shadow", "at": [24.48, 25.44], "label": "A different kind of depth."},
+        {"id": "graphic-spatial", "at": [25.44, 26.4], "label": "Spatial lettering"}
       ],
       "groups": ["all", "showcase"]
     },
@@ -1046,6 +1046,132 @@
       ],
       "groups": ["all", "showcase", "mechanical", "technical"],
       "fps": 60
+    },
+    {
+      "id": "graphic-field",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "Pull. Warp. Return.",
+      "summary": "A dot lattice pulls into an authored force field, recovers, then becomes a perspective wave floor.",
+      "duration": 9.6,
+      "fps": 60,
+      "format": "16:9",
+      "page": "examples/graphic-field.html",
+      "media": {"mp4": "media/graphic-field.mp4", "poster": "media/graphic-field.jpg"},
+      "card": {
+        "headline": "Pull. Warp. Return.",
+        "description": "A dot lattice pulls into an authored force field, recovers, then becomes a perspective wave floor.",
+        "useFor": "Title design, graphic identities and motion backgrounds.",
+        "relation": "Full film of one controllable visual operation.",
+        "guide": "fx/graphic/README.md"
+      },
+      "audience": "Designers making graphic titles and animated backgrounds.",
+      "effects": [
+        {"id": "graphic-field"}
+      ],
+      "groups": ["all", "showcase", "graphic"]
+    },
+    {
+      "id": "graphic-fill",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "Inside the letters.",
+      "summary": "One glyph silhouette contains moving stripes, an authored liquid level and a two-tone boundary.",
+      "duration": 9.6,
+      "fps": 60,
+      "format": "16:9",
+      "page": "examples/graphic-fill.html",
+      "media": {"mp4": "media/graphic-fill.mp4", "poster": "media/graphic-fill.jpg"},
+      "card": {
+        "headline": "Inside the letters.",
+        "description": "One glyph silhouette contains moving stripes, an authored liquid level and a two-tone boundary.",
+        "useFor": "Title design, graphic identities and motion backgrounds.",
+        "relation": "Full film of one controllable visual operation.",
+        "guide": "fx/graphic/README.md"
+      },
+      "audience": "Designers making graphic titles and animated backgrounds.",
+      "effects": [
+        {"id": "graphic-fill"}
+      ],
+      "groups": ["all", "showcase", "graphic"]
+    },
+    {
+      "id": "graphic-network",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "Near enough to connect.",
+      "summary": "Distance changes which particles connect; pulses travel along the surviving links.",
+      "duration": 9.6,
+      "fps": 60,
+      "format": "16:9",
+      "page": "examples/graphic-network.html",
+      "media": {"mp4": "media/graphic-network.mp4", "poster": "media/graphic-network.jpg"},
+      "card": {
+        "headline": "Near enough to connect.",
+        "description": "Distance changes which particles connect; pulses travel along the surviving links.",
+        "useFor": "Title design, graphic identities and motion backgrounds.",
+        "relation": "Full film of one controllable visual operation.",
+        "guide": "fx/graphic/README.md"
+      },
+      "audience": "Designers making graphic titles and animated backgrounds.",
+      "effects": [
+        {"id": "graphic-network"}
+      ],
+      "groups": ["all", "showcase", "graphic"]
+    },
+    {
+      "id": "graphic-shadow",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "A different kind of depth.",
+      "summary": "The same flat word gains a long graphic shadow whose direction and length keep changing.",
+      "duration": 9.6,
+      "fps": 60,
+      "format": "16:9",
+      "page": "examples/graphic-shadow.html",
+      "media": {"mp4": "media/graphic-shadow.mp4", "poster": "media/graphic-shadow.jpg"},
+      "card": {
+        "headline": "A different kind of depth.",
+        "description": "The same flat word gains a long graphic shadow whose direction and length keep changing.",
+        "useFor": "Title design, graphic identities and motion backgrounds.",
+        "relation": "Full film of one controllable visual operation.",
+        "guide": "fx/graphic/README.md"
+      },
+      "audience": "Designers making graphic titles and animated backgrounds.",
+      "effects": [
+        {"id": "graphic-shadow"}
+      ],
+      "groups": ["all", "showcase", "graphic"]
+    },
+    {
+      "id": "graphic-extensions",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "Type. Flip. Flow.",
+      "summary": "Split-flap letters, rolling reels, counter-moving bands, three spatial arrangements, grid choreography, LED type and temporal echoes.",
+      "duration": 33.6,
+      "fps": 60,
+      "format": "16:9",
+      "page": "examples/graphic-extensions.html",
+      "media": {"mp4": "media/graphic-extensions.mp4", "poster": "media/graphic-extensions.jpg"},
+      "card": {
+        "headline": "Type. Flip. Flow.",
+        "description": "Split-flap letters, rolling reels, counter-moving bands, three spatial arrangements, grid choreography, LED type and temporal echoes.",
+        "useFor": "Title design, graphic identities and motion backgrounds.",
+        "relation": "Segments play inside their existing effect cards.",
+        "guide": "fx/graphic/README.md"
+      },
+      "audience": "Designers making graphic titles and animated backgrounds.",
+      "effects": [
+        {"id": "graphic-flap", "at": [0, 4.8], "proof": ["fx/graphic/app.js", "id:'graphic-flap'"]},
+        {"id": "graphic-reels", "at": [4.8, 9.6], "proof": ["fx/graphic/app.js", "id:'graphic-reels'"]},
+        {"id": "graphic-bands", "at": [9.6, 14.4], "proof": ["fx/graphic/app.js", "id:'graphic-bands'"]},
+        {"id": "graphic-spatial", "at": [14.4, 21.6], "proof": ["fx/graphic/app.js", "id:'graphic-spatial'"]},
+        {"id": "graphic-tiles", "at": [21.6, 26.4], "proof": ["fx/graphic/app.js", "id:'graphic-tiles'"]},
+        {"id": "graphic-led", "at": [26.4, 30], "proof": ["fx/graphic/app.js", "id:'graphic-led'"]},
+        {"id": "graphic-echo", "at": [30, 33.6], "proof": ["fx/graphic/app.js", "id:'graphic-echo'"]}
+      ],
+      "groups": ["all", "showcase", "graphic"]
     }
   ]
 }

@@ -15,6 +15,20 @@ const ffmpeg = (...args) => execFileSync('ffmpeg', ['-v', 'error', '-y', ...args
 const grey = file => { const px = ffmpeg('-i', file, '-f', 'rawvideo', '-pix_fmt', 'gray', '-'); return px.reduce((a, b) => a + b, 0) / px.length; };
 const frameIndex = level => level * 219 / 255 / 3;
 
+test('BT.709 saturated colours survive the conversion to a JPEG poster', () => {
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'poster-colour-'));
+  try {
+    const film=path.join(dir,'film.mp4'),poster=path.join(dir,'poster.jpg');
+    ffmpeg('-f','lavfi','-i','color=c=0xd3f54b:s=64x64:r=30:d=0.1,format=rgb24',
+      '-vf','scale=out_color_matrix=bt709,format=yuv420p','-colorspace','bt709',
+      '-color_primaries','bt709','-color_trc','bt709','-c:v','libx264',film);
+    execFileSync('python3',[DELIVER,'--poster',film,'0',poster]);
+    const rgb=file=>ffmpeg('-i',file,'-frames:v','1','-vf','format=rgb24','-f','rawvideo','-');
+    const a=rgb(film),b=rgb(poster),at=(32*64+32)*3;
+    for(let i=0;i<3;i++)assert.ok(Math.abs(a[at+i]-b[at+i])<4,'JPEG changes channel '+i);
+  } finally {fs.rmSync(dir,{recursive:true,force:true})}
+});
+
 test('the poster is the frame shown at the requested time, not two frames earlier', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'poster-frame-'));
   try {

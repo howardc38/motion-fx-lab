@@ -5,9 +5,10 @@
   // Generated from fx/manifest.json by tools/fx-manifest.cjs; edit the manifest, not this block.
   const GALLERY = {
     order: [
-      "optical-foil", "mechanical-cutaway", "domainrep", "plush-fur", "fluid-smoke", "reaction",
-      "mechanical-assembly", "studio-lowpoly", "gpuparticles", "studio-freeze-orbit",
-      "organic-contours", "dissolve", "mechanical-linkage", "dialogue-lipsync", "studio-skin-cloud",
+      "optical-foil", "graphic-field", "mechanical-cutaway", "domainrep", "graphic-fill",
+      "plush-fur", "fluid-smoke", "reaction", "mechanical-assembly", "graphic-shadow",
+      "studio-lowpoly", "gpuparticles", "studio-freeze-orbit", "organic-contours", "dissolve",
+      "graphic-network", "mechanical-linkage", "dialogue-lipsync", "studio-skin-cloud",
       "studio-echo", "rays", "stack-gpu", "design-type-orbit", "studio-video-dots", "chrome",
       "optical-slit", "clay", "water-material", "toon", "signal-motion-fragments", "cjk-solid",
       "studio-depth-dots", "optical-moire", "studio-portal", "optical-caustic", "optical-morph",

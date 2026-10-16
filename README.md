@@ -2,9 +2,9 @@
 
 **Code-made motion graphics → MP4 with sound.** Write the animation as a web page, yourself or with an AI coding assistant, and this repository renders it frame by frame to a checked MP4 with sound. Project code: [0BSD](LICENSE). Adapted helpers and assets retain their [third-party notices](THIRD_PARTY.md).
 
-[![Highlights from the intro video (no sound). Click for the full video with sound.](media/intro.gif?v=intro-5)](media/intro.mp4?v=intro-5)
+[![Highlights from the intro video (no sound). Click for the full video with sound.](media/intro.gif?v=intro-6)](media/intro.mp4?v=intro-6)
 
-▶ **[Intro video, with sound](media/intro.mp4?v=intro-5)** · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · No build step · Editable motion and sound
+▶ **[Intro video, with sound](media/intro.mp4?v=intro-6)** · **[Live gallery](https://howardc38.github.io/motion-fx-lab/)** · No build step · Editable motion and sound
 
 GitHub does not play repository videos inline, so the loop above is a short GIF (the only GIF in the repository); the film cards below are posters. The live gallery plays silent loops on its cards, the real videos with sound and every effect.
 
@@ -83,13 +83,13 @@ Each effect is a small function of time that draws one look or motion: materials
 | 3D space & particles | [Solid longitudinal cutaway](https://howardc38.github.io/motion-fx-lab/#demo-mechanical-cutaway) · [Infinite grid by domain repetition](https://howardc38.github.io/motion-fx-lab/#demo-domainrep) · [Low-poly flight course](https://howardc38.github.io/motion-fx-lab/#demo-studio-lowpoly) · [Particle flow into type](https://howardc38.github.io/motion-fx-lab/#demo-gpuparticles) · [Skinned point cloud](https://howardc38.github.io/motion-fx-lab/#demo-studio-skin-cloud) · [Orbital particles](https://howardc38.github.io/motion-fx-lab/#demo-stack-gpu) |
 | Physics & growth | [Volumetric smoke around geometry](https://howardc38.github.io/motion-fx-lab/#demo-fluid-smoke) · [Reaction–diffusion growing from text](https://howardc38.github.io/motion-fx-lab/#demo-reaction) · [Geared slider-crank mechanism](https://howardc38.github.io/motion-fx-lab/#demo-mechanical-linkage) · [Fluid flow and overflow](https://howardc38.github.io/motion-fx-lab/#demo-fluid-overflow) · [Rigid bodies with Matter.js](https://howardc38.github.io/motion-fx-lab/#demo-rigid) |
 | Characters | [Speech, expression and lip sync](https://howardc38.github.io/motion-fx-lab/#demo-dialogue-lipsync) · [Character shading](https://howardc38.github.io/motion-fx-lab/#demo-toon) · [Rigged 2D character](https://howardc38.github.io/motion-fx-lab/#demo-character-rig) |
-| Motion & timing | [Exploded assembly and reassembly](https://howardc38.github.io/motion-fx-lab/#demo-mechanical-assembly) · [Freeze frame and camera orbit](https://howardc38.github.io/motion-fx-lab/#demo-studio-freeze-orbit) · [Time echoes and speed ramps](https://howardc38.github.io/motion-fx-lab/#demo-studio-echo) · [Motion shatter and reassemble](https://howardc38.github.io/motion-fx-lab/#demo-signal-motion-fragments) · [Cross-frame style portal](https://howardc38.github.io/motion-fx-lab/#demo-studio-portal) · [Shape morphing](https://howardc38.github.io/motion-fx-lab/#demo-optical-morph) · [Drop, crown and rebound](https://howardc38.github.io/motion-fx-lab/#demo-water-impact) · [Folding paper ribbon](https://howardc38.github.io/motion-fx-lab/#demo-optical-ribbon) |
-| Backgrounds | [Organic closed contours](https://howardc38.github.io/motion-fx-lab/#demo-organic-contours) · [Bauhaus tile rhythm](https://howardc38.github.io/motion-fx-lab/#demo-rhythm) · [Noise ridgelines](https://howardc38.github.io/motion-fx-lab/#demo-ridgelines) |
+| Motion & timing | [Force-field dot deformation](https://howardc38.github.io/motion-fx-lab/#demo-graphic-field) · [Exploded assembly and reassembly](https://howardc38.github.io/motion-fx-lab/#demo-mechanical-assembly) · [Freeze frame and camera orbit](https://howardc38.github.io/motion-fx-lab/#demo-studio-freeze-orbit) · [Time echoes and speed ramps](https://howardc38.github.io/motion-fx-lab/#demo-studio-echo) · [Motion shatter and reassemble](https://howardc38.github.io/motion-fx-lab/#demo-signal-motion-fragments) · [Cross-frame style portal](https://howardc38.github.io/motion-fx-lab/#demo-studio-portal) · [Shape morphing](https://howardc38.github.io/motion-fx-lab/#demo-optical-morph) · [Drop, crown and rebound](https://howardc38.github.io/motion-fx-lab/#demo-water-impact) · [Folding paper ribbon](https://howardc38.github.io/motion-fx-lab/#demo-optical-ribbon) |
+| Backgrounds | [Organic closed contours](https://howardc38.github.io/motion-fx-lab/#demo-organic-contours) · [Proximity particle connections](https://howardc38.github.io/motion-fx-lab/#demo-graphic-network) · [Bauhaus tile rhythm](https://howardc38.github.io/motion-fx-lab/#demo-rhythm) · [Noise ridgelines](https://howardc38.github.io/motion-fx-lab/#demo-ridgelines) |
 | UI & data | [3D card flip grid](https://howardc38.github.io/motion-fx-lab/#demo-cardflip) |
-| Type | [Type in three-dimensional space](https://howardc38.github.io/motion-fx-lab/#demo-design-type-orbit) · [Slit-scan typography](https://howardc38.github.io/motion-fx-lab/#demo-optical-slit) · [Solid lettering](https://howardc38.github.io/motion-fx-lab/#demo-cjk-solid) · [Variable-font kinetic type](https://howardc38.github.io/motion-fx-lab/#demo-vartype) · [Signal breakup](https://howardc38.github.io/motion-fx-lab/#demo-glitch) · [Whip-in letters + motion blur](https://howardc38.github.io/motion-fx-lab/#demo-whip) |
+| Type | [Animated glyph interiors](https://howardc38.github.io/motion-fx-lab/#demo-graphic-fill) · [Graphic long-shadow type](https://howardc38.github.io/motion-fx-lab/#demo-graphic-shadow) · [Type in three-dimensional space](https://howardc38.github.io/motion-fx-lab/#demo-design-type-orbit) · [Slit-scan typography](https://howardc38.github.io/motion-fx-lab/#demo-optical-slit) · [Solid lettering](https://howardc38.github.io/motion-fx-lab/#demo-cjk-solid) · [Variable-font kinetic type](https://howardc38.github.io/motion-fx-lab/#demo-vartype) · [Signal breakup](https://howardc38.github.io/motion-fx-lab/#demo-glitch) · [Whip-in letters + motion blur](https://howardc38.github.io/motion-fx-lab/#demo-whip) |
 | Motion basics | [Camera move over real UI](https://howardc38.github.io/motion-fx-lab/#demo-uifly) · [3-second headline hook](https://howardc38.github.io/motion-fx-lab/#demo-hook) · [Staggered letter animation](https://howardc38.github.io/motion-fx-lab/#demo-chars) · [Word-synced captions](https://howardc38.github.io/motion-fx-lab/#demo-karaoke) · [Stroke reveal](https://howardc38.github.io/motion-fx-lab/#demo-datachart) · [Timing: squash and stretch with its graph](https://howardc38.github.io/motion-fx-lab/#demo-timing) · [Frosted glass card](https://howardc38.github.io/motion-fx-lab/#demo-glass) · [Light sweep](https://howardc38.github.io/motion-fx-lab/#demo-sweep) · [Red flash + shake + stamp](https://howardc38.github.io/motion-fx-lab/#demo-stamp) · [Beat sync](https://howardc38.github.io/motion-fx-lab/#demo-beat) · [Sticker labels](https://howardc38.github.io/motion-fx-lab/#demo-sticker) · [Soft colour fields](https://howardc38.github.io/motion-fx-lab/#demo-gradient) · [Countdown ring](https://howardc38.github.io/motion-fx-lab/#demo-ring) · [Counting number](https://howardc38.github.io/motion-fx-lab/#demo-count) · [Typewriter](https://howardc38.github.io/motion-fx-lab/#demo-type) · [Highlighter](https://howardc38.github.io/motion-fx-lab/#demo-mark) · [Scan and check](https://howardc38.github.io/motion-fx-lab/#demo-scan) · [0.5 s wipe](https://howardc38.github.io/motion-fx-lab/#demo-wipe) · [Cool vs warm colour grade](https://howardc38.github.io/motion-fx-lab/#demo-lut) · [Source size and soft shadows](https://howardc38.github.io/motion-fx-lab/#demo-design-soft-shadow) · [Film grain](https://howardc38.github.io/motion-fx-lab/#demo-grain) |
 
-Code families with their own guide: [stacks](examples/stack-lab/README.md) · [studio](assets/studio/README.md) · [materials](fx/material-studies/README.md) · [fluid](tools/blender/README.md) · [design](fx/design/README.md) · [signals](fx/signals/README.md) · [character](fx/character/README.md) · [dialogue](fx/dialogue/README.md) · [plush](fx/plush/README.md) · [mechanical](fx/mechanical/README.md).
+Code families with their own guide: [stacks](examples/stack-lab/README.md) · [studio](assets/studio/README.md) · [materials](fx/material-studies/README.md) · [fluid](tools/blender/README.md) · [design](fx/design/README.md) · [signals](fx/signals/README.md) · [character](fx/character/README.md) · [dialogue](fx/dialogue/README.md) · [plush](fx/plush/README.md) · [mechanical](fx/mechanical/README.md) · [graphic](fx/graphic/README.md).
 <!-- fx:effects:end -->
 
 ## Make your own video
@@ -135,11 +135,11 @@ page.html ─ record.cjs cues ─► cues.json ─► sfx.py + music.py ─► m
 `examples/films.json` is the only source for this table, the site's film cards and lists, and `fx/films-data.js`; run `npm run sync:films` after editing it. Effect films also play inside their effect cards on the site.
 
 <!-- films:start -->
-36 published films: 1 intro, 15 use cases, 7 demo films, 1 comparison and 12 effect films. Effect films also play inside their effect cards.
+41 published films: 1 intro, 15 use cases, 7 demo films, 1 comparison and 17 effect films. Effect films also play inside their effect cards.
 
 | Layer | Film | Authored length | Format | Preview | Source |
 |---|---|---:|---|---|---|
-| Intro | [Intro](media/intro.mp4?v=intro-5) | 55.2 s | 16:9 | [loop](media/intro.preview.mp4?v=intro-5) · [GIF](media/intro.gif?v=intro-5) · [poster](media/intro.jpg?v=intro-5) | [HTML](video/intro.html) |
+| Intro | [Intro](media/intro.mp4?v=intro-6) | 55.2 s | 16:9 | [loop](media/intro.preview.mp4?v=intro-6) · [GIF](media/intro.gif?v=intro-6) · [poster](media/intro.jpg?v=intro-6) | [HTML](video/intro.html) |
 | Use case | [This weekend only](media/reel.mp4) | 12 s | 9:16 | [loop](media/reel.preview.mp4) · [poster](media/reel.jpg) | [HTML](examples/reel.html) |
 | Use case | [This weekend only (bakery)](media/reel-bakery.mp4) | 12 s | 9:16 | [poster](media/reel-bakery.jpg) | [HTML](examples/reel-bakery.html) |
 | Use case | [This weekend only (yoga studio)](media/reel-yoga.mp4) | 12 s | 9:16 | [poster](media/reel-yoga.jpg) | [HTML](examples/reel-yoga.html) |
@@ -175,6 +175,11 @@ page.html ─ record.cjs cues ─► cues.json ─► sfx.py + music.py ─► m
 | Effect film | [Apart. Together.](media/mechanical-assembly.mp4) | 14.4 s | 16:9 | [poster](media/mechanical-assembly.jpg) | [HTML](examples/mechanical-assembly.html) |
 | Effect film | [Inside the machine.](media/mechanical-cutaway.mp4) | 14.4 s | 16:9 | [poster](media/mechanical-cutaway.jpg) | [HTML](examples/mechanical-cutaway.html) |
 | Effect film | [One turn. Everything moves.](media/mechanical-linkage.mp4) | 14.4 s | 16:9 | [poster](media/mechanical-linkage.jpg) | [HTML](examples/mechanical-linkage.html) |
+| Effect film | [Pull. Warp. Return.](media/graphic-field.mp4) | 9.6 s | 16:9 | [poster](media/graphic-field.jpg) | [HTML](examples/graphic-field.html) |
+| Effect film | [Inside the letters.](media/graphic-fill.mp4) | 9.6 s | 16:9 | [poster](media/graphic-fill.jpg) | [HTML](examples/graphic-fill.html) |
+| Effect film | [Near enough to connect.](media/graphic-network.mp4) | 9.6 s | 16:9 | [poster](media/graphic-network.jpg) | [HTML](examples/graphic-network.html) |
+| Effect film | [A different kind of depth.](media/graphic-shadow.mp4) | 9.6 s | 16:9 | [poster](media/graphic-shadow.jpg) | [HTML](examples/graphic-shadow.html) |
+| Effect film | [Type. Flip. Flow.](media/graphic-extensions.mp4) | 33.6 s | 16:9 | [poster](media/graphic-extensions.jpg) | [HTML](examples/graphic-extensions.html) |
 <!-- films:end -->
 
 A loop (or the intro's GIF) is a silent selection of shots, not the full film. To cut the loops again from films already in `media/`, without rendering, run `node tools/make-previews.cjs` (add `--posters` to take each poster again). MP4 container durations can be about 0.1 s longer than the authored timeline because of the final frame and encoding timestamps.
@@ -195,7 +200,7 @@ An appearance change to a shared renderer means rebuilding the films that use it
 | 0–2.4 s | Motion graphics in plain HTML, made by you or your AI coding assistant |
 | 2.4–16.8 s | Six use cases, 2.4 s each, each played from its own published page: shop promo (9:16), feature launch, year in numbers, product spotlight (4:5), event countdown and B-roll loops |
 | 16.8–21.6 s | A shot from The Final Final: the startled plush bear asks whether the launch video is ready and Pip answers "I made it more dramatic", with mouth cues, expressions and gestures in sync |
-| 21.6–26.4 s | Five distinct effects: holographic foil, motion shatter, spatial type, a geared mechanism and volumetric smoke |
+| 21.6–26.4 s | Force-field dots, animated glyph interiors, distance connections, graphic long shadows and a 3D word tunnel |
 | 26.4–33.6 s | One Flight, Twenty Worlds: six readable styles, then the twenty-style overview |
 | 33.6–38.4 s | Spark / Form, played from its published page: ember drawing, a dive through the O, then solid engraved lettering |
 | 38.4–43.2 s | Mechanical inspection: ordered service disassembly, then a moving solid section through the same detailed engine |
@@ -215,6 +220,10 @@ Source: [intro.html](video/intro.html) and [intro-stories.js](fx/intro-stories.j
 | Quiet or rejected uploads | Audio is limited, then brought to −14 LUFS by a linear gain, and its loudness and true peak are measured on the final file. AAC stays within 128 kbps for Reels. |
 | CJK text | Solid lettering uses bundled CJK vector outlines; unsupported glyphs report how to rebuild the subset. |
 | Licence worries | Project code under 0BSD; adapted mechanical helpers keep MIT notices. Music and sound effects are synthesised in code; see [THIRD_PARTY.md](THIRD_PARTY.md) for all retained notices. |
+
+## Graphic motion
+
+Four distinct operations cover force-field dots, animated glyph interiors, proximity connections and flat long-shadow type. [The graphic guide](fx/graphic/README.md) documents editable controls and the seven extensions to existing cards: split-flap letters, rolling reels, text bands, spatial lettering, grid choreography, LED lettering and temporal echoes. The four effect films and the segmented extension sampler play from those cards. All export at 1080p60 using Canvas 2D and the existing three.js core.
 
 ## Mechanical and technical films
 
@@ -262,7 +271,7 @@ References checked on 2026-10-03: [Remotion licence](https://github.com/remotion
 | `fx/manifest.json`, `tools/fx-manifest.cjs` | Which scripts register which effects, in load order, and the gallery order (`npm run sync:fx`) |
 | `fx/catalog.js` | Effects, variants, Motion basics and presets: which demo belongs to which card |
 | `fx/demos.js`, `fx/pack-*.js` | The core effects and the packs that register more with `FX.demo` |
-| `fx/<family>/`, `fx/*-effects.js` | Larger effect families (studio, materials, fluid, design, signals, character, dialogue, plush, stacks, mechanical), each with its guide |
+| `fx/<family>/`, `fx/*-effects.js` | Larger effect families (studio, materials, fluid, design, signals, character, dialogue, plush, stacks, mechanical, graphic), each with its guide |
 | `examples/`, `examples/films.json` | Film pages and the published film list; `tools/films.cjs` validates it and writes the generated blocks |
 | `video/engine.js` | Timeline engine: scenes, `data-fx` animations, wipes, sound cues and the preview scrub bar |
 | `video/record.cjs`, `video/deliver.py`, `video/build.sh` | Render twice and compare, master the sound, deliver and check the files |

@@ -174,7 +174,7 @@ test("intro plays the published use cases, edits a real line and seeks reproduci
   const shot = async t => { await page.evaluate(t => __render(t), t); return page.screenshot({ clip: { x: 0, y: 0, width: 1920, height: 1080 } }); };
   for (const t of [13.0, 46.5]) { const first = await shot(t); await shot(t - 4); expect((await shot(t)).equals(first), `frame at ${t} s`).toBe(true); }
   // D4: the intro names no exact effect count, so adding or merging an effect never forces a re-render.
-  await expect(page.locator('#scLib')).toContainText('Dozens of effect techniques');
+  await expect(page.locator('#scLib')).toContainText('Type. Patterns. Motion.');
   expect(await page.locator('#scLib, #scCta').evaluateAll(els => els.map(e => e.textContent).join(' '))).not.toMatch(/\d+ (effect )?techniques/);
   expect(await page.locator('#scStacks').count()).toBe(0);
 });
