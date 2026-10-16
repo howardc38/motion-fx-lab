@@ -1,0 +1,13 @@
+{
+  "title": "Spark / Form score",
+  "license": "0BSD",
+  "origin": "Original fixed-seed instrumental and drawing foley, authored here. No source-post recording or lyrics.",
+  "audio": {
+    "file": "score.wav",
+    "sha256": "b363486c0c85d20bc0f6a4bad2096fdb76bf3c7f3125cb8613e00e493a97c84c",
+    "duration": 16.8,
+    "sampleRate": 48000,
+    "channels": 2
+  },
+  "generator": "tools/spark-form/make-score.py"
+}

@@ -1,0 +1,11 @@
+Adapted code: AirsupHQ/machine-skill
+https://github.com/AirsupHQ/machine-skill/tree/e0bd066ac5beaf48512935de2fc0f0e55636853a
+Copyright (c) 2026 Air Supply Technologies Inc. (Airsup), MIT.
+
+vendor.js: geometry builders, material recipes, procedural finish textures and studio environment.
+turbofan.js: procedural turbofan geometry, adapted from examples/turbofan.html.
+The numerical film clock, section-cap geometry, assembly sequencing, audit, staging and UI are authored here.
+
+Anatomy verification and motion references informed the geometric review method:
+https://github.com/wheresryan22/anatomy/tree/e9488296a44211c42701ff71705b7901470ec78f
+No Anatomy source code or artwork is copied; its checks are not claimed to run on these models.

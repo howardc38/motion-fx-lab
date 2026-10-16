@@ -37,6 +37,9 @@ Each entry gives:
   (`mp4`, `poster`; `preview`, the silent card loop, for every film with a card and the intro; `gif` only for the intro,
   the README hero), `card` copy (`headline`, `description`, `useFor`,
   `relation`, optional `guide`), `audience` and the build `groups`.
+- Optional `fps` (24, 25, 30, 50 or 60; omitted means 30). The registered build passes it to the recorder.
+  A page can declare `window.__FPS`; the media check compares the page, manifest and delivered file.
+  For a direct `bash video/build.sh` call, set `RECORD_ARGS="--fps 60"` explicitly when required.
 - `effects`: the catalogue ids the film's source actually runs, each with an optional `at: [start, end]` in seconds.
   A sampler gives every effect its segment, so each effect card can play its own part. Ids that only inspired the
   film go in `related`. The check needs evidence for each listed effect: either the page names it (`data-fx`,
@@ -59,6 +62,8 @@ The generated blocks are `films:hero`, `films:uses`, `films:demos`, `films:summa
 links. Counts name films only; no generated text states an exact number of effects.
 
 To add a film: put the page under `examples/`, add its entry, build it, run `sync:films`, then both checks.
+The build allows only its selected films' media to be missing, so it can create a new bundle; missing
+source pages, guides, unselected bundles and unexpected media still fail. Publication checks require every bundle.
 
 **Moving from version 1.** `node tools/films.cjs --migrate` reads a version 1 `examples/films.json` and writes
 `examples/films.next.json`. It keeps every v1 value (`source` becomes `page`, `description` becomes `summary`, and

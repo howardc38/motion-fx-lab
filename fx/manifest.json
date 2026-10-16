@@ -303,6 +303,57 @@
           "fx/plush/README.md"
         ]
       }
+    },
+    {
+      "id": "mechanical",
+      "scripts": [
+        "fx/mechanical-effects.js",
+        "fx/pack-mechanical.js"
+      ],
+      "cacheTag": "mechanical-1",
+      "readme": "fx/mechanical/README.md",
+      "anchor": "id:'{id}'",
+      "sources": {
+        "mechanical-assembly": [
+          "fx/mechanical-effects.js",
+          "fx/pack-mechanical.js",
+          "fx/mechanical/app.js",
+          "fx/mechanical/model.js",
+          "fx/mechanical/geometry.js",
+          "fx/mechanical/stage.js",
+          "fx/mechanical/audit.js",
+          "fx/mechanical/README.md",
+          "fx/mechanical/turbofan.js",
+          "fx/mechanical/vendor.js",
+          "fx/mechanical/player.js"
+        ],
+        "mechanical-cutaway": [
+          "fx/mechanical-effects.js",
+          "fx/pack-mechanical.js",
+          "fx/mechanical/app.js",
+          "fx/mechanical/model.js",
+          "fx/mechanical/geometry.js",
+          "fx/mechanical/stage.js",
+          "fx/mechanical/audit.js",
+          "fx/mechanical/README.md",
+          "fx/mechanical/turbofan.js",
+          "fx/mechanical/vendor.js",
+          "fx/mechanical/player.js"
+        ],
+        "mechanical-linkage": [
+          "fx/mechanical-effects.js",
+          "fx/pack-mechanical.js",
+          "fx/mechanical/app.js",
+          "fx/mechanical/model.js",
+          "fx/mechanical/geometry.js",
+          "fx/mechanical/stage.js",
+          "fx/mechanical/audit.js",
+          "fx/mechanical/README.md",
+          "fx/mechanical/mechanism.js",
+          "fx/mechanical/vendor.js",
+          "fx/mechanical/player.js"
+        ]
+      }
     }
   ],
   "catalog": {
@@ -314,15 +365,18 @@
     "$comment": "order: effect cards curated by visual impact (judged on tile screenshots) and contrast between neighbouring looks, then the Motion basics; every gallery family must be listed once. showcaseOrder: the same for the comparison and scene presets. previewDefault: the variant a card shows first. previewHero: the frame time shown while motion is paused (gpuparticles shows the flowing form). previewWindow: [start, end] of the demo time a card loops, where a shared film timeline starts or ends with a long calm stretch (films and the intro still play the whole timeline).",
     "order": [
       "optical-foil",
+      "mechanical-cutaway",
       "domainrep",
       "plush-fur",
       "fluid-smoke",
       "reaction",
+      "mechanical-assembly",
       "studio-lowpoly",
       "gpuparticles",
       "studio-freeze-orbit",
       "organic-contours",
       "dissolve",
+      "mechanical-linkage",
       "dialogue-lipsync",
       "studio-skin-cloud",
       "studio-echo",
@@ -386,8 +440,26 @@
       "gpuparticles": 1.5
     },
     "previewWindow": {
-      "signal-motion-fragments": [1, 8],
-      "dialogue-lipsync": [0, 10.7]
+      "signal-motion-fragments": [
+        1,
+        8
+      ],
+      "dialogue-lipsync": [
+        0,
+        10.7
+      ],
+      "mechanical-assembly": [
+        1.8,
+        12.8
+      ],
+      "mechanical-cutaway": [
+        1.8,
+        12.8
+      ],
+      "mechanical-linkage": [
+        1.8,
+        12.8
+      ]
     }
   }
 }

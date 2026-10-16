@@ -31,14 +31,17 @@ export function label(g, title, sub, color = "#eaf3ed") {
   g.font = "700 38px Arial";
   g.fillText(title, 46, 101);
 }
-let shared;
-export function stage3D() {
+const sharedBySize = new Map();
+export function stage3D({width=W,height=H,alpha=false}={}) {
+  const key = width+'x'+height+'/'+alpha;
+  let shared = sharedBySize.get(key);
   if (!shared) {
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       preserveDrawingBuffer: true,
+      alpha,
     });
-    renderer.setSize(W, H);
+    renderer.setSize(width, height);
     renderer.setPixelRatio(1);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -49,11 +52,13 @@ export function stage3D() {
     room.dispose();
     pmrem.dispose();
     shared = { renderer, environment: env.texture };
+    (window.__fxRenderers ||= []).push(renderer);
+    sharedBySize.set(key, shared);
   }
   const scene = new THREE.Scene();
   scene.environment = shared.environment;
   scene.background = new THREE.Color("#08202c");
-  const camera = new THREE.PerspectiveCamera(36, W / H, 0.1, 120);
+  const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 120);
   camera.position.set(6, 4, 9);
   camera.lookAt(0, 0.5, 0);
   scene.add(new THREE.HemisphereLight("#e5fbff", "#193b54", 2.8));
@@ -61,6 +66,7 @@ export function stage3D() {
   sun.position.set(-4, 8, 6);
   scene.add(sun);
   const { canvas, g } = surface();
+  canvas.width=width;canvas.height=height;
   return {
     scene,
     camera,
@@ -72,7 +78,7 @@ export function stage3D() {
       if (r.getContext().isContextLost())
         throw new Error("Material renderer lost its WebGL context");
       r.render(scene, camera);
-      g.clearRect(0, 0, W, H);
+      g.clearRect(0, 0, width, height);
       g.drawImage(r.domElement, 0, 0);
     },
   };

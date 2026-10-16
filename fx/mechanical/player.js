@@ -1,0 +1,15 @@
+import {create,FILMS} from './app.js';
+const id=document.body.dataset.film,meta=FILMS[id],canvasHolder=document.getElementById('picture'),bar=document.getElementById('scrub'),play=document.getElementById('play'),parameter=document.getElementById('parameter');
+if(!meta)throw Error('Unknown film '+id);
+window.__SIZE={w:1920,h:1080};window.__DUR=meta.duration;window.__poster=meta.poster;window.__FPS=60;
+window.__cues=()=>[{t:1.8,name:'riser',gain:.35},{t:4.8,name:'thump',gain:.32},{t:12.6,name:'chime',gain:.25}];
+window.__music=[[0,'build'],[2.4,'drop'],[7.2,'lift'],[9.6,'break'],[12,'tail']];
+let effect,record=false,playing=false,at=0,start=0,manual=false;
+window.__render=async t=>{await window.__ready;const o={};if(manual&&!record){if(id==='mechanical-assembly')o.explode=+parameter.value;if(id==='mechanical-cutaway')o.cutZ=+parameter.value;if(id==='mechanical-linkage')o.rpm=+parameter.value}effect.frame(t,o);bar.value=t;document.getElementById('time').textContent=t.toFixed(1)+' / '+meta.duration};
+window.__record=async()=>{record=true;playing=false;document.body.classList.add('record')};
+window.__ready=(async()=>{effect=create(id,{width:1920,height:1080});canvasHolder.append(effect.canvas);window.__effect=effect;await document.fonts.ready;effect.frame(0)})();
+bar.max=meta.duration;bar.oninput=()=>{at=+bar.value;playing=false;play.textContent='Play';window.__render(at)};
+parameter.oninput=()=>{manual=true;playing=false;at=0;play.textContent='Play';window.__render(at)};
+document.getElementById('timeline').onclick=()=>{manual=false;window.__render(at)};
+play.onclick=()=>{playing=!playing;if(at>=meta.duration)at=0;start=performance.now()-at*1000;play.textContent=playing?'Pause':'Play'};
+function tick(now){if(playing&&!record){at=Math.min(meta.duration,(now-start)/1000);window.__render(at);if(at>=meta.duration){playing=false;play.textContent='Play again'}}requestAnimationFrame(tick)}requestAnimationFrame(tick);

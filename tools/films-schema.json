@@ -93,6 +93,7 @@
         "title": { "$ref": "#/$defs/text" },
         "summary": { "description": "One line for the film list, README and viewing guide.", "$ref": "#/$defs/text" },
         "duration": { "description": "Authored length in seconds (window.__DUR).", "type": "number", "exclusiveMinimum": 0 },
+        "fps": { "description": "Delivery frame rate; omitted means 30. The build passes it to the recorder, and media checks compare it with window.__FPS when declared.", "enum": [24, 25, 30, 50, 60] },
         "format": { "enum": ["16:9", "9:16", "4:5", "1:1"] },
         "page": {
           "description": "The editable page that video/build.sh renders.",

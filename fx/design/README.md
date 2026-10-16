@@ -5,6 +5,22 @@ runtime library, external artwork, video or model is needed.
 
 ## Films
 
+**Spark / Form** is a finished demo film, not a new technique family. Its source is
+[`../spark-form.js`](../spark-form.js), played by [`examples/spark-form.html`](../../examples/spark-form.html).
+An authored ember draws the construction lettering, the camera enters its O, and the paper scene
+actually calls `material-studies/type.js` in `engraved` mode with the existing `inkMaterial` from
+`design/ink.js`. The catalogue links therefore name solid lettering and surface hatching. The
+hand-drawn reveal and corridor are authored transitions; related gallery capabilities are marked
+as related rather than claimed to run. The 16.8-second film renders at 60 fps, has its own original
+score, and publishes an MP4 card loop rather than another GIF.
+
+The four-letter word and O counter are part of this composition. To change them, update the
+letter outline source, the `text:'FORM'` solid-word call, the end card, and the dive's `focus` point;
+other word lengths need a layout pass. Edit drawing/camera timing in `blueprint`, `portal` and
+`solid`; it remains a pure function of time. Optional score regeneration is documented by
+`tools/spark-form/make-score.py` and its pinned requirements. Build with
+`node tools/films.cjs build spark-form`.
+
 | Film | Timeline | Story |
 |---|---:|---|
 | [One dot. Many roles.](../../examples/dot-story.html) | 14.1 s | Toggle → letter (with a ripple) → a 1.2 s spring trace → shape → spatial type → dot reveal → title held 1.5 s → return to toggle. |

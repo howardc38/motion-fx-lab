@@ -44,7 +44,7 @@ Every published film has one layer. Use cases and demo films get cards in their 
 <!-- films:guide:start -->
 | Film | Layer | Role | Placement |
 |---|---|---|---|
-| Intro | Intro | A guided overview: six use cases played from their own pages, a voiced character, an effect montage and short stories, then a one-line edit rendered to MP4. | Top of the page |
+| Intro | Intro | A guided overview: editable use cases, a voiced character, distinct effects, art direction, Spark / Form and mechanical inspection, then a one-line edit rendered to MP4. | Top of the page |
 | This weekend only | Use case | A 9:16 weekend promo for a small shop: hook, product, offer and call to action inside every app’s safe area. | Card in Use cases |
 | This weekend only (bakery) | Use case | Bakery version of This weekend only, rendered from the same page. | Linked from the This weekend only card |
 | This weekend only (yoga studio) | Use case | Yoga studio version of This weekend only, rendered from the same page. | Linked from the This weekend only card |
@@ -60,6 +60,7 @@ Every published film has one layer. Use cases and demo films get cards in their 
 | Product spotlight | Use case | A code-drawn product drops in, gains three callouts, changes colourway and ends on price and call to action. | Card in Use cases |
 | Product spotlight (vertical) | Use case | Vertical version of Product spotlight, rendered from the same page. | Linked from the Product spotlight card |
 | Product spotlight (square) | Use case | Square version of Product spotlight, rendered from the same page. | Linked from the Product spotlight card |
+| Spark / Form | Demo film | An ember traces a construction drawing, the camera enters its O, and the same word resolves as engraved three-dimensional lettering. | Card in Demo films |
 | The Final Final | Demo film | The plush bear asks for the launch video; Pip has made one small, dramatic improvement. Nine library effects play a part in the story. | Card in Demo films |
 | One flight. Twenty worlds. | Demo film | One character travels through twenty art directions. | Card in Demo films |
 | Clear | Demo film | A 15-second drinks advert: a drop crowns, rises into a glass bottle, dives underwater and surfaces as the brand. | Card in Demo films |
@@ -76,6 +77,9 @@ Every published film has one layer. Use cases and demo films get cards in their 
 | Pulse / Form | Effect film | Measured loudness pushes Milo’s portrait out into solid pins; silence is flat. | Effect card: Image relief |
 | Motion / Release | Effect film | Apricot shatters only where measured motion is fast and reassembles when she lands. | Effect card: Motion shatter and reassemble |
 | Say it. Mean it. | Effect film | The plush bear in close-up: three named expressions, a split-screen line and the nine mouth shapes. | Effect cards: Speech, expression and lip sync, Plush fur |
+| Apart. Together. | Effect film | A detailed turbofan opens into seven service assemblies and returns along their ordered paths. | Effect card: Exploded assembly and reassembly |
+| Inside the machine. | Effect film | A section plane opens closed housings while the detailed core keeps moving; real cap geometry preserves wall thickness. | Effect card: Solid longitudinal cutaway |
+| One turn. Everything moves. | Effect film | A 20:40 gear pair drives a crank, rod, piston and tachometer from one analytic model. | Effect card: Geared slider-crank mechanism |
 <!-- films:guide:end -->
 
 The effect links on a film name the catalogue effects its source actually runs; `tools/films.cjs --check` finds each one in the film's code. Effects that only inspired a film are listed as related, not as effects.

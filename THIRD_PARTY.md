@@ -22,12 +22,38 @@ source are retained in [`examples/stack-lab/NOTICE`](examples/stack-lab/NOTICE).
 No new third-party runtime library binaries are bundled. The CJK outline asset is documented below; film frames are rendered from
 the procedural effects in this repository.
 
+## Adapted mechanical geometry and material helpers (MIT)
+
+`fx/mechanical/vendor.js` and `fx/mechanical/turbofan.js` adapt geometry builders, material
+recipes, procedural finish textures, studio environment and the detailed turbofan model from
+[AirsupHQ/machine-skill](https://github.com/AirsupHQ/machine-skill/tree/e0bd066ac5beaf48512935de2fc0f0e55636853a),
+Copyright (c) 2026 Air Supply Technologies Inc. (Airsup), under MIT. Its full notice is retained in
+[`fx/mechanical/LICENSE-MIT.txt`](fx/mechanical/LICENSE-MIT.txt), with the adapted scope in
+[`fx/mechanical/NOTICE`](fx/mechanical/NOTICE). The project's 0BSD licence does not replace this notice.
+The source runtime clock, UI and back-face section shader are not copied. The closed shell halves,
+profile-derived section triangles, absolute-time motion, geared demonstrator and geometric checker
+are authored here. No reference-post footage, recording or downloaded product model is bundled.
+
+[Anatomy's verification and motion references](https://github.com/wheresryan22/anatomy/tree/e9488296a44211c42701ff71705b7901470ec78f/references)
+informed the method: register what is drawn, check motion between poses, and test the checker with
+deliberate faults. No Anatomy code or artwork is copied, and its audit is not claimed to certify these models.
+
+## Spark / Form
+
+The drawing, camera passage, composition and score are original. The finished film uses the existing
+Noto Sans TC outline asset, solid-lettering renderer and object-space surface-hatching material.
+`assets/spark-form/score.wav` is synthesised from a fixed seed; its hash and origin are in
+[`assets/spark-form/manifest.json`](assets/spark-form/manifest.json). Regenerating that optional score
+uses NumPy 2.5.4 (BSD-3-Clause) and SciPy 1.18.1 (BSD-3-Clause); pinned dependencies are in
+`tools/spark-form/requirements.txt`. Browser playback and video rendering do not require them.
+
 ## Drawn by the operating system
 
 Emoji and a few symbols in the tiles and the intro (for example ✓ ★) are not in the web fonts
 above, so the browser draws them with the system's fonts at render time. On macOS, where
 `media/intro.mp4` was rendered, these were Apple Color Emoji, Lucida Grande and PingFang HK. No
-system font is bundled; renders on other systems use that system's glyphs.
+system font is bundled; renders on other systems use that system's glyphs. The technical films also
+use system Arial, Courier New and Baskerville (with portable fallbacks), without distributing font files.
 
 ## Made here
 

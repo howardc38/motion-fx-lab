@@ -29,6 +29,11 @@ const hasCard = f => f.tier === 'featured' || (f.tier === 'listed' && f.versionO
 // Media policy (D5): a film with a card, and the intro, has a silent loop (media.preview, cut by video/preview.py
 // from window.__preview clips); only the intro keeps a GIF, the README hero. Versions and effect films have neither.
 const needsPreview = f => f.tier === 'hero' || hasCard(f);
+function recordArgs(film,extra='') {
+  const fps=film.fps??30,match=extra.match(/(?:^|\s)--fps\s+(\S+)/);
+  if(match&&Number(match[1])!==fps)throw Error(`${film.id}: --fps ${match[1]} conflicts with manifest fps ${fps}`);
+  return (match?extra:`${extra} --fps ${fps}`).trim();
+}
 
 // ---------------------------------------------------------------- JSON Schema (the subset the schema uses)
 function schemaErrors(schema, value, at = '$', root = schema) {
@@ -149,7 +154,7 @@ function load(root = ROOT) {
   if (!fs.existsSync(path.join(root, NEXT))) return { manifest: migrate(raw, null), from: null, v1: raw };
   return { manifest: readJSON(NEXT, root), from: NEXT, v1: raw };
 }
-function validateManifest(manifest, { root = ROOT, catalog = loadCatalog(root) } = {}) {
+function validateManifest(manifest, { root = ROOT, catalog = loadCatalog(root), allowMissingMediaFor = new Set() } = {}) {
   const schema = readJSON(SCHEMA, root), errors = schemaErrors(schema, manifest);
   if (errors.length) return errors;
   const layerIds = manifest.layers.map(l => l.id), allLayers = schema.$defs.layer.enum;
@@ -182,7 +187,8 @@ function validateManifest(manifest, { root = ROOT, catalog = loadCatalog(root) }
     const files = [film.page, ...Object.values(film.media), ...(film.card.guide ? [film.card.guide] : [])];
     for (const file of files) {
       const target = path.resolve(root, clean(file));
-      if (!target.startsWith(root + path.sep) || !fs.existsSync(target)) errors.push(`${where}: missing or outside file ${file}`);
+      const pending=allowMissingMediaFor.has(film.id)&&Object.values(film.media).includes(file);
+      if (!target.startsWith(root + path.sep) || (!fs.existsSync(target)&&!pending)) errors.push(`${where}: missing or outside file ${file}`);
     }
     if (fs.existsSync(path.join(root, clean(film.page)))) {
       const reach = closure(film.page, root);
@@ -196,9 +202,11 @@ function validateManifest(manifest, { root = ROOT, catalog = loadCatalog(root) }
     if (!parent || parent.layer !== film.layer || !hasCard(parent)) errors.push(`film ${film.id}: versionOf ${film.versionOf} must name a film with a card in the same layer`);
   }
   const expected = manifest.films.flatMap(f => Object.values(f.media).map(clean)).sort();
+  const pendingMedia = new Set(manifest.films.filter(f=>allowMissingMediaFor.has(f.id)).flatMap(f=>Object.values(f.media).map(clean)));
   if (fs.existsSync(path.join(root, 'media'))) {
     const actual = fs.readdirSync(path.join(root, 'media')).filter(n => !n.startsWith('.') && !n.endsWith('_hq.mp4')).map(n => 'media/' + n).sort();
-    if (JSON.stringify(actual) !== JSON.stringify(expected)) errors.push('media/ differs from the published film manifest: ' + [...actual.filter(f => !expected.includes(f)).map(f => '+' + f), ...expected.filter(f => !actual.includes(f)).map(f => '-' + f)].join(' '));
+    const extra=actual.filter(f=>!expected.includes(f)),missing=expected.filter(f=>!actual.includes(f)&&!pendingMedia.has(f));
+    if (extra.length||missing.length) errors.push('media/ differs from the published film manifest: ' + [...extra.map(f => '+' + f), ...missing.map(f => '-' + f)].join(' '));
   }
   return errors;
 }
@@ -457,9 +465,10 @@ if (require.main === module) {
     } else if (command === 'build') {
       const chosen = films.filter(f => f.id === selection || f.groups.includes(selection));
       if (!chosen.length) throw new Error('Unknown film/group: ' + selection);
-      validate();
+      const state=load(),errors=validateManifest(state.manifest,{allowMissingMediaFor:new Set(chosen.map(f=>f.id))});
+      if(errors.length)throw Error(errors.join('\n'));
       for (const film of chosen) {
-        const result = spawnSync('bash', ['video/build.sh', clean(film.page)], { cwd: ROOT, stdio: 'inherit', env: { ...process.env, FX_FILM_NAME: film.id } });
+        const result = spawnSync('bash', ['video/build.sh', clean(film.page)], { cwd: ROOT, stdio: 'inherit', env: { ...process.env, FX_FILM_NAME: film.id, RECORD_ARGS: recordArgs(film,process.env.RECORD_ARGS||'') } });
         if (result.status !== 0) process.exit(result.status || 1);
       }
     } else if (command === '--check' || command === '--write') {
@@ -469,4 +478,4 @@ if (require.main === module) {
     } else throw new Error('Usage: node tools/films.cjs --check | --write | --verify | --migrate | build <id|group>');
   } catch (error) { console.error(error.message); process.exitCode = 1; }
 }
-module.exports = { films, needsPreview, validate, sync, load, migrate, compareV1, validateManifest, schemaErrors, loadCatalog, closure, evidence, formatJSON, render: { hero: renderHero, cards: renderCards, list: renderList, summary: renderSummary, count: renderCount, readme: renderReadme, readmeCards: renderReadmeCards, guide: renderGuide, data: renderData }, BLOCKS, hasCard };
+module.exports = { films, needsPreview, recordArgs, validate, sync, load, migrate, compareV1, validateManifest, schemaErrors, loadCatalog, closure, evidence, formatJSON, render: { hero: renderHero, cards: renderCards, list: renderList, summary: renderSummary, count: renderCount, readme: renderReadme, readmeCards: renderReadmeCards, guide: renderGuide, data: renderData }, BLOCKS, hasCard };

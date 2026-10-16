@@ -163,7 +163,7 @@
     <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="optical-foil" data-shot="0" data-t0="-0.7"></div></div>
     <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="signal-motion-fragments" data-shot="1" data-t0="-2.45"></div></div>
     <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="design-type-orbit" data-shot="2" data-t0="-1.3"></div></div>
-    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="signal-audio-relief" data-shot="3" data-t0="-6.1"></div></div>
+    <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="mechanical-linkage" data-shot="3" data-t0="-5.2"></div></div>
     <div class="tile montage-shot" style="left:320px;top:275px;width:1280px"><div class="stage" style="aspect-ratio:16/9" data-demo="fluid-smoke" data-shot="4" data-t0="-3.4"></div></div>
   </section>
 
@@ -171,18 +171,19 @@
     <div id="worlds-shot" class="a story-canvas" style="inset:0"></div>
   </section>
 
-  <!-- 07 titles: the titles use case itself, its first preset's impact and then its third -->
+  <!-- 07 a finished title story, composed from actual lettering and surface hatching -->
   <section class="scene ink" data-start="33.6" id="scTitles" data-trans="cut">
     <i data-fx="fade" data-at="2.1" data-sfx="impact"></i><i data-fx="fade" data-at="2.4" data-sfx="whoosh"></i><i data-fx="fade" data-at="4.5" data-sfx="impact" data-sfx-gain="0.7"></i>
-    <div class="a device full" data-box="0,0,1920,1080"><iframe id="titles-shot" data-src="../examples/titles.html" data-t0="0.3" width="1920" height="1080" title="Use case: titles and logo stings" tabindex="-1"></iframe></div>
-    <div class="a pill" style="left:60px;bottom:56px" data-fx="fade" data-at="0.3">07 · TITLES &amp; LOGO STINGS · type a name, pick a preset</div>
+    <div class="a device full" data-box="0,0,1920,1080"><iframe id="titles-shot" data-src="../examples/spark-form.html" width="1920" height="1080" title="Spark / Form: drawing, space and solid lettering" tabindex="-1"></iframe></div>
+    <div class="a pill" style="left:60px;bottom:56px" data-fx="fade" data-at="0.3">Spark / Form · one complete title story</div>
   </section>
 
-  <section class="scene" data-start="38.4" id="scChain">
-    <i data-fx="fade" data-at="0.7" data-sfx="tap"></i><i data-fx="fade" data-at="1.1" data-sfx="tick" data-sfx-repeat="10" data-sfx-every="0.28"></i>
-    <div id="chain-shot" class="a story-canvas" style="inset:0"></div>
-    <div class="a wide" style="left:85px;top:85px;font-size:70px;color:#173d30">One push. Chain reaction.</div>
-    <div class="a mono" id="chain-result" style="left:90px;bottom:90px;font-size:32px;color:#173d30">One nudge starts it.</div>
+  <section class="scene" data-start="38.4" id="scMechanics" data-trans="cut">
+    <i data-fx="fade" data-at="0.1" data-sfx="whoosh"></i><i data-fx="fade" data-at="2.4" data-sfx="impact" data-sfx-gain="0.6"></i>
+    <div class="a device full" data-box="0,0,1920,1080">
+      <iframe id="assembly-shot" data-src="../examples/mechanical-assembly.html" width="1920" height="1080" title="Apart. Together.: service assemblies" tabindex="-1"></iframe>
+      <iframe id="cutaway-shot" data-src="../examples/mechanical-cutaway.html" width="1920" height="1080" title="Inside the machine.: moving section" tabindex="-1"></iframe>
+    </div>
   </section>
 
   <!-- 08 how: the real line of examples/titles.html is edited, the same page shows the change,
@@ -249,6 +250,8 @@
 <script src="../fx/dialogue-effects.js?v=dialogue-2"></script>
 <script src="../fx/pack-dialogue.js?v=dialogue-2"></script>
 <script src="../fx/pack-plush.js?v=plush-1"></script>
+<script src="../fx/mechanical-effects.js?v=mechanical-1"></script>
+<script src="../fx/pack-mechanical.js?v=mechanical-1"></script>
 <script src="../fx/catalog.js?v=catalog-2"></script>
 <!-- fx:scripts:end -->
 <script>
@@ -259,9 +262,9 @@
   // The poster is the opening title: what the repository makes, in one line.
   window.__poster = 2.0;
   // README hero (at most 3 MB): the hook, two use cases, the montage, the flight and the edit.
-  window.__gif = [[0.3, 1.6], [3.2, 4.2], [12.8, 13.8], [21.9, 23.2], [29.1, 30.1], [45.8, 47.8]];
+  window.__gif = [[0.3, 1.5], [3.2, 4.2], [17.1, 18.1], [28.8, 29.8], [35.5, 36.5], [39, 40.2], [46.4, 48.0]];
   // Silent loop (media/intro.preview.mp4) for the film list: the same moments, a little longer.
-  window.__preview = [[0.2, 1.8], [3.0, 4.4], [12.6, 14.0], [21.8, 23.6], [28.9, 30.3], [44.6, 49.2]];
+  window.__preview = [[0.2, 1.8], [3.0, 4.4], [17.0, 18.4], [28.9, 30.3], [35.2, 37.6], [38.8, 42.4], [45.0, 49.2]];
 
   const START = Object.fromEntries([...document.querySelectorAll(".scene")].map((el) => [el.id, +el.dataset.start]));
   const SHOT = 0.96;   // montage shot length: five shots in the 4.8 s scene
@@ -317,6 +320,9 @@
   function release(frame) {
     let doc = null;
     try { doc = frame.contentDocument; } catch {}
+    // Some compositors return a 2D output while keeping their WebGL canvas detached.
+    // Release those renderers too, before replacing the frame's document.
+    try { for(const renderer of frame.contentWindow.__fxRenderers||[])if(!renderer.getContext().isContextLost())renderer.forceContextLoss(); } catch {}
     for (const canvas of doc ? doc.querySelectorAll("canvas") : []) {
       const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
       if (gl && !gl.isContextLost()) gl.getExtension("WEBGL_lose_context")?.loseContext();
@@ -332,7 +338,7 @@
   }
   const byId = (id) => frames.find((f) => f.frame.id === id);
   // Film time for each frame, seconds into its scene in, page seconds out.
-  const reel = byId("reel-shot"), titles = byId("titles-shot"), before = byId("how-before"), edited = byId("how-after");
+  const reel = byId("reel-shot"), titles = byId("titles-shot"), before = byId("how-before"), edited = byId("how-after"), assembly=byId("assembly-shot"), cutaway=byId("cutaway-shot");
   const spotlight = frames.find((f) => f.frame.dataset.src.endsWith("/spotlight.html"));
   // Reel: the cup and the price slam, then the reasons whip in (one cut inside the phone).
   reel.time = (l) => l < 1.3 ? 1.9 + l : 4.4 + (l - 1.3);
@@ -340,7 +346,9 @@
   // holds still), then the price slams (one cut inside the frame).
   spotlight.time = (l) => l < 1.5 ? 0.5 + 1.3 * l : 7.0 + (l - 1.5);
   // Titles: the solid preset builds to its impact, then the contours preset ends in its glitch.
-  titles.time = (l) => l < 2.4 ? 0.3 + l : 12.3 + (l - 2.4);
+  titles.time = (l) => l < 1.6 ? 1.7+l : l < 3.2 ? 4.5+(l-1.6)*1.2 : 11.2+(l-3.2);
+  assembly.time=l=>2+2.3*l;assembly.shows=l=>l<2.4;
+  cutaway.time=l=>2.1+(l-2.4)*2.1;cutaway.shows=l=>l>=2.4;
   // How: the published word glows until the edit, then the edited page builds the new word to its impact.
   const EDITED_AT = 2.2;
   before.time = (l) => 9.6 + 0.3 * l;
@@ -382,17 +390,16 @@
     const scene = el.closest(".scene");
     return { el, d, frame: typeof built === "function" ? built : built.frame, ready: built && built.ready, scene, s0: +scene.dataset.start + SHOT * +(el.dataset.shot || 0), t0: +(el.dataset.t0 || 0), rate: +(el.dataset.rate || 1) };
   });
-  const montageLabels = ["Light splits into colour", "Fast motion breaks apart", "Words take up space", "Sound pushes the picture out", "Smoke reveals the form"];
+  const montageLabels = ["Light splits into colour", "Fast motion breaks apart", "Words take up space", "One turn drives every part", "Smoke reveals the form"];
   const mount=(id,effect)=>{document.getElementById(id).appendChild(effect.canvas);return effect;};
   // The Final Final, from the bear's start to Pip's "…more dramatic." (source 0.72–5.52 s).
   const DIALOGUE = { at: 16.8, offset: 0.72, duration: 4.8 };
   const dialogueReady=FXDialogue.create("character-dialogue").then(e=>{window.__audioLayers=[{src:"/assets/dialogue/"+e.spec.audio.file,sha256:e.spec.audio.sha256,at:DIALOGUE.at,offset:DIALOGUE.offset,duration:DIALOGUE.duration,gain:1.4,duck:.16}];return mount("dialogue-shot",e);});
   const storiesReady=import('../fx/intro-stories.js').then(m=>({worlds:mount('worlds-shot',m.createWorlds())}));
-  const chainReady=FXStack.create('rapier').then(e=>mount('chain-shot',e));
-  window.__ready=Promise.all([document.fonts.ready,dialogueReady,storiesReady,chainReady,codeReady,...hosted.map(h=>h.ready).filter(Boolean)]);
+  window.__ready=Promise.all([document.fonts.ready,dialogueReady,storiesReady,codeReady,...hosted.map(h=>h.ready).filter(Boolean)]);
   // What the stories and frames show at the last rendered time, for tests.
   let shown = {};
-  window.introProof=async()=>({charsTitle:!charsTitle.hidden,dialogue:(await dialogueReady).proof(),worlds:(await storiesReady).worlds.proof(),chain:(await chainReady).proof(),...shown});
+  window.introProof=async()=>({charsTitle:!charsTitle.hidden,dialogue:(await dialogueReady).proof(),worlds:(await storiesReady).worlds.proof(),...shown});
 
   const hudScene = document.getElementById("hudScene"), hudTc = document.getElementById("hudTc"), charsTitle = document.getElementById("chars-title");
   const starts = [...document.querySelectorAll(".scene")].map((s) => +s.dataset.start);
@@ -407,12 +414,6 @@
     document.getElementById('montage-label').textContent=montageLabels[montage];
     const stories=await storiesReady;
     if(t>=START.scStyle&&t<START.scTitles)stories.worlds.frame(t-START.scStyle);
-    if(t>=START.scChain&&t<START.scHow){
-      const local=t-START.scChain;
-      const source=local<.6?local*.6:local<4.1?.36+(local-.6)*2.7:9.81;
-      const chain=await chainReady;await chain.frame(source,{camera:'follow',labels:false});
-      document.getElementById('chain-result').textContent=local<3.8?'One nudge starts it.':chain.proof().fallen+' dominoes. One connected motion.';
-    }
     // 08 how: the edit, then the edited page in the preview.
     const how = t - START.scHow;
     drawEdit(how);
@@ -428,6 +429,7 @@
       await w.__render(at);
       await w.document.fonts.ready;
       shown.frames[f.frame.id || f.frame.dataset.src] = at;
+      if(f.scene.id==="scMechanics")shown.mechanics=w.__effect.proof();
     }
     for (const h of hosted) {
       if (h.scene.style.visibility === "hidden" || h.el.closest("[hidden]")) continue;

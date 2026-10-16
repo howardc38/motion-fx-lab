@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { SVGLoader } from "three/addons/loaders/SVGLoader.js";
-import { stage3D, surface, label, time } from "./common.js";
+import { stage3D, surface, label, time } from "./common.js?v=material-2";
+import {inkMaterial} from '../design/ink.js';
 let fontPromise;
 export function font() {
   return (fontPromise ||= fetch(
@@ -45,19 +46,19 @@ export function mask(data, word = "流動") {
 }
 // mode "reveal" (gallery): the flat word spins into depth with an overshoot and a camera kick, then a
 // light sweeps across the faces. No mode keeps the original turntable used by the word film.
-export async function create(mode) {
+export async function create(mode, options={}) {
   const data = await font(),
-    view = stage3D(),
+    view = stage3D(options),
     { canvas, g, scene, camera } = view;
   scene.background.set("#30214f");
   const group = new THREE.Group();
   scene.add(group);
-  const face = new THREE.MeshStandardMaterial({
+  const face = mode==='engraved'?inkMaterial('#e9e3d4'):new THREE.MeshStandardMaterial({
       color: "#ffe3a0",
       metalness: 0.22,
       roughness: 0.28,
     }),
-    side = new THREE.MeshStandardMaterial({
+    side = mode==='engraved'?inkMaterial('#757770'):new THREE.MeshStandardMaterial({
       color: "#c5598e",
       metalness: 0.4,
       roughness: 0.27,
@@ -68,6 +69,10 @@ export async function create(mode) {
   );
   back.position.z = -2;
   scene.add(back);
+  if(mode==='engraved'){
+    back.visible=false;scene.background=null;
+    for(const m of [face,side]){m.uniforms.frequency.value=.095;m.uniforms.strength.value=1;}
+  }
   const head = surface();
   label(
     head.g,
@@ -181,6 +186,13 @@ export async function create(mode) {
         sweep.intensity = 120 * Math.min(1, light + flash);
         sweepUniforms.sweepX.value = q < 1.6 ? 0 : sx * 0.62;
         sweepUniforms.sweepAmount.value = q < 1.6 ? 2.4 * flash : 1.6 * Math.min(1, light);
+      } else if(mode==='engraved'){
+        group.scale.setScalar(fit*1.2);group.position.y=-.35;
+        const angle=o.cameraAngle??(-.5+.65*phase(t,0,4.8));
+        camera.position.set(Math.sin(angle)*12.5,3.2,Math.cos(angle)*12.5);camera.lookAt(0,0,0);camera.updateMatrixWorld();
+        const direction=new THREE.Vector3(-3.5,5,6).normalize().transformDirection(camera.matrixWorldInverse);
+        for(const m of [face,side]){m.uniforms.lightView.value.copy(direction);m.uniforms.debugPattern.value=0;m.uniforms.frequency.value=o.frequency??.095;}
+        sweep.intensity=0;
       } else {
         group.scale.setScalar(fit);
         group.rotation.set(
@@ -203,6 +215,11 @@ export async function create(mode) {
         sweep: light,
         rotation: group.rotation.y,
       };
+      if(mode==='engraved'){
+        const b=new THREE.Box3().setFromObject(group),points=[];
+        for(const x of [b.min.x,b.max.x])for(const y of [b.min.y,b.max.y])for(const z of [b.min.z,b.max.z]){const p=new THREE.Vector3(x,y,z).project(camera);points.push([(p.x+1)*canvas.width/2,(1-p.y)*canvas.height/2]);}
+        proof.bounds=points;proof.material='object-space surface hatching';
+      }
     },
     proof: () => proof,
   };

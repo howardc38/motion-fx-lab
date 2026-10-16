@@ -160,7 +160,7 @@ if (require.main === module) {
     const errors = inspect(files);
     if (errors.length) throw new Error(errors.join('\n'));
     validate(); sync(true);
-    console.log(`Public scope OK: ${files.length} Git candidates, ${films.length} films, ${films.length * 3} media files.`);
+    console.log(`Public scope OK: ${files.length} Git candidates, ${films.length} films, ${films.reduce((n,f)=>n+Object.keys(f.media).length,0)} media files.`);
   } catch (error) { console.error(error.message); process.exitCode = 1; }
 }
 module.exports = { inspect, privateNames, publicRoots, nonBranchRefs, candidates, TOP_DIRS, LISTED_FILES, PROBE_FIXTURES };

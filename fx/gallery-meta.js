@@ -5,23 +5,24 @@
   // Generated from fx/manifest.json by tools/fx-manifest.cjs; edit the manifest, not this block.
   const GALLERY = {
     order: [
-      "optical-foil", "domainrep", "plush-fur", "fluid-smoke", "reaction", "studio-lowpoly",
-      "gpuparticles", "studio-freeze-orbit", "organic-contours", "dissolve", "dialogue-lipsync",
-      "studio-skin-cloud", "studio-echo", "rays", "stack-gpu", "design-type-orbit",
-      "studio-video-dots", "chrome", "optical-slit", "clay", "water-material", "toon",
-      "signal-motion-fragments", "cjk-solid", "studio-depth-dots", "optical-moire", "studio-portal",
-      "optical-caustic", "optical-morph", "water-impact", "rhythm", "vartype", "optical-ribbon",
-      "glitch", "cardflip", "fluid-overflow", "liquid", "ridgelines", "rigid", "character-rig",
-      "design-surface-ink", "whip", "uifly", "hook", "chars", "karaoke", "datachart", "timing",
-      "glass", "sweep", "stamp", "beat", "sticker", "gradient", "ring", "count", "type", "mark",
-      "scan", "wipe", "lut", "design-soft-shadow", "grain",
+      "optical-foil", "mechanical-cutaway", "domainrep", "plush-fur", "fluid-smoke", "reaction",
+      "mechanical-assembly", "studio-lowpoly", "gpuparticles", "studio-freeze-orbit",
+      "organic-contours", "dissolve", "mechanical-linkage", "dialogue-lipsync", "studio-skin-cloud",
+      "studio-echo", "rays", "stack-gpu", "design-type-orbit", "studio-video-dots", "chrome",
+      "optical-slit", "clay", "water-material", "toon", "signal-motion-fragments", "cjk-solid",
+      "studio-depth-dots", "optical-moire", "studio-portal", "optical-caustic", "optical-morph",
+      "water-impact", "rhythm", "vartype", "optical-ribbon", "glitch", "cardflip", "fluid-overflow",
+      "liquid", "ridgelines", "rigid", "character-rig", "design-surface-ink", "whip", "uifly",
+      "hook", "chars", "karaoke", "datachart", "timing", "glass", "sweep", "stamp", "beat",
+      "sticker", "gradient", "ring", "count", "type", "mark", "scan", "wipe", "lut",
+      "design-soft-shadow", "grain",
     ],
     showcaseOrder: [
       "styles", "studio-themes", "studio-gallery", "water-underwater", "scene-eras",
     ],
     previewDefault: { "glitch": "frame-glitch", "studio-depth-dots": "signal-audio-relief" },
     previewHero: { "gpuparticles": 1.5 },
-    previewWindow: { "signal-motion-fragments": [1,8], "dialogue-lipsync": [0,10.7] },
+    previewWindow: { "signal-motion-fragments": [1,8], "dialogue-lipsync": [0,10.7], "mechanical-assembly": [1.8,12.8], "mechanical-cutaway": [1.8,12.8], "mechanical-linkage": [1.8,12.8] },
   };
   // fx:gallery:end
   const KINDS = { shader: "Materials & surfaces", light: "Light & image treatments", space: "3D space & particles", sim: "Physics & growth", character: "Characters", motion: "Motion & timing", backdrop: "Backgrounds", ui: "UI & data", type: "Type" };

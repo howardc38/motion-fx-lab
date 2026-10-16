@@ -136,7 +136,7 @@ test("intro plays the published use cases, edits a real line and seeks reproduci
   const result=await page.evaluate(async()=>{
     await __render(20.4);const host=document.querySelector('#dialogue-shot').getBoundingClientRect(),canvas=document.querySelector('#dialogue-shot canvas').getBoundingClientRect();const actionFill=[canvas.width/host.width,canvas.height/host.height];
     const samples=[];
-    for(const t of [3.0,5.6,8.0,10.4,11.6,13.0,15.2,17.5,20.4,29.0,33.1,34.5,37.2,42.9,43.7,45.0,46.5,49.4]){
+    for(const t of [3.0,5.6,8.0,10.4,11.6,13.0,15.2,17.5,20.4,29.0,33.1,34.5,37.2,39.6,42.9,43.7,45.0,46.5,49.4]){
       await __render(t);samples.push({t,...await introProof()});
     }
     const alive=[...document.querySelectorAll("iframe")].filter(f=>f.src||f.srcdoc).map(f=>f.id||f.dataset.src);
@@ -152,9 +152,10 @@ test("intro plays the published use cases, edits a real line and seeks reproduci
   expect([at(20.4).dialogue.shot, at(20.4).charsTitle]).toEqual(['pip', false]);
   expect(at(29.0).worlds.phase).toBe('flight');
   expect(at(33.1).worlds).toMatchObject({phase:'overview',count:20});
-  expect(at(34.5).frames["titles-shot"]).toBeCloseTo(1.2, 6);
-  expect(at(37.2).frames["titles-shot"]).toBeCloseTo(13.5, 6);
-  expect(at(42.9).chain.fallen).toBe(48);
+  expect(at(34.5).frames["titles-shot"]).toBeCloseTo(2.6, 6);
+  expect(at(37.2).frames["titles-shot"]).toBeCloseTo(11.6, 6);
+  expect(at(39.6).mechanics).toMatchObject({mode:'assembly',sourceClock:'absolute time',fanBlades:20});
+  expect(at(42.9).mechanics.mode).toBe('cutaway');expect(at(42.9).mechanics.caps).toBeGreaterThan(0);
   // How: the line shown is the real line of examples/titles.html, and the preview after the edit is that page with only this line changed.
   const titles = fs.readFileSync(path.join(__dirname, "../examples/titles.html"), "utf8"), lines = titles.split("\n");
   const n = lines.findIndex(l => l.includes('word: "SLOW SIGNAL"'));

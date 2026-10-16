@@ -39,6 +39,22 @@ test('every film has a layer, a tier, card copy and at least one catalogue effec
   assert.equal(manifest.films.filter(f => f.tier === 'hero').length, 1);
 });
 
+test('published builds use the declared FPS and reject a conflicting override',()=>{
+  assert.equal(tool.recordArgs({id:'legacy'}),'--fps 30');
+  assert.equal(tool.recordArgs({id:'detail',fps:60},'--workers 2'),'--workers 2 --fps 60');
+  assert.equal(tool.recordArgs({id:'detail',fps:60},'--fps 60 --cpu'),'--fps 60 --cpu');
+  assert.throws(()=>tool.recordArgs({id:'detail',fps:60},'--fps 30'),/conflicts/);
+  assert.match(errorsAfter(m=>{m.films[1].fps=31}),/is not one of/);
+});
+
+test('a first build may create only the selected missing media, while publication stays strict',()=>{
+ const m=copy(manifest),pending=copy(m.films.find(f=>f.layer==='effect-film'&&f.effects.length===1));
+ pending.id='pending-example';pending.media={mp4:'media/pending-example.mp4',poster:'media/pending-example.jpg'};m.films.push(pending);
+ assert.match(tool.validateManifest(m).join('\n'),/pending-example/);
+ assert.deepEqual(tool.validateManifest(m,{allowMissingMediaFor:new Set([pending.id])}),[]);
+ pending.page='examples/no-source.html';assert.match(tool.validateManifest(m,{allowMissingMediaFor:new Set([pending.id])}).join('\n'),/missing or outside file/);
+});
+
 test('planned changes from the review are recorded on the films they concern', () => {
   const byId = new Map(manifest.films.map(f => [f.id, f]));
   if (byId.has('impact-orbit')) assert.equal(byId.get('impact-orbit').mergeInto, 'dot-battle');

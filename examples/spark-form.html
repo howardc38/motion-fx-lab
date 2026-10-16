@@ -1,0 +1,7 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Spark / Form</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#10100f;color:#d7d0bf;font:12px Arial,sans-serif;min-height:100vh;display:grid;place-items:center}main{width:min(100vw,1600px)}canvas{display:block;width:100%;aspect-ratio:16/9}nav{display:flex;gap:14px;align-items:center;padding:15px 20px;background:#191917}button{background:none;color:#e8e0ce;border:1px solid #6b6252;padding:7px 14px;cursor:pointer}input{flex:1;accent-color:#ef6128}body.record nav{display:none}body.record main{width:1920px}body.record canvas{width:1920px;height:1080px}
+</style></head><body><main><canvas id="film" width="1920" height="1080"></canvas><nav><button id="play">Play with sound</button><input id="scrub" type="range" min="0" max="16.8" step="0.01" value="0"><span id="time">0.0 / 16.8</span></nav></main><audio id="sound" src="../assets/spark-form/score.wav" preload="auto"></audio>
+<script type="module" src="../fx/spark-form.js"></script></body></html>

@@ -13,11 +13,12 @@ const SIZE=64*36*3;
 const thumbs=(file,frames)=>{const raw=execFileSync('ffmpeg',['-v','error','-i',file,'-vf',`select=${frames.map(n=>`eq(n\\,${n})`).join('+')},scale=64:36:flags=area,format=rgb24`,'-fps_mode','passthrough','-frames:v',String(frames.length),'-f','rawvideo','-'],{timeout:120000,maxBuffer:1<<22});return frames.map((_,i)=>raw.subarray(i*SIZE,(i+1)*SIZE));};
 const still=file=>execFileSync('ffmpeg',['-v','error','-i',file,'-vf','scale=64:36:flags=area,format=rgb24','-frames:v','1','-f','rawvideo','-'],{timeout:60000,maxBuffer:1<<20});
 const meanDiff=(a,b)=>a.reduce((s,x,i)=>s+Math.abs(x-b[i]),0)/a.length;
-const frames=clips=>clips.reduce((n,[a,b])=>n+Math.round(b*30)-Math.round(a*30),0);
+const frames=(clips,fps)=>clips.reduce((n,[a,b])=>n+Math.round(b*fps)-Math.round(a*fps),0);
 for(const film of films){const name=film.id;test(`published ${name} bundle agrees with its authoring metadata`,async({page})=>{
  await page.goto('/'+film.page);
  await page.waitForFunction(()=>window.__DUR&&window.__SIZE);
- const spec=await page.evaluate(()=>({duration:__DUR,size:__SIZE,gif:window.__gif||[],preview:window.__preview||[],poster:window.__poster??__DUR/3}));
+ const spec=await page.evaluate(()=>({duration:__DUR,size:__SIZE,fps:window.__FPS??30,gif:window.__gif||[],preview:window.__preview||[],poster:window.__poster??__DUR/3}));
+ const fps=film.fps??30;expect(spec.fps).toBe(fps);
  const readme=fs.readFileSync(path.resolve(__dirname,'../README.md'),'utf8');
  const row=readme.split('\n').find(line=>line.startsWith('|')&&line.includes('[poster]')&&[...line.matchAll(/\]\(([^)]+)\)/g)].some(([,href])=>new URL(href,'https://local.test/').pathname==='/media/'+name+'.mp4'));
  expect(row,`README published row for ${name}`).toBeTruthy();
@@ -25,15 +26,15 @@ for(const film of films){const name=film.id;test(`published ${name} bundle agree
  expect(cells[4]).toBe(ratio(spec.size));expect(film.format).toBe(ratio(spec.size));expect(film.duration).toBeCloseTo(spec.duration,2);
  const media=path.resolve(__dirname,'../media'),mp4=path.join(media,name+'.mp4'),movie=probe(mp4);
  const v=movie.streams.find(s=>s.codec_type==='video'),a=movie.streams.find(s=>s.codec_type==='audio');
- expect([v.width,v.height]).toEqual([spec.size.w,spec.size.h]);expect(v.codec_name).toBe('h264');expect(v.r_frame_rate).toBe('30/1');
- expect(Number(v.nb_frames)).toBe(Math.round(spec.duration*30)+1);
+ expect([v.width,v.height]).toEqual([spec.size.w,spec.size.h]);expect(v.codec_name).toBe('h264');expect(v.r_frame_rate).toBe(fps+'/1');
+ expect(Number(v.nb_frames)).toBe(Math.round(spec.duration*fps)+1);
  expect([v.color_space,v.color_transfer,v.color_primaries]).toEqual(['bt709','bt709','bt709']);
  expect(a.codec_name).toBe('aac');expect(Number(a.bit_rate)).toBeLessThanOrEqual(128000);expect(Number(movie.format.size)).toBeLessThanOrEqual(15000000);
  // The poster is the frame the film shows at window.__poster (deliver.py picks it by index, not by -ss).
  const jpg=path.join(media,name+'.jpg'),poster=probe(jpg).streams[0];expect([poster.width,poster.height]).toEqual([spec.size.w,spec.size.h]);
  expect(fs.statSync(jpg).size,`${name}.jpg size`).toBeLessThanOrEqual(BUDGET.poster);
  expect(spec.poster).toBeGreaterThanOrEqual(0);expect(spec.poster).toBeLessThan(spec.duration);
- const n=Math.round(spec.poster*30),cand=[n-2,n,n+2].filter(k=>k>=0&&k<Number(v.nb_frames)),got=still(jpg);
+ const n=Math.round(spec.poster*fps),cand=[n-2,n,n+2].filter(k=>k>=0&&k<Number(v.nb_frames)),got=still(jpg);
  const d=thumbs(mp4,cand).map(t=>meanDiff(got,t)),own=d[cand.indexOf(n)];
  expect(own,`${name}.jpg looks like a frame of this film`).toBeLessThan(8);
  cand.forEach((k,i)=>{if(k!==n)expect(own,`${name}.jpg is the frame at ${spec.poster} s, not frame ${k}`).toBeLessThanOrEqual(d[i]+.25);});
@@ -48,7 +49,7 @@ for(const film of films){const name=film.id;test(`published ${name} bundle agree
   expect([lv.codec_name,lv.pix_fmt]).toEqual(['h264','yuv420p']);
   expect(lv.width).toBeLessThanOrEqual(800);expect(lv.height).toBeLessThanOrEqual(450);expect(Math.max(lv.width/800,lv.height/450)).toBeGreaterThan(.99);
   expect(lv.width/lv.height).toBeCloseTo(spec.size.w/spec.size.h,1);
-  expect(Number(lv.nb_frames)).toBe(frames(spec.preview));
+  expect(Number(lv.nb_frames)).toBe(frames(spec.preview,fps));
   expect(Number(info.format.size),`${name}.preview.mp4 size`).toBeLessThanOrEqual(BUDGET.preview);
   const head=fs.readFileSync(loop).subarray(0,1<<16).toString('latin1');expect(head.indexOf('moov'),'faststart').toBeGreaterThan(0);expect(head.indexOf('moov')).toBeLessThan(head.indexOf('mdat')<0?Infinity:head.indexOf('mdat'));
  }
