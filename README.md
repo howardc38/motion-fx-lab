@@ -214,7 +214,7 @@ Source: [intro.html](video/intro.html) and [intro-stories.js](fx/intro-stories.j
 | Colour shifts | ffmpeg's defaults use the BT.601 matrix with no colour tags, and browsers read untagged HD video as BT.709 (`#ff90e8` played as `#ff9fe8`). Screenshots are converted with BT.709 and every file is tagged; the checks refuse an untagged file. |
 | Quiet or rejected uploads | Audio is limited, then brought to −14 LUFS by a linear gain, and its loudness and true peak are measured on the final file. AAC stays within 128 kbps for Reels. |
 | CJK text | Solid lettering uses bundled CJK vector outlines; unsupported glyphs report how to rebuild the subset. |
-| Licence worries | Code under 0BSD. Music and sound effects are synthesised in code; see [THIRD_PARTY.md](THIRD_PARTY.md) for fonts, textures and the optional voice tools. |
+| Licence worries | Project code under 0BSD; adapted mechanical helpers keep MIT notices. Music and sound effects are synthesised in code; see [THIRD_PARTY.md](THIRD_PARTY.md) for all retained notices. |
 
 ## Mechanical and technical films
 
@@ -262,7 +262,7 @@ References checked on 2026-10-03: [Remotion licence](https://github.com/remotion
 | `fx/manifest.json`, `tools/fx-manifest.cjs` | Which scripts register which effects, in load order, and the gallery order (`npm run sync:fx`) |
 | `fx/catalog.js` | Effects, variants, Motion basics and presets: which demo belongs to which card |
 | `fx/demos.js`, `fx/pack-*.js` | The core effects and the packs that register more with `FX.demo` |
-| `fx/<family>/`, `fx/*-effects.js` | Larger effect families (studio, materials, fluid, design, signals, character, dialogue, plush, stacks), each with its guide |
+| `fx/<family>/`, `fx/*-effects.js` | Larger effect families (studio, materials, fluid, design, signals, character, dialogue, plush, stacks, mechanical), each with its guide |
 | `examples/`, `examples/films.json` | Film pages and the published film list; `tools/films.cjs` validates it and writes the generated blocks |
 | `video/engine.js` | Timeline engine: scenes, `data-fx` animations, wipes, sound cues and the preview scrub bar |
 | `video/record.cjs`, `video/deliver.py`, `video/build.sh` | Render twice and compare, master the sound, deliver and check the files |
@@ -300,4 +300,4 @@ If this saves you an export marathon or a night chasing blank frames, **star the
 
 ## Licence
 
-[0BSD](LICENSE): use, copy, modify and distribute for any purpose, with or without attribution. The adapted TSL example, fonts, textures and voices keep their own notices; three.js, Matter.js, Flubber, PixiJS, Rapier and the web fonts load from public CDNs under their own licences. See [THIRD_PARTY.md](THIRD_PARTY.md).
+[0BSD](LICENSE): use, copy, modify and distribute for any purpose, with or without attribution. The adapted mechanical helpers and TSL example, fonts, textures and voices keep their own notices; three.js, Matter.js, Flubber, PixiJS, Rapier and the web fonts load from public CDNs under their own licences. See [THIRD_PARTY.md](THIRD_PARTY.md).
