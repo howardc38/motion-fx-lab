@@ -21,8 +21,7 @@
   const demo = (o) => DEMOS.push(o);
 
   // ================= 2D effects =================
-  // Entries marked tier: "basic" are motion fundamentals for the gallery's Motion basics area; they are not
-  // counted as effect families. Every 2D layout here is authored for a 16:9 stage and centred, and the copy
+  // Every 2D layout here is authored for a 16:9 stage and centred, and the copy
   // is fictional and neutral.
   let UID = 0;
   const uid = (p) => `${p}-${++UID}`;
@@ -83,7 +82,7 @@
       };
     } });
 
-  demo({ id: "chars", tier: "basic", name: "Character pop", kind: "type", stacks: ["css"], chips: ["CSS transform", "engine.js chars"], grade: "A",
+  demo({ id: "chars", name: "Character pop", kind: "type", stacks: ["css"], chips: ["CSS transform", "engine.js chars"], grade: "A",
     purpose: "One character at a time, so the eye reads along; the key word changes colour once the line is complete.", period: 4, hero: 2.7,
     build(s) {
       s.style.background = "radial-gradient(120% 95% at 50% 42%, #2c2018, #110c09)";
@@ -105,7 +104,7 @@
       };
     } });
 
-  demo({ id: "mark", tier: "basic", name: "Highlighter", kind: "type", stacks: ["css"], chips: ["CSS scaleX", "engine.js mark"], grade: "A",
+  demo({ id: "mark", name: "Highlighter", kind: "type", stacks: ["css"], chips: ["CSS scaleX", "engine.js mark"], grade: "A",
     purpose: "Draws the eye to one phrase at a time, as a marker pen would; in the sample, the two numbers a baker must not miss.", period: 3.6, hero: 2.5,
     build(s) {
       s.style.background = "#ece6db";
@@ -123,7 +122,7 @@
       };
     } });
 
-  demo({ id: "count", tier: "basic", name: "Counting number", kind: "type", stacks: ["css"], chips: ["JS counter", "tabular-nums"], grade: "A",
+  demo({ id: "count", name: "Counting number", kind: "type", stacks: ["css"], chips: ["JS counter", "tabular-nums"], grade: "A",
     purpose: "A number counts up to its value while a bar fills toward the goal; tabular digits keep its width steady.", period: 3.2, hero: 2.4,
     build(s) {
       s.style.background = "radial-gradient(110% 90% at 50% 40%, #173226, #0b1711)";
@@ -140,7 +139,7 @@
       };
     } });
 
-  demo({ id: "type", tier: "basic", name: "Typewriter", kind: "type", stacks: ["css"], chips: ["JS per character", "CSS caret"], grade: "A",
+  demo({ id: "type", name: "Typewriter", kind: "type", stacks: ["css"], chips: ["JS per character", "CSS caret"], grade: "A",
     purpose: "Shows a reply being written, one character at a time; reads instantly as a chat.", period: 5, hero: 3.6,
     build(s) {
       s.style.background = "linear-gradient(160deg, #dfe7ef, #c5d2df)";
@@ -159,7 +158,7 @@
       };
     } });
 
-  demo({ id: "stamp", tier: "basic", name: "Red flash + shake + stamp", kind: "type", stacks: ["svg", "css"], chips: ["SVG turbulence ink", "engine.js slam / shake / flash", "dust burst"], grade: "A",
+  demo({ id: "stamp", name: "Red flash + shake + stamp", kind: "type", stacks: ["svg", "css"], chips: ["SVG turbulence ink", "engine.js slam / shake / flash", "dust burst"], grade: "A",
     purpose: "An alarm beat: the stamp hovers, slams down with a red flash and a shake, and leaves rough ink, spatter and a puff of dust. In the sample, a cancelled boarding pass.", period: 3.6, hero: 1.25,
     build(s) {
       s.style.background = "radial-gradient(110% 95% at 50% 45%, #2e2924, #110f0d)";
@@ -227,7 +226,7 @@
       };
     } });
 
-  demo({ id: "scan", tier: "basic", name: "Scan and check", kind: "ui", stacks: ["css"], chips: ["CSS gradient", "engine.js scan"], grade: "A",
+  demo({ id: "scan", name: "Scan and check", kind: "ui", stacks: ["css"], chips: ["CSS gradient", "engine.js scan"], grade: "A",
     purpose: "A scan line passes down a list and ticks each item off as it goes; in the sample, a grocery order checked against stock.", period: 4.4, hero: 2.7,
     build(s) {
       s.style.background = "radial-gradient(110% 90% at 50% 40%, #232032, #110f18)";
@@ -246,7 +245,7 @@
       };
     } });
 
-  demo({ id: "sweep", tier: "basic", name: "Light sweep", kind: "ui", stacks: ["css"], chips: ["CSS linear-gradient", "CSS 3D tilt"], grade: "A",
+  demo({ id: "sweep", name: "Light sweep", kind: "ui", stacks: ["css"], chips: ["CSS linear-gradient", "CSS 3D tilt"], grade: "A",
     purpose: "A band of light sweeps across a card as it tilts, the way light catches a glossy surface.", period: 3, hero: 0.95,
     build(s) {
       s.style.background = "radial-gradient(120% 90% at 50% 30%, #2d2140, #0c0a12)";
@@ -261,7 +260,7 @@
       };
     } });
 
-  demo({ id: "glass", tier: "basic", name: "Frosted glass card", kind: "ui", stacks: ["css"], chips: ["CSS backdrop-filter"], grade: "A",
+  demo({ id: "glass", name: "Frosted glass card", kind: "ui", stacks: ["css"], chips: ["CSS backdrop-filter"], grade: "A",
     purpose: "A frosted card blurs the busy, moving background behind it, so the text on it stays clear.", period: 6, hero: 1.4,
     build(s) {
       s.style.background = "#1a1433";
@@ -281,7 +280,7 @@
       };
     } });
 
-  demo({ id: "orbs", tier: "basic", name: "Glow orbs", kind: "backdrop", stacks: ["css"], chips: ["CSS radial-gradient", "mix-blend-mode: screen"], grade: "A",
+  demo({ id: "orbs", name: "Glow orbs", kind: "backdrop", stacks: ["css"], chips: ["CSS radial-gradient", "mix-blend-mode: screen"], grade: "A",
     purpose: "Soft glowing orbs drift and blend into each other behind a title.", period: 8, hero: 2,
     build(s) {
       s.style.background = "#07060b";
@@ -290,7 +289,7 @@
       return (t) => { const a = (t / 8) * TAU; os.forEach((o, i) => { o.style.transform = `translate(${(Math.cos(a * (i % 2 ? 1 : -1) + i * 1.3) * 26).toFixed(2)}cqw, ${(Math.sin(a * (i % 3 ? 1 : 2) + i) * 12).toFixed(2)}cqw) scale(${(0.85 + 0.3 * Math.sin(a + i)).toFixed(4)})`; }); };
     } });
 
-  demo({ id: "wipe", tier: "basic", name: "0.5 s wipe", kind: "motion", stacks: ["css"], chips: ["CSS clip-path", "engine.js"], grade: "A",
+  demo({ id: "wipe", name: "0.5 s wipe", kind: "motion", stacks: ["css"], chips: ["CSS clip-path", "engine.js"], grade: "A",
     purpose: "Scenes change with a half-second clip-path wipe; a bright edge leads the cut.", period: 4, hero: 1.62,
     build(s) {
       s.innerHTML = `<div class="wp-sc wp-a"><span class="wp-k">OLD ROUTE · TWO BUSES</span><b>42 min</b><span class="wp-s">Riverside → Old Town</span></div>
@@ -304,7 +303,7 @@
       };
     } });
 
-  demo({ id: "grain", tier: "basic", name: "Film grain", kind: "backdrop", stacks: ["canvas"], chips: ["Canvas 2D", "per-pixel grain at display size", "new grain every 2 frames"], grade: "A",
+  demo({ id: "grain", name: "Film grain", kind: "backdrop", stacks: ["canvas"], chips: ["Canvas 2D", "per-pixel grain at display size", "new grain every 2 frames"], grade: "A",
     purpose: "Fine grain changes over the image to give an animated film texture; it is generated at the display size, so it stays visible in a small preview. Keep it subtle behind text; dense noise increases video bitrate.", period: 4, hero: 1.6,
     build(s) {
       s.style.background = "#000";
@@ -435,8 +434,8 @@
 
   // Toon, halftone and dithered characters: the Character shading family in fx/pack-shading.js.
 
-  // ================= Motion basics, continued (tier: "basic", 16:9, centred) =================
-  demo({ id: "hook", tier: "basic", name: "3-second headline hook", kind: "type", stacks: ["css"], chips: ["CSS mask reveal", "transform"], grade: "A",
+  // ================= 2D effects, continued (16:9, centred) =================
+  demo({ id: "hook", name: "3-second headline hook", kind: "type", stacks: ["css"], chips: ["CSS mask reveal", "transform"], grade: "A",
     purpose: "A headline revealed by a mask within the first second, with no logo before it.", period: 4, hero: 2.3,
     build(s) {
       s.style.background = "#ffd400";
@@ -453,7 +452,7 @@
       };
     } });
 
-  demo({ id: "karaoke", tier: "basic", name: "Word-synced captions", kind: "type", stacks: ["css", "svg"], chips: ["CSS", "hand-made timing"], grade: "A",
+  demo({ id: "karaoke", name: "Word-synced captions", kind: "type", stacks: ["css", "svg"], chips: ["CSS", "hand-made timing"], grade: "A",
     purpose: "Readable with the sound off: each word lights up as it is spoken. The timing comes from the script, set by hand rather than by speech recognition.", period: 4.6, hero: 2.3,
     build(s) {
       s.style.background = "#141a26";
@@ -487,7 +486,7 @@
       };
     } });
 
-  demo({ id: "sticker", tier: "basic", name: "Sticker labels", kind: "type", stacks: ["css"], chips: ["CSS transform", "box-shadow"], grade: "A",
+  demo({ id: "sticker", name: "Sticker labels", kind: "type", stacks: ["css"], chips: ["CSS transform", "box-shadow"], grade: "A",
     purpose: "Rounded labels slap on with a white border and a drop shadow that shrinks as they land, like stickers on a laptop lid.", period: 3.4, hero: 2.3,
     build(s) {
       s.style.background = "radial-gradient(120% 100% at 50% 30%, #efe4d2, #cdbb9f)";
@@ -502,7 +501,7 @@
       });
     } });
 
-  demo({ id: "beat", tier: "basic", name: "Beat sync", kind: "motion", stacks: ["css"], chips: ["music.py beat grid", "engine.js"], grade: "A",
+  demo({ id: "beat", name: "Beat sync", kind: "motion", stacks: ["css"], chips: ["music.py beat grid", "engine.js"], grade: "A",
     purpose: "Pops land on the beat. The music is synthesised here, so every beat time is already known; no audio analysis.", period: 2.4, hero: 1.85,
     build(s) {
       s.style.background = "radial-gradient(110% 90% at 50% 35%, #261d36, #110d18)";
@@ -522,7 +521,7 @@
       };
     } });
 
-  demo({ id: "gradient", tier: "basic", name: "Low-contrast flowing gradient", kind: "backdrop", stacks: ["css"], chips: ["CSS radial-gradient"], grade: "A",
+  demo({ id: "gradient", name: "Low-contrast flowing gradient", kind: "backdrop", stacks: ["css"], chips: ["CSS radial-gradient"], grade: "A",
     purpose: "Movement that never fights the text; long copy stays readable on top.", period: 12, hero: 3,
     build(s) {
       s.style.background = "#f3e9f1";
@@ -560,7 +559,7 @@
       <g fill="#2d2a28"><circle cx="690" cy="690" r="34" fill="none" stroke="#2d2a28" stroke-width="7"/><circle cx="790" cy="690" r="34" fill="none" stroke="#2d2a28" stroke-width="7"/><path d="M690 690 L730 640 L790 690 M730 640 L770 640" fill="none" stroke="#2d2a28" stroke-width="7"/><circle cx="742" cy="590" r="14"/><path d="M738 604 L728 650 L760 650" fill="none" stroke="#2d2a28" stroke-width="11" stroke-linecap="round"/></g>
     </svg>`;
   }
-  demo({ id: "lut", tier: "basic", name: "Cool vs warm colour grade", kind: "backdrop", stacks: ["css", "svg"], chips: ["CSS colour filters", "soft-light tint", "background glow"], grade: "A",
+  demo({ id: "lut", name: "Cool vs warm colour grade", kind: "backdrop", stacks: ["css", "svg"], chips: ["CSS colour filters", "soft-light tint", "background glow"], grade: "A",
     purpose: "The same street graded two ways: a cool, flat overcast look against a warm golden-hour look with a soft glow; the divider sweeps between them.", period: 6, hero: 3.2,
     build(s) {
       s.style.background = "#000";
@@ -571,7 +570,7 @@
       return (t) => { const x = 50 + 26 * Math.sin((t / 6) * TAU); r.style.clipPath = `inset(0 0 0 ${x.toFixed(3)}%)`; dv.style.left = `${x.toFixed(3)}%`; };
     } });
 
-  demo({ id: "uifly", tier: "basic", name: "Camera move over real UI", kind: "ui", stacks: ["css"], chips: ["CSS 3D transform", "perspective"], grade: "A",
+  demo({ id: "uifly", name: "Camera move over real UI", kind: "ui", stacks: ["css"], chips: ["CSS 3D transform", "perspective"], grade: "A",
     purpose: "The camera glides over a real interface card in 3D perspective, then pushes in on the line that matters.", period: 6, hero: 2.3,
     build(s) {
       s.style.background = "radial-gradient(90% 80% at 50% 40%, #27303a, #0b0e12)";
@@ -589,7 +588,7 @@
       };
     } });
 
-  demo({ id: "ring", tier: "basic", name: "24-hour countdown ring", kind: "ui", stacks: ["svg"], chips: ["SVG stroke-dasharray", "tabular-nums"], grade: "A",
+  demo({ id: "ring", name: "24-hour countdown ring", kind: "ui", stacks: ["svg"], chips: ["SVG stroke-dasharray", "tabular-nums"], grade: "A",
     purpose: "A deadline at a glance: the ring empties as time runs out and turns red in the final hours.", period: 5, hero: 2.6,
     build(s) {
       s.style.background = "radial-gradient(100% 90% at 40% 45%, #1d1a2a, #0d0c14)";

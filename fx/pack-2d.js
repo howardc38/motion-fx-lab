@@ -74,7 +74,7 @@
   }
 
   // ---------- 1. Timing: a bouncing ball and its height curve ----------
-  demo({ id: "timing", tier: "basic", name: "Timing: squash and stretch with its graph", kind: "motion", stacks: ["svg"], chips: ["SVG graph + playhead", "closed-form bounce", "squash and stretch"], grade: "A",
+  demo({ id: "timing", name: "Timing: squash and stretch with its graph", kind: "motion", stacks: ["svg"], chips: ["SVG graph + playhead", "closed-form bounce", "squash and stretch"], grade: "A",
     purpose: "Shows why timing matters: the bounce and its height curve play side by side, and the playhead marks the frame you see.",
     period: 4.8, hero: 1.28,
     build(s) {
@@ -369,7 +369,7 @@
     } });
 
   // ---------- 7. Self-drawing data chart ----------
-  demo({ id: "datachart", tier: "basic", name: "Self-drawing data chart", kind: "ui", stacks: ["svg"], chips: ["SVG stroke-dashoffset", "gradient area", "stroke-dasharray ring"], grade: "A",
+  demo({ id: "datachart", name: "Self-drawing data chart", kind: "ui", stacks: ["svg"], chips: ["SVG stroke-dashoffset", "gradient area", "stroke-dasharray ring"], grade: "A",
     purpose: "Builds a line, its bars and a goal ring in order, so the eye reads the numbers in the order they matter.",
     period: 6, hero: 3.6,
     build(s) {

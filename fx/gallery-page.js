@@ -1,5 +1,5 @@
 // index.html page script: effect gallery, filters, film links on tiles, benchmark bars and stack table.
-// Site words follow one glossary: use case, demo film, effect, variant, effect film, comparison (and Motion basics).
+// Site words follow one glossary: use case, demo film, effect, variant, effect film.
 // Load after fx/catalog.js, fx/gallery-layout.js, fx/films-data.js (window.FXFilms) and fx/gallery-meta.js.
 (() => {
   document.querySelectorAll('.film-preview').forEach(preview => {
@@ -36,7 +36,7 @@
     stillMotion.addEventListener?.('change', () => loops.forEach(update));
   }
   const { R3 } = window.FX;
-  const { families, showcases, stats, byId } = window.FXCatalog, basics = window.FXCatalog.basics || [];
+  const { families, showcases, stats, byId } = window.FXCatalog;
   // Order, preview defaults and labels: fx/gallery-meta.js (order from fx/manifest.json).
   const { KINDS, NEEDS, STACKS, order: ORDER, showcaseOrder: SHOWCASE_ORDER, previewDefault: PREVIEW_DEFAULT, previewHero: PREVIEW_HERO, previewWindow: PREVIEW_WINDOW = {},
     TILE_FILM_LAYERS, TILE_FILM_LABELS, FILM_BOOKMARKS, FILM_RENAMES = {}, DEMO_ALIASES = {} } = window.FXGalleryMeta;
@@ -85,17 +85,15 @@
     card.placeholder.hidden = card.instances.has(id);
     details(card);
   }
-  // Effects, then Motion basics (fundamentals, not counted as effects), then the comparison and scene presets.
-  const basicsHost = document.getElementById('basicsGallery');
-  for (const [list, host, showcase, rank, basic] of [[families, gallery, false, rankIn(ORDER), false], [basics, basicsHost || gallery, false, rankIn(ORDER), true], [showcases, document.getElementById('showcaseGallery'), true, rankIn(SHOWCASE_ORDER), false]]) {
+  // All 86 reusable effects in one WOW-ordered gallery, then the scene and treatment presets.
+  for (const [list, host, showcase, rank] of [[families, gallery, false, rankIn(ORDER)], [showcases, document.getElementById('showcaseGallery'), true, rankIn(SHOWCASE_ORDER)]]) {
     for (const family of [...list].sort((a,b) => rank(a)-rank(b))) {
       const fig = document.createElement('figure'); fig.className = 'tile'; fig.dataset.effectId = family.id; fig.id='demo-'+family.id; fig.tabIndex=-1;
       const preview = document.createElement('div'); preview.className = 'preview';
       const placeholder = document.createElement('div'); placeholder.className = 'stage'; placeholder.innerHTML = '<span class="loading">Preview loads when visible</span>'; preview.appendChild(placeholder);
       const caption = document.createElement('figcaption');
       caption.innerHTML = `<h3>${family.name}</h3><p>${family.purpose}</p><p class="variant-description"></p><p class="preview-link"></p><details class="implementation"><summary>Drawing details</summary><div class="pills"></div><div class="chips"></div></details>`;
-      if (basic) fig.dataset.tier = 'basic';
-      const card = {family, fig, preview, placeholder, caption, showcase, basic, selected: PREVIEW_DEFAULT[family.id] || family.id, instances:new Map(), work:Promise.resolve(), busy:false, visible:false, dirty:true};
+      const card = {family, fig, preview, placeholder, caption, showcase, selected: PREVIEW_DEFAULT[family.id] || family.id, instances:new Map(), work:Promise.resolve(), busy:false, visible:false, dirty:true};
       if (family.entries.length > 1) {
         const label = document.createElement('label'); label.className = 'variant-picker'; label.append('Variant');
         const select = document.createElement('select'); select.setAttribute('aria-label', family.name + ' variant');
@@ -112,20 +110,19 @@
     }
   };
   function apply() {
-    let n=0, nb=0, demoCount=0, variantCount=0;
+    let n=0, demoCount=0, variantCount=0;
     for (const card of cards) {
       if (card.showcase) continue;
       const matches=card.family.entries.filter(entryMatches); card.fig.hidden=matches.length===0;
-      if (matches.length) { if (card.basic) nb++; else n++; demoCount+=matches.length; variantCount+=matches.filter(d=>d.role==='variant').length; if (!matches.some(d=>d.id===card.selected)) choose(card,matches[0].id); }
+      if (matches.length) { n++; demoCount+=matches.length; variantCount+=matches.filter(d=>d.role==='variant').length; if (!matches.some(d=>d.id===card.selected)) choose(card,matches[0].id); }
       if (card.select) for (const option of card.select.options) option.disabled=!entryMatches(byId.get(option.value));
       card.dirty=true;
     }
     document.getElementById('shown').textContent=`${n} / ${stats.techniques} effects shown`;
-    const basicsShown=document.getElementById('basics-shown'); if (basicsShown) basicsShown.textContent=`${nb} / ${stats.basics || 0} motion basics shown`;
     document.getElementById('available').textContent=`${demoCount} ${demoCount===1?'preview matches':'previews match'} these filters${variantCount ? `, including ${variantCount} variant${variantCount===1?'':'s'} in the card selectors` : ''}.`;
     document.getElementById('showcase-count').textContent='Scene presets below ↘';
   }
-  mk(document.getElementById('fKind'),'kind', [['all','All'],...Object.entries(KINDS).filter(([k])=>[...families, ...basics].some(f=>f.kind===k))]);
+  mk(document.getElementById('fKind'),'kind', [['all','All'],...Object.entries(KINDS).filter(([k])=>families.some(f=>f.kind===k))]);
   mk(document.getElementById('fStack'),'stack', [['all','All'],...Object.entries(STACKS)]);
   apply();
   async function instanceFor(card,id) {

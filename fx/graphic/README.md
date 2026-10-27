@@ -17,8 +17,8 @@ variant its own segment inside the corresponding existing card:
 | Segment | Variant | Parent |
 |---|---|---|
 | 0–4.8 s | `graphic-flap`: split-flap letters | `cardflip` |
-| 4.8–9.6 s | `graphic-reels`: carrying digits and braking word reels | `count` (Motion basics) |
-| 9.6–14.4 s | `graphic-bands`: scrolling, vertical and crossed type | `chars` (Motion basics) |
+| 4.8–9.6 s | `graphic-reels`: carrying digits and braking word reels | `count` |
+| 9.6–14.4 s | `graphic-bands`: scrolling, vertical and crossed type | `chars` |
 | 14.4–21.6 s | `graphic-spatial`: cylinder, word tunnel and corridor | `design-type-orbit` |
 | 21.6–26.4 s | `graphic-tiles`: fill, row shifts and triangular tiles | `rhythm` |
 | 26.4–30 s | `graphic-led`: sampled LED lettering | `studio-video-dots` |

@@ -1,8 +1,6 @@
 // Presentation catalogue. Registered demo IDs stay stable for existing films.
 // A technique owns its variants; collections and finished combinations are not
 // counted as additional techniques merely because they have another demo ID.
-// Families whose lead demo is registered with tier: "basic" are Motion basics:
-// listed separately (FXCatalog.basics) and not counted as effect families.
 (() => {
   const variants = {
     'graphic-flap': 'cardflip',
@@ -113,7 +111,7 @@
   const byId = new Map();
   for (const demo of FX.DEMOS) {
     if (byId.has(demo.id)) throw new Error('Duplicate demo ID: ' + demo.id);
-    const entry = { ...demo, kind: kinds[demo.id] || demo.kind, role: collections.has(demo.id) ? 'showcase' : variants[demo.id] ? 'variant' : 'technique', familyId: variants[demo.id] || demo.id };
+    const entry = { ...demo, kind: kinds[demo.id] || demo.kind, tier: 'effect', role: collections.has(demo.id) ? 'showcase' : variants[demo.id] ? 'variant' : 'technique', familyId: variants[demo.id] || demo.id };
     if (['studio-video-dots', 'studio-dot-rhythm', 'studio-dot-impact', 'studio-echo', 'studio-time-remap'].includes(demo.id)) entry.stacks = ['canvas'];
     if (['studio-skin-cloud', 'studio-particle-lens'].includes(demo.id)) entry.stacks = ['canvas', 'three', 'glsl'];
     byId.set(entry.id, entry);
@@ -123,18 +121,15 @@
     if (!byId.has(id) || !byId.has(parent)) throw new Error('Unknown catalogue relation: ' + id + ' → ' + parent);
   }
   for (const id of collections) if (!byId.has(id)) throw new Error('Unknown showcase: ' + id);
-  // A family takes its tier from its lead demo; variants follow their family.
-  for (const entry of byId.values()) entry.tier = byId.get(entry.familyId).tier === 'basic' ? 'basic' : 'effect';
-  const groups = [...byId.values()].filter(e => e.role === 'technique').map(entry => ({
+  const families = [...byId.values()].filter(e => e.role === 'technique').map(entry => ({
     id: entry.id,
     name: names[entry.id] || entry.name,
     purpose: descriptions[entry.id] || entry.purpose,
     kind: entry.kind,
-    tier: entry.tier,
+    tier: 'effect',
     entries: [entry, ...[...byId.values()].filter(e => e.role === 'variant' && e.familyId === entry.id)],
   }));
-  const families = groups.filter(f => f.tier !== 'basic'), basics = groups.filter(f => f.tier === 'basic');
   const showcases = [...byId.values()].filter(e => e.role === 'showcase').map(entry => ({ id: entry.id, name: entry.name, purpose: entry.purpose, kind: entry.kind, entries: [entry] }));
-  const stats = Object.freeze({ techniques: families.length, basics: basics.length, variants: Object.keys(variants).length, showcases: showcases.length, demos: byId.size });
-  window.FXCatalog = { families, basics, showcases, byId, stats };
+  const stats = Object.freeze({ techniques: families.length, variants: Object.keys(variants).length, showcases: showcases.length, demos: byId.size });
+  window.FXCatalog = { families, showcases, byId, stats };
 })();

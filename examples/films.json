@@ -640,6 +640,112 @@
       "groups": ["all", "showcase", "chrome-type"]
     },
     {
+      "id": "character-dialogue",
+      "layer": "demo",
+      "tier": "featured",
+      "title": "The Final Final",
+      "summary": "The plush bear asks for the launch video; Pip has made one small, dramatic improvement. Nine library effects play a part in the story.",
+      "duration": 23.8,
+      "format": "16:9",
+      "page": "examples/character-dialogue.html",
+      "media": {"mp4": "media/character-dialogue.mp4", "poster": "media/character-dialogue.jpg", "preview": "media/character-dialogue.preview.mp4"},
+      "card": {
+        "headline": "The Final Final",
+        "description": "The bear asks for the launch video. Pip has made one small, dramatic improvement.",
+        "useFor": "Voiced character stories, product explainers and comedy shorts.",
+        "relation": "Speech and lip sync, plush fur and seven library effects inside the film-within-the-film each have a story role.",
+        "guide": "fx/dialogue/README.md"
+      },
+      "audience": "Explainer, comedy and product-story makers who need talking characters.",
+      "effects": [
+        {"id": "plush-fur", "label": "Plush fur", "proof": ["fx/dialogue/final.js", "{id: 'plush-fur'"]},
+        {"id": "dialogue-lipsync", "at": [1.35, 21.4], "label": "Speech and lip sync", "proof": ["fx/dialogue/final.js", "{id: 'dialogue-lipsync'"]},
+        {"id": "rays", "at": [0.28, 0.5], "label": "Launch burst", "proof": ["fx/dialogue/final.js", "{id: 'rays'"]},
+        {"id": "stamp", "at": [0.28, 0.5], "label": "LAUNCH slam", "proof": ["fx/dialogue/final.js", "{id: 'stamp'"]},
+        {"id": "count", "at": [7.45, 10.47], "label": "Stuck at 99%", "proof": ["fx/dialogue/trailer.js", "{effect: 'count'"]},
+        {"id": "sweep", "at": [7.65, 10.47], "label": "Progress sweep", "proof": ["fx/dialogue/trailer.js", "{effect: 'sweep'"]},
+        {"id": "glitch", "at": [10.45, 11.07], "label": "Trailer breaks up", "proof": ["fx/dialogue/trailer.js", "{effect: 'glitch'"]},
+        {"id": "stamp", "at": [11.05, 11.83], "label": "TO BE CONTINUED", "proof": ["fx/dialogue/trailer.js", "{effect: 'stamp'"]},
+        {"id": "cardflip", "at": [14.36, 17.83], "label": "Final, final, actually final", "proof": ["fx/dialogue/final.js", "{id: 'cardflip'"]},
+        {"id": "ring", "at": [18.9, 19.93], "label": "Loading face", "proof": ["fx/dialogue/final.js", "{id: 'ring'"]}
+      ],
+      "groups": ["all", "showcase", "dialogue"]
+    },
+    {
+      "id": "dot-battle",
+      "layer": "demo",
+      "tier": "featured",
+      "title": "COUNTERFORM",
+      "summary": "A complete fight with authored action and contact timing, and a 1.2 s freeze-orbit at the climax.",
+      "duration": 19.8,
+      "format": "16:9",
+      "page": "examples/dot-battle.html",
+      "media": {"mp4": "media/dot-battle.mp4", "poster": "media/dot-battle.jpg", "preview": "media/dot-battle.preview.mp4"},
+      "card": {
+        "headline": "COUNTERFORM",
+        "description": "Original action choreography and contact holds; at the climax time stops and the camera circles the fighters as a 3D point cloud.",
+        "useFor": "Action promos, game trailers and sports intros.",
+        "relation": "Same fight. Eight treatments. reuses this choreography to compare operations."
+      },
+      "audience": "Action, game and sports promo makers.",
+      "effects": [
+        {"id": "studio-video-dots", "label": "Dots", "proof": ["fx/studio/battle.js", "function dots(data,t,spacing,solid,alpha=1"]},
+        {"id": "studio-dot-impact", "label": "Impact", "proof": ["fx/studio/battle.js", "kick=burst*near"]},
+        {"id": "studio-echo", "label": "Echoes", "proof": ["fx/studio/battle.js", "const trail="]},
+        {"id": "studio-time-remap", "at": [7.2, 9], "label": "Time control", "proof": ["fx/studio/battle.js", "const sourceTime=t=>"]},
+        {"id": "signal-freeze-orbit", "at": [12, 13.2], "label": "Freeze-orbit climax", "proof": ["fx/studio/battle.js", "3D freeze-orbit insert"]}
+      ],
+      "groups": ["all", "showcase", "studio"]
+    },
+    {
+      "id": "mechanical-cutaway",
+      "layer": "demo",
+      "tier": "featured",
+      "title": "Inside the machine.",
+      "summary": "A section plane opens closed housings while the detailed core keeps moving; real cap geometry preserves wall thickness.",
+      "duration": 14.4,
+      "format": "16:9",
+      "page": "examples/mechanical-cutaway.html",
+      "media": {"mp4": "media/mechanical-cutaway.mp4", "poster": "media/mechanical-cutaway.jpg", "preview": "media/mechanical-cutaway.preview.mp4"},
+      "card": {
+        "headline": "Inside the machine.",
+        "description": "A section plane opens closed housings while the detailed core keeps moving; real cap geometry preserves wall thickness.",
+        "useFor": "Technical explainers and product interior reveals.",
+        "relation": "Full render of one controllable mechanical operation.",
+        "guide": "fx/mechanical/README.md"
+      },
+      "audience": "Designers of product and technical motion films.",
+      "effects": [
+        {"id": "mechanical-cutaway"}
+      ],
+      "groups": ["all", "showcase", "mechanical", "technical"],
+      "fps": 60
+    },
+    {
+      "id": "mechanical-assembly",
+      "layer": "demo",
+      "tier": "featured",
+      "title": "Apart. Together.",
+      "summary": "A detailed turbofan opens into seven service assemblies and returns along their ordered paths.",
+      "duration": 14.4,
+      "format": "16:9",
+      "page": "examples/mechanical-assembly.html",
+      "media": {"mp4": "media/mechanical-assembly.mp4", "poster": "media/mechanical-assembly.jpg", "preview": "media/mechanical-assembly.preview.mp4"},
+      "card": {
+        "headline": "Apart. Together.",
+        "description": "A detailed turbofan opens into seven service assemblies and returns along their ordered paths.",
+        "useFor": "Product teardowns, maintenance explanations and assembly reveals.",
+        "relation": "Full render of one controllable mechanical operation.",
+        "guide": "fx/mechanical/README.md"
+      },
+      "audience": "Designers of product and technical motion films.",
+      "effects": [
+        {"id": "mechanical-assembly"}
+      ],
+      "groups": ["all", "showcase", "mechanical", "technical"],
+      "fps": 60
+    },
+    {
       "id": "spark-form",
       "layer": "demo",
       "tier": "featured",
@@ -674,38 +780,6 @@
       "fps": 60
     },
     {
-      "id": "character-dialogue",
-      "layer": "demo",
-      "tier": "featured",
-      "title": "The Final Final",
-      "summary": "The plush bear asks for the launch video; Pip has made one small, dramatic improvement. Nine library effects play a part in the story.",
-      "duration": 23.8,
-      "format": "16:9",
-      "page": "examples/character-dialogue.html",
-      "media": {"mp4": "media/character-dialogue.mp4", "poster": "media/character-dialogue.jpg", "preview": "media/character-dialogue.preview.mp4"},
-      "card": {
-        "headline": "The Final Final",
-        "description": "The bear asks for the launch video. Pip has made one small, dramatic improvement.",
-        "useFor": "Voiced character stories, product explainers and comedy shorts.",
-        "relation": "Speech and lip sync, plush fur and seven library effects inside the film-within-the-film each have a story role.",
-        "guide": "fx/dialogue/README.md"
-      },
-      "audience": "Explainer, comedy and product-story makers who need talking characters.",
-      "effects": [
-        {"id": "plush-fur", "label": "Plush fur", "proof": ["fx/dialogue/final.js", "{id: 'plush-fur'"]},
-        {"id": "dialogue-lipsync", "at": [1.35, 21.4], "label": "Speech and lip sync", "proof": ["fx/dialogue/final.js", "{id: 'dialogue-lipsync'"]},
-        {"id": "rays", "at": [0.28, 0.5], "label": "Launch burst", "proof": ["fx/dialogue/final.js", "{id: 'rays'"]},
-        {"id": "stamp", "at": [0.28, 0.5], "label": "LAUNCH slam", "proof": ["fx/dialogue/final.js", "{id: 'stamp'"]},
-        {"id": "count", "at": [7.45, 10.47], "label": "Stuck at 99%", "proof": ["fx/dialogue/trailer.js", "{effect: 'count'"]},
-        {"id": "sweep", "at": [7.65, 10.47], "label": "Progress sweep", "proof": ["fx/dialogue/trailer.js", "{effect: 'sweep'"]},
-        {"id": "glitch", "at": [10.45, 11.07], "label": "Trailer breaks up", "proof": ["fx/dialogue/trailer.js", "{effect: 'glitch'"]},
-        {"id": "stamp", "at": [11.05, 11.83], "label": "TO BE CONTINUED", "proof": ["fx/dialogue/trailer.js", "{effect: 'stamp'"]},
-        {"id": "cardflip", "at": [14.36, 17.83], "label": "Final, final, actually final", "proof": ["fx/dialogue/final.js", "{id: 'cardflip'"]},
-        {"id": "ring", "at": [18.9, 19.93], "label": "Loading face", "proof": ["fx/dialogue/final.js", "{id: 'ring'"]}
-      ],
-      "groups": ["all", "showcase", "dialogue"]
-    },
-    {
       "id": "style-journey",
       "layer": "demo",
       "tier": "featured",
@@ -731,9 +805,32 @@
       "groups": ["all", "showcase", "studio"]
     },
     {
+      "id": "ink-city",
+      "layer": "demo",
+      "tier": "featured",
+      "title": "One block. A drawn city.",
+      "summary": "Surface hatching, staged construction and camera travel in one scene.",
+      "duration": 12,
+      "format": "16:9",
+      "page": "examples/ink-city.html",
+      "media": {"mp4": "media/ink-city.mp4", "poster": "media/ink-city.jpg", "preview": "media/ink-city.preview.mp4"},
+      "card": {
+        "headline": "One block. A drawn city.",
+        "description": "Hatching is anchored in object coordinates. Camera movement preserves the marks, while changing light changes ink density.",
+        "useFor": "Architectural and illustrated 3D scenes.",
+        "relation": "The full render of the surface-hatching effect.",
+        "guide": "fx/design/README.md"
+      },
+      "audience": "Illustrators and architects presenting a drawn 3D scene.",
+      "effects": [
+        {"id": "design-surface-ink", "label": "Surface hatching", "proof": ["fx/design/films.js", "if(id==='ink-city')return createCity();"]}
+      ],
+      "groups": ["all", "showcase", "design"]
+    },
+    {
       "id": "dot-story",
       "layer": "demo",
-      "tier": "listed",
+      "tier": "featured",
       "title": "One dot. Many roles.",
       "summary": "One orange dot becomes a switch, a letter, a spring trace and a reveal before returning to the start.",
       "duration": 14.1,
@@ -756,35 +853,9 @@
       "groups": ["all", "showcase", "design"]
     },
     {
-      "id": "dot-battle",
-      "layer": "demo",
-      "tier": "listed",
-      "title": "COUNTERFORM",
-      "summary": "A complete fight with authored action and contact timing, and a 1.2 s freeze-orbit at the climax.",
-      "duration": 19.8,
-      "format": "16:9",
-      "page": "examples/dot-battle.html",
-      "media": {"mp4": "media/dot-battle.mp4", "poster": "media/dot-battle.jpg", "preview": "media/dot-battle.preview.mp4"},
-      "card": {
-        "headline": "COUNTERFORM",
-        "description": "Original action choreography and contact holds; at the climax time stops and the camera circles the fighters as a 3D point cloud.",
-        "useFor": "Action promos, game trailers and sports intros.",
-        "relation": "Same fight. Eight treatments. reuses this choreography to compare operations."
-      },
-      "audience": "Action, game and sports promo makers.",
-      "effects": [
-        {"id": "studio-video-dots", "label": "Dots", "proof": ["fx/studio/battle.js", "function dots(data,t,spacing,solid,alpha=1"]},
-        {"id": "studio-dot-impact", "label": "Impact", "proof": ["fx/studio/battle.js", "kick=burst*near"]},
-        {"id": "studio-echo", "label": "Echoes", "proof": ["fx/studio/battle.js", "const trail="]},
-        {"id": "studio-time-remap", "at": [7.2, 9], "label": "Time control", "proof": ["fx/studio/battle.js", "const sourceTime=t=>"]},
-        {"id": "signal-freeze-orbit", "at": [12, 13.2], "label": "Freeze-orbit climax", "proof": ["fx/studio/battle.js", "3D freeze-orbit insert"]}
-      ],
-      "groups": ["all", "showcase", "studio"]
-    },
-    {
       "id": "fight-effects",
       "layer": "demo",
-      "tier": "listed",
+      "tier": "featured",
       "title": "Same fight. Eight treatments.",
       "summary": "Compare eight operations on the same choreography.",
       "duration": 38.4,
@@ -809,77 +880,6 @@
         {"id": "studio-skin-cloud", "at": [33.6, 38.4], "label": "Surface points"}
       ],
       "groups": ["all", "showcase", "studio"]
-    },
-    {
-      "id": "mechanical-cutaway",
-      "layer": "demo",
-      "tier": "listed",
-      "title": "Inside the machine.",
-      "summary": "A section plane opens closed housings while the detailed core keeps moving; real cap geometry preserves wall thickness.",
-      "duration": 14.4,
-      "format": "16:9",
-      "page": "examples/mechanical-cutaway.html",
-      "media": {"mp4": "media/mechanical-cutaway.mp4", "poster": "media/mechanical-cutaway.jpg", "preview": "media/mechanical-cutaway.preview.mp4"},
-      "card": {
-        "headline": "Inside the machine.",
-        "description": "A section plane opens closed housings while the detailed core keeps moving; real cap geometry preserves wall thickness.",
-        "useFor": "Technical explainers and product interior reveals.",
-        "relation": "Full render of one controllable mechanical operation.",
-        "guide": "fx/mechanical/README.md"
-      },
-      "audience": "Designers of product and technical motion films.",
-      "effects": [
-        {"id": "mechanical-cutaway"}
-      ],
-      "groups": ["all", "showcase", "mechanical", "technical"],
-      "fps": 60
-    },
-    {
-      "id": "mechanical-assembly",
-      "layer": "demo",
-      "tier": "listed",
-      "title": "Apart. Together.",
-      "summary": "A detailed turbofan opens into seven service assemblies and returns along their ordered paths.",
-      "duration": 14.4,
-      "format": "16:9",
-      "page": "examples/mechanical-assembly.html",
-      "media": {"mp4": "media/mechanical-assembly.mp4", "poster": "media/mechanical-assembly.jpg", "preview": "media/mechanical-assembly.preview.mp4"},
-      "card": {
-        "headline": "Apart. Together.",
-        "description": "A detailed turbofan opens into seven service assemblies and returns along their ordered paths.",
-        "useFor": "Product teardowns, maintenance explanations and assembly reveals.",
-        "relation": "Full render of one controllable mechanical operation.",
-        "guide": "fx/mechanical/README.md"
-      },
-      "audience": "Designers of product and technical motion films.",
-      "effects": [
-        {"id": "mechanical-assembly"}
-      ],
-      "groups": ["all", "showcase", "mechanical", "technical"],
-      "fps": 60
-    },
-    {
-      "id": "ink-city",
-      "layer": "demo",
-      "tier": "listed",
-      "title": "One block. A drawn city.",
-      "summary": "Surface hatching, staged construction and camera travel in one scene.",
-      "duration": 12,
-      "format": "16:9",
-      "page": "examples/ink-city.html",
-      "media": {"mp4": "media/ink-city.mp4", "poster": "media/ink-city.jpg", "preview": "media/ink-city.preview.mp4"},
-      "card": {
-        "headline": "One block. A drawn city.",
-        "description": "Hatching is anchored in object coordinates. Camera movement preserves the marks, while changing light changes ink density.",
-        "useFor": "Architectural and illustrated 3D scenes.",
-        "relation": "The full render of the surface-hatching effect.",
-        "guide": "fx/design/README.md"
-      },
-      "audience": "Illustrators and architects presenting a drawn 3D scene.",
-      "effects": [
-        {"id": "design-surface-ink", "label": "Surface hatching", "proof": ["fx/design/films.js", "if(id==='ink-city')return createCity();"]}
-      ],
-      "groups": ["all", "showcase", "design"]
     },
     {
       "id": "fluid-smoke",

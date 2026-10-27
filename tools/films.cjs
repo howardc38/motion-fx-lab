@@ -406,7 +406,6 @@ const BLOCKS = [
   { file: 'index.html', name: 'films:hero', render: renderHero },
   { file: 'index.html', name: 'films:uses', render: (m, r) => renderCards(m, 'use-case', r) },
   { file: 'index.html', name: 'films:demos', render: (m, r) => renderCards(m, 'demo', r) },
-  { file: 'index.html', name: 'films:demos-more', render: (m, r) => renderCards(m, 'demo', r, 'listed') },
   { file: 'index.html', name: 'films:summary', inline: true, render: renderSummary },
   { file: 'index.html', name: 'films:count', inline: true, render: renderCount },
   { file: 'index.html', name: 'films', render: renderList },

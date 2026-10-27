@@ -28,8 +28,7 @@ other word lengths need a layout pass. Edit drawing/camera timing in `blueprint`
 | [One light. Different edges.](../../examples/shadow-lab.html) | 9.6 s | Enlarge the emitter, then raise the occluder; compare shadow edge width. |
 
 The first two are composed sequences. The third is a single-effect render.
-None is an extra technique. The catalogue adds two effect families, one Motion basic (the soft-shadow study, a lighting
-fundamental listed with the basics and not counted as an effect) and two variants:
+None is an extra technique. The catalogue adds three effect families and two variants:
 
 | Family / variant | Module | Editable controls |
 |---|---|---|

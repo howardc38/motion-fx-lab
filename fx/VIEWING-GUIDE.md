@@ -9,7 +9,6 @@ The site and the README use one set of words:
 | Effect | One distinct visible operation or material response, shown on its own gallery card under Unique effects |
 | Variant | Another version of an effect, chosen in that card's selector |
 | Effect film | The full render of one effect; it plays from that effect's card |
-| Motion basics | Everyday moves the use cases are built from; shown inside Unique effects below the main grid and not counted as effects |
 
 Counts are not written here: the gallery and the film list count themselves from the catalogue and from `examples/films.json`.
 
@@ -67,15 +66,15 @@ Every published film has one layer. Use cases and demo films get cards in their 
 | Clear (9:16) | Use case | The Clear drinks advert recomposed for 9:16 from the same page. | Linked from the Clear card |
 | Every Stroke Is Code | Demo film | Over 1,000 stroke-sliced Latin and CJK vectors swarm into a Bento mural, invert polarity from one expanding dot and loop seamlessly. | Card in Demo films |
 | Liquid Mercury Type | Demo film | A top-down studio raymarcher pours liquid mercury into Latin and CJK letterforms, settles with specular glints and melts cleanly back into the cyclorama. | Card in Demo films |
-| Spark / Form | Demo film | An ember traces a construction drawing, the camera enters its O, and the same word resolves as engraved three-dimensional lettering. | Card in Demo films |
 | The Final Final | Demo film | The plush bear asks for the launch video; Pip has made one small, dramatic improvement. Nine library effects play a part in the story. | Card in Demo films |
-| One flight. Twenty worlds. | Demo film | One character travels through twenty art directions. | Card in Demo films |
-| One dot. Many roles. | Demo film | One orange dot becomes a switch, a letter, a spring trace and a reveal before returning to the start. | Card in Demo films |
 | COUNTERFORM | Demo film | A complete fight with authored action and contact timing, and a 1.2 s freeze-orbit at the climax. | Card in Demo films |
-| Same fight. Eight treatments. | Demo film | Compare eight operations on the same choreography. | Card in Demo films |
 | Inside the machine. | Demo film | A section plane opens closed housings while the detailed core keeps moving; real cap geometry preserves wall thickness. | Card in Demo films |
 | Apart. Together. | Demo film | A detailed turbofan opens into seven service assemblies and returns along their ordered paths. | Card in Demo films |
+| Spark / Form | Demo film | An ember traces a construction drawing, the camera enters its O, and the same word resolves as engraved three-dimensional lettering. | Card in Demo films |
+| One flight. Twenty worlds. | Demo film | One character travels through twenty art directions. | Card in Demo films |
 | One block. A drawn city. | Demo film | Surface hatching, staged construction and camera travel in one scene. | Card in Demo films |
+| One dot. Many roles. | Demo film | One orange dot becomes a switch, a letter, a spring trace and a reveal before returning to the start. | Card in Demo films |
+| Same fight. Eight treatments. | Demo film | Compare eight operations on the same choreography. | Card in Demo films |
 | Find the Form | Effect film | An extended rendered example of volumetric smoke. | Effect card: Volumetric smoke around geometry |
 | Overflow | Effect film | Partly filled bowl → rising water → overflow → settling. | Effect card: Fluid flow and overflow |
 | Slow Gold | Effect film | Inspect liquid contact, stretching and drainage over a ring. | Effect card: Fluid flow and overflow |
@@ -93,6 +92,6 @@ The effect links on a film name the catalogue effects its source actually runs; 
 
 ## Ordering by visual impact
 
-The gallery order lives in `gallery.order` in [manifest.json](manifest.json) (`npm run sync:fx` writes it into the page). It is judged on tile screenshots: effects with the strongest look in a 16:9 tile come first, and neighbouring cards should differ in colour, subject and kind. Quieter lighting effects and small utility effects come later; Motion basics follow in their own section. Filters keep the same order.
+The gallery order lives in `gallery.order` in [manifest.json](manifest.json) (`npm run sync:fx` writes it into the page). It is judged on tile screenshots: effects with the strongest look in a 16:9 tile come first, and neighbouring cards should differ in colour, subject and kind. Quieter lighting effects and everyday building-block moves come later in the same gallery. Filters keep the same order.
 
 This is a viewing order, not a quality certification. Re-check it with screenshots whenever an effect is added, rebuilt or merged.

@@ -6,30 +6,26 @@ async function filter(page,f){
  await page.locator('#fKind').getByRole('button',{name:f.kind,exact:true}).click();
  await page.locator('#fStack').getByRole('button',{name:f.stack,exact:true}).click();
 }
-test('catalogue owns every demo once; variants, basics and showcases do not inflate the effect count',async({page})=>{
+test('catalogue owns every demo once; variants and showcases do not inflate the effect count',async({page})=>{
  await open(page);
  const all=COUNTS.filters[0];
  await expect(page.locator('#shown')).toHaveText(`${C.techniques} / ${C.techniques} effects shown`);
- await expect(page.locator('#basics-shown')).toHaveText(`${C.basics} / ${C.basics} motion basics shown`);
  await expect(page.locator('#available')).toHaveText(available(all));
  await expect(page.locator('#showcase-count')).toHaveText('Scene presets below ↘');
- const p=await page.evaluate(()=>({stats:FXCatalog.stats,ids:FX.DEMOS.map(d=>d.id),groups:[...FXCatalog.families,...FXCatalog.basics].map(f=>f.entries.map(d=>d.id)),shows:FXCatalog.showcases.map(f=>f.id),
-  uiIds:[...document.querySelectorAll('#gallery > figure, #basicsGallery > figure, #showcaseGallery > figure')].flatMap(card=>card.querySelector('select')?[...card.querySelectorAll('option')].map(o=>o.value):[card.dataset.effectId]),
-  basicCards:[...document.querySelectorAll('#basicsGallery > figure')].map(f=>f.dataset.effectId).sort(),basicIds:FXCatalog.basics.map(f=>f.id).sort(),
+ const p=await page.evaluate(()=>({stats:FXCatalog.stats,ids:FX.DEMOS.map(d=>d.id),groups:FXCatalog.families.map(f=>f.entries.map(d=>d.id)),shows:FXCatalog.showcases.map(f=>f.id),
+  uiIds:[...document.querySelectorAll('#gallery > figure, #showcaseGallery > figure')].flatMap(card=>card.querySelector('select')?[...card.querySelectorAll('option')].map(o=>o.value):[card.dataset.effectId]),
+  galleryCards:[...document.querySelectorAll('#gallery > figure')].map(f=>f.dataset.effectId),familyIds:FXCatalog.families.map(f=>f.id),
   tiers:[...FXCatalog.byId.values()].filter(d=>d.role!=='showcase').map(d=>[d.id,d.tier,FXCatalog.byId.get(d.familyId).tier]),
-  effectTiers:FXCatalog.families.map(f=>f.tier),registeredBasics:FX.DEMOS.filter(d=>d.tier==='basic').map(d=>d.id),
+  effectTiers:FXCatalog.families.map(f=>f.tier),
   built:galleryAPI.cards.reduce((n,c)=>n+c.instances.size,0)}));
  expect(p.stats).toEqual(C);
  const owned=[...p.groups.flat(),...p.shows];expect(new Set(owned).size).toBe(p.ids.length);expect(owned.sort()).toEqual(p.ids.sort());expect(p.built).toBeLessThan(10);expect(p.uiIds.sort()).toEqual(p.ids.sort());
- // Motion basics: the tier comes from the lead demo's registration, variants follow their family, and they get their own section.
- expect(p.basicCards).toEqual(p.basicIds);expect(p.basicIds).toHaveLength(C.basics);
+ expect([...p.galleryCards].sort()).toEqual([...p.familyIds].sort());expect(p.familyIds).toHaveLength(C.techniques);
  expect(new Set(p.effectTiers)).toEqual(new Set(['effect']));
  for(const [id,tier,family] of p.tiers)expect(tier,id).toBe(family);
- for(const id of p.registeredBasics)expect(p.tiers.find(t=>t[0]===id)[1],id).toBe('basic');
  for(const f of COUNTS.filters.slice(1)){
   await filter(page,f);
   await expect(page.locator('#gallery > figure:visible'),f.kind+' + '+f.stack).toHaveCount(f.families);
-  await expect(page.locator('#basicsGallery > figure:visible'),f.kind+' + '+f.stack).toHaveCount(f.basics);
   await expect(page.locator('#available')).toHaveText(available(f));
  }
  await filter(page,{kind:'All',stack:'Flubber'});

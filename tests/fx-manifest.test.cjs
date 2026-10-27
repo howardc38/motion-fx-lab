@@ -119,8 +119,10 @@ test('the README effect overview names every gallery card once, in gallery order
   const manifest = fxm.load(), text = fxm.renderReadmeEffects(manifest), reg = fxm.registry(manifest);
   const ids = [...text.matchAll(/#demo-([a-z0-9-]+)\)/g)].map(m => m[1]);
   assert.deepEqual([...ids].sort(), reg.cards.map(c => c.id).sort());
-  const basics = new Set(reg.cards.filter(c => c.basic).map(c => c.id));
-  assert.deepEqual(ids.filter(id => basics.has(id)), manifest.gallery.order.filter(id => basics.has(id)));
+  for (const line of text.split('\n').filter(l => l.includes('#demo-'))) {
+    const rowIds = [...line.matchAll(/#demo-([a-z0-9-]+)\)/g)].map(m => m[1]);
+    assert.deepEqual(rowIds, manifest.gallery.order.filter(id => rowIds.includes(id)));
+  }
   assert.doesNotMatch(text, /\d+\s+(effects|effect families|variants|techniques)/i);
   for (const f of manifest.families.filter(x => x.readme)) assert.ok(text.includes(`(${f.readme})`), f.readme);
 });

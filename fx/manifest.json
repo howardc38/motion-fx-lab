@@ -47,7 +47,7 @@
         "fx/pack-shaders.js",
         "fx/pack-sims.js"
       ],
-      "cacheTag": "classic-2",
+      "cacheTag": "classic-3",
       "readme": null,
       "anchor": "id: \"{id}\"",
       "sources": {
@@ -172,7 +172,7 @@
     {
       "id": "design",
       "scripts": ["fx/design-effects.js", "fx/pack-design.js"],
-      "cacheTag": "design-4",
+      "cacheTag": "design-5",
       "readme": "fx/design/README.md",
       "prefix": "design-",
       "anchor": "id:'{key}'",
@@ -594,11 +594,11 @@
   ],
   "catalog": {
     "scripts": ["fx/catalog.js"],
-    "cacheTag": "catalog-v3"
+    "cacheTag": "catalog-v4"
   },
   "pages": ["index.html", "video/intro.html"],
   "gallery": {
-    "$comment": "order: effect cards curated by visual design craft and motion feel (judged on tile screenshots and live motion, not 3D complexity) with contrast between neighbouring looks, then the Motion basics; every gallery family must be listed once. showcaseOrder: the same for the scene presets. previewDefault: the variant a card shows first. previewHero: the frame time shown while motion is paused (gpuparticles shows the flowing form). previewWindow: [start, end] of the demo time a card loops, where a shared film timeline starts or ends with a long calm stretch (films and the intro still play the whole timeline).",
+    "$comment": "order: all 86 reusable effect cards curated by visual design craft and motion feel (judged on tile screenshots and live motion, not 3D complexity) with contrast between neighbouring looks; every gallery family must be listed once. showcaseOrder: the same for the scene presets. previewDefault: the variant a card shows first. previewHero: the frame time shown while motion is paused (gpuparticles shows the flowing form). previewWindow: [start, end] of the demo time a card loops, where a shared film timeline starts or ends with a long calm stretch (films and the intro still play the whole timeline).",
     "order": [
       "graphic-stroke-mural", "liquid-chrome-type", "paper-collage", "ink-slash", "optical-foil",
       "graphic-fill", "wipe-dot-polarity", "ui-cursor-loupe", "cad-telemetry-hud", "graphic-bands",

@@ -4,7 +4,7 @@
   "films": {
     "intro": {
       "page": "video/intro.html",
-      "source_digest": "2ca22413beffd77118a404eb60a778f080a9dcf4b34b4c0f33af1eacdc4c2924",
+      "source_digest": "f79172620b467a111c2e29c5f4a96bfedf9c2954de4044aca8615a0576e1e66b",
       "video": {
         "width": 1920,
         "height": 1080,
@@ -522,34 +522,6 @@
         }
       }
     },
-    "spark-form": {
-      "page": "examples/spark-form.html",
-      "source_digest": "22b372dcc33a1db3a28e51cca58f90ce489c586ed62b9155323df59d6761a22f",
-      "video": {
-        "width": 1920,
-        "height": 1080,
-        "fps": 60,
-        "duration_sec": 16.871,
-        "has_audio": true
-      },
-      "files": {
-        "mp4": {
-          "path": "media/spark-form.mp4",
-          "bytes": 12002746,
-          "sha256": "bbd849e9232f8356db3da62422d186a02f6e347ce3f487349d4957cf99a6fd46"
-        },
-        "poster": {
-          "path": "media/spark-form.jpg",
-          "bytes": 95820,
-          "sha256": "40d4bbfee05811a7fc5aab4fe16d8bde45b7bdc87c613f176ce03fcbc236dc84"
-        },
-        "preview": {
-          "path": "media/spark-form.preview.mp4",
-          "bytes": 304577,
-          "sha256": "56cca46ea5c49e4ed748ccf93a9a21221a6d634f1aff74ecc8543df2f2e7c590"
-        }
-      }
-    },
     "character-dialogue": {
       "page": "examples/character-dialogue.html",
       "source_digest": "9c15e9807a7ee3528bde9035ccc0714057f50955bcdb0ecd821729f1c8adebc2",
@@ -575,6 +547,118 @@
           "path": "media/character-dialogue.preview.mp4",
           "bytes": 378886,
           "sha256": "22584a07f4246ec183548b8ad41a60e281bc31f7dd7ce3b914d748794001eac1"
+        }
+      }
+    },
+    "dot-battle": {
+      "page": "examples/dot-battle.html",
+      "source_digest": "26ca6c6d580c2fcd70745518932f1eb164f385b43b1eee26d102ef4b7f3e13fa",
+      "video": {
+        "width": 1280,
+        "height": 720,
+        "fps": 30,
+        "duration_sec": 19.921,
+        "has_audio": true
+      },
+      "files": {
+        "mp4": {
+          "path": "media/dot-battle.mp4",
+          "bytes": 4497072,
+          "sha256": "85262f8ae3606b1084a3800fb25f3ba04b6fe3290c8e3b156160f9b603c0272c"
+        },
+        "poster": {
+          "path": "media/dot-battle.jpg",
+          "bytes": 65825,
+          "sha256": "03932d797dc8e94e4ae5ffd8c7fd277e57455e0115f5aa20fd991dc827c3b59b"
+        },
+        "preview": {
+          "path": "media/dot-battle.preview.mp4",
+          "bytes": 434425,
+          "sha256": "9779c80689a2f529e6e6ece445be37df19284cc49cd1399a2f87837c4f96060d"
+        }
+      }
+    },
+    "mechanical-cutaway": {
+      "page": "examples/mechanical-cutaway.html",
+      "source_digest": "cf3da8519fb99a853aa3085ec7803bd6baad70d74ba01b94bfdf5ae01e0f542a",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "fps": 60,
+        "duration_sec": 14.471,
+        "has_audio": true
+      },
+      "files": {
+        "mp4": {
+          "path": "media/mechanical-cutaway.mp4",
+          "bytes": 7112359,
+          "sha256": "4edc209e8b18b634a9467b4b1528724fcd87b1563e3ac2dc1e2d5d75909303ac"
+        },
+        "poster": {
+          "path": "media/mechanical-cutaway.jpg",
+          "bytes": 96369,
+          "sha256": "82b585c006b2f0d575ede46db97cc3eb3251e9cfc5b693fb2cac6b79d5937a1a"
+        },
+        "preview": {
+          "path": "media/mechanical-cutaway.preview.mp4",
+          "bytes": 323390,
+          "sha256": "ed9c67a1ef1d4b1340d3c1034d52d343804fffe4d3a0b2da31cb5c284b4cb36c"
+        }
+      }
+    },
+    "mechanical-assembly": {
+      "page": "examples/mechanical-assembly.html",
+      "source_digest": "c238d759945f156a1ffd40365aa5a3bfb98edc6ed5014f671e900dbba59586dd",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "fps": 60,
+        "duration_sec": 14.471,
+        "has_audio": true
+      },
+      "files": {
+        "mp4": {
+          "path": "media/mechanical-assembly.mp4",
+          "bytes": 5356411,
+          "sha256": "cb16cc20b9d3f6a58862cddc235156eefb8dc06f38be03baced8a1ee5ff5d846"
+        },
+        "poster": {
+          "path": "media/mechanical-assembly.jpg",
+          "bytes": 93559,
+          "sha256": "f478e1d480d1ab7521ab2c91b07f97e3b6989995c2b8201e5af96d218f170b4f"
+        },
+        "preview": {
+          "path": "media/mechanical-assembly.preview.mp4",
+          "bytes": 270595,
+          "sha256": "78390c2e4bb97e71285f0661302bd98550f718aea76d62e1f68db25bb3df1d97"
+        }
+      }
+    },
+    "spark-form": {
+      "page": "examples/spark-form.html",
+      "source_digest": "22b372dcc33a1db3a28e51cca58f90ce489c586ed62b9155323df59d6761a22f",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "fps": 60,
+        "duration_sec": 16.871,
+        "has_audio": true
+      },
+      "files": {
+        "mp4": {
+          "path": "media/spark-form.mp4",
+          "bytes": 12002746,
+          "sha256": "bbd849e9232f8356db3da62422d186a02f6e347ce3f487349d4957cf99a6fd46"
+        },
+        "poster": {
+          "path": "media/spark-form.jpg",
+          "bytes": 95820,
+          "sha256": "40d4bbfee05811a7fc5aab4fe16d8bde45b7bdc87c613f176ce03fcbc236dc84"
+        },
+        "preview": {
+          "path": "media/spark-form.preview.mp4",
+          "bytes": 304577,
+          "sha256": "56cca46ea5c49e4ed748ccf93a9a21221a6d634f1aff74ecc8543df2f2e7c590"
         }
       }
     },
@@ -606,9 +690,37 @@
         }
       }
     },
+    "ink-city": {
+      "page": "examples/ink-city.html",
+      "source_digest": "18776df2fe457974c2661fe5c5ca873db57368326944898305c09053fd04218a",
+      "video": {
+        "width": 1280,
+        "height": 720,
+        "fps": 30,
+        "duration_sec": 12.121,
+        "has_audio": true
+      },
+      "files": {
+        "mp4": {
+          "path": "media/ink-city.mp4",
+          "bytes": 13894932,
+          "sha256": "cc233f16799c9795c35a37b088f0a6a9898708a50fffc144c8483a5c63866fde"
+        },
+        "poster": {
+          "path": "media/ink-city.jpg",
+          "bytes": 236647,
+          "sha256": "3ca6fcfeffdea0c8a3ab07045ab8166ccf6bf431f9342ba035eb59f50fbc6206"
+        },
+        "preview": {
+          "path": "media/ink-city.preview.mp4",
+          "bytes": 1145086,
+          "sha256": "b7bb4dd018bed7d5cc7ba955362a4e3d171dec41cb6f85f01c68c189febf617f"
+        }
+      }
+    },
     "dot-story": {
       "page": "examples/dot-story.html",
-      "source_digest": "0e551ccad91c77fbcd1d83813d044a15f4597d8d49e278290de301afcaf890bc",
+      "source_digest": "a239ade41b9ab5bcf5d8046eafa582ec9a769b1347d35780d7f9a60d86f9c218",
       "video": {
         "width": 1280,
         "height": 720,
@@ -634,37 +746,9 @@
         }
       }
     },
-    "dot-battle": {
-      "page": "examples/dot-battle.html",
-      "source_digest": "1620994c5f828bc436f169ade7a8d219bcf96719d04bb254c7c25ea84e8bf4ac",
-      "video": {
-        "width": 1280,
-        "height": 720,
-        "fps": 30,
-        "duration_sec": 19.921,
-        "has_audio": true
-      },
-      "files": {
-        "mp4": {
-          "path": "media/dot-battle.mp4",
-          "bytes": 4497072,
-          "sha256": "85262f8ae3606b1084a3800fb25f3ba04b6fe3290c8e3b156160f9b603c0272c"
-        },
-        "poster": {
-          "path": "media/dot-battle.jpg",
-          "bytes": 65825,
-          "sha256": "03932d797dc8e94e4ae5ffd8c7fd277e57455e0115f5aa20fd991dc827c3b59b"
-        },
-        "preview": {
-          "path": "media/dot-battle.preview.mp4",
-          "bytes": 434425,
-          "sha256": "9779c80689a2f529e6e6ece445be37df19284cc49cd1399a2f87837c4f96060d"
-        }
-      }
-    },
     "fight-effects": {
       "page": "examples/fight-effects.html",
-      "source_digest": "7abb060b8771afb6e134e4bd34e3f446a98a686720f40d533a2a150535e697c5",
+      "source_digest": "1c71b4c89fc5a03338fa7e248ba538f04a9cb009ae467dc88cf9251b5249e6be",
       "video": {
         "width": 1280,
         "height": 720,
@@ -687,90 +771,6 @@
           "path": "media/fight-effects.preview.mp4",
           "bytes": 420705,
           "sha256": "759312d4a66c4351244ac8c5c379a85c767eba814255b227ecd03dbc3e2d1928"
-        }
-      }
-    },
-    "mechanical-cutaway": {
-      "page": "examples/mechanical-cutaway.html",
-      "source_digest": "211b4961574e297510471457c2d471356953bf847fa9964c782ee26f8e665c16",
-      "video": {
-        "width": 1920,
-        "height": 1080,
-        "fps": 60,
-        "duration_sec": 14.471,
-        "has_audio": true
-      },
-      "files": {
-        "mp4": {
-          "path": "media/mechanical-cutaway.mp4",
-          "bytes": 7112359,
-          "sha256": "4edc209e8b18b634a9467b4b1528724fcd87b1563e3ac2dc1e2d5d75909303ac"
-        },
-        "poster": {
-          "path": "media/mechanical-cutaway.jpg",
-          "bytes": 96369,
-          "sha256": "82b585c006b2f0d575ede46db97cc3eb3251e9cfc5b693fb2cac6b79d5937a1a"
-        },
-        "preview": {
-          "path": "media/mechanical-cutaway.preview.mp4",
-          "bytes": 323390,
-          "sha256": "ed9c67a1ef1d4b1340d3c1034d52d343804fffe4d3a0b2da31cb5c284b4cb36c"
-        }
-      }
-    },
-    "mechanical-assembly": {
-      "page": "examples/mechanical-assembly.html",
-      "source_digest": "6c9e10a8a901517f205d31dc904a53d020711057391e00406b0b8f5995e5c1da",
-      "video": {
-        "width": 1920,
-        "height": 1080,
-        "fps": 60,
-        "duration_sec": 14.471,
-        "has_audio": true
-      },
-      "files": {
-        "mp4": {
-          "path": "media/mechanical-assembly.mp4",
-          "bytes": 5356411,
-          "sha256": "cb16cc20b9d3f6a58862cddc235156eefb8dc06f38be03baced8a1ee5ff5d846"
-        },
-        "poster": {
-          "path": "media/mechanical-assembly.jpg",
-          "bytes": 93559,
-          "sha256": "f478e1d480d1ab7521ab2c91b07f97e3b6989995c2b8201e5af96d218f170b4f"
-        },
-        "preview": {
-          "path": "media/mechanical-assembly.preview.mp4",
-          "bytes": 270595,
-          "sha256": "78390c2e4bb97e71285f0661302bd98550f718aea76d62e1f68db25bb3df1d97"
-        }
-      }
-    },
-    "ink-city": {
-      "page": "examples/ink-city.html",
-      "source_digest": "c569f4cf12f32196f231a705c1c2c06ff46fcc41e57de7549482ef55c8c27d7a",
-      "video": {
-        "width": 1280,
-        "height": 720,
-        "fps": 30,
-        "duration_sec": 12.121,
-        "has_audio": true
-      },
-      "files": {
-        "mp4": {
-          "path": "media/ink-city.mp4",
-          "bytes": 13894932,
-          "sha256": "cc233f16799c9795c35a37b088f0a6a9898708a50fffc144c8483a5c63866fde"
-        },
-        "poster": {
-          "path": "media/ink-city.jpg",
-          "bytes": 236647,
-          "sha256": "3ca6fcfeffdea0c8a3ab07045ab8166ccf6bf431f9342ba035eb59f50fbc6206"
-        },
-        "preview": {
-          "path": "media/ink-city.preview.mp4",
-          "bytes": 1145086,
-          "sha256": "b7bb4dd018bed7d5cc7ba955362a4e3d171dec41cb6f85f01c68c189febf617f"
         }
       }
     },

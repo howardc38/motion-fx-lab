@@ -60,14 +60,13 @@ function replaceBlock(text, [start, end], body, file) {
   return text.slice(0, afterStart) + body + '\n' + text.slice(endLine);
 }
 
-// README table of effect names by gallery kind, in gallery order, each linking to its live card; Motion basics last.
+// README table of effect names by gallery kind, in gallery order, each linking to its live card.
 // No counts: the list grows and shrinks with the catalogue.
 function renderReadmeEffects(manifest, root = ROOT) {
   const reg = registry(manifest, root), site = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).homepage.replace(/\/?$/, '/');
   const rank = id => manifest.gallery.order.indexOf(id), cell = text => String(text).replace(/\|/g, '\\|');
   const list = cards => [...cards].sort((a, b) => rank(a.id) - rank(b.id)).map(c => `[${cell(c.name)}](${site}#demo-${c.id})`).join(' · ');
-  const rows = Object.entries(reg.kinds).map(([kind, label]) => [label, reg.cards.filter(c => !c.basic && c.kind === kind)]).filter(([, cards]) => cards.length);
-  rows.push(['Motion basics', reg.cards.filter(c => c.basic)]);
+  const rows = Object.entries(reg.kinds).map(([kind, label]) => [label, reg.cards.filter(c => c.kind === kind)]).filter(([, cards]) => cards.length);
   const guides = manifest.families.filter(f => f.readme).map(f => `[${f.id}](${f.readme})`).join(' · ');
   return ['| Kind | Effects, in gallery order |', '|---|---|', ...rows.map(([label, cards]) => `| ${cell(label)} | ${list(cards)} |`), '', `Code families with their own guide: ${guides}.`].join('\n');
 }
@@ -142,12 +141,11 @@ function registry(manifest = load(), root = ROOT) {
   }
   return {
     kinds,
-    cards: [...catalog.families.map(f => ({ id: f.id, name: f.name, kind: f.kind, basic: false })), ...(catalog.basics || []).map(f => ({ id: f.id, name: f.name, kind: f.kind, basic: true }))],
+    cards: Array.from(catalog.families, f => ({ id: f.id, name: f.name, kind: f.kind })),
     owner,
-    demos: [...catalog.byId.values()].map(d => ({ id: d.id, period: d.period, hero: d.hero, role: d.role, familyId: d.familyId })),
-    // Motion basics are gallery cards too; they share the one order list with the effect families.
-    families: [...catalog.families, ...(catalog.basics || [])].map(f => ({ id: f.id, entries: f.entries.map(e => e.id) })),
-    showcases: catalog.showcases.map(f => f.id),
+    demos: Array.from(catalog.byId.values(), d => ({ id: d.id, period: d.period, hero: d.hero, role: d.role, familyId: d.familyId })),
+    families: Array.from(catalog.families, f => ({ id: f.id, entries: Array.from(f.entries, e => e.id) })),
+    showcases: Array.from(catalog.showcases, f => f.id),
     stats: { ...catalog.stats },
   };
 }
@@ -260,7 +258,7 @@ if (require.main === module) {
     const manifest = load(), errors = validate(manifest);
     if (errors.length) throw new Error('fx/manifest.json does not match the code:\n- ' + errors.join('\n- '));
     const changed = sync(command === '--check', ROOT, manifest), { stats } = registry(manifest);
-    console.log(`fx manifest OK: ${manifest.families.length} code families register ${stats.demos} demos in ${stats.techniques} effect families, ${stats.basics ?? 0} motion basics and ${stats.showcases} comparison and scene presets` +
+    console.log(`fx manifest OK: ${manifest.families.length} code families register ${stats.demos} demos in ${stats.techniques} effect families and ${stats.showcases} comparison and scene presets` +
       (command === '--write' ? `; ${changed.length ? 'updated ' + changed.join(', ') : 'nothing to update'}` : ''));
   } catch (error) { console.error(error.message); process.exitCode = 1; }
 }
