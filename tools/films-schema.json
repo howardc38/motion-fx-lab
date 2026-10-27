@@ -12,8 +12,8 @@
     "layers": {
       "description": "Display order of the film layers. Titles and descriptions head the generated film list; singular names build the count sentence.",
       "type": "array",
-      "minItems": 5,
-      "maxItems": 5,
+      "minItems": 4,
+      "maxItems": 4,
       "items": {
         "type": "object",
         "required": ["id", "title", "singular", "description"],
@@ -37,11 +37,11 @@
     "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
     "text": { "type": "string", "minLength": 1, "pattern": "^[^|<>]*[^|<>\\s][^|<>]*$" },
     "layer": {
-      "description": "intro: what the repository is. use-case: a familiar video format to adapt. demo: several effects combined into a finished piece. comparison: one input, different treatments. effect-film: a full render of one effect (or a sampler that plays one segment per effect card).",
-      "enum": ["intro", "use-case", "demo", "comparison", "effect-film"]
+      "description": "intro: what the repository is. use-case: a familiar video format to adapt. demo: finished short films and multi-treatment demonstrations. effect-film: a full render of one effect that plays inside its effect card(s).",
+      "enum": ["intro", "use-case", "demo", "effect-film"]
     },
     "tier": {
-      "description": "hero: the page-top video (only the intro). featured: a large card in its layer's section (use-case or demo). listed: a smaller card in its layer's section (demo or comparison), or, with versionOf, a link on its parent's card; every film is also in the full film list. in-card: plays inside its effect card(s); effect films only.",
+      "description": "hero: the page-top video (only the intro). featured: a large card in its layer's section (use-case or demo). listed: a compact card in Demo films, or, with versionOf, a link on its parent's card; every film is also in the full film list. in-card: plays inside its effect card(s); effect films only.",
       "enum": ["hero", "featured", "listed", "in-card"]
     },
     "span": {
@@ -89,7 +89,6 @@
         "id": { "$ref": "#/$defs/id" },
         "layer": { "$ref": "#/$defs/layer" },
         "tier": { "$ref": "#/$defs/tier" },
-        "galleryShortcut": { "description": "Offer this in-card effect film as an additional watch link above the effect gallery. The generator reads its title, media, duration and catalogue roles from their existing sources.", "type": "boolean" },
         "versionOf": { "description": "Another cut, ratio or brand of the named film in the same layer, rendered from the same page; linked from that film's card.", "$ref": "#/$defs/id" },
         "title": { "$ref": "#/$defs/text" },
         "summary": { "description": "One line for the film list, README and viewing guide.", "$ref": "#/$defs/text" },

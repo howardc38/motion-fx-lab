@@ -22,9 +22,9 @@ const esc = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<'
 const readJSON = (file, root = ROOT) => JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
 const num = n => String(+(+n).toFixed(2));
 const cap = s => s[0].toUpperCase() + s.slice(1);
-// Featured films get a large card in their layer's section; other listed demo films and comparisons get a smaller
-// one. A version of another film (versionOf: another cut, ratio or brand) is linked from its parent's card.
-const CARD_LAYERS = ['use-case', 'demo', 'comparison'];
+// Featured films get a large card in their layer's section; listed demo films get a compact card in Demo films.
+// A version of another film (versionOf: another cut, ratio or brand) is linked from its parent's card.
+const CARD_LAYERS = ['use-case', 'demo'];
 const hasCard = f => f.tier === 'featured' || (f.tier === 'listed' && f.versionOf === undefined && CARD_LAYERS.includes(f.layer));
 // Media policy (D5): a film with a card, and the intro, has a silent loop (media.preview, cut by video/preview.py
 // from window.__preview clips); only the intro keeps a GIF, the README hero. Versions and effect films have neither.
@@ -166,13 +166,12 @@ function validateManifest(manifest, { root = ROOT, catalog = loadCatalog(root), 
     byId.set(film.id, film);
     if ((film.layer === 'intro') !== (film.tier === 'hero')) errors.push(where + ': only the intro uses the hero tier, and the intro is the hero');
     if ((film.layer === 'effect-film') !== (film.tier === 'in-card')) errors.push(where + ': effect films, and only they, play in-card');
-    if (film.galleryShortcut && film.layer !== 'effect-film') errors.push(where + ': galleryShortcut is only for an in-card effect film');
     if (film.tier === 'featured' && !['use-case', 'demo'].includes(film.layer)) errors.push(where + ': only use cases and demo films have featured cards');
     if (film.tier === 'featured' && !(film.card.useFor && film.card.relation)) errors.push(where + ': a featured card needs useFor and relation');
     if (film.versionOf !== undefined && film.tier !== 'listed') errors.push(where + ': only a listed film can be a version of another film');
     if (film.tier === 'listed' && film.layer === 'use-case' && film.versionOf === undefined) errors.push(where + ': a listed use case must be a version (versionOf) of a use case with a card');
     const ids = new Set(film.effects.map(e => e.id));
-    if (film.layer === 'effect-film' && ids.size > 1 && film.effects.some(e => !e.at)) errors.push(where + ': a sampler gives every effect its [start, end]');
+    if (film.layer === 'effect-film' && ids.size > 1 && film.effects.some(e => !e.at)) errors.push(where + ': a multi-effect film gives every effect its [start, end]');
     for (const effect of film.effects) {
       if (effect.at && !(effect.at[0] < effect.at[1] && effect.at[1] <= film.duration + 1e-9)) errors.push(`${where}: ${effect.id} at [${effect.at}] is outside 0–${film.duration} s`);
       const same = film.effects.filter(e => e.id === effect.id);
@@ -227,11 +226,10 @@ function validate(root = ROOT) {
 const DEFAULT_LAYERS = [
   { id: 'intro', title: 'Intro', singular: 'intro', description: 'What the repository makes and how a page becomes an MP4.' },
   { id: 'use-case', title: 'Use cases', singular: 'use case', description: 'Start from a familiar video format and replace its copy, data or brand.' },
-  { id: 'demo', title: 'Demo films', singular: 'demo film', description: 'Finished pieces that combine several effects around one subject or story.' },
-  { id: 'comparison', title: 'Comparisons', singular: 'comparison', description: 'The same input under different treatments, for choosing an effect.' },
+  { id: 'demo', title: 'Demo films', singular: 'demo film', description: 'Finished pieces that combine effects around one subject, story or choreography.' },
   { id: 'effect-film', title: 'Effect films', singular: 'effect film', description: 'Full renders of one effect; each also plays inside its effect card.' },
 ];
-const KIND_LAYER = { Overview: 'intro', 'Use case': 'use-case', Sequence: 'demo', Comparison: 'comparison' };
+const KIND_LAYER = { Overview: 'intro', 'Use case': 'use-case', Sequence: 'demo', Comparison: 'demo' };
 const FIELD_ORDER = ['id', 'layer', 'tier', 'versionOf', 'title', 'summary', 'duration', 'format', 'page', 'media', 'card', 'audience', 'effects', 'related', 'groups', 'mergeInto', 'retire', 'becomes', 'plan'];
 const ordered = (object, keys) => Object.fromEntries(keys.filter(k => object[k] !== undefined).map(k => [k, object[k]]));
 // v1 owns title, duration, format, source (now page), media, groups and description (now summary) until the
@@ -307,7 +305,7 @@ function context(manifest, root = ROOT) {
     const base = f.tier === 'hero' ? 'Top of the page' : hasCard(f) ? `Card in ${layers.get(f.layer).title}` : f.versionOf ? `Linked from the ${byId.get(f.versionOf).title} card`
       : f.tier === 'listed' ? (inList ? 'This list only' : 'Film list only')
       : (cards => `Effect card${cards.length > 1 ? 's' : ''}: ${cards.join(', ')}`)([...new Set(f.effects.map(e => catalog.byId.get(e.id).card))]);
-    return base + (f.galleryShortcut ? '; watch link above Effects' : '') + (plan(f) ? '; ' + plan(f) : '');
+    return base + (plan(f) ? '; ' + plan(f) : '');
   };
   const parts = grouped.map(([l, list]) => `${list.length} ${list.length === 1 ? l.singular : l.title.toLowerCase()}`);
   return { catalog, layers, byId, source, label, span, grouped, plan, placement, parts };
@@ -315,7 +313,7 @@ function context(manifest, root = ROOT) {
 // "Clear (9:16)" and "Titles (vertical)" → "9:16"; "This weekend only (bakery)" → "bakery, 9:16".
 const FORMAT_WORDS = { vertical: '9:16', square: '1:1', portrait: '4:5', landscape: '16:9' };
 const versionLabel = v => {
-  const m = v.title.match(/\(([^)]+)\)\s*$/), label = m ? m[1] : v.title;
+  const m = v.title.match(/\(([^)]+)\s*\)\s*$/), label = m ? m[1] : v.title;
   return label === v.format || FORMAT_WORDS[label] === v.format ? v.format : `${label}, ${v.format}`;
 };
 // Cards for one layer: tier 'featured' gives the large cards, 'listed' the smaller ones (versions are links on their parent).
@@ -351,15 +349,6 @@ function renderList(manifest, root = ROOT) {
       return `<tr${ownElement ? '' : ` id="film-${f.id}"`} data-film-index-id="${f.id}" data-film-layer="${f.layer}" data-film-tier="${f.tier}"><td>${esc(c.placement(f, true))}</td><td><b>${esc(f.title)}</b><span class="film-meta">${num(f.duration)} s · ${f.format}</span><p>${esc(f.summary)}</p>${listed}${related ? `<p class="film-effects">Related, not in this film: ${related}</p>` : ''}</td><td>${watch}</td></tr>`;
     }).join('\n');
     return `<section class="film-index-group" data-film-kind="${layer.id}"><h3>${esc(layer.title)} · ${list.length}</h3><p class="note">${esc(layer.description)}</p>\n<div class="scroll"><table><thead><tr><th>Where</th><th>Film and purpose</th><th>Watch / edit</th></tr></thead><tbody>\n${rows}\n</tbody></table></div></section>`;
-  }).join('\n');
-}
-function renderGalleryShortcuts(manifest, root = ROOT) {
-  const catalog = loadCatalog(root);
-  return manifest.films.filter(f => f.galleryShortcut).map(f => {
-    const ids = [...new Set(f.effects.map(e => e.id))];
-    const variants = ids.every(id => catalog.byId.get(id)?.role === 'variant');
-    const action = variants ? 'Watch all ' + ids.length + ' motion variations' : 'Watch ' + f.title;
-    return '<p class="gallery-shortcut" data-sampler-id="' + esc(f.id) + '"><a class="cta-button" href="' + esc(f.media.mp4) + '">▶ ' + esc(action) + '</a><span>' + esc(f.title) + ' · ' + num(f.duration) + ' s · with sound</span><a href="' + esc(f.page) + '">Scrub timeline</a></p>';
   }).join('\n');
 }
 function renderHero(manifest) {
@@ -415,11 +404,9 @@ ${rows.join(',\n')}
 }
 const BLOCKS = [
   { file: 'index.html', name: 'films:hero', render: renderHero },
-  { file: 'index.html', name: 'films:gallery-shortcuts', render: renderGalleryShortcuts },
   { file: 'index.html', name: 'films:uses', render: (m, r) => renderCards(m, 'use-case', r) },
   { file: 'index.html', name: 'films:demos', render: (m, r) => renderCards(m, 'demo', r) },
   { file: 'index.html', name: 'films:demos-more', render: (m, r) => renderCards(m, 'demo', r, 'listed') },
-  { file: 'index.html', name: 'films:comparisons', render: (m, r) => renderCards(m, 'comparison', r, 'listed') },
   { file: 'index.html', name: 'films:summary', inline: true, render: renderSummary },
   { file: 'index.html', name: 'films:count', inline: true, render: renderCount },
   { file: 'index.html', name: 'films', render: renderList },
@@ -489,4 +476,4 @@ if (require.main === module) {
     } else throw new Error('Usage: node tools/films.cjs --check | --write | --verify | --migrate | build <id|group>');
   } catch (error) { console.error(error.message); process.exitCode = 1; }
 }
-module.exports = { films, needsPreview, recordArgs, validate, sync, load, migrate, compareV1, validateManifest, schemaErrors, loadCatalog, closure, evidence, formatJSON, render: { galleryShortcuts: renderGalleryShortcuts, hero: renderHero, cards: renderCards, list: renderList, summary: renderSummary, count: renderCount, readme: renderReadme, readmeCards: renderReadmeCards, guide: renderGuide, data: renderData }, BLOCKS, hasCard };
+module.exports = { films, needsPreview, recordArgs, validate, sync, load, migrate, compareV1, validateManifest, schemaErrors, loadCatalog, closure, evidence, formatJSON, render: { hero: renderHero, cards: renderCards, list: renderList, summary: renderSummary, count: renderCount, readme: renderReadme, readmeCards: renderReadmeCards, guide: renderGuide, data: renderData }, BLOCKS, hasCard };

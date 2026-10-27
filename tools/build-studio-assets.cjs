@@ -9,7 +9,7 @@ const { publishBundle } = require("../video/publish.cjs");
   await fs.mkdir(destination, { recursive: true });
   // The recorder serves files below ROOT. This temporary page uses the real
   // source renderer with a staged GLB, keeping all shipped assets untouched.
-  const work = await fs.mkdtemp(path.join(destination, ".studio-build-"));
+  const work = await fs.mkdtemp(path.join(destination, "_studio-build-"));
   let server;
   let browser;
   try {

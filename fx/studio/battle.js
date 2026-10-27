@@ -61,35 +61,35 @@ export function createChoreography() {
   // front elbow/hand, rear knee/ankle, front knee/ankle. No motion-capture asset.
   const P = {
     guard: [
-      0, 430, 12, 308, 12, 249, -45, 332, 35, 296, 66, 329, 110, 283, -52, 511,
-      -92, 602, 68, 508, 113, 602,
+      0, 412, 12, 294, 12, 236, 24, 376, 48, 292, 66, 340, 110, 276, -46, 504,
+      -92, 602, 68, 502, 113, 602,
     ],
     load: [
-      -28, 454, -40, 334, -38, 273, -107, 333, -95, 277, 20, 357, 65, 326, -75,
-      520, -121, 602, 47, 527, 109, 602,
+      -26, 428, -38, 314, -36, 255, -112, 382, -38, 350, 24, 356, 68, 312, -68,
+      515, -121, 602, 52, 516, 109, 602,
     ],
     jab: [
-      36, 418, 90, 304, 108, 249, 32, 338, 59, 293, 169, 286, 248, 278, -17,
+      36, 418, 90, 304, 108, 249, 68, 396, 108, 322, 169, 286, 248, 278, -17,
       508, -123, 602, 117, 512, 154, 602,
     ],
     recoil: [
-      35, 441, -32, 328, -71, 279, -73, 336, -103, 274, 9, 366, 60, 333, -39,
+      35, 441, -32, 328, -71, 279, -112, 394, -36, 362, 9, 366, 60, 333, -39,
       515, -78, 602, 102, 530, 155, 602,
     ],
     block: [
-      -3, 442, -12, 320, -14, 264, 15, 312, 79, 244, 63, 347, 85, 271, -65, 512,
+      -3, 442, -12, 320, -14, 264, 48, 356, 74, 268, 63, 347, 85, 271, -65, 512,
       -111, 602, 58, 528, 104, 602,
     ],
     duck: [
-      -13, 494, 69, 427, 123, 394, -29, 432, 32, 405, 101, 459, 153, 421, -78,
+      -13, 494, 69, 427, 123, 394, -29, 468, 36, 428, 101, 459, 153, 421, -78,
       543, -129, 602, 76, 546, 143, 602,
     ],
     kickload: [
-      -10, 437, -45, 322, -52, 269, -91, 318, -38, 274, 15, 339, 75, 304, -56,
+      -10, 437, -45, 322, -52, 269, -118, 386, -46, 358, 15, 339, 75, 304, -56,
       513, -75, 602, 67, 429, 43, 491,
     ],
     kick: [
-      30, 410, -74, 314, -98, 270, -120, 345, -58, 378, 3, 333, 62, 305, -48,
+      30, 410, -74, 314, -98, 270, -148, 376, -68, 378, 3, 333, 62, 305, -48,
       500, -63, 602, 94, 352, 232, 290,
     ],
     sweep: [
@@ -97,32 +97,32 @@ export function createChoreography() {
       -82, 559, -115, 603, 91, 554, 225, 602,
     ],
     jump: [
-      8, 317, 34, 221, 54, 167, -29, 207, 16, 153, 101, 236, 148, 190, -34, 410,
+      8, 317, 34, 221, 54, 167, -56, 278, 26, 258, 101, 256, 148, 190, -34, 410,
       -104, 416, 103, 354, 143, 442,
     ],
     fly: [
-      10, 334, -75, 237, -98, 190, -145, 279, -185, 234, -22, 244, 33, 190,
+      10, 334, -75, 237, -98, 190, -148, 298, -185, 256, -22, 264, 33, 190,
       -67, 411, -146, 475, 94, 330, 236, 279,
     ],
     fall: [
-      16, 400, -73, 338, -119, 307, -130, 372, -188, 318, -25, 310, -49, 258,
+      16, 400, -73, 338, -119, 307, -138, 396, -188, 348, -25, 332, -49, 258,
       62, 482, 146, 519, -40, 494, -55, 583,
     ],
     upperload: [
-      -25, 482, -6, 374, 22, 322, -75, 389, -27, 342, 53, 437, 98, 410, -74,
+      -25, 482, -6, 374, 22, 322, -82, 434, -18, 396, 53, 437, 98, 410, -74,
       532, -131, 602, 59, 540, 131, 602,
     ],
     upper: [
-      38, 406, 68, 285, 48, 231, 7, 325, 77, 342, 125, 360, 185, 250, -30, 508,
+      38, 406, 68, 285, 48, 231, 32, 372, 77, 342, 125, 360, 185, 250, -30, 508,
       -113, 602, 112, 497, 119, 602,
     ],
     land: [
-      8, 495, 73, 393, 91, 342, -20, 405, 10, 341, 116, 461, 177, 499, -74, 548,
+      8, 495, 73, 393, 91, 342, -8, 466, 62, 432, 116, 461, 177, 499, -74, 548,
       -137, 602, 99, 542, 162, 602,
     ],
     finish: [
-      0, 430, 7, 308, 0, 249, -55, 347, -92, 302, 65, 329, 112, 300, -56, 515,
-      -104, 602, 57, 515, 98, 602,
+      0, 408, 7, 290, 0, 232, -64, 368, 12, 332, 65, 334, 112, 286, -46, 504,
+      -88, 602, 56, 504, 94, 602,
     ],
   };
   // Root displacement and asymmetric counterattacks make contact readable.
@@ -316,22 +316,84 @@ export function createBattle() {
     g.closePath();
     g.fill();
   }
-  function limb(a, b, c, w1, w2, col) {
-    g.strokeStyle = col;
-    g.lineCap = "round";
-    g.lineJoin = "round";
-    g.lineWidth = w1;
-    g.beginPath();
-    g.moveTo(...a);
-    g.lineTo(...b);
-    g.stroke();
-    g.lineWidth = w2;
-    g.beginPath();
-    g.moveTo(...b);
-    g.lineTo(...c);
-    g.stroke();
+  function segPoly(a, b, r0f, r0b, rmf, rmb, r1f, r1b, color, midT = 0.38) {
+    const dx = b[0] - a[0],
+      dy = b[1] - a[1],
+      len = Math.hypot(dx, dy) || 1;
+    const ux = dx / len,
+      uy = dy / len,
+      nx = -uy,
+      ny = ux;
+    const at = (u, rf, rb) => [
+      [a[0] + ux * len * u + nx * rf, a[1] + uy * len * u + ny * rf],
+      [a[0] + ux * len * u - nx * rb, a[1] + uy * len * u - ny * rb],
+    ];
+    const [p0f, p0b] = at(0, r0f, r0b);
+    const [p1f, p1b] = at(midT * 0.5, (r0f + rmf) * 0.52, (r0b + rmb) * 0.52);
+    const [pmf, pmb] = at(midT, rmf, rmb);
+    const [p2f, p2b] = at(mix(midT, 1, 0.55), (rmf + r1f) * 0.52, (rmb + r1b) * 0.5);
+    const [p3f, p3b] = at(1, r1f, r1b);
+    const capA = [a[0] - ux * (r0f + r0b) * 0.38, a[1] - uy * (r0f + r0b) * 0.38];
+    const capB = [b[0] + ux * (r1f + r1b) * 0.38, b[1] + uy * (r1f + r1b) * 0.38];
+    poly([capA, p0f, p1f, pmf, p2f, p3f, capB, p3b, p2b, pmb, p1b, p0b], color);
   }
-  function fighter(st, face, id, t, override) {
+  function boot(ankle, knee, mainCol, soleCol) {
+    const dx = ankle[0] - knee[0],
+      dy = ankle[1] - knee[1],
+      ang = clamp((Math.atan2(dx, Math.max(20, dy)) ) * 0.35);
+    g.save();
+    g.translate(ankle[0], ankle[1]);
+    g.rotate(-ang * 0.35);
+    poly(
+      [
+        [-11, -12],
+        [10, -12],
+        [14, -2],
+        [30, 3],
+        [32, 9],
+        [-14, 9],
+        [-15, 0],
+      ],
+      mainCol,
+    );
+    poly(
+      [
+        [-14, 6],
+        [32, 6],
+        [31, 10],
+        [-14, 10],
+      ],
+      soleCol,
+    );
+    g.restore();
+  }
+  function glove(hand, elbow, mainCol, trimCol) {
+    const dx = hand[0] - elbow[0],
+      dy = hand[1] - elbow[1],
+      ang = Math.atan2(dy, dx);
+    g.save();
+    g.translate(hand[0], hand[1]);
+    g.rotate(ang);
+    poly(
+      [
+        [-12, -8],
+        [-3, -9],
+        [-3, 9],
+        [-12, 8],
+      ],
+      trimCol,
+    );
+    g.fillStyle = mainCol;
+    g.beginPath();
+    g.ellipse(4, 0, 13, 10.5, 0, 0, Math.PI * 2);
+    g.fill();
+    g.fillStyle = trimCol;
+    g.beginPath();
+    g.ellipse(6, -3.5, 7, 3.2, 0.15, 0, Math.PI * 2);
+    g.fill();
+    g.restore();
+  }
+  function fighter(st, face, id, t, override, cutout = false) {
     const p = st.p,
       pt = (i) => [p[i * 2], p[i * 2 + 1]],
       hip = pt(0),
@@ -345,128 +407,220 @@ export function createBattle() {
       rearF = pt(8),
       frontK = pt(9),
       frontF = pt(10);
-    let ink = override || "#142b3a",
-      cloth = override || (id ? "#258b99" : "#eb7044"),
-      light = override || (id ? "#69c4c9" : "#f9b079"),
-      skin = override || "#f7d4a4";
+    const ink = override || "#102331",
+      cloth = override || (id ? "#1f8796" : "#ea683c"),
+      light = override || (id ? "#7ce2e6" : "#ffc085"),
+      darkSuit = override || (id ? "#164e5b" : "#9c3922"),
+      visor = override || "#fff8ea";
     g.save();
     g.translate(st.x, 0);
     g.scale(face, 1);
-    // Loose trousers, split wrap jacket, forearm wraps, and a flowing waist sash.
-    limb([hip[0] - 13, hip[1]], rearK, rearF, 57, 39, ink);
-    limb([sh[0] - 18, sh[1] + 10], rearE, rearH, 34, 25, ink);
-    limb([hip[0] + 13, hip[1]], frontK, frontF, 66, 42, cloth);
+
+    // 1. Rear leg & rear arm (athletic quad/calf taper + martial-arts boot & glove)
+    const rHip = [hip[0] - 13, hip[1]];
+    segPoly(rHip, rearK, 19, 17, 20, 17, 13, 12, ink, 0.4);
+    segPoly(rearK, rearF, 12.5, 13, 12, 15.5, 8.5, 8.5, darkSuit, 0.32);
+    boot(rearF, rearK, ink, light);
+
+    const rSh = [sh[0] - 18, sh[1] + 10];
+    segPoly(rSh, rearE, 13, 12, 12.5, 11.5, 9.5, 9, ink, 0.42);
+    segPoly(rearE, rearH, 9.5, 9.5, 10, 9.5, 7, 7, darkSuit, 0.32);
+    glove(rearH, rearE, ink, light);
+
+    // 2. Torso: athletic pelvis, narrow waist, broad V-tapered chest & ribcage
+    const sdx = sh[0] - hip[0],
+      sdy = sh[1] - hip[1],
+      slen = Math.hypot(sdx, sdy) || 1;
+    const ux = sdx / slen,
+      uy = sdy / slen,
+      fx = -uy,
+      fy = ux;
+    const torsoPt = (u, fOff) => [
+      hip[0] + ux * slen * u + fx * fOff,
+      hip[1] + uy * slen * u + fy * fOff,
+    ];
+    // Pelvis / compression shorts base
     poly(
       [
-        [hip[0] - 34, hip[1] + 12],
-        [hip[0] + 42, hip[1] + 15],
-        [sh[0] + 33, sh[1] - 8],
-        [sh[0] - 34, sh[1] - 6],
-      ],
-      cloth,
-    );
-    poly(
-      [
-        [sh[0] - 30, sh[1]],
-        [sh[0] - 9, sh[1] - 14],
-        [hip[0] + 26, hip[1] - 3],
-        [hip[0] + 9, hip[1] + 6],
-      ],
-      light,
-    );
-    poly(
-      [
-        [hip[0] - 44, hip[1] - 7],
-        [hip[0] + 42, hip[1] - 7],
-        [hip[0] + 43, hip[1] + 13],
-        [hip[0] - 44, hip[1] + 14],
+        torsoPt(-0.1, -18),
+        torsoPt(-0.1, 19),
+        torsoPt(0.22, 16),
+        torsoPt(0.22, -15),
       ],
       ink,
     );
-    const flow = Math.sin(t * 12 + id) * 20;
+    // Broad V-tapered upper torso (waist 31px -> chest/lats 50px -> collar 28px)
     poly(
       [
-        [hip[0] - 28, hip[1]],
-        [hip[0] - 82, hip[1] - 12],
-        [hip[0] - 141, hip[1] + flow - 38],
-        [hip[0] - 105, hip[1] + flow + 10],
-        [hip[0] - 62, hip[1] + 27],
+        torsoPt(0.2, -15),
+        torsoPt(0.2, 16),
+        torsoPt(0.55, 25),
+        torsoPt(0.82, 27),
+        torsoPt(1.03, 15),
+        torsoPt(1.03, -15),
+        torsoPt(0.78, -23),
+        torsoPt(0.48, -19),
+      ],
+      cloth,
+    );
+    // Sculpted chest / sternum armor panel for high-contrast halftone read
+    poly(
+      [
+        torsoPt(0.32, 4),
+        torsoPt(0.32, 17),
+        torsoPt(0.8, 26),
+        torsoPt(0.96, 13),
+        torsoPt(0.84, -4),
+        torsoPt(0.54, 1),
       ],
       light,
     );
-    limb([sh[0] + 17, sh[1] + 10], frontE, frontH, 42, 29, cloth);
-    limb(
-      [mix(frontE[0], frontH[0], 0.6), mix(frontE[1], frontH[1], 0.6)],
-      frontH,
-      frontH,
-      25,
-      25,
-      skin,
-    );
-    // Sculpted jaw and windswept hair create an identifiable human silhouette.
-    g.strokeStyle = skin;
-    g.lineWidth = 23;
-    g.beginPath();
-    g.moveTo(sh[0], sh[1]);
-    g.lineTo(head[0], head[1] + 22);
-    g.stroke();
-    g.fillStyle = skin;
-    g.beginPath();
-    g.ellipse(head[0] + 6, head[1], 29, 37, -0.1, 0, Math.PI * 2);
-    g.fill();
+    // Crisp martial-arts waist belt (no protruding tail/sash)
     poly(
       [
-        [head[0] + 20, head[1] - 17],
-        [head[0] + 40, head[1] + 5],
-        [head[0] + 24, head[1] + 10],
-        [head[0] + 17, head[1] + 30],
-        [head[0] - 17, head[1] + 27],
+        torsoPt(0.14, -17.5),
+        torsoPt(0.14, 18.5),
+        torsoPt(0.25, 17.5),
+        torsoPt(0.25, -16.5),
       ],
-      skin,
+      ink,
     );
-    const hair = [
-      [-30, 19],
-      [-40, -7],
-      [-51, -17],
-      [-32, -22],
-      [-45, -43],
-      [-21, -36],
-      [-18, -57],
-      [-5, -38],
-      [15, -51],
-      [14, -29],
-      [34, -34],
-      [28, -11],
-      [13, -16],
-      [-5, 0],
-      [-8, 22],
-    ].map(([x, y]) => [head[0] + x, head[1] + y]);
-    if(id) {
-      g.fillStyle=ink;g.beginPath();g.ellipse(head[0]-5,head[1]-17,34,27,-.2,0,Math.PI*2);g.fill();
-      g.beginPath();g.arc(head[0]-32,head[1]-35,17,0,Math.PI*2);g.fill();
-      poly([[head[0]-36,head[1]-34],[head[0]-69,head[1]-9],[head[0]-62,head[1]+30],[head[0]-43,head[1]+8]],ink);
-    } else poly(hair, ink);
-    g.strokeStyle=light;g.lineWidth=7;g.beginPath();g.moveTo(head[0]-25,head[1]-11);g.lineTo(head[0]+25,head[1]-14);g.stroke();
+    poly(
+      [
+        torsoPt(0.155, 6),
+        torsoPt(0.155, 18.5),
+        torsoPt(0.235, 18),
+        torsoPt(0.235, 6),
+      ],
+      light,
+    );
+
+    // 3. Front leg (quad sweep, knee cap, sculpted shin guard & crisp boot)
+    const fHip = [hip[0] + 13, hip[1]];
+    segPoly(fHip, frontK, 21, 18, 22, 18.5, 13.5, 12.5, cloth, 0.4);
+    segPoly(frontK, frontF, 13, 13.5, 13, 16.5, 9, 9, cloth, 0.32);
+    // Shin-guard front plate + knee pad
+    segPoly(
+      [mix(frontK[0], frontF[0], 0.06), mix(frontK[1], frontF[1], 0.06)],
+      [mix(frontK[0], frontF[0], 0.82), mix(frontK[1], frontF[1], 0.82)],
+      8,
+      -2,
+      8.5,
+      -2,
+      6.5,
+      -1,
+      light,
+      0.4,
+    );
     g.fillStyle = ink;
-    g.fillRect(head[0] + 18, head[1] - 5, 13, 5);
-    g.strokeStyle = ink;
-    g.lineWidth = 18;
-    g.lineCap = "round";
-    for (const f of [rearF, frontF]) {
+    g.beginPath();
+    g.arc(frontK[0] + 2, frontK[1], 10.5, 0, Math.PI * 2);
+    g.fill();
+    boot(frontF, frontK, ink, light);
+
+    // 4. Neck & sleek cyber-martial-artist helmet (1:7.5 human head-to-height ratio)
+    const neckBase = torsoPt(1.0, 1);
+    const headCtr = [head[0] + 2, head[1] + 5];
+    segPoly(neckBase, [headCtr[0] - 2, headCtr[1] + 10], 8.5, 8.5, 8, 8, 7.5, 7.5, ink, 0.5);
+    // Collar ring
+    poly(
+      [
+        torsoPt(0.96, -13),
+        torsoPt(0.96, 15),
+        torsoPt(1.06, 13),
+        torsoPt(1.06, -11),
+      ],
+      ink,
+    );
+    // Rounded human helmet shell ( ~48px tall for ~365px standing figure )
+    const hx = headCtr[0],
+      hy = headCtr[1];
+    g.fillStyle = ink;
+    g.beginPath();
+    g.ellipse(hx, hy - 1, 21.5, 24, -0.06, 0, Math.PI * 2);
+    g.fill();
+    // Clean human jawline / chin guard (no snout!)
+    poly(
+      [
+        [hx + 6, hy - 6],
+        [hx + 22, hy + 2],
+        [hx + 19, hy + 15],
+        [hx + 9, hy + 23],
+        [hx - 7, hy + 18],
+        [hx - 12, hy + 6],
+      ],
+      ink,
+    );
+    // Subtle crown trim differentiating the two strikers (zero spikes or tails)
+    if (id) {
+      g.strokeStyle = light;
+      g.lineWidth = 4;
       g.beginPath();
-      g.moveTo(f[0] - 12, f[1]);
-      g.lineTo(f[0] + 27, f[1]);
+      g.arc(hx - 1, hy - 2, 20, -Math.PI * 0.82, -Math.PI * 0.18);
       g.stroke();
-    }
-    // Folds and wrist bands survive the dot conversion as high-contrast detail.
-    g.strokeStyle = light;
-    g.lineWidth = 5;
-    for (let j = 0; j < 3; j++) {
+      g.fillStyle = cloth;
       g.beginPath();
-      g.moveTo(frontK[0] - 16, frontK[1] + j * 12);
-      g.lineTo(frontK[0] + 17, frontK[1] + j * 12 - 8);
-      g.stroke();
+      g.arc(hx - 4, hy + 2, 6.5, 0, Math.PI * 2);
+      g.fill();
+    } else {
+      poly(
+        [
+          [hx - 17, hy - 17],
+          [hx - 3, hy - 27],
+          [hx + 14, hy - 22],
+          [hx + 18, hy - 14],
+          [hx - 12, hy - 12],
+        ],
+        cloth,
+      );
     }
+    // Glowing wrap-around visor slit + negative-space notch on solid-ink shots
+    poly(
+      [
+        [hx + 1, hy - 6],
+        [hx + 22.5, hy - 4],
+        [hx + 21.5, hy + 3.5],
+        [hx + 3, hy + 2.5],
+      ],
+      visor,
+    );
+    if (cutout) {
+      g.save();
+      g.globalCompositeOperation = "destination-out";
+      poly(
+        [
+          [hx + 4, hy - 4.5],
+          [hx + 22.5, hy - 3],
+          [hx + 22, hy + 1.2],
+          [hx + 5, hy + 0.5],
+        ],
+        "#000",
+      );
+      g.restore();
+    }
+
+    // 5. Sculpted front deltoid cap, tapered front arm, forearm bracer & striking glove
+    const fSh = [sh[0] + 17, sh[1] + 10];
+    g.fillStyle = cloth;
+    g.beginPath();
+    g.ellipse(fSh[0] - 2, fSh[1] - 1, 15.5, 14, -0.2, 0, Math.PI * 2);
+    g.fill();
+    segPoly(fSh, frontE, 14, 13, 13.5, 12, 10, 9.5, cloth, 0.42);
+    segPoly(frontE, frontH, 10.5, 10, 11, 10, 7.5, 7.5, cloth, 0.32);
+    // Forearm bracer accent
+    segPoly(
+      [mix(frontE[0], frontH[0], 0.25), mix(frontE[1], frontH[1], 0.25)],
+      [mix(frontE[0], frontH[0], 0.82), mix(frontE[1], frontH[1], 0.82)],
+      9.5,
+      8.5,
+      9,
+      8,
+      7.5,
+      7,
+      light,
+      0.45,
+    );
+    glove(frontH, frontE, ink, light);
     g.restore();
   }
   const shots = [
@@ -494,11 +648,11 @@ export function createBattle() {
     const cam=camera(t),x=(point[0]-cam.x)*cam.z,y=(point[1]-cam.y)*cam.z;
     return [640+x*Math.cos(cam.rot)-y*Math.sin(cam.rot),360+x*Math.sin(cam.rot)+y*Math.cos(cam.rot)];
   }
-  function source(t,ghost=0,outputTime=t) {
+  function source(t,ghost=0,outputTime=t,cutout=false) {
     g.clearRect(0,0,W,H);
     const cam=camera(outputTime),poseTime=Math.max(0,t-ghost);
     g.save();g.translate(W/2,H/2);g.rotate(cam.rot);g.scale(cam.z,cam.z);g.translate(-cam.x,-cam.y);
-    fighter(pose(0,poseTime),1,0,poseTime);fighter(pose(1,poseTime),-1,1,poseTime);g.restore();
+    fighter(pose(0,poseTime),1,0,poseTime,undefined,cutout);fighter(pose(1,poseTime),-1,1,poseTime,undefined,cutout);g.restore();
     return g.getImageData(0,0,W,H).data;
   }
   function dots(data,t,spacing,solid,alpha=1,heavy=false) {
@@ -531,8 +685,8 @@ export function createBattle() {
     ctx.globalAlpha=1;
     // Echoes belong to fast attacks, not every idle breath or held pose.
     const trail=events.some(e=>t>e.t-.18 && t<e.t+.045) && !(t>=7.8&&t<8.4);
-    if(trail) for(let n=3;n>0;n--) dots(source(motionTime,n*.055,t),t,shot.step,["#ea9576","#61a5b5","#a4b4b0"][n-1],.17+(3-n)*.06);
-    dots(source(motionTime,0,t),t,shot.step,shot.ink,1-closing*.85,shot.heavy);
+    if(trail) for(let n=3;n>0;n--) dots(source(motionTime,n*.055,t,true),t,shot.step,["#ea9576","#61a5b5","#a4b4b0"][n-1],.17+(3-n)*.06);
+    dots(source(motionTime,0,t,!!shot.ink),t,shot.step,shot.ink,1-closing*.85,shot.heavy);
     const event=impactAt(t);
     if(event) {
       const u=clamp((t-event.t)/.16),[x,y]=project(event.point,t);

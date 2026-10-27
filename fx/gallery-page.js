@@ -123,7 +123,7 @@
     document.getElementById('shown').textContent=`${n} / ${stats.techniques} effects shown`;
     const basicsShown=document.getElementById('basics-shown'); if (basicsShown) basicsShown.textContent=`${nb} / ${stats.basics || 0} motion basics shown`;
     document.getElementById('available').textContent=`${demoCount} ${demoCount===1?'preview matches':'previews match'} these filters${variantCount ? `, including ${variantCount} variant${variantCount===1?'':'s'} in the card selectors` : ''}.`;
-    document.getElementById('showcase-count').textContent='Compare treatments below ↘';
+    document.getElementById('showcase-count').textContent='Scene presets below ↘';
   }
   mk(document.getElementById('fKind'),'kind', [['all','All'],...Object.entries(KINDS).filter(([k])=>[...families, ...basics].some(f=>f.kind===k))]);
   mk(document.getElementById('fStack'),'stack', [['all','All'],...Object.entries(STACKS)]);
@@ -168,12 +168,22 @@
   const playBtn=document.getElementById('play');
   function label(){playBtn.textContent=playing?'⏸ Pause':'▶ Play';playBtn.setAttribute('aria-pressed',String(!playing));}
   playBtn.onclick=()=>{playing=!playing;label();cards.forEach(c=>{c.dirty=true;c.manual=false;});}; label();
+  const customInput=document.getElementById('customText');
+  function setCustomText(value=''){
+    window.FX_CUSTOM_TEXT=String(value).trim();
+    if(customInput&&customInput.value!==value)customInput.value=value;
+    for(const card of cards){
+      card.dirty=true;card.manual=false;
+      if(!playing&&card.visible&&!card.fig.hidden&&!card.busy){card.dirty=false;draw(card,clock,clock===0);}
+    }
+  }
+  if(customInput)customInput.addEventListener('input',()=>setCustomText(customInput.value));
   function tick(now) {
     const dt=Math.min(.1,(now-last)/1000);last=now;if(playing)clock+=dt;
     if(now-lastDraw>30){lastDraw=now;for(const card of cards)if(card.visible&&!card.fig.hidden&&!card.busy&&!card.manual&&(playing||card.dirty)){card.dirty=false;draw(card,clock,!playing&&clock===0);}}
     requestAnimationFrame(tick);
   }
-  window.galleryAPI={cards,stats,filter(kind='all',stack='all'){state.kind=kind;state.stack=stack;apply();},pause(){playing=false;label();},selectVariant(id){const card=cards.find(c=>c.family.entries.some(e=>e.id===id));if(!card)throw new Error('Unknown demo: '+id);choose(card,id);return card;},async draw(id,time){const card=this.selectVariant(id);if(card.showcase)document.getElementById('composition-presets').open=true;card.manual=true;return draw(card,time);}};
+  window.galleryAPI={cards,stats,setCustomText,filter(kind='all',stack='all'){state.kind=kind;state.stack=stack;apply();},pause(){playing=false;label();},selectVariant(id){const card=cards.find(c=>c.family.entries.some(e=>e.id===id));if(!card)throw new Error('Unknown demo: '+id);choose(card,id);return card;},async draw(id,time){const card=this.selectVariant(id);if(card.showcase)document.getElementById('composition-presets').open=true;card.manual=true;return draw(card,time);}};
   window.galleryReady=Promise.resolve(window.galleryAPI);
   function revealLinkedDemo(){
     if(!location.hash.startsWith('#demo-'))return;
@@ -187,7 +197,9 @@
     card.fig.scrollIntoView({block:'start'});card.fig.focus({preventScroll:true});
   }
   function revealLinkedFilm(){
-    const effect=FILM_BOOKMARKS[location.hash.slice(1)];
+    const key=location.hash.slice(1);
+    const effectFilm=(Array.isArray(window.FXFilms)?window.FXFilms:[]).find(f=>f.layer==='effect-film'&&'film-'+f.id===key);
+    const effect=FILM_BOOKMARKS[key]||effectFilm?.effects?.[0]?.id;
     if(effect){history.replaceState(null,'','#demo-'+effect);revealLinkedDemo();return;}
 
     const renamed=FILM_RENAMES[location.hash.slice(1)];

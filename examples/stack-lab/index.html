@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -27,30 +27,30 @@
       <div class="intro">
         <div>
           <p class="eyebrow">SCRIPT MOTION. RENDER FRAMES.</p>
-          <h1>設定效果，編排成片。</h1>
+          <h1>Tune parameters, author the film.</h1>
         </div>
-        <p class="summary">拖動時間、比較參數。<br />選定後修改影片原始碼，再重新輸出。</p>
+        <p class="summary">Scrub the timeline and compare settings.<br />Copy chosen options into your film source and re-render.</p>
       </div>
-      <nav aria-label="選擇影片效果">
+      <nav aria-label="Select film effect">
         <button data-demo="pixi" aria-pressed="true">
           <span class="num">01</span
-          ><span><b>PixiJS</b><small>水波 × 濾鏡</small></span
+          ><span><b>PixiJS</b><small>Displacement × filters</small></span
           ><span class="arrow">↗</span>
         </button>
         <button data-demo="rapier" aria-pressed="false">
           <span class="num">02</span
-          ><span><b>Rapier</b><small>3D 連鎖碰撞</small></span
+          ><span><b>Rapier</b><small>3D domino collisions</small></span
           ><span class="arrow">↗</span>
         </button>
         <button data-demo="gpu" aria-pressed="false">
           <span class="num">03</span
-          ><span><b>WebGPU / TSL</b><small>GPU 粒子吸引場</small></span
+          ><span><b>WebGPU / TSL</b><small>GPU orbital attractor</small></span
           ><span class="arrow">↗</span>
         </button>
       </nav>
-      <section class="viewer" aria-label="動畫預覽">
+      <section class="viewer" aria-label="Animation preview">
         <div id="stage"></div>
-        <div id="loading" role="status">載入 PixiJS…</div>
+        <div id="loading" role="status">Loading PixiJS…</div>
         <div class="overlay">
           <span id="art-title">LIQUID POSTER</span
           ><span id="clock">00.00 s</span>
@@ -58,18 +58,18 @@
       </section>
       <div class="controlbar">
         <div class="actions">
-          <button id="play" disabled>暫停</button
-          ><button id="reset" disabled>重播</button
-          ><button id="action" disabled>查看成片</button>
+          <button id="play" disabled>Pause</button
+          ><button id="reset" disabled>Restart</button
+          ><button id="action" disabled>Open gallery</button>
         </div>
         <label id="parameter-label"
-          >扭曲程度 <output id="value">60%</output
+          >Distortion strength <output id="value">60%</output
           ><input id="parameter" type="range" min="0" max="100" value="60"
         /></label>
       </div>
       <label
         style="display: flex; gap: 12px; align-items: center; margin: 16px 0"
-        >時間軸
+        >Timeline
         <input
           id="seek"
           type="range"
@@ -79,12 +79,12 @@
           value="0"
           style="flex: 1"
       /></label>
-      <p class="note">滑桿只改此頁預覽，不會儲存到影片。把選定參數加入 <a href="../stacks.html">examples/stacks.html</a> 的 <code>effects[i].frame(t - starts[i], options)</code> 呼叫，再執行 <code>npm run render:stacks</code>。<a href="https://github.com/howardc38/motion-fx-lab/blob/main/examples/stack-lab/README.md">參數及輸出方法</a></p>
+      <p class="note">Sliders adjust this live preview only. Pass your chosen options into <code>effect.frame(t, options)</code> in your film page (for example <a href="../stacks.html">examples/stacks.html</a>) and re-render. <a href="https://github.com/howardc38/motion-fx-lab/blob/main/examples/stack-lab/README.md">Parameters and export guide</a></p>
       <div class="notes">
         <div>
           <h2 id="title">PixiJS · Liquid poster</h2>
           <p id="description">
-            整張海報通過位移貼圖扭曲，再疊加模糊與色彩濾鏡。
+            A displacement map warps the poster over time, layered with blur and colour-matrix grading.
           </p>
         </div>
         <div class="runtime">

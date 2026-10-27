@@ -140,21 +140,64 @@ var ART = {
   </svg>`,
   croissant: (C, hero) => `<svg viewBox="0 0 600 800" aria-hidden="true">
     <defs>
-      <linearGradient id="crust" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c46a"/><stop offset=".55" stop-color="#d9862f"/><stop offset="1" stop-color="#9a4a14"/></linearGradient>
-      <linearGradient id="box" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8b285"/><stop offset="1" stop-color="#b98c5c"/></linearGradient>
+      <radialGradient id="plateRim" cx=".46" cy=".4" r=".6"><stop offset="0" stop-color="#fffdf8"/><stop offset=".74" stop-color="#f3e6cf"/><stop offset="1" stop-color="#dcc5a2"/></radialGradient>
+      <radialGradient id="plateWell" cx=".5" cy=".54" r=".52"><stop offset="0" stop-color="#ead7b9"/><stop offset=".8" stop-color="#f7ecda"/><stop offset="1" stop-color="#e3cca8"/></radialGradient>
+      <linearGradient id="hornBake" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#efa84a"/><stop offset=".55" stop-color="#c9681d"/><stop offset="1" stop-color="#87360b"/></linearGradient>
+      <linearGradient id="tierBake" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="#ffd97d"/><stop offset=".45" stop-color="#e78e2d"/><stop offset="1" stop-color="#9e4310"/></linearGradient>
+      <radialGradient id="crownBake" cx=".44" cy=".28" r=".68"><stop offset="0" stop-color="#ffeaa3"/><stop offset=".34" stop-color="#f5a63d"/><stop offset=".75" stop-color="#c65f19"/><stop offset="1" stop-color="#89350b"/></radialGradient>
+      <radialGradient id="crema" cx=".45" cy=".42" r=".55"><stop offset="0" stop-color="#b86b35"/><stop offset=".7" stop-color="#6e3615"/><stop offset="1" stop-color="#3c1907"/></radialGradient>
     </defs>
-    <ellipse cx="300" cy="752" rx="250" ry="26" fill="#5a3a1c" opacity=".22"/>
-    <path d="M80 420 L520 420 L500 740 L100 740 Z" fill="url(#box)"/>
-    <path d="M80 420 L140 230 L460 230 L520 420 Z" fill="#c99d6c"/>
-    <path d="M140 230 L460 230 L520 420 L80 420 Z" fill="#000" opacity=".06"/>
-    <rect x="80" y="520" width="440" height="80" fill="${C.pop}"/>
-    <text x="300" y="578" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="900" font-size="46" fill="#fff" letter-spacing="2">OVEN &amp; IVY</text>
-    ${[[300, 420, 1.15, 0], [170, 400, 0.9, -14], [430, 400, 0.9, 14]].map(([x, y, s, r]) => `<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})">
-      <path d="M-170 30 C-190 -10 -150 -40 -120 -30 C-110 -60 -60 -70 -40 -52 C-20 -84 20 -84 40 -52 C60 -70 110 -60 120 -30 C150 -40 190 -10 170 30 C140 60 80 56 40 48 C10 60 -10 60 -40 48 C-80 56 -140 60 -170 30 Z" fill="url(#crust)"/>
-      <path d="M-120 -30 C-100 0 -96 30 -110 50 M-40 -52 C-30 -10 -30 30 -40 48 M40 -52 C30 -10 30 30 40 48 M120 -30 C100 0 96 30 110 50" stroke="#8a3f10" stroke-width="7" fill="none" opacity=".55" stroke-linecap="round"/>
-      <path d="M-30 -60 C0 -72 20 -70 34 -58" stroke="#fff3cf" stroke-width="10" fill="none" opacity=".55" stroke-linecap="round"/>
-    </g>`).join("")}
-    ${shine(`<path d="M80 420 L140 230 L460 230 L520 420 L500 740 L100 740 Z"/><rect x="0" y="300" width="600" height="190"/>`, hero)}
+    <!-- Café linen napkin tucked beneath stoneware plate -->
+    <g transform="rotate(11 220 620)">
+      <rect x="64" y="476" width="330" height="264" rx="22" fill="#fbf3e4" stroke="#dfcbb0" stroke-width="3"/>
+      <rect x="64" y="514" width="330" height="22" fill="${C.pop}" opacity=".88"/>
+      <rect x="64" y="550" width="330" height="8" fill="${C.pop}" opacity=".55"/>
+      <rect x="64" y="676" width="330" height="26" fill="${C.pop}"/>
+      <text x="229" y="695" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="900" font-size="18" fill="#fff" letter-spacing="3">OVEN &amp; IVY</text>
+    </g>
+    <!-- Steaming artisan espresso cup & saucer -->
+    <ellipse cx="458" cy="296" rx="108" ry="86" fill="#5a3418" opacity=".18"/>
+    <ellipse cx="452" cy="284" rx="106" ry="84" fill="#f7eedf" stroke="${C.pop}" stroke-width="5"/>
+    <ellipse cx="452" cy="284" rx="68" ry="52" fill="#e6d3b5"/>
+    <path d="M518 258 C556 254 564 294 522 300" fill="none" stroke="${C.pop}" stroke-width="16" stroke-linecap="round"/>
+    <ellipse cx="452" cy="276" rx="68" ry="54" fill="${C.pop}"/>
+    <ellipse cx="452" cy="268" rx="58" ry="45" fill="url(#crema)"/>
+    <path d="M452 284 C434 270 432 252 444 248 C450 246 452 253 452 256 C452 253 454 246 460 248 C472 252 470 270 452 284 Z" fill="#f9ecd6" opacity=".88"/>
+    <path d="M432 212 C420 186 444 166 432 138 M466 206 C454 180 478 160 466 132" fill="none" stroke="#fff9ee" stroke-width="6" stroke-linecap="round" opacity=".55"/>
+    <!-- Artisan stoneware plate -->
+    <ellipse cx="294" cy="548" rx="248" ry="192" fill="#4f2b10" opacity=".2"/>
+    <ellipse cx="284" cy="528" rx="246" ry="190" fill="url(#plateRim)"/>
+    <ellipse cx="284" cy="528" rx="228" ry="174" fill="none" stroke="${C.pop}" stroke-width="4" opacity=".68"/>
+    <ellipse cx="284" cy="528" rx="184" ry="138" fill="url(#plateWell)"/>
+    <!-- Scattered flaky golden butter crumbs on plate -->
+    ${[[166, 594, 7, 4, 20], [192, 610, 5, 3, -15], [374, 608, 8, 4, -28], [404, 586, 5, 3, 35], [248, 626, 6, 3, 12], [146, 502, 5, 3, -40]].map(([x, y, rx, ry, rot]) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" transform="rotate(${rot} ${x} ${y})" fill="#d47824" opacity=".78"/>`).join("")}
+    <!-- Hero laminated French crescent croissant -->
+    <g transform="translate(284 510) rotate(-14)">
+      <!-- Soft warm contact shadow -->
+      <path d="M-196 36 C-214 96 -132 132 -88 92 C-42 64 42 64 88 92 C132 132 214 96 196 36 C172 -42 96 -96 0 -98 C-96 -96 -172 -42 -196 36 Z" fill="#59290a" opacity=".22" transform="translate(6 18)"/>
+      <!-- 1. Inward-curving toasted crescent horn tips -->
+      <path d="M-136 -18 C-194 4 -216 62 -184 102 C-162 126 -118 118 -108 92 C-102 76 -124 64 -134 52 C-146 36 -134 10 -114 -2 Z" fill="url(#hornBake)" stroke="#702a07" stroke-width="3.5" stroke-linejoin="round"/>
+      <path d="M136 -18 C194 4 216 62 184 102 C162 126 118 118 108 92 C102 76 124 64 134 52 C146 36 134 10 114 -2 Z" fill="url(#hornBake)" stroke="#702a07" stroke-width="3.5" stroke-linejoin="round"/>
+      <!-- 2. Outer laminated pastry wraps -->
+      <path d="M-84 -66 C-148 -54 -184 -4 -168 48 C-156 80 -118 82 -98 52 C-84 32 -82 6 -66 -12 Z" fill="url(#tierBake)" stroke="#782e08" stroke-width="3.8" stroke-linejoin="round"/>
+      <path d="M84 -66 C148 -54 184 -4 168 48 C156 80 118 82 98 52 C84 32 82 6 66 -12 Z" fill="url(#tierBake)" stroke="#782e08" stroke-width="3.8" stroke-linejoin="round"/>
+      <!-- 3. Inner shoulder laminated pastry folds -->
+      <path d="M-36 -94 C-98 -92 -138 -46 -124 22 C-116 54 -76 58 -52 34 C-38 18 -34 -16 -22 -42 Z" fill="url(#tierBake)" stroke="#7c3009" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M36 -94 C98 -92 138 -46 124 22 C116 54 76 58 52 34 C38 18 34 -16 22 -42 Z" fill="url(#tierBake)" stroke="#7c3009" stroke-width="4" stroke-linejoin="round"/>
+      <!-- 4. Lofty golden-butter central crown wrap -->
+      <path d="M0 -112 C62 -112 88 -58 76 14 C68 50 36 66 0 66 C-36 66 -68 50 -76 14 C-88 -58 -62 -112 0 -112 Z" fill="url(#crownBake)" stroke="#7c3009" stroke-width="4.2" stroke-linejoin="round"/>
+      <!-- Crisp flaky lamination rim highlights along each rolled edge -->
+      <path d="M-64 -68 C-78 -26 -72 18 -56 32 M64 -68 C78 -26 72 18 56 32 M-118 -32 C-136 2 -128 38 -110 54 M118 -32 C136 2 128 38 110 54" fill="none" stroke="#ffe59e" stroke-width="4.5" stroke-linecap="round" opacity=".72"/>
+      <!-- Glossy egg-wash sheen on lofty crown & shoulders -->
+      <path d="M-38 -74 C-14 -92 22 -90 42 -68 C22 -74 -12 -74 -38 -56 Z" fill="#fff7dc" opacity=".68"/>
+      <ellipse cx="-88" cy="-34" rx="22" ry="9" transform="rotate(-32 -88 -34)" fill="#fff4cf" opacity=".48"/>
+      <ellipse cx="88" cy="-34" rx="20" ry="8" transform="rotate(32 88 -34)" fill="#fff4cf" opacity=".42"/>
+      <ellipse cx="-164" cy="48" rx="14" ry="6" transform="rotate(-62 -164 48)" fill="#ffdca0" opacity=".42"/>
+      <ellipse cx="164" cy="48" rx="14" ry="6" transform="rotate(62 164 48)" fill="#ffdca0" opacity=".4"/>
+      <!-- Subtle flaky pastry striation lines -->
+      <path d="M-46 -22 Q0 -38 46 -22 M-52 8 Q0 -6 52 8 M-38 36 Q0 26 38 36" fill="none" stroke="#963d0c" stroke-width="3" stroke-linecap="round" opacity=".36"/>
+    </g>
+    ${shine(`<ellipse cx="284" cy="528" rx="246" ry="190"/><ellipse cx="452" cy="284" rx="106" ry="84"/>`, hero)}
   </svg>`,
   mat: (C, hero) => `<svg viewBox="0 0 600 800" aria-hidden="true">
     <defs>

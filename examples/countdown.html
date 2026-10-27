@@ -36,8 +36,8 @@ const EVENT = {
   .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; background: var(--bg); }
   .a { position: absolute; }
   .glow { position: absolute; border-radius: 50%; background: radial-gradient(circle, var(--glow) 0%, transparent 65%); opacity: .45; }
-  .num { position: absolute; display: grid; place-items: center; font: 900 430px/1 var(--lat); font-stretch: 112%; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
-  .kick { font: 700 46px var(--mono); letter-spacing: .3em; color: var(--accent); text-align: center; }
+  .num { position: absolute; display: grid; place-items: center; font: 900 430px/1 var(--lat); font-stretch: 112%; letter-spacing: -.04em; font-variant-numeric: tabular-nums; transform-origin: 50% 60%; }
+  .kick { font: 700 42px var(--mono); letter-spacing: .3em; color: var(--accent); text-align: center; }
   .chip { display: flex; flex-direction: column; gap: 6px; padding: 18px 26px; border-radius: 22px; background: var(--soft); border: 2px solid rgba(251,244,234,.18); }
   .chip span { font: 700 26px var(--mono); letter-spacing: .14em; color: var(--accent); }
   .chip b { font: 800 36px var(--lat); white-space: nowrap; }
@@ -81,8 +81,8 @@ const EVENT = {
   const numAt = (n) => REVEAL - n * STEP;
 
   // Layout per format. Vertical keeps words inside the area Reels, TikTok and Shorts leave clear.
-  const L = V ? { cx: 500, cy: 690, r: 290, numSize: 330, kickY: 482, chips: "below", chipY: 1062, chipGap: 62, titleY: 300, logoX: 504, logoY: 560, logoW: 0.68, infoY: 740, ctaY: 1040, infoSide: [120, 192] }
-              : { cx: 960, cy: 520, r: 330, numSize: 430, kickY: 285, chips: "left", chipX: 110, chipY: 300, chipGap: 170, titleX: 1375, titleY: 340, logoX: 960, logoY: 380, logoW: 0.62, infoY: 610, ctaY: 845, infoSide: [0, 0] };
+  const L = V ? { cx: 484, cy: 714, r: 244, numSize: 272, kickY: 368, kickSize: 38, chips: "below", chipY: 1062, chipGap: 62, titleY: 294, logoX: 504, logoY: 560, logoW: 0.68, infoY: 740, ctaY: 1040, infoSide: [120, 192] }
+              : { cx: 960, cy: 568, r: 316, numSize: 384, kickY: 120, kickSize: 42, chips: "left", chipX: 110, chipY: 300, chipGap: 170, titleX: 1375, titleY: 340, logoX: 960, logoY: 380, logoW: 0.62, infoY: 610, ctaY: 845, infoSide: [0, 0] };
   window.__layout = { W, H, ...L };
 
   const ringSize = L.r * 2 + 80, rx = L.cx - ringSize / 2, ry = L.cy - ringSize / 2, RC = 2 * Math.PI * L.r;
@@ -96,14 +96,14 @@ const EVENT = {
         `<circle cx="${ringSize / 2}" cy="${ringSize / 2}" r="${L.r}" fill="none" stroke="${C.soft}" stroke-width="22"/>` +
         `<circle id="arc" cx="${ringSize / 2}" cy="${ringSize / 2}" r="${L.r}" fill="none" stroke="${C.ink}" stroke-width="22" stroke-linecap="round" stroke-dasharray="${RC} ${RC}" transform="rotate(-90 ${ringSize / 2} ${ringSize / 2})"/>` +
         `<g id="ticks" stroke="${C.ink}" stroke-width="4" stroke-linecap="round" opacity=".35">${ticks}</g></svg>` +
-      `<div class="a kick" style="left:${L.cx - 300}px;width:600px;top:${L.kickY}px" data-fx="fade" data-at="0.05" data-out="${numAt(1) + 0.4}">${esc(EVENT.kicker)}</div>` +
-      nums.map((n) => `<div class="num" data-effect="count beat" style="left:${L.cx - 400}px;top:${L.cy - 270}px;width:800px;height:560px;font-size:${L.numSize}px${n <= 3 ? `;color:${C.accent}` : ""}" data-fx="slam" data-at="${Math.max(0, numAt(n)).toFixed(2)}" data-dur="${n <= 3 ? 0.4 : 0.32}" data-out="${(numAt(n) + STEP - (n === 1 ? 0.6 : 0.12)).toFixed(2)}" data-sfx="${n <= 3 ? "impact" : "tick"}">${n}</div>`).join("") +
+      `<div class="a kick" style="left:${L.cx - 300}px;width:600px;top:${L.kickY}px;font-size:${L.kickSize}px" data-fx="fade" data-at="0.05" data-out="${numAt(1) + 0.4}">${esc(EVENT.kicker)}</div>` +
+      nums.map((n) => `<div class="num" data-effect="count beat" style="left:${L.cx - 400}px;top:${L.cy - 276}px;width:800px;height:560px;font-size:${L.numSize}px${n <= 3 ? `;color:${C.accent}` : ""}" data-fx="slam" data-at="${Math.max(0, numAt(n)).toFixed(2)}" data-dur="${n <= 3 ? 0.4 : 0.32}" data-out="${(numAt(n) + STEP - (n === 1 ? 0.6 : 0.12)).toFixed(2)}" data-sfx="${n <= 3 ? "impact" : "tick"}">${n}</div>`).join("") +
     `</div>` +
     (L.chips === "left"
       ? EVENT.chips.map(([k, v], i) => `<div class="a chip" style="left:${L.chipX}px;top:${L.chipY + i * L.chipGap}px" data-effect="whip" data-fx="whip" data-dx="-420" data-at="${(1.8 + i * 1.8).toFixed(1)}" data-out="8.2" data-sfx="whoosh"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join("") +
         EVENT.title.map((w, i) => `<div class="a title" style="left:${L.titleX}px;top:${L.titleY + i * 100}px" data-fx="up" data-at="${0.3 + i * 0.12}" data-out="8.2">${esc(w)}</div>`).join("")
       : EVENT.chips.map(([k, v], i) => `<div class="a chip row" style="left:120px;top:${L.chipY + i * L.chipGap}px" data-effect="whip" data-fx="whip" data-dx="-420" data-at="${(1.8 + i * 1.8).toFixed(1)}" data-out="8.2" data-sfx="whoosh"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join("") +
-        `<div class="a title" style="left:120px;top:${L.titleY}px;font-size:56px;width:768px" data-fx="up" data-at="0.3" data-out="8.2">${esc(EVENT.title.join(" "))}</div>`) +
+        `<div class="a title" style="left:120px;top:${L.titleY}px;font-size:52px;width:756px" data-fx="up" data-at="0.3" data-out="8.2">${esc(EVENT.title.join(" "))}</div>`) +
     `<canvas id="dust" data-effect="particles"></canvas>` +
     nums.filter((n) => n <= 3).map((n) => `<div class="a flash" data-fx="flash" data-at="${numAt(n).toFixed(2)}" data-dur="0.25"></div>`).join("");
 

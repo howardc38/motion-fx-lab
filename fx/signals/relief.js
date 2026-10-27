@@ -12,9 +12,9 @@ const PX=1/100,smooth=(a,b,x)=>{x=clamp((x-a)/(b-a));return x*x*(3-2*x);};
 // Camera yaw/pitch (radians) as a pure function of film time.
 export function reliefCamera(t){
   const k=smooth;
-  const yaw=.34*k(1,3,t)+.16*k(3,5.6,t)+.45*k(5.85,6.45,t)+.05*k(6.45,7.6,t)-.75*k(7.6,9.4,t)-.25*k(9.4,10.2,t)+.26*k(10.2,11.1,t)-.08*k(11.1,12,t);
-  const pitch=.12*k(5.85,6.5,t)*(1-k(7.4,9.4,t))+.04*k(10.2,11.2,t);
-  const zoom=1+.06*k(5.85,6.5,t)*(1-k(7.6,9.6,t));
+  const yaw=.28*k(1,3,t)+.17*k(3,5.5,t)+.24*k(5.65,6.25,t)+.034*k(6.25,7.5,t)-.52*k(7.6,9.4,t)-.204*k(9.4,10.2,t)+.22*k(10.2,11.1,t)-.06*k(11.1,12,t);
+  const pitch=.13*k(5.65,6.45,t)*(1-k(7.4,9.4,t))+.04*k(10.2,11.2,t);
+  const zoom=1+.06*k(5.65,6.45,t)*(1-k(7.6,9.6,t));
   return{yaw,pitch,zoom};
 }
 
@@ -35,10 +35,10 @@ export async function createRelief({signalsUrl}={}){
     c.x=((c.i%gw+.5)/gw-.5)*12.8;c.y=(.5-(Math.floor(c.i/gw)+.5)/gh)*7.2;c.band=Math.round(2+26*(1-Math.floor(c.i/gw)/(gh-1)));}
   // Column sides are darker than their image-coloured tops, so the picture stays readable
   // and every extruded cell reads as a separate pin at a grazing angle.
-  const material=new THREE.MeshStandardMaterial({roughness:.5,metalness:.06});
+  const material=new THREE.MeshStandardMaterial({roughness:.46,metalness:.06});
   material.onBeforeCompile=shader=>{
     shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying float vTop;').replace('#include <begin_vertex>','#include <begin_vertex>\nvTop=abs(normal.z);');
-    shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\nvarying float vTop;').replace('#include <color_fragment>','#include <color_fragment>\ndiffuseColor.rgb*=mix(.4,1.,vTop);');
+    shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\nvarying float vTop;').replace('#include <color_fragment>','#include <color_fragment>\ndiffuseColor.rgb*=mix(.34,1.,vTop);');
   };
   material.customProgramCacheKey=()=>'signal-relief-pins';
   const mesh=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),material,cells.length);
@@ -46,11 +46,11 @@ export async function createRelief({signalsUrl}={}){
   const color=new THREE.Color();cells.forEach((c,k)=>mesh.setColorAt(k,color.setRGB(...c.color)));s.scene.add(mesh);
   // An unlit wall in the background colour, with a shadow-only layer just in front of it.
   const wall=new THREE.Mesh(new THREE.PlaneGeometry(400,400),new THREE.MeshBasicMaterial({color:LOOK.background}));wall.position.z=-.002;s.scene.add(wall);
-  const shade=new THREE.Mesh(new THREE.PlaneGeometry(400,400),new THREE.ShadowMaterial({opacity:.55}));shade.receiveShadow=true;s.scene.add(shade);
-  s.scene.add(new THREE.HemisphereLight('#fff6e8','#2b3440',1.25));
-  const key=new THREE.DirectionalLight('#fff1dc',2.1);key.position.set(-6,7,9);key.castShadow=true;
+  const shade=new THREE.Mesh(new THREE.PlaneGeometry(400,400),new THREE.ShadowMaterial({opacity:.62}));shade.receiveShadow=true;s.scene.add(shade);
+  s.scene.add(new THREE.HemisphereLight('#fff6e8','#2b3440',1.18));
+  const key=new THREE.DirectionalLight('#fff1dc',2.35);key.position.set(-8.6,5.8,6.2);key.castShadow=true;
   Object.assign(key.shadow.camera,{left:-8,right:8,top:6,bottom:-6,near:1,far:40});key.shadow.mapSize.set(2048,2048);key.shadow.bias=-.0004;key.shadow.normalBias=.01;
-  s.scene.add(key,key.target);const rim=new THREE.DirectionalLight('#9fd8ff',.7);rim.position.set(8,2,3);s.scene.add(rim);
+  s.scene.add(key,key.target);const rim=new THREE.DirectionalLight('#9fd8ff',.85);rim.position.set(8.5,2.4,2.8);s.scene.add(rim);
   s.renderer.shadowMap.enabled=true;s.renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   const m=new THREE.Matrix4(),q=new THREE.Quaternion(),v=new THREE.Vector3(),sc=new THREE.Vector3();
   let proof;

@@ -12,7 +12,7 @@ test('catalogue owns every demo once; variants, basics and showcases do not infl
  await expect(page.locator('#shown')).toHaveText(`${C.techniques} / ${C.techniques} effects shown`);
  await expect(page.locator('#basics-shown')).toHaveText(`${C.basics} / ${C.basics} motion basics shown`);
  await expect(page.locator('#available')).toHaveText(available(all));
- await expect(page.locator('#showcase-count')).toHaveText('Compare treatments below ↘');
+ await expect(page.locator('#showcase-count')).toHaveText('Scene presets below ↘');
  const p=await page.evaluate(()=>({stats:FXCatalog.stats,ids:FX.DEMOS.map(d=>d.id),groups:[...FXCatalog.families,...FXCatalog.basics].map(f=>f.entries.map(d=>d.id)),shows:FXCatalog.showcases.map(f=>f.id),
   uiIds:[...document.querySelectorAll('#gallery > figure, #basicsGallery > figure, #showcaseGallery > figure')].flatMap(card=>card.querySelector('select')?[...card.querySelectorAll('option')].map(o=>o.value):[card.dataset.effectId]),
   basicCards:[...document.querySelectorAll('#basicsGallery > figure')].map(f=>f.dataset.effectId).sort(),basicIds:FXCatalog.basics.map(f=>f.id).sort(),
@@ -61,14 +61,23 @@ test('landscape gallery remains usable at phone width and filters include charac
  await expect(page.locator('#shown')).toHaveText(`${COUNTS.filters[1].families} / ${C.techniques} effects shown`);
 });
 
-test('counts include a matching variant when its parent does not match the filter',async({page})=>{
+test('counts include a matching variant when its parent does not match the filter, and custom text updates previews',async({page})=>{
  await open(page);
  const f=COUNTS.filters.find(x=>x.stack==='PixiJS');
  await filter(page,f);
  await expect(page.locator('#shown')).toHaveText(`${f.families} / ${C.techniques} effects shown`);
  await expect(page.locator('#available')).toHaveText(available(f));
  await expect(page.locator('[data-effect-id="liquid"] select')).toHaveValue('stack-pixi');
- await expect(page.locator('#showcase-count')).toHaveAttribute('href','#comparisons');
+ await expect(page.locator('#showcase-count')).toHaveAttribute('href','#composition-presets');
+ await filter(page,{kind:'All',stack:'All'});
+ const changed=await page.evaluate(async()=>{
+  const a=(await galleryAPI.draw('graphic-stroke-mural',1.8)).stage.querySelector('canvas').toDataURL();
+  galleryAPI.setCustomText('NOVA');
+  const b=(await galleryAPI.draw('graphic-stroke-mural',1.8)).stage.querySelector('canvas').toDataURL();
+  galleryAPI.setCustomText('');
+  return{input:document.getElementById('customText').value,changed:a!==b};
+ });
+ expect(changed).toEqual({input:'',changed:true});
 });
 
 test('old demo links for merged or removed effects open the card that replaced them',async({page})=>{

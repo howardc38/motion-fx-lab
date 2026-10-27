@@ -58,11 +58,36 @@ gallery-tile size and a wide-open D of at least 20 px). Lids, brows and gaze giv
 
 `textures.js` draws felt, satin stitch, gingham, knit and wall procedurally from a seed, and loads
 the optional CC0 photographs. `stage.js` provides two sets: `bedroom` (teal dusk, fairy-light bokeh)
-and `studio` (dark sweep with strong back rims). `effect.js` is the gallery tile.
+and `studio` (dark sweep with strong back rims). `effect.js` is the `plush-fur` gallery tile.
+
+## Interactive Verlet Fur Physics (`webgpu.js` · `plush-webgpu`)
+
+`createPlushWebGPU(options)` upgrades every furry part with a `240 Hz` Verlet guide-strand solver in
+raw WebGPU compute (`WGSL`) while keeping the exact WebGL2 shell, silhouette-fin, fibre-strand and
+post-processing pipeline:
+
+```js
+import {createPlushWebGPU} from './fx/plush/webgpu.js';
+
+const plush = await createPlushWebGPU({
+  width: 1280,
+  height: 720,
+  set: 'bedroom',        // 'bedroom' | 'studio'
+  interactive: true,     // live pointer-drag pressing in addition to scripted choreography
+});
+
+document.body.append(plush.canvas);
+await plush.frame(2.6);  // deterministic random-access seek via 0.5 s GPU state checkpoints
+```
+
+- **Guide strands & soft-body denting**: each base-mesh vertex of the 11 furry parts (~23,300 guides) owns a 5-node guide (`node 0` = dented skin, `nodes 1..4` = inextensible follow-the-leader pile). Forearm capsules and a studio tactile presser cushion dent the body, head and muzzle inward with a damped spring rebound (`skinK`, `skinDamp`), analytical rim-normal tilt and contact-compression shading (`vSimComp`), while dragging adjacent strands by friction.
+- **Deterministic `0.5 s` state checkpoints**: simulation state (`X`, `Xp`, `D`, `Out` and previous capsule transforms) is snapshotted on the GPU every `120` steps (`0.5 s`), keeping backward or random-access `frame(t)` seeks fast and bit-reproducible across forward, reverse and chunked playback orders.
+- **Seamless fallback**: when `navigator.gpu` or a hardware adapter is unavailable, `createPlushWebGPU` falls back automatically to a deterministic `240 Hz` CPU Verlet + `FUR_SOFT` Gaussian dent solver on Three.js WebGL2 (and a 2D Canvas emergency fallback if WebGL2 is unavailable) without uncaught errors.
 
 ## Limits
 
-Shell fur is an approximation: very close or edge-on views can still show layers; fur does not
-collide (a paw passes into it); squash is a scale, not a volume-preserving body; secondary motion is
-filtered from the performance, not simulated. The brushed path is drawn as data, not by contact.
-`setFurForce` is the hook for a future GPU fur solver.
+Shell fur remains an approximation: very close or edge-on views can still show shell layers when
+pressed nearly flat; guide strands collide against analytic limb capsules, body ellipsoids and the
+blanket rather than strand-to-strand within the same part; whole-body `squash` remains an affine
+scale rather than volume-preserving tetrahedral FEM.
+

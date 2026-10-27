@@ -1,25 +1,24 @@
 {
-  "$comment": "Expected gallery and film counts, in one place. Adding, merging or removing an effect, variant, basic or film changes these on purpose: update the numbers here and say why in the commit. Filters name the gallery buttons; families and basics count visible cards, demos and variants count the matching entries. This revision adds four distinct graphic operations, seven variants of existing effects and five in-card films; the sampler adds no effect family.",
-  "catalog": {"techniques": 49, "basics": 21, "variants": 27, "showcases": 5, "demos": 102},
+  "$comment": "Expected gallery and film counts, in one place. Adding, merging or removing an effect, variant, basic or film changes these on purpose: update the numbers here and say why in the commit. Filters name the gallery buttons; families and basics count visible cards, demos and variants count the matching entries. This revision adds 16 distinct effect families, 10 variants, 2 flagship 60fps demo films (stroke-mural, liquid-chrome-type), promotes mechanical/ink-city/fight-effects into Demo films, moves water-forms to Use cases, and retires the 3 redundant sampler films.",
+  "catalog": {"techniques": 65, "basics": 21, "variants": 37, "showcases": 5, "demos": 128},
   "filters": [
-    {"kind": "All", "stack": "All", "families": 49, "basics": 21, "demos": 97, "variants": 27},
-    {"kind": "Characters", "stack": "All", "families": 3, "basics": 0, "demos": 7, "variants": 4},
+    {"kind": "All", "stack": "All", "families": 65, "basics": 21, "demos": 123, "variants": 37},
+    {"kind": "Characters", "stack": "All", "families": 4, "basics": 0, "demos": 8, "variants": 4},
     {"kind": "Characters", "stack": "Flubber", "families": 0, "basics": 0, "demos": 0, "variants": 0},
     {"kind": "All", "stack": "Flubber", "families": 1, "basics": 0, "demos": 1, "variants": 0},
     {"kind": "Light & image treatments", "stack": "PixiJS", "families": 1, "basics": 0, "demos": 1, "variants": 1}
   ],
   "films": {
-    "total": 41,
-    "layers": {"intro": 1, "use-case": 15, "demo": 7, "comparison": 1, "effect-film": 17},
+    "total": 40,
+    "layers": {"intro": 1, "use-case": 17, "demo": 11, "effect-film": 11},
     "featured": {
-      "use-case": ["reel", "product", "infographic", "broll", "titles", "countdown", "spotlight"],
-      "demo": ["spark-form", "character-dialogue", "style-journey", "water-forms"]
+      "use-case": ["reel", "product", "infographic", "broll", "titles", "countdown", "spotlight", "water-forms"],
+      "demo": ["stroke-mural", "liquid-chrome-type", "spark-form", "character-dialogue", "style-journey"]
     },
     "$cards": "Film cards on the home page by section, in page order: the featured cards, then the smaller cards (listed films that are not a version of another film).",
     "cards": {
-      "use-case": ["reel", "product", "infographic", "broll", "titles", "countdown", "spotlight"],
-      "demo": ["spark-form", "character-dialogue", "style-journey", "water-forms", "dot-story", "dot-battle"],
-      "comparison": ["fight-effects"]
+      "use-case": ["reel", "product", "infographic", "broll", "titles", "countdown", "spotlight", "water-forms"],
+      "demo": ["stroke-mural", "liquid-chrome-type", "spark-form", "character-dialogue", "style-journey", "dot-story", "dot-battle", "fight-effects", "mechanical-cutaway", "mechanical-assembly", "ink-city"]
     }
   }
 }

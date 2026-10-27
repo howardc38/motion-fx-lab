@@ -4,12 +4,11 @@
   "layers": [
     {"id": "intro", "title": "Intro", "singular": "intro", "description": "What the repository makes and how a page becomes an MP4."},
     {"id": "use-case", "title": "Use cases", "singular": "use case", "description": "Start from a familiar video format and replace its copy, data or brand."},
-    {"id": "demo", "title": "Demo films", "singular": "demo film", "description": "Finished pieces that combine several effects around one subject or story."},
     {
-      "id": "comparison",
-      "title": "Comparisons",
-      "singular": "comparison",
-      "description": "The same input under different treatments, for choosing an effect."
+      "id": "demo",
+      "title": "Demo films",
+      "singular": "demo film",
+      "description": "Finished pieces that combine effects around one subject, story or choreography."
     },
     {
       "id": "effect-film",
@@ -532,6 +531,115 @@
       "groups": ["all", "uses"]
     },
     {
+      "id": "water-forms",
+      "layer": "use-case",
+      "tier": "featured",
+      "title": "Clear",
+      "summary": "A 15-second drinks advert: a drop crowns, rises into a glass bottle, dives underwater and surfaces as the brand.",
+      "duration": 15,
+      "format": "16:9",
+      "page": "examples/water-forms.html",
+      "media": {"mp4": "media/water-forms.mp4", "poster": "media/water-forms.jpg", "preview": "media/water-forms.preview.mp4"},
+      "card": {
+        "headline": "Clear",
+        "description": "A drop becomes a crown splash, rises into a bottle that refracts the brand, dives underwater and surfaces on the end card.",
+        "useFor": "Product adverts and material-led openers.",
+        "relation": "Four water effects each carry one chapter; the brand is set in one place and a 9:16 cut uses the same page.",
+        "guide": "fx/material-studies/README.md"
+      },
+      "audience": "Brands and designers making a short product advert.",
+      "effects": [
+        {"id": "water-impact", "at": [0, 2], "label": "Drop and crown", "proof": ["fx/material-studies/clear.js", "\"water-impact\""]},
+        {"id": "water-morph", "at": [2, 4.5], "label": "Rises into the bottle", "proof": ["fx/material-studies/clear.js", "\"water-morph\""]},
+        {"id": "water-material", "at": [4.5, 7.5], "label": "Glass refraction", "proof": ["fx/material-studies/clear.js", "\"water-material\""]},
+        {"id": "water-underwater", "at": [7.5, 12.5], "label": "Underwater", "proof": ["fx/material-studies/clear.js", "\"water-underwater\""]}
+      ],
+      "related": [
+        {"id": "sweep", "label": "Highlight sweep"},
+        {"id": "sticker", "label": "CTA sticker"},
+        {"id": "optical-caustic", "label": "Caustic light"}
+      ],
+      "groups": ["all", "uses", "showcase", "materials"]
+    },
+    {
+      "id": "water-forms-vertical",
+      "layer": "use-case",
+      "tier": "listed",
+      "versionOf": "water-forms",
+      "title": "Clear (9:16)",
+      "summary": "The Clear drinks advert recomposed for 9:16 from the same page.",
+      "duration": 15,
+      "format": "9:16",
+      "page": "examples/water-forms-vertical.html",
+      "media": {"mp4": "media/water-forms-vertical.mp4", "poster": "media/water-forms-vertical.jpg"},
+      "card": {
+        "headline": "Clear (9:16)",
+        "description": "A drop becomes a crown splash, rises into a bottle that refracts the brand, dives underwater and surfaces on the end card."
+      },
+      "audience": "Brands and designers making a short product advert.",
+      "effects": [
+        {"id": "water-impact", "at": [0, 2], "label": "Drop and crown", "proof": ["fx/material-studies/clear.js", "\"water-impact\""]},
+        {"id": "water-morph", "at": [2, 4.5], "label": "Rises into the bottle", "proof": ["fx/material-studies/clear.js", "\"water-morph\""]},
+        {"id": "water-material", "at": [4.5, 7.5], "label": "Glass refraction", "proof": ["fx/material-studies/clear.js", "\"water-material\""]},
+        {"id": "water-underwater", "at": [7.5, 12.5], "label": "Underwater", "proof": ["fx/material-studies/clear.js", "\"water-underwater\""]}
+      ],
+      "related": [
+        {"id": "sweep", "label": "Highlight sweep"},
+        {"id": "sticker", "label": "CTA sticker"},
+        {"id": "optical-caustic", "label": "Caustic light"}
+      ],
+      "groups": ["all", "uses", "showcase", "materials"]
+    },
+    {
+      "id": "stroke-mural",
+      "layer": "demo",
+      "tier": "featured",
+      "title": "Every Stroke Is Code",
+      "summary": "Over 1,000 stroke-sliced Latin and CJK vectors swarm into a Bento mural, invert polarity from one expanding dot and loop seamlessly.",
+      "duration": 12,
+      "fps": 60,
+      "format": "16:9",
+      "page": "examples/stroke-mural.html",
+      "media": {"mp4": "media/stroke-mural.mp4", "poster": "media/stroke-mural.jpg", "preview": "media/stroke-mural.preview.mp4"},
+      "card": {
+        "headline": "Every Stroke Is Code",
+        "description": "Over 1,000 stroke-sliced Latin and CJK vectors assemble a multi-angle Bento mural, invert polarity from a single dot and close a seamless loop.",
+        "useFor": "Launch reels, kinetic-typography manifestos and developer tool announcements.",
+        "relation": "Combines the stroke-swarm Bento mural and the off-center dot-iris polarity wipe; frame 0 and frame 720 meet on the same period dot.",
+        "guide": "fx/mural/README.md"
+      },
+      "audience": "Design engineers and brand teams making high-craft kinetic typography.",
+      "effects": [
+        {"id": "graphic-stroke-mural", "at": [0, 11.5], "label": "Stroke-swarm Bento mural"},
+        {"id": "wipe-dot-polarity", "at": [3.8, 12], "label": "Dot-iris polarity wipe"}
+      ],
+      "groups": ["all", "showcase", "mural"]
+    },
+    {
+      "id": "liquid-chrome-type",
+      "layer": "demo",
+      "tier": "featured",
+      "title": "Liquid Mercury Type",
+      "summary": "A top-down studio raymarcher pours liquid mercury into Latin and CJK letterforms, settles with specular glints and melts cleanly back into the cyclorama.",
+      "duration": 12,
+      "fps": 60,
+      "format": "16:9",
+      "page": "examples/liquid-chrome-type.html",
+      "media": {"mp4": "media/liquid-chrome-type.mp4", "poster": "media/liquid-chrome-type.jpg", "preview": "media/liquid-chrome-type.preview.mp4"},
+      "card": {
+        "headline": "Liquid Mercury Type",
+        "description": "Liquid metal beads nucleate, coalesce into sculpted Latin and CJK chrome lettering under studio softboxes, then melt away into a seamless loop.",
+        "useFor": "Luxury title cards, album visuals and tactile brand stings.",
+        "relation": "Runs the 16-bit Euclidean distance-field raymarcher across two word cycles; custom strings work via ?text=.",
+        "guide": "fx/chrome-type/README.md"
+      },
+      "audience": "Art directors and motion designers crafting tactile 3D lettering without offline DCC bakes.",
+      "effects": [
+        {"id": "liquid-chrome-type", "at": [0, 12], "label": "Liquid mercury chrome lettering"}
+      ],
+      "groups": ["all", "showcase", "chrome-type"]
+    },
+    {
       "id": "spark-form",
       "layer": "demo",
       "tier": "featured",
@@ -623,66 +731,6 @@
       "groups": ["all", "showcase", "studio"]
     },
     {
-      "id": "water-forms",
-      "layer": "demo",
-      "tier": "featured",
-      "title": "Clear",
-      "summary": "A 15-second drinks advert: a drop crowns, rises into a glass bottle, dives underwater and surfaces as the brand.",
-      "duration": 15,
-      "format": "16:9",
-      "page": "examples/water-forms.html",
-      "media": {"mp4": "media/water-forms.mp4", "poster": "media/water-forms.jpg", "preview": "media/water-forms.preview.mp4"},
-      "card": {
-        "headline": "Clear",
-        "description": "A drop becomes a crown splash, rises into a bottle that refracts the brand, dives underwater and surfaces on the end card.",
-        "useFor": "Product adverts and material-led openers.",
-        "relation": "Four water effects each carry one chapter; the brand is set in one place and a 9:16 cut uses the same page.",
-        "guide": "fx/material-studies/README.md"
-      },
-      "audience": "Brands and designers making a short product advert.",
-      "effects": [
-        {"id": "water-impact", "at": [0, 2], "label": "Drop and crown", "proof": ["fx/material-studies/clear.js", "\"water-impact\""]},
-        {"id": "water-morph", "at": [2, 4.5], "label": "Rises into the bottle", "proof": ["fx/material-studies/clear.js", "\"water-morph\""]},
-        {"id": "water-material", "at": [4.5, 7.5], "label": "Glass refraction", "proof": ["fx/material-studies/clear.js", "\"water-material\""]},
-        {"id": "water-underwater", "at": [7.5, 12.5], "label": "Underwater", "proof": ["fx/material-studies/clear.js", "\"water-underwater\""]}
-      ],
-      "related": [
-        {"id": "sweep", "label": "Highlight sweep"},
-        {"id": "sticker", "label": "CTA sticker"},
-        {"id": "optical-caustic", "label": "Caustic light"}
-      ],
-      "groups": ["all", "showcase", "materials"]
-    },
-    {
-      "id": "water-forms-vertical",
-      "layer": "demo",
-      "tier": "listed",
-      "versionOf": "water-forms",
-      "title": "Clear (9:16)",
-      "summary": "The Clear drinks advert recomposed for 9:16 from the same page.",
-      "duration": 15,
-      "format": "9:16",
-      "page": "examples/water-forms-vertical.html",
-      "media": {"mp4": "media/water-forms-vertical.mp4", "poster": "media/water-forms-vertical.jpg"},
-      "card": {
-        "headline": "Clear (9:16)",
-        "description": "A drop becomes a crown splash, rises into a bottle that refracts the brand, dives underwater and surfaces on the end card."
-      },
-      "audience": "Brands and designers making a short product advert.",
-      "effects": [
-        {"id": "water-impact", "at": [0, 2], "label": "Drop and crown", "proof": ["fx/material-studies/clear.js", "\"water-impact\""]},
-        {"id": "water-morph", "at": [2, 4.5], "label": "Rises into the bottle", "proof": ["fx/material-studies/clear.js", "\"water-morph\""]},
-        {"id": "water-material", "at": [4.5, 7.5], "label": "Glass refraction", "proof": ["fx/material-studies/clear.js", "\"water-material\""]},
-        {"id": "water-underwater", "at": [7.5, 12.5], "label": "Underwater", "proof": ["fx/material-studies/clear.js", "\"water-underwater\""]}
-      ],
-      "related": [
-        {"id": "sweep", "label": "Highlight sweep"},
-        {"id": "sticker", "label": "CTA sticker"},
-        {"id": "optical-caustic", "label": "Caustic light"}
-      ],
-      "groups": ["all", "showcase", "materials"]
-    },
-    {
       "id": "dot-story",
       "layer": "demo",
       "tier": "listed",
@@ -735,7 +783,7 @@
     },
     {
       "id": "fight-effects",
-      "layer": "comparison",
+      "layer": "demo",
       "tier": "listed",
       "title": "Same fight. Eight treatments.",
       "summary": "Compare eight operations on the same choreography.",
@@ -747,7 +795,7 @@
         "headline": "Same fight. Eight treatments.",
         "description": "A common source makes eight different operations comparable.",
         "useFor": "Choosing a treatment for moving footage.",
-        "relation": "COUNTERFORM, a demo film above, uses the same choreography."
+        "relation": "COUNTERFORM above uses the same choreography as a finished action short."
       },
       "audience": "Anyone choosing a treatment for moving footage.",
       "effects": [
@@ -761,6 +809,77 @@
         {"id": "studio-skin-cloud", "at": [33.6, 38.4], "label": "Surface points"}
       ],
       "groups": ["all", "showcase", "studio"]
+    },
+    {
+      "id": "mechanical-cutaway",
+      "layer": "demo",
+      "tier": "listed",
+      "title": "Inside the machine.",
+      "summary": "A section plane opens closed housings while the detailed core keeps moving; real cap geometry preserves wall thickness.",
+      "duration": 14.4,
+      "format": "16:9",
+      "page": "examples/mechanical-cutaway.html",
+      "media": {"mp4": "media/mechanical-cutaway.mp4", "poster": "media/mechanical-cutaway.jpg", "preview": "media/mechanical-cutaway.preview.mp4"},
+      "card": {
+        "headline": "Inside the machine.",
+        "description": "A section plane opens closed housings while the detailed core keeps moving; real cap geometry preserves wall thickness.",
+        "useFor": "Technical explainers and product interior reveals.",
+        "relation": "Full render of one controllable mechanical operation.",
+        "guide": "fx/mechanical/README.md"
+      },
+      "audience": "Designers of product and technical motion films.",
+      "effects": [
+        {"id": "mechanical-cutaway"}
+      ],
+      "groups": ["all", "showcase", "mechanical", "technical"],
+      "fps": 60
+    },
+    {
+      "id": "mechanical-assembly",
+      "layer": "demo",
+      "tier": "listed",
+      "title": "Apart. Together.",
+      "summary": "A detailed turbofan opens into seven service assemblies and returns along their ordered paths.",
+      "duration": 14.4,
+      "format": "16:9",
+      "page": "examples/mechanical-assembly.html",
+      "media": {"mp4": "media/mechanical-assembly.mp4", "poster": "media/mechanical-assembly.jpg", "preview": "media/mechanical-assembly.preview.mp4"},
+      "card": {
+        "headline": "Apart. Together.",
+        "description": "A detailed turbofan opens into seven service assemblies and returns along their ordered paths.",
+        "useFor": "Product teardowns, maintenance explanations and assembly reveals.",
+        "relation": "Full render of one controllable mechanical operation.",
+        "guide": "fx/mechanical/README.md"
+      },
+      "audience": "Designers of product and technical motion films.",
+      "effects": [
+        {"id": "mechanical-assembly"}
+      ],
+      "groups": ["all", "showcase", "mechanical", "technical"],
+      "fps": 60
+    },
+    {
+      "id": "ink-city",
+      "layer": "demo",
+      "tier": "listed",
+      "title": "One block. A drawn city.",
+      "summary": "Surface hatching, staged construction and camera travel in one scene.",
+      "duration": 12,
+      "format": "16:9",
+      "page": "examples/ink-city.html",
+      "media": {"mp4": "media/ink-city.mp4", "poster": "media/ink-city.jpg", "preview": "media/ink-city.preview.mp4"},
+      "card": {
+        "headline": "One block. A drawn city.",
+        "description": "Hatching is anchored in object coordinates. Camera movement preserves the marks, while changing light changes ink density.",
+        "useFor": "Architectural and illustrated 3D scenes.",
+        "relation": "The full render of the surface-hatching effect.",
+        "guide": "fx/design/README.md"
+      },
+      "audience": "Illustrators and architects presenting a drawn 3D scene.",
+      "effects": [
+        {"id": "design-surface-ink", "label": "Surface hatching", "proof": ["fx/design/films.js", "if(id==='ink-city')return createCity();"]}
+      ],
+      "groups": ["all", "showcase", "design"]
     },
     {
       "id": "fluid-smoke",
@@ -832,80 +951,6 @@
       "groups": ["all", "showcase", "fluid"]
     },
     {
-      "id": "ink-city",
-      "layer": "effect-film",
-      "tier": "in-card",
-      "title": "One block. A drawn city.",
-      "summary": "Surface hatching, staged construction and camera travel in one scene.",
-      "duration": 12,
-      "format": "16:9",
-      "page": "examples/ink-city.html",
-      "media": {"mp4": "media/ink-city.mp4", "poster": "media/ink-city.jpg"},
-      "card": {
-        "headline": "One block. A drawn city.",
-        "description": "Hatching is anchored in object coordinates. Camera movement preserves the marks, while changing light changes ink density.",
-        "useFor": "Architectural and illustrated 3D scenes.",
-        "relation": "The full render of the surface-hatching effect.",
-        "guide": "fx/design/README.md"
-      },
-      "audience": "Illustrators and architects presenting a drawn 3D scene.",
-      "effects": [
-        {"id": "design-surface-ink", "label": "Surface hatching", "proof": ["fx/design/films.js", "if(id==='ink-city')return createCity();"]}
-      ],
-      "groups": ["all", "showcase", "design"]
-    },
-    {
-      "id": "optical",
-      "layer": "effect-film",
-      "tier": "in-card",
-      "title": "Optical effects",
-      "summary": "A sampler of six optical effects; each segment plays inside its own effect card.",
-      "duration": 31.6,
-      "format": "16:9",
-      "page": "examples/optical.html",
-      "media": {"mp4": "media/optical.mp4", "poster": "media/optical.jpg"},
-      "card": {
-        "headline": "Optical effects",
-        "description": "A holographic foil card, slit-scan time, a moiré that hides a word, a folding paper ribbon, caustic light and a path morph.",
-        "useFor": "Choosing an optical look for a title, card or background.",
-        "relation": "Each segment plays inside its own effect card."
-      },
-      "audience": "Designers choosing an optical look for a title or background.",
-      "effects": [
-        {"id": "optical-foil", "at": [0, 6], "label": "Holographic foil"},
-        {"id": "optical-slit", "at": [6, 12.5], "label": "Slit-scan time"},
-        {"id": "optical-moire", "at": [12.5, 19], "label": "Moiré"},
-        {"id": "optical-ribbon", "at": [19, 24.6], "label": "Paper ribbon"},
-        {"id": "optical-caustic", "at": [24.6, 27.6], "label": "Caustic light"},
-        {"id": "optical-morph", "at": [27.6, 31.6], "label": "Path morph"}
-      ],
-      "groups": ["all", "showcase"]
-    },
-    {
-      "id": "stacks",
-      "layer": "effect-film",
-      "tier": "in-card",
-      "title": "Image distortion, collisions and particles",
-      "summary": "Three unrelated operations with separate settings.",
-      "duration": 24,
-      "format": "16:9",
-      "page": "examples/stacks.html",
-      "media": {"mp4": "media/stacks.mp4", "poster": "media/stacks.jpg"},
-      "card": {
-        "headline": "Image distortion, collisions and particles",
-        "description": "A PixiJS liquid poster, a Rapier domino chain and WebGPU orbital particles, each with its own settings.",
-        "useFor": "Seeing what each rendering library adds.",
-        "relation": "Each segment plays inside its own effect card."
-      },
-      "audience": "Developers choosing between PixiJS, Rapier and WebGPU effects.",
-      "effects": [
-        {"id": "stack-pixi", "at": [0, 7], "label": "Liquid poster", "proof": ["examples/stacks.html", "i = t < 7 ? 0 : t < 16 ? 1 : 2"]},
-        {"id": "stack-rapier", "at": [7, 16], "label": "Domino chain", "proof": ["examples/stacks.html", "i = t < 7 ? 0 : t < 16 ? 1 : 2"]},
-        {"id": "stack-gpu", "at": [16, 24], "label": "Orbital particles", "proof": ["examples/stacks.html", "i = t < 7 ? 0 : t < 16 ? 1 : 2"]}
-      ],
-      "groups": ["all", "showcase"]
-    },
-    {
       "id": "audio-relief",
       "layer": "effect-film",
       "tier": "in-card",
@@ -974,54 +1019,6 @@
         {"id": "plush-fur", "at": [0, 11.6], "label": "Plush fur", "proof": ["fx/dialogue/lipsync.js", "createPlushBear"]}
       ],
       "groups": ["all", "showcase", "dialogue"]
-    },
-    {
-      "id": "mechanical-assembly",
-      "layer": "effect-film",
-      "tier": "in-card",
-      "title": "Apart. Together.",
-      "summary": "A detailed turbofan opens into seven service assemblies and returns along their ordered paths.",
-      "duration": 14.4,
-      "format": "16:9",
-      "page": "examples/mechanical-assembly.html",
-      "media": {"mp4": "media/mechanical-assembly.mp4", "poster": "media/mechanical-assembly.jpg"},
-      "card": {
-        "headline": "Apart. Together.",
-        "description": "A detailed turbofan opens into seven service assemblies and returns along their ordered paths.",
-        "useFor": "Product teardowns, maintenance explanations and assembly reveals.",
-        "relation": "Full render of one controllable mechanical operation.",
-        "guide": "fx/mechanical/README.md"
-      },
-      "audience": "Designers of product and technical motion films.",
-      "effects": [
-        {"id": "mechanical-assembly"}
-      ],
-      "groups": ["all", "showcase", "mechanical", "technical"],
-      "fps": 60
-    },
-    {
-      "id": "mechanical-cutaway",
-      "layer": "effect-film",
-      "tier": "in-card",
-      "title": "Inside the machine.",
-      "summary": "A section plane opens closed housings while the detailed core keeps moving; real cap geometry preserves wall thickness.",
-      "duration": 14.4,
-      "format": "16:9",
-      "page": "examples/mechanical-cutaway.html",
-      "media": {"mp4": "media/mechanical-cutaway.mp4", "poster": "media/mechanical-cutaway.jpg"},
-      "card": {
-        "headline": "Inside the machine.",
-        "description": "A section plane opens closed housings while the detailed core keeps moving; real cap geometry preserves wall thickness.",
-        "useFor": "Technical explainers and product interior reveals.",
-        "relation": "Full render of one controllable mechanical operation.",
-        "guide": "fx/mechanical/README.md"
-      },
-      "audience": "Designers of product and technical motion films.",
-      "effects": [
-        {"id": "mechanical-cutaway"}
-      ],
-      "groups": ["all", "showcase", "mechanical", "technical"],
-      "fps": 60
     },
     {
       "id": "mechanical-linkage",
@@ -1140,37 +1137,6 @@
       "audience": "Designers making graphic titles and animated backgrounds.",
       "effects": [
         {"id": "graphic-shadow"}
-      ],
-      "groups": ["all", "showcase", "graphic"]
-    },
-    {
-      "id": "graphic-extensions",
-      "layer": "effect-film",
-      "tier": "in-card",
-      "galleryShortcut": true,
-      "title": "Type. Flip. Flow.",
-      "summary": "Split-flap letters, rolling reels, counter-moving bands, three spatial arrangements, grid choreography, LED type and temporal echoes.",
-      "duration": 33.6,
-      "fps": 60,
-      "format": "16:9",
-      "page": "examples/graphic-extensions.html",
-      "media": {"mp4": "media/graphic-extensions.mp4", "poster": "media/graphic-extensions.jpg"},
-      "card": {
-        "headline": "Type. Flip. Flow.",
-        "description": "Split-flap letters, rolling reels, counter-moving bands, three spatial arrangements, grid choreography, LED type and temporal echoes.",
-        "useFor": "Title design, graphic identities and motion backgrounds.",
-        "relation": "Segments play inside their existing effect cards.",
-        "guide": "fx/graphic/README.md"
-      },
-      "audience": "Designers making graphic titles and animated backgrounds.",
-      "effects": [
-        {"id": "graphic-flap", "at": [0, 4.8], "proof": ["fx/graphic/app.js", "id:'graphic-flap'"]},
-        {"id": "graphic-reels", "at": [4.8, 9.6], "proof": ["fx/graphic/app.js", "id:'graphic-reels'"]},
-        {"id": "graphic-bands", "at": [9.6, 14.4], "proof": ["fx/graphic/app.js", "id:'graphic-bands'"]},
-        {"id": "graphic-spatial", "at": [14.4, 21.6], "proof": ["fx/graphic/app.js", "id:'graphic-spatial'"]},
-        {"id": "graphic-tiles", "at": [21.6, 26.4], "proof": ["fx/graphic/app.js", "id:'graphic-tiles'"]},
-        {"id": "graphic-led", "at": [26.4, 30], "proof": ["fx/graphic/app.js", "id:'graphic-led'"]},
-        {"id": "graphic-echo", "at": [30, 33.6], "proof": ["fx/graphic/app.js", "id:'graphic-echo'"]}
       ],
       "groups": ["all", "showcase", "graphic"]
     }

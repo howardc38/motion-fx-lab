@@ -124,17 +124,18 @@ export function createFigure() {
   // Torso, hips and head.
   part("pelvis", new THREE.SphereGeometry(1, 20, 14).scale(0.165, 0.12, 0.12), C.pants, frame("pelvis", "qr", 0, -0.01, 0));
   part("waist", taper(0.125, 0.15, 0.16, 18), C.shirt, frame("pelvis", "qr", 0, 0.04, 0));
-  part("chest", new THREE.SphereGeometry(1, 22, 16).scale(0.2, 0.2, 0.135), C.jacket, frame("chest", "qc", 0, 0.05, 0));
+  part("chest", new THREE.SphereGeometry(1, 22, 16).scale(0.21, 0.2, 0.135), C.jacket, frame("chest", "qc", 0, 0.05, 0));
   part("zip", new THREE.BoxGeometry(0.025, 0.3, 0.03), C.trim, frame("chest", "qc", 0, 0.03, 0.128));
   part("collar", new THREE.TorusGeometry(0.085, 0.035, 10, 20).rotateX(Math.PI / 2), C.jacket, frame("neck", "qc", 0, -0.03, 0));
   part("neck", taper(0.045, 0.045, 0.08, 10), C.skin, frame("neck", "qc", 0, -0.02, 0));
-  part("head", new THREE.SphereGeometry(0.115, 24, 18).scale(1, 1.08, 1), C.skin, frame("head", "qh"));
-  part("hair", new THREE.SphereGeometry(0.124, 24, 14, 0, Math.PI * 2, 0, Math.PI * 0.55).rotateX(-0.45), C.hair, frame("head", "qh", 0, 0.012, -0.012));
-  part("bun", new THREE.SphereGeometry(0.06, 14, 10), C.hair, frame("head", "qh", 0, 0.1, -0.1));
-  part("tail", taper(0.04, 0.012, 0.22, 10).rotateX(-2.4), C.hair, frame("head", "qh", 0, 0.1, -0.12));
-  part("goggles", new THREE.TorusGeometry(0.121, 0.018, 8, 28).rotateX(Math.PI / 2 - 0.12), C.goggles, frame("head", "qh", 0, 0.03, 0), { emissive: C.goggles, emissiveIntensity: 0.35 });
-  part("lens", new THREE.BoxGeometry(0.15, 0.05, 0.03), C.goggles, frame("head", "qh", 0, 0.035, 0.112), { emissive: C.goggles, emissiveIntensity: 0.6, roughness: 0.2 });
-  for (const s of ["L", "R"]) {
+  part("head", new THREE.SphereGeometry(0.115, 24, 18).scale(0.98, 1.08, 1), C.skin, frame("head", "qh"));
+  part("hair", new THREE.SphereGeometry(0.125, 24, 14, 0, Math.PI * 2, 0, Math.PI * 0.62).rotateX(-0.42), C.hair, frame("head", "qh", 0, 0.012, -0.012));
+  part("bun", new THREE.SphereGeometry(0.056, 14, 10).scale(1.1, 0.85, 0.95), C.hair, frame("head", "qh", 0, 0.085, -0.095));
+  part("headset", new THREE.CylinderGeometry(0.034, 0.034, 0.238, 12).rotateZ(Math.PI / 2), C.trim, frame("head", "qh", 0, 0.01, -0.005));
+  part("goggles", new THREE.TorusGeometry(0.121, 0.016, 8, 28).rotateX(Math.PI / 2 - 0.1), C.goggles, frame("head", "qh", 0, 0.028, 0), { emissive: C.goggles, emissiveIntensity: 0.38 });
+  part("lens", new THREE.BoxGeometry(0.155, 0.046, 0.032), C.goggles, frame("head", "qh", 0, 0.03, 0.11), { emissive: C.goggles, emissiveIntensity: 0.62, roughness: 0.18 });
+  for (const [s, sx] of [["L", 1], ["R", -1]]) {
+    part("deltoid" + s, new THREE.SphereGeometry(0.072, 14, 10).scale(0.95, 1.08, 0.95), C.jacket, frame("shoulder" + s, "qc", 0.01 * sx, -0.015, 0));
     part("upper" + s, taper(0.062, 0.05, UPPER), C.jacket, seg("shoulder" + s, "elbow" + s));
     part("cuff" + s, taper(0.052, 0.05, 0.05), C.trim, (j, m) => { seg("elbow" + s, "hand" + s)(j, m); m.multiply(new THREE.Matrix4().makeTranslation(0, FORE * 0.62, 0)); });
     part("fore" + s, taper(0.05, 0.04, FORE * 0.62), C.jacket, seg("elbow" + s, "hand" + s));

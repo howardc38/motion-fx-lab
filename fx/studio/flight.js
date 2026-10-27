@@ -79,9 +79,9 @@ export function createFlight(mode) {
         w,
         h,
         t,
-        mix(gx + 62, 640, u),
-        mix(gy + 86, 330 + Math.sin(t * 1.7) * 9, u),
-        mix(104, 380, u),
+        x + w * 0.53,
+        mix(gy + 84, y + h * 0.52 + Math.sin(t * 1.9 + i * 0.35) * 9, u),
+        mix(98, 326, u),
       );
       if (u > 0.5) {
         g.save();
@@ -108,9 +108,14 @@ export function createFlight(mode) {
             ? Math.floor(t / 1.2) % 20
             : clamp(Math.floor(options.theme), 0, 19);
         const th = themes[active];
+        g.save();
+        g.beginPath();
+        g.rect(645, 52, 444, 592);
+        g.clip();
         g.drawImage(poster(active), 645, 52, 444, 592);
-        // Drawn at 1.5× so the courier stays crisp instead of upsampling the 320 px sprite.
-        g.drawImage(flyer(active, t, 1.5), 630, 228, 478, 269);
+        // Drawn at 1.5× inside safe poster margins so the courier is crisp and never clipped.
+        g.drawImage(flyer(active, t, 1.5), 676, 238, 396, 223);
+        g.restore();
         text(
           g,
           String(active + 1).padStart(2, "0") + " / 20",

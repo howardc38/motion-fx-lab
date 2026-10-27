@@ -5,7 +5,7 @@ import {createCity} from './ink.js';
 import {create as lighting} from './lighting.js';
 export const FILMS={
  'dot-story':{title:'One dot. Many roles.',duration:14.1,poster:8,preview:[[1.3,2.6],[3,4.3],[6.9,8.4],[9.1,10.6]],cuts:[1.2,3,5,6.8,9,12.9]},
- 'ink-city':{title:'One block. A drawn city.',duration:12,poster:2.5,cuts:[5.2,9]},
+ 'ink-city':{title:'One block. A drawn city.',duration:12,poster:2.5,preview:[[1.4,3.4],[4.8,7.2],[8.8,10.8]],cuts:[5.2,9]},
  'shadow-lab':{title:'One light. Different edges.',duration:9.6,poster:6.8,cuts:[.8,5.2],music:[[0,'intro'],[2.4,'drop'],[4.8,'lift'],[7.2,'tail']]},
 };
 // One owner for the film's plotted curve and moving dot.

@@ -151,15 +151,113 @@ const PLACES = {
     `<div class="a" style="left:150px;top:830px;font:700 34px var(--mono);color:var(--sun)" data-fx="up" data-at="0.6">${esc(Wt.handle)}</div>` +
     seamPanel(2) + loopTag();
 
-  // Head-and-shoulders drawings for the two call tiles. They breathe on the loop, so the tiles loop too.
+  // Geometric editorial portraits + reactive speaking waveform rings, closed on the 4-second loop.
   function person(k) {
-    const skin = ["#c98a64", "#f0c8a8"][k], hair = ["#2a1a14", "#6b4a2e"][k], top = ["#3b5bff", "#ff90e8"][k], bg = ["#2b2a3a", "#33313f"][k];
-    return `<svg viewBox="0 0 820 560" aria-hidden="true"><rect width="820" height="560" fill="${bg}"/><rect x="520" y="60" width="220" height="300" rx="12" fill="rgba(255,255,255,.06)"/>
-      <g class="who" data-k="${k}"><path d="M210 560 C220 430 300 380 410 380 C520 380 600 430 610 560 Z" fill="${top}"/>
-      <rect x="380" y="330" width="60" height="70" rx="20" fill="${skin}"/><ellipse cx="410" cy="260" rx="96" ry="112" fill="${skin}"/>
-      ${k ? `<path d="M314 250 C310 160 360 130 412 130 C470 130 512 170 506 250 C490 200 450 180 410 186 C370 180 330 200 314 250 Z" fill="${hair}"/>`
-          : `<path d="M300 280 C290 150 360 120 412 120 C480 120 530 160 520 290 C520 240 500 200 470 190 C430 214 370 214 330 196 C312 220 306 250 300 280 Z" fill="${hair}"/>`}
-      <circle cx="378" cy="262" r="8" fill="#1a1414"/><circle cx="442" cy="262" r="8" fill="#1a1414"/><path d="M388 312 Q410 326 432 312" stroke="#7a3b2a" stroke-width="6" fill="none" stroke-linecap="round"/></g></svg>`;
+    const id = `av${k}`;
+    if (k === 0) {
+      // Ada Moreno — Founder, Paper Kite Studio
+      return `<svg viewBox="0 0 820 560" aria-hidden="true">
+        <defs>
+          <linearGradient id="${id}bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#191829"/><stop offset="1" stop-color="#2a243d"/></linearGradient>
+          <radialGradient id="${id}glow" cx=".5" cy=".44" r=".52"><stop offset="0" stop-color="#ff90e8" stop-opacity=".28"/><stop offset=".6" stop-color="#3b5bff" stop-opacity=".12"/><stop offset="1" stop-color="#191829" stop-opacity="0"/></radialGradient>
+          <linearGradient id="${id}coat" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4c6bff"/><stop offset="1" stop-color="#253ec7"/></linearGradient>
+        </defs>
+        <rect width="820" height="560" fill="url(#${id}bg)"/>
+        <g opacity=".12" fill="#f4f3ee">${Array.from({ length: 7 }, (_, j) => `<rect x="${560 + j * 30}" y="46" width="12" height="290" rx="6"/>`).join("")}</g>
+        <rect width="820" height="560" fill="url(#${id}glow)"/>
+        <g class="waves" data-k="0" transform="translate(410 252)">
+          <circle class="wring" r="142" fill="none" stroke="#ff90e8" stroke-width="3.5" opacity=".45"/>
+          <circle class="wring" r="182" fill="none" stroke="#ffd400" stroke-width="2.5" stroke-dasharray="18 14" opacity=".32"/>
+          <circle class="wring" r="224" fill="none" stroke="#f4f3ee" stroke-width="2" opacity=".18"/>
+        </g>
+        <g class="who" data-k="0">
+          <!-- Back sculpted wavy espresso hair -->
+          <path d="M286 348 C264 258 292 128 410 118 C528 128 556 258 530 352 C504 374 316 374 286 348 Z" fill="#1b1214"/>
+          <path d="M300 336 C284 252 312 142 414 132 C496 140 528 214 518 326 Z" fill="#2c1d20"/>
+          <!-- Tailored cobalt blazer + cream mock-neck -->
+          <path d="M188 560 C202 432 284 378 410 378 C536 378 618 432 632 560 Z" fill="url(#${id}coat)"/>
+          <path d="M352 384 L410 492 L468 384 Z" fill="#f4f3ee"/>
+          <path d="M332 382 L392 520 L356 560 L304 424 Z" fill="#1e319e"/>
+          <path d="M488 382 L428 520 L464 560 L516 424 Z" fill="#1e319e"/>
+          <!-- Neck & warm studio-lit facial planes -->
+          <path d="M376 318 L444 318 L452 396 C426 410 394 410 368 396 Z" fill="#b36c4c"/>
+          <path d="M376 318 L428 318 L412 374 L372 358 Z" fill="#8f5035" opacity=".55"/>
+          <!-- Gold hoop earrings -->
+          <circle cx="316" cy="278" r="14" fill="none" stroke="#ffd400" stroke-width="5"/>
+          <circle cx="504" cy="278" r="14" fill="none" stroke="#ffd400" stroke-width="5"/>
+          <!-- Sculpted editorial head -->
+          <path d="M322 232 C322 166 360 144 410 144 C460 144 498 166 498 232 C498 298 462 346 410 348 C358 346 322 298 322 232 Z" fill="#cc8460"/>
+          <!-- Warm key-light plane on left cheek/forehead & rim highlight -->
+          <path d="M326 232 C326 172 362 148 412 148 L412 344 C364 342 326 296 326 232 Z" fill="#dc9672"/>
+          <path d="M326 218 C328 180 352 156 388 150" fill="none" stroke="#ffd8be" stroke-width="5" stroke-linecap="round" opacity=".65"/>
+          <!-- Geometric nose plane, composed lips, brows & editorial wireframe glasses -->
+          <path d="M410 218 L410 274 L396 278 Z" fill="#9e593c" opacity=".55"/>
+          <path d="M352 214 Q376 204 396 212 M424 212 Q444 204 468 214" fill="none" stroke="#241516" stroke-width="5.5" stroke-linecap="round"/>
+          <ellipse cx="374" cy="238" rx="22" ry="18" fill="rgba(255,244,230,.08)" stroke="#ffd400" stroke-width="3.5"/>
+          <ellipse cx="446" cy="238" rx="22" ry="18" fill="rgba(255,244,230,.08)" stroke="#ffd400" stroke-width="3.5"/>
+          <line x1="396" y1="236" x2="424" y2="236" stroke="#ffd400" stroke-width="3.5"/>
+          <path d="M362 238 Q374 232 386 238 M434 238 Q446 232 458 238" fill="none" stroke="#241516" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M388 302 Q410 296 432 302 Q410 315 388 302 Z" fill="#9c433c"/>
+          <!-- Swept front hair locks -->
+          <path d="M316 244 C314 172 364 132 426 134 C478 136 508 176 504 242 C486 196 456 178 424 176 C384 198 344 198 316 244 Z" fill="#1b1214"/>
+        </g>
+        <g class="vmeter" data-k="0" transform="translate(658 34)">
+          <rect width="128" height="40" rx="20" fill="rgba(14,13,18,.74)" stroke="rgba(244,243,238,.2)" stroke-width="1.5"/>
+          ${Array.from({ length: 7 }, (_, b) => `<rect class="vbar" x="${22 + b * 13}" y="12" width="6" height="16" rx="3" fill="#ff90e8"/>`).join("")}
+        </g>
+      </svg>`;
+    }
+    // Tomas Lind — Host
+    return `<svg viewBox="0 0 820 560" aria-hidden="true">
+      <defs>
+        <linearGradient id="${id}bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b1c2c"/><stop offset="1" stop-color="#25293e"/></linearGradient>
+        <radialGradient id="${id}glow" cx=".5" cy=".44" r=".52"><stop offset="0" stop-color="#2fd39a" stop-opacity=".24"/><stop offset=".6" stop-color="#3b5bff" stop-opacity=".12"/><stop offset="1" stop-color="#1b1c2c" stop-opacity="0"/></radialGradient>
+        <linearGradient id="${id}jkt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2c314a"/><stop offset="1" stop-color="#191c2d"/></linearGradient>
+      </defs>
+      <rect width="820" height="560" fill="url(#${id}bg)"/>
+      <circle cx="150" cy="120" r="88" fill="none" stroke="rgba(244,243,238,.07)" stroke-width="24"/>
+      <rect width="820" height="560" fill="url(#${id}glow)"/>
+      <g class="waves" data-k="1" transform="translate(410 252)">
+        <circle class="wring" r="142" fill="none" stroke="#2fd39a" stroke-width="3.5" opacity=".42"/>
+        <circle class="wring" r="182" fill="none" stroke="#ffd400" stroke-width="2.5" stroke-dasharray="18 14" opacity=".28"/>
+        <circle class="wring" r="224" fill="none" stroke="#f4f3ee" stroke-width="2" opacity=".16"/>
+      </g>
+      <g class="who" data-k="1">
+        <!-- Studio headphone headband -->
+        <path d="M304 252 C304 144 348 112 410 112 C472 112 516 144 516 252" fill="none" stroke="#d8dadf" stroke-width="11" stroke-linecap="round"/>
+        <!-- Structured studio overshirt + warm pink crew tee accent -->
+        <path d="M184 560 C198 426 284 376 410 376 C536 376 622 426 636 560 Z" fill="url(#${id}jkt)"/>
+        <path d="M360 384 C382 418 438 418 460 384 L446 560 L374 560 Z" fill="#ff90e8"/>
+        <path d="M342 378 L378 446 L342 468 L314 398 Z" fill="#3a4060"/>
+        <path d="M478 378 L442 446 L478 468 L506 398 Z" fill="#3a4060"/>
+        <!-- Neck & sculpted angular head planes -->
+        <path d="M372 316 L448 316 L456 394 C428 408 392 408 364 394 Z" fill="#cfa082"/>
+        <path d="M372 316 L426 316 L410 368 L368 352 Z" fill="#ad7b5e" opacity=".5"/>
+        <!-- Over-ear studio monitor cups -->
+        <rect x="292" y="224" width="32" height="72" rx="16" fill="#141622" stroke="#2fd39a" stroke-width="3.5"/>
+        <rect x="496" y="224" width="32" height="72" rx="16" fill="#141622" stroke="#2fd39a" stroke-width="3.5"/>
+        <!-- Editorial head & crisp jawline -->
+        <path d="M322 224 C322 162 358 140 410 140 C462 140 498 162 498 224 L492 288 C488 326 452 350 410 350 C368 350 332 326 328 288 Z" fill="#e6b798"/>
+        <path d="M326 224 C326 166 360 144 410 144 L410 346 C370 346 336 322 332 286 Z" fill="#f1c6aa"/>
+        <!-- Subtle short beard/jaw shadow plane -->
+        <path d="M332 276 C348 312 378 326 410 326 C442 326 472 312 488 276 L486 292 C478 328 448 348 410 348 C372 348 342 328 334 292 Z" fill="#8b6249" opacity=".28"/>
+        <!-- Brows, eyes, nose bridge & composed host expression -->
+        <path d="M410 214 L410 272 L424 276 Z" fill="#b88467" opacity=".6"/>
+        <path d="M352 212 L392 210 M428 210 L468 212" fill="none" stroke="#472d1e" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M360 236 Q375 230 390 236 M430 236 Q445 230 460 236" fill="none" stroke="#231815" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M390 302 Q410 308 430 300" fill="none" stroke="#9e5c4b" stroke-width="5" stroke-linecap="round"/>
+        <!-- Side-parted chestnut hair -->
+        <path d="M318 228 C316 158 356 124 416 124 C472 124 506 158 502 226 C490 192 468 176 438 174 C402 186 356 184 336 168 C328 186 322 206 318 228 Z" fill="#523523"/>
+        <path d="M342 154 C374 136 428 134 468 152" fill="none" stroke="#754e36" stroke-width="6" stroke-linecap="round" opacity=".7"/>
+        <!-- Broadcast boom mic arm -->
+        <path d="M520 390 Q492 332 444 316" fill="none" stroke="#d8dadf" stroke-width="6" stroke-linecap="round"/>
+        <rect x="424" y="305" width="26" height="16" rx="8" fill="#141622" stroke="#ffd400" stroke-width="2.5"/>
+      </g>
+      <g class="vmeter" data-k="1" transform="translate(658 34)">
+        <rect width="128" height="40" rx="20" fill="rgba(14,13,18,.74)" stroke="rgba(244,243,238,.2)" stroke-width="1.5"/>
+        ${Array.from({ length: 7 }, (_, b) => `<rect class="vbar" x="${22 + b * 13}" y="12" width="6" height="16" rx="3" fill="#2fd39a"/>`).join("")}
+      </g>
+    </svg>`;
   }
 
   // ── Wire up: each scene's canvas, its seam check, and a measured first/last difference.
@@ -176,6 +274,8 @@ const PLACES = {
     return { bar: s.querySelector(".seam .bar i"), ring: s.querySelector(".looptag .fill") };
   });
   const whos = [...document.querySelectorAll(".who")];
+  const waveGroups = [...document.querySelectorAll(".waves")].map((el) => [...el.querySelectorAll(".wring")]);
+  const meterBars = [...document.querySelectorAll(".vmeter")].map((el) => [...el.querySelectorAll(".vbar")]);
 
   window.__preview = [[1.0, 3.2], [4.2, 6.2], [8.4, 10.4]];   // the card's silent loop; the MP4 is the film
   window.__poster = 5.5;   // the interview over the ridgelines
@@ -190,7 +290,26 @@ const PLACES = {
     LOOPS[i](big[i], u);
     seams[i].bar.style.width = `${((local / P) * 100).toFixed(2)}%`;
     seams[i].ring.setAttribute("stroke-dashoffset", (RING * (1 - local / P)).toFixed(2));
-    if (i === 1) whos.forEach((w, k) => w.setAttribute("transform", `translate(0 ${(6 * Math.sin(u * (k + 1) + k)).toFixed(2)}) rotate(${(1.5 * Math.sin(u + k * 2)).toFixed(2)} 410 380)`));
+    if (i === 1) {
+      whos.forEach((w, k) => {
+        const talk = Math.pow(0.5 + 0.5 * Math.cos(u - (k ? 5.2 : 2.1)), 1.6);
+        const syl = 0.6 + 0.4 * Math.sin(3 * u + k * 1.7);
+        const e = talk * syl;
+        w.setAttribute("transform", `translate(0 ${(5 * Math.sin(u * (k + 1) + k)).toFixed(2)}) rotate(${(1.2 * Math.sin(u + k * 2)).toFixed(2)} 410 380)`);
+        waveGroups[k].forEach((r, j) => {
+          const pulse = 1 + e * (0.045 + j * 0.032) + 0.015 * Math.sin(2 * u - j * 0.9 + k);
+          const alpha = 0.1 + e * (0.58 - j * 0.14);
+          r.setAttribute("transform", `scale(${pulse.toFixed(3)})`);
+          r.setAttribute("opacity", alpha.toFixed(3));
+        });
+        meterBars[k].forEach((bar, b) => {
+          const h = 6 + 22 * e * (0.45 + 0.55 * Math.abs(Math.sin(2 * u + b * 0.85 + k)));
+          bar.setAttribute("y", (20 - h / 2).toFixed(2));
+          bar.setAttribute("height", h.toFixed(2));
+          bar.setAttribute("opacity", (0.35 + 0.65 * e).toFixed(2));
+        });
+      });
+    }
   });
   window.__ready = document.fonts.ready;
 })();

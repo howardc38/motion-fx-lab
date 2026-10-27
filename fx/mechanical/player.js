@@ -1,7 +1,7 @@
 import {create,FILMS} from './app.js';
 const id=document.body.dataset.film,meta=FILMS[id],canvasHolder=document.getElementById('picture'),bar=document.getElementById('scrub'),play=document.getElementById('play'),parameter=document.getElementById('parameter');
 if(!meta)throw Error('Unknown film '+id);
-window.__SIZE={w:1920,h:1080};window.__DUR=meta.duration;window.__poster=meta.poster;window.__FPS=60;
+window.__SIZE={w:1920,h:1080};window.__DUR=meta.duration;window.__poster=meta.poster;window.__FPS=60;if(meta.preview)window.__preview=meta.preview;
 window.__cues=()=>[{t:1.8,name:'riser',gain:.35},{t:4.8,name:'thump',gain:.32},{t:12.6,name:'chime',gain:.25}];
 window.__music=[[0,'build'],[2.4,'drop'],[7.2,'lift'],[9.6,'break'],[12,'tail']];
 let effect,record=false,playing=false,at=0,start=0,manual=false;

@@ -43,9 +43,9 @@ function scenery(scene) {
   box(scene, 3, .16, .58, keys[1], 0, -.08, 2.31, .055);
   const canvas = document.createElement('canvas'); canvas.width = 1600; canvas.height = 900;
   const texture = new T.CanvasTexture(canvas); texture.colorSpace = T.SRGBColorSpace; texture.anisotropy = 4;
-  box(scene, 11.3, 6.5, .35, dark, 0, 3.3, -4.5, .18);
-  const screen = mesh(scene, new T.PlaneGeometry(10.7, 6.0), new T.MeshBasicMaterial({map: texture, toneMapped: false}), 0, 3.35, -4.31);
-  box(scene, .5, 1.2, .5, steel, 0, .3, -4.45, .05);
+  box(scene, 10.2, 5.9, .35, dark, 0, 2.72, -4.5, .18);
+  const screen = mesh(scene, new T.PlaneGeometry(9.6, 5.4), new T.MeshBasicMaterial({map: texture, toneMapped: false}), 0, 2.75, -4.31);
+  box(scene, .5, 1.0, .5, steel, 0, .2, -4.45, .05);
   const bulb = material('#ffe0a5', {emissive: '#ffa345', emissiveIntensity: 3});
   for (let i = 0; i < 25; i++) { const side = i % 2 ? 1 : -1; mesh(scene, new T.SphereGeometry(.035 + (i % 4) * .01, 8, 6), bulb, side * (6.1 + (i % 3) * .27), .5 + (i % 9) * .5, -3.8 - (i % 4) * .32); }
   const lamp = new T.Group(); lamp.position.set(-4.9, 0, -1.8); scene.add(lamp);
@@ -63,7 +63,7 @@ function scenery(scene) {
   const gy = rg.createLinearGradient(0, 0, 0, 512); gy.addColorStop(0, 'rgba(255,255,255,0)'); gy.addColorStop(.5, 'rgba(255,255,255,1)'); gy.addColorStop(1, 'rgba(255,255,255,0)'); rg.fillStyle = gy; rg.fillRect(0, 0, 64, 512);
   const gx = rg.createLinearGradient(0, 0, 64, 0); gx.addColorStop(0, 'rgba(0,0,0,1)'); gx.addColorStop(.5, 'rgba(0,0,0,0)'); gx.addColorStop(1, 'rgba(0,0,0,1)'); rg.globalCompositeOperation = 'destination-out'; rg.fillStyle = gx; rg.fillRect(0, 0, 64, 512);
   const rayMat = new T.MeshBasicMaterial({map: new T.CanvasTexture(rc), transparent: true, blending: T.AdditiveBlending, depthWrite: false, color: '#ffd9a0', opacity: 0, toneMapped: false});
-  const rays = new T.Group(); rays.position.set(0, 3.35, -4.7); scene.add(rays);
+  const rays = new T.Group(); rays.position.set(0, 2.75, -4.7); scene.add(rays);
   for (let i = 0; i < 18; i++) { const m = new T.Mesh(new T.PlaneGeometry(.35 + hash(i) * .4, 12 + hash(i + 3) * 9), rayMat); m.rotation.z = (i / 18) * Math.PI * 2 + hash(i + 7) * .2; rays.add(m); }
   return {dust, screen, canvas, texture, rays, rayMat};
 }
@@ -205,33 +205,41 @@ export async function create(spec, data, {width = 1280, height = 720, mode = 'fi
   }
 
   function drawScreen(t) {
-    const g = sctx; g.setTransform(1, 0, 0, 1, 0, 0);
+    const g = sctx; g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over'; g.shadowBlur = 0; g.textAlign = 'left'; g.textBaseline = 'alphabetic';
     if (t >= K.trailer && t < b.trailer[1]) { g.save(); g.scale(1600 / 1280, 900 / 720); drawTrailer(g, t - K.trailer, null); g.restore(); }
-    else if (t >= b.trailer[1]) { g.save(); g.scale(1600 / 1280, 900 / 720); drawTrailer(g, TRAILER.end, null); g.restore(); g.fillStyle = 'rgba(8,12,24,.45)'; g.fillRect(0, 0, 1600, 900); }
+    else if (t >= b.trailer[1]) { g.save(); g.scale(1600 / 1280, 900 / 720); drawTrailer(g, TRAILER.end, null); g.restore(); g.fillStyle = 'rgba(8,12,24,.38)'; g.fillRect(0, 0, 1600, 900); }
     else {
-      g.fillStyle = '#101b2b'; g.fillRect(0, 0, 1600, 900); g.fillStyle = '#63cab6'; g.font = '600 25px monospace'; g.fillText('NIGHT SHIFT / MOTION STUDIO', 90, 75);
+      g.fillStyle = '#101d30'; g.fillRect(0, 0, 1600, 900);
+      const bgGlow = g.createRadialGradient(800, 460, 40, 800, 460, 680);
+      bgGlow.addColorStop(0, 'rgba(255,190,105,.16)'); bgGlow.addColorStop(1, 'rgba(16,29,48,0)');
+      g.fillStyle = bgGlow; g.fillRect(0, 0, 1600, 900);
+      g.fillStyle = '#63cab6'; g.font = '700 26px monospace'; g.fillText('NIGHT SHIFT / MOTION STUDIO', 96, 82);
       const k = clamp((t - K.slam) / .3), s = t < K.slam ? 0 : (k >= 1 ? 1 : back(k)), shake = Math.max(0, 1 - (t - K.slam) / .5) * (t > K.slam ? 1 : 0);
       if (t >= K.slam - .02) {
-        g.save(); g.translate(800 + 26 * shake * Math.sin(t * 90), 430 + 18 * shake * Math.cos(t * 70)); g.scale(2.6 - 1.6 * s, 2.6 - 1.6 * s); g.globalAlpha = clamp(k * 4);
-        g.shadowColor = '#ffb24d'; g.shadowBlur = 60; g.fillStyle = '#fff1d6'; g.font = '900 250px Arial, Helvetica, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('LAUNCH', 0, 0);
-        g.restore(); g.textAlign = 'center'; g.fillStyle = 'rgba(255,214,150,.85)'; g.font = '700 38px Arial, Helvetica, sans-serif'; g.globalAlpha = smooth((t - K.slam - .3) / .4); g.fillText('The launch video · review copy', 800, 640); g.globalAlpha = 1; g.textAlign = 'left';
+        g.save(); g.translate(800 + 24 * shake * Math.sin(t * 90), 362 + 16 * shake * Math.cos(t * 70)); g.scale(2.5 - 1.5 * s, 2.5 - 1.5 * s); g.globalAlpha = clamp(k * 4);
+        g.shadowColor = '#ffb24d'; g.shadowBlur = 54; g.fillStyle = '#fff3dc'; g.font = '900 164px Arial, Helvetica, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('LAUNCH', 0, 0);
+        g.restore();
+        g.textAlign = 'center'; g.fillStyle = '#ffe2aa'; g.font = '700 35px Arial, Helvetica, sans-serif';
+        g.globalAlpha = smooth((t - K.slam - .25) / .35); g.fillText('The launch video · review copy', 800, 486);
+        g.globalAlpha = 1; g.textAlign = 'left';
         const flash = Math.max(0, .7 * (1 - (t - K.slam) / .3)); if (flash > 0) { g.fillStyle = `rgba(255,236,200,${flash})`; g.fillRect(0, 0, 1600, 900); }
       }
     }
-    // Behind dialogue the screen steps down so faces and captions lead; it is darkest behind the cards.
-    const dim = t < b.hook[1] ? 0 : t < K.trailer ? .45 * smooth((t - b.hook[1]) / .4) : t >= b.trailer[1] ? .2 + .5 * env(t, K.cards - .3, L.count.end + .5, .3, .3) : 0;
+    // Behind dialogue the screen steps down gently so faces and captions lead while the monitor copy stays crisp.
+    const dim = t < b.hook[1] ? 0 : t < K.trailer ? .24 * smooth((t - b.hook[1]) / .4) : t >= b.trailer[1] ? .16 + .48 * env(t, K.cards - .3, L.count.end + .5, .3, .3) : 0;
     if (dim > 0) { g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = `rgba(6,10,20,${dim})`; g.fillRect(0, 0, 1600, 900); }
+    g.restore();
     set.texture.needsUpdate = true;
   }
 
-  // Cameras: [pos, target, fov, aperture].
+  // Cameras: [pos, target, fov, aperture]. Two-plane medium close-ups keep LAUNCH and subtitle clear above both heads.
   const cams = {
-    screen: t => ({pos: [0, 2.35 + .1 * smooth(t / 1), 6.2 - .5 * smooth(t / 1)], target: [0, 3.1, -4.3], fov: 44, aperture: .0006}),
-    bear: (t, d = 0) => ({pos: [-.74 + .04 * Math.sin(t * .4), 1.2, 2.95 - d], target: [-1.3, 1.02, .1], fov: 31, aperture: .0016}),
-    pip: t => ({pos: [.86 + .04 * Math.sin(t * .5), 1.36, 3.05], target: [1.25, 1.1, .12], fov: 31, aperture: .0016}),
-    two: t => ({pos: [.05, 1.75, 5.6 - .1 * Math.sin(t * .3)], target: [0, 1.25, -.4], fov: 33, aperture: .0012}),
+    screen: t => ({pos: [0, 2.15 + .1 * smooth(t / 1), 6.0 - .5 * smooth(t / 1)], target: [0, 2.65, -4.3], fov: 44, aperture: .0006}),
+    bear: (t, d = 0) => ({pos: [-.52 + .04 * Math.sin(t * .4), 1.32, 3.35 - d], target: [-.64, 1.42, -.45], fov: 36, aperture: .0012}),
+    pip: t => ({pos: [.52 + .04 * Math.sin(t * .5), 1.36, 3.35], target: [.64, 1.44, -.45], fov: 36, aperture: .0012}),
+    two: t => ({pos: [.05, 1.72, 5.55 - .1 * Math.sin(t * .3)], target: [0, 1.24, -.4], fov: 33, aperture: .0012}),
     cards: t => ({pos: [0, 2.0, 6.0], target: [0, 1.9, -1.2], fov: 38, aperture: .0009}),
-    push: t => ({pos: [0, 3.0, lerp(3.0, -.6, smooth((t - K.trailer) / .42))], target: [0, 3.3, -4.3], fov: 42, aperture: .0004}),
+    push: t => ({pos: [0, 2.65, lerp(3.0, -.6, smooth((t - K.trailer) / .42))], target: [0, 2.75, -4.3], fov: 42, aperture: .0004}),
   };
   function shotAt(t) {
     if (t < K.jump - .05) return ['screen', cams.screen(t)];
@@ -249,11 +257,48 @@ export async function create(spec, data, {width = 1280, height = 720, mode = 'fi
     return ['end', null];
   }
 
+  function drawStudioEndBackdrop(g, t) {
+    const bg = g.createLinearGradient(0, 0, 0, 720);
+    bg.addColorStop(0, '#19314d');
+    bg.addColorStop(0.55, '#213d5c');
+    bg.addColorStop(1, '#14263b');
+    g.fillStyle = bg;
+    g.fillRect(0, 0, 1280, 720);
+    // Warm amber studio key-light wash + cool cyan rim matching the room lighting
+    const keyGlow = g.createRadialGradient(560, 250, 20, 580, 280, 620);
+    keyGlow.addColorStop(0, 'rgba(255,204,120,0.34)');
+    keyGlow.addColorStop(0.55, 'rgba(255,176,92,0.12)');
+    keyGlow.addColorStop(1, 'rgba(255,176,92,0)');
+    g.fillStyle = keyGlow;
+    g.fillRect(0, 0, 1280, 720);
+    const rimGlow = g.createRadialGradient(980, 210, 20, 960, 240, 520);
+    rimGlow.addColorStop(0, 'rgba(114,208,255,0.22)');
+    rimGlow.addColorStop(1, 'rgba(114,208,255,0)');
+    g.fillStyle = rimGlow;
+    g.fillRect(0, 0, 1280, 720);
+    // Soft out-of-focus studio fairy-light bokeh orbs along the left and right edges
+    for (let i = 0; i < 18; i++) {
+      const side = i % 2 ? 1 : -1;
+      const bx = 640 + side * (420 + (i % 3) * 68) + Math.sin(t * 0.4 + i) * 6;
+      const by = 96 + ((i * 57) % 520);
+      const br = 22 + (i % 4) * 11;
+      const orb = g.createRadialGradient(bx, by, 2, bx, by, br);
+      orb.addColorStop(0, 'rgba(255,226,164,0.30)');
+      orb.addColorStop(0.55, 'rgba(255,196,112,0.11)');
+      orb.addColorStop(1, 'rgba(255,196,112,0)');
+      g.fillStyle = orb;
+      g.beginPath();
+      g.arc(bx, by, br, 0, Math.PI * 2);
+      g.fill();
+    }
+  }
+
   const proof = {};
   function frame(seconds, {captions = true, branding = mode === 'film'} = {}) {
     if (!Number.isFinite(seconds)) throw new Error('Time must be finite');
     const t = clamp(seconds, 0, spec.duration), active = activeTurn(spec, t), [shot, cam] = shotAt(t);
     const bp = poseBear(t), pp = pipAt(t);
+    bearHolder.visible = shot !== 'pip'; pip.root.visible = shot !== 'bear';
     drawScreen(t);
     // rays: a burst behind the screen as LAUNCH lands, then a slow glow.
     const burst = t < K.slam ? 0 : Math.exp(-(t - K.slam) * 1.6) * smooth((t - K.slam) / .08);
@@ -269,25 +314,27 @@ export async function create(spec, data, {width = 1280, height = 720, mode = 'fi
     if (shot === 'trailer') {
       fctx.setTransform(S, 0, 0, S, 0, 0); drawTrailer(fctx, t - K.trailer, glitch); ctx.drawImage(film, 0, 0);
     } else if (shot === 'end') {
-      ctx.fillStyle = '#05080f'; ctx.fillRect(0, 0, W, H);
+      ctx.save(); ctx.scale(S, S); drawStudioEndBackdrop(ctx, t); ctx.restore();
     } else {
       camera.position.set(...cam.pos); camera.fov = cam.fov; camera.updateProjectionMatrix(); camera.lookAt(...cam.target); camera.updateMatrixWorld();
       bokeh.uniforms.focus.value = camera.position.distanceTo(new T.Vector3(...cam.target)); bokeh.uniforms.aperture.value = cam.aperture;
       composer.render(0); if (renderer.getContext().isContextLost()) throw new Error('Dialogue renderer lost WebGL context');
       ctx.drawImage(renderer.domElement, 0, 0);
-      const vg = ctx.createRadialGradient(W / 2, H * .45, H * .25, W / 2, H * .47, H * 1.05); vg.addColorStop(0, '#00000000'); vg.addColorStop(1, '#050a1990'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+      const vg = ctx.createRadialGradient(W / 2, H * .45, H * .25, W / 2, H * .47, H * 1.05); vg.addColorStop(0, '#00000000'); vg.addColorStop(1, '#050a1980'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
     }
     ctx.save(); ctx.scale(S, S);
-    const fadeEnd = smooth((t - K.end) / .3);
+    const fadeEnd = smooth((t - K.end + .12) / .24);
     if (fadeEnd > 0) {
-      ctx.globalAlpha = fadeEnd; ctx.fillStyle = '#05080f'; ctx.fillRect(0, 0, 1280, 720);
-      const rise = 14 * (1 - smooth((t - K.end - .1) / .5)); ctx.globalAlpha = smooth((t - K.end - .1) / .4);
-      label(ctx, 'THE FINAL FINAL', 640, 238 + rise, {size: 64, align: 'center', colour: '#fff1d6', spacing: 10, weight: 900});
-      label(ctx, 'A plush bear, a robot and one very dramatic progress bar.', 640, 296 + rise, {size: 26, align: 'center', colour: '#b9c9d6', weight: 500, spacing: 0});
+      if (shot !== 'end') { ctx.globalAlpha = fadeEnd; drawStudioEndBackdrop(ctx, t); }
+      const inTitle = smooth((t - K.end + .04) / .24), rise = 12 * (1 - inTitle);
+      ctx.globalAlpha = inTitle;
+      ctx.fillStyle = '#ffd166'; ctx.fillRect(640 - 46, 166 + rise, 92, 4);
+      label(ctx, 'THE FINAL FINAL', 640, 236 + rise, {size: 66, align: 'center', colour: '#fff7e6', spacing: 10, weight: 900});
+      label(ctx, 'A plush bear, a robot and one very dramatic progress bar.', 640, 294 + rise, {size: 26, align: 'center', colour: '#dceaf6', weight: 600, spacing: 0});
       const names = EFFECTS.map(e => e.name);
-      ctx.globalAlpha = smooth((t - K.end - .45) / .5);
-      label(ctx, 'EFFECTS IN THIS FILM', 640, 392, {size: 17, align: 'center', colour: '#ffd166', spacing: 4});
-      [names.slice(0, 3), names.slice(3, 6), names.slice(6)].forEach((row, r) => label(ctx, row.join('  ·  '), 640, 440 + r * 40, {size: 25, align: 'center', colour: '#e9eef2', weight: 600, spacing: 0}));
+      ctx.globalAlpha = smooth((t - K.end - .10) / .30);
+      label(ctx, 'EFFECTS IN THIS FILM', 640, 388, {size: 18, align: 'center', colour: '#ffd166', spacing: 4});
+      [names.slice(0, 3), names.slice(3, 6), names.slice(6)].forEach((row, r) => label(ctx, row.join('  ·  '), 640, 438 + r * 42, {size: 25, align: 'center', colour: '#f5f9fc', weight: 600, spacing: 0}));
       ctx.globalAlpha = 1;
     }
     if (captions && fadeEnd < 1 && shot !== 'trailer') drawCaption(ctx, active, t, {size: mode === 'tile' ? 50 : 34, y: 690, colour: active?.speaker === 'pip' ? '#8ff0d0' : '#ffd166'});

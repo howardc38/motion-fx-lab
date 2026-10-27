@@ -271,6 +271,9 @@ def frame_rate(info):
     return float(Fraction(next(s for s in info["streams"] if s["codec_type"] == "video")["r_frame_rate"]))
 
 
+POSTER_CAP = 300_000
+
+
 def poster_frame(video, seconds, fps, out):
     """Write the frame the film shows at `seconds`, frame round(seconds x fps), as a JPEG.
 
@@ -280,8 +283,12 @@ def poster_frame(video, seconds, fps, out):
     n = round(seconds * fps)
     # Delivered films are BT.709; JPEG decoders assume BT.601. Merely relabelling
     # the YUV samples shifts saturated colours, so convert the matrix explicitly.
-    run("ffmpeg", "-y", "-loglevel", "error", "-i", video, "-map", "0:v:0", "-vf", f"select=eq(n\\,{n}),scale=in_color_matrix=bt709:out_color_matrix=bt601",
-        "-fps_mode", "passthrough", "-frames:v", "1", "-q:v", "3", out)
+    for q in (3, 4, 5, 6, 8, 10, 12):
+        run("ffmpeg", "-y", "-loglevel", "error", "-i", video, "-map", "0:v:0", "-vf", f"select=eq(n\\,{n}),scale=in_color_matrix=bt709:out_color_matrix=bt601",
+            "-fps_mode", "passthrough", "-frames:v", "1", "-q:v", str(q), out)
+        if os.path.isfile(out) and os.path.getsize(out) <= POSTER_CAP:
+            return
+    raise SystemExit(f"poster {out} still {os.path.getsize(out)} bytes > {POSTER_CAP}")
 
 
 def encode_hq(master, audio, out):

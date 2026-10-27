@@ -5,8 +5,8 @@ import {createMechanism} from './mechanism.js';
 import {capGeometry,sectionMaterial} from './geometry.js';
 import {validTime,phase,assemblyAmount,assemblyOffset,shares,DURATION,TAU} from './model.js';
 export const FILMS={
- 'mechanical-assembly':{title:'Apart. Together.',duration:DURATION,poster:7.8},
- 'mechanical-cutaway':{title:'Inside the machine.',duration:DURATION,poster:7.2},
+ 'mechanical-assembly':{title:'Apart. Together.',duration:DURATION,poster:7.8,preview:[[1.8,4.6],[6.4,9.2],[10.4,12.6]]},
+ 'mechanical-cutaway':{title:'Inside the machine.',duration:DURATION,poster:7.2,preview:[[2.0,4.8],[6.2,9.0],[10.2,12.4]]},
  'mechanical-linkage':{title:'One turn. Everything moves.',duration:DURATION,poster:6.6},
 };
 const MODES={'mechanical-assembly':'assembly','mechanical-cutaway':'cutaway','mechanical-linkage':'linkage'};

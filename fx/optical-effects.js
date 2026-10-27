@@ -676,49 +676,48 @@
     }
 
     // ------------------------------------------------ paper ribbon
-    const PANELS = 8,
-      PA_LEN = 156,
-      PB = 120,
-      SUB = 4;
+    const SEGMENTS = 96,
+      STRIP_LEN = 1280,
+      SEG_LEN = STRIP_LEN / SEGMENTS,
+      PB = 114;
     function ribbonPrint(back) {
       const c = document.createElement("canvas");
-      c.width = PANELS * PA_LEN * 2;
+      c.width = STRIP_LEN * 2;
       c.height = PB * 2;
       const g = c.getContext("2d");
       g.scale(2, 2);
-      g.fillStyle = back ? "#f0553f" : "#f5efe3";
-      g.fillRect(0, 0, PANELS * PA_LEN, PB);
+      g.fillStyle = back ? "#ef5640" : "#f6f0e4";
+      g.fillRect(0, 0, STRIP_LEN, PB);
       let seed = back ? 91 : 17;
       const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
       for (let i = 0; i < 2600; i++) {
-        g.fillStyle = rnd() > 0.5 ? "rgba(255,255,255,0.10)" : "rgba(60,40,20,0.07)";
-        g.fillRect(rnd() * PANELS * PA_LEN, rnd() * PB, 1 + rnd() * 2.5, 0.7);
+        g.fillStyle = rnd() > 0.5 ? "rgba(255,255,255,0.10)" : "rgba(60,40,20,0.06)";
+        g.fillRect(rnd() * STRIP_LEN, rnd() * PB, 1 + rnd() * 2.5, 0.7);
       }
       if (back) {
-        g.strokeStyle = "rgba(255,226,200,0.28)";
+        g.strokeStyle = "rgba(255,228,204,0.30)";
         g.lineWidth = 7;
-        for (let x = -PB; x < PANELS * PA_LEN + PB; x += 26) {
+        for (let x = -PB; x < STRIP_LEN + PB; x += 26) {
           g.beginPath();
           g.moveTo(x, PB);
           g.lineTo(x + PB, 0);
           g.stroke();
         }
-        g.fillStyle = "rgba(255,240,226,0.9)";
-        g.fillRect(0, 9, PANELS * PA_LEN, 4);
-        g.fillRect(0, PB - 13, PANELS * PA_LEN, 4);
+        g.fillStyle = "rgba(255,242,228,0.92)";
+        g.fillRect(0, 9, STRIP_LEN, 4);
+        g.fillRect(0, PB - 13, STRIP_LEN, 4);
       } else {
-        g.fillStyle = "#1f2a4d";
-        g.fillRect(0, 9, PANELS * PA_LEN, 5);
-        g.fillRect(0, PB - 14, PANELS * PA_LEN, 5);
+        g.fillStyle = "#1c2748";
+        g.fillRect(0, 9, STRIP_LEN, 5);
+        g.fillRect(0, PB - 14, STRIP_LEN, 5);
         g.textBaseline = "middle";
         g.textAlign = "center";
-        g.font = "900 64px Arial, Helvetica, sans-serif";
-        const words = ["FOLD", "✦", "LOOP", "✦", "FLOAT"];
-        const xs = [190, 360, 590, 820, 1030];
+        const words = ["CURL", "✦", "LOOP", "✦", "FLOAT"];
+        const xs = [210, 425, 640, 855, 1070];
         words.forEach((w, i) => {
-          g.fillStyle = w === "✦" ? "#f0553f" : "#1f2a4d";
-          g.font = (w === "✦" ? "700 44px" : "900 64px") + " Arial, Helvetica, sans-serif";
-          g.fillText(w, xs[i], PB / 2 + 3);
+          g.fillStyle = w === "✦" ? "#ef5640" : "#1c2748";
+          g.font = (w === "✦" ? "700 42px" : "900 60px") + " Arial, Helvetica, sans-serif";
+          g.fillText(w, xs[i], PB / 2 + 2);
         });
       }
       if (back) {
@@ -757,11 +756,12 @@
       const l = Math.hypot(v[0], v[1], v[2]) || 1;
       return [v[0] / l, v[1] / l, v[2] / l];
     };
+    const cross3 = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
     const dot3 = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
     const CAM = [0, 260, 1500],
       FOCAL = 1250,
       PITCH = Math.atan2(CAM[1] - 10, CAM[2]);
-    const LIGHT_DIR = norm([-0.45, 1, 0.42]);
+    const LIGHT_DIR = norm([-0.42, 1, 0.48]);
     const FLOOR = -150;
     function toCam(p) {
       const x = p[0] - CAM[0],
@@ -777,70 +777,106 @@
       return [W / 2 + (FOCAL * q[0]) / d, H / 2 - (FOCAL * q[1]) / d, d];
     }
     function ribbonState(time) {
-      // fly in, fold into an octagonal loop, float, drift away
-      const flutterAmp = 17 * (1 - ramp(0.55, 1.05, time)) * amp;
-      const alphas = [];
-      for (let i = 1; i < PANELS; i++) {
-        const start = 0.7 + (i - 1) * 0.068;
-        const fold = 45 * spring(time - start, 0.36, 0.42);
-        // zero-sum weights keep the loop closed while the paper flexes
-        const breathe = 2.4 * [1, -1, 1, -1, 1, -1, 0][i - 1] * Math.sin((TAU * time) / 2.4) * ramp(1.5, 2.2, time) * amp;
-        const flutter = flutterAmp * Math.sin(TAU * 1.6 * time - i * 1.05);
-        alphas.push((fold + breathe + flutter) * DEG);
+      // Fly in as a silk-smooth undulating paper streamer, curl continuously into a
+      // saddle-curved sculptural loop (constant arc length, zero polygon creases), float, drift out.
+      const curlK = inOutCubic(clamp((time - 0.52) / 1.16));
+      const alpha = lerp(0.34, TAU, curlK);
+      const baseR = STRIP_LEN / alpha;
+      const zCentroid = (baseR * Math.sin(alpha * 0.5)) / (alpha * 0.5);
+      const wavePhase = (TAU * time) / 4;
+      const saddleAmp = curlK * (28 + 16 * amp);
+      const radAmp = curlK * (12 + 10 * amp);
+      const flyAmp = (1 - curlK) * (16 + 22 * amp);
+
+      const centerAt = (u) => {
+        const th = (u - 0.5) * alpha;
+        const r = baseR + radAmp * Math.cos(2 * th - wavePhase * 0.5);
+        const x = r * Math.sin(th);
+        const z = r * Math.cos(th) - zCentroid + flyAmp * Math.sin(u * Math.PI * 2.5 - time * TAU * 1.25);
+        const y =
+          saddleAmp * Math.sin(2 * th + wavePhase) +
+          flyAmp * 0.55 * Math.cos(u * Math.PI * 2.0 - time * TAU * 1.25);
+        return [x, y, z];
+      };
+
+      const twistAt = (u) => {
+        const th = (u - 0.5) * alpha;
+        const loopTwist =
+          curlK * ((0.46 + 0.18 * amp) * Math.sin(th + wavePhase * 0.5) + 0.22 * Math.cos(2 * th - wavePhase));
+        const streamTwist = (1 - curlK) * 0.34 * amp * Math.sin(u * Math.PI * 2.2 - time * TAU * 1.25);
+        return loopTwist + streamTwist;
+      };
+
+      const rings = [];
+      const eps = 0.002;
+      for (let k = 0; k <= SEGMENTS; k++) {
+        const u = k / SEGMENTS;
+        const c = centerAt(u);
+        const p0 = centerAt(curlK > 0.999 ? ((u - eps + 1) % 1) : Math.max(0, u - eps));
+        const p1 = centerAt(curlK > 0.999 ? ((u + eps) % 1) : Math.min(1, u + eps));
+        const tang = norm([p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]]);
+        const n0 = norm(cross3(tang, [0, 1, 0]));
+        const b0 = norm(cross3(n0, tang));
+        const psi = twistAt(u);
+        const cp = Math.cos(psi),
+          sp = Math.sin(psi);
+        const binorm = [cp * b0[0] + sp * n0[0], cp * b0[1] + sp * n0[1], cp * b0[2] + sp * n0[2]];
+        const half = PB * 0.5;
+        rings.push({
+          lo: [c[0] - binorm[0] * half, c[1] - binorm[1] * half, c[2] - binorm[2] * half],
+          hi: [c[0] + binorm[0] * half, c[1] + binorm[1] * half, c[2] + binorm[2] * half],
+        });
       }
-      // frames along the strip (structure space)
-      const frames = [trans(0, 0, 0)];
-      for (let k = 1; k < PANELS; k++) frames.push(mul(mul(frames[k - 1], trans(PA_LEN, 0, 0)), rotY(alphas[k - 1])));
+
       let cx = 0,
         cy = 0,
         cz = 0;
-      const local = frames.map((F) => {
-        const v = [
-          apply(F, [0, -PB / 2, 0]),
-          apply(F, [PA_LEN, -PB / 2, 0]),
-          apply(F, [PA_LEN, PB / 2, 0]),
-          apply(F, [0, PB / 2, 0]),
-        ];
+      const local = [];
+      for (let k = 0; k < SEGMENTS; k++) {
+        const r0 = rings[k],
+          r1 = rings[k + 1];
+        const v = [r0.lo, r1.lo, r1.hi, r0.hi];
         v.forEach((p) => {
           cx += p[0];
           cy += p[1];
           cz += p[2];
         });
-        return v;
-      });
-      const n = PANELS * 4;
+        local.push(v);
+      }
+      const n = SEGMENTS * 4;
       const centre = trans(-cx / n, -cy / n, -cz / n);
-      // orientation: flat and facing camera while flying, a tilted loop afterwards
-      const ringK = ramp(0.75, 1.65, time);
-      const spinA = (-24 + 26 * Math.max(0, time - 1.2) * (0.6 + 0.4 * amp) + 40 * ramp(6.5, 8, time) * (time - 6.5)) * DEG;
-      const flyRoll = (14 * (1 - outCubic(time / 0.9)) - 4) * DEG * (1 - ringK);
-      const orient = mul(rotX(lerp(-8, 31, ringK) * DEG), mul(rotZ(flyRoll), rotY(spinA * ringK + (1 - ringK) * -6 * DEG)));
-      // world path
+
+      const ringK = ramp(0.68, 1.65, time);
+      const spinA = (-22 + 28 * Math.max(0, time - 1.15) * (0.6 + 0.4 * amp) + 38 * ramp(6.5, 8, time) * (time - 6.5)) * DEG;
+      const flyRoll = (13 * (1 - outCubic(time / 0.9)) - 3) * DEG * (1 - ringK);
+      const tiltX = lerp(-6, 33, ringK) + 4 * amp * Math.sin(wavePhase) * ringK;
+      const orient = mul(rotX(tiltX * DEG), mul(rotZ(flyRoll), rotY(spinA * ringK + (1 - ringK) * -6 * DEG)));
+
       const fly = outCubic(time / 0.95);
       const settle = ramp(0.85, 1.8, time);
-      let px = lerp(-1080, -20, fly) + 20 * settle,
-        py = lerp(240, 70, fly),
-        pz = lerp(-500, 0, fly) + 380 * settle;
-      const bob = 9 * Math.sin((TAU * (time - 1.6)) / 2.8) * ramp(1.4, 2.2, time) * amp;
+      let px = lerp(-1040, -16, fly) + 16 * settle,
+        py = lerp(225, 68, fly),
+        pz = lerp(-460, 0, fly) + 390 * settle;
+      const bob = 10 * Math.sin((TAU * (time - 1.6)) / 2.8) * ramp(1.4, 2.2, time) * amp;
       py += bob;
       const exit = inCubic((time - 6.55) / 1.45);
       if (time > 6.55) {
         px += 1180 * exit;
-        py += 240 * exit;
+        py += 230 * exit;
         pz -= 420 * exit;
       }
-      const pop = 1 + 0.045 * bump(1.38, 1.72, time);
+      const pop = 1 + 0.04 * bump(1.38, 1.74, time);
       const S = [pop, 0, 0, 0, 0, pop, 0, 0, 0, 0, pop, 0];
       const M = mul(trans(px, py, pz), mul(orient, mul(S, centre)));
       const panels = local.map((v, k) => {
         const w = v.map((p) => apply(M, p));
         const e1 = w[1].map((x, i) => x - w[0][i]),
           e2 = w[3].map((x, i) => x - w[0][i]);
-        const nrm = norm([e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]]);
+        const nrm = norm(cross3(e1, e2));
         const ctr = [0, 1, 2].map((i) => (w[0][i] + w[1][i] + w[2][i] + w[3][i]) / 4);
         return { k, w, nrm, ctr, depth: -toCam(ctr)[2] };
       });
-      return { panels, M, local, frames };
+      return { panels, M, local, closed: curlK > 0.995 };
     }
     function triangle(img, s0, s1, s2, d0, d1, d2) {
       // affine map from texture triangle s to screen triangle d (logical units), clip slightly enlarged
@@ -850,7 +886,7 @@
         const dx = p[0] - cxs,
           dy = p[1] - cys,
           l = Math.hypot(dx, dy) || 1;
-        return [p[0] + (dx / l) * 0.9, p[1] + (dy / l) * 0.9];
+        return [p[0] + (dx / l) * 0.85, p[1] + (dy / l) * 0.85];
       };
       const [g0, g1, g2] = [grow(d0), grow(d1), grow(d2)];
       ctx.save();
@@ -878,20 +914,20 @@
     function ribbon() {
       ribbonTex ||= { front: ribbonPrint(false), back: ribbonPrint(true) };
       clear([16, 21, 29]);
-      // studio sweep: wall fades into a lit floor
+      // studio sweep: warm slate wall fading into a softly lit studio floor
       const wall = ctx.createLinearGradient(0, 0, 0, H);
-      wall.addColorStop(0, "#1a2230");
-      wall.addColorStop(0.55, "#2a3444");
-      wall.addColorStop(1, "#384354");
+      wall.addColorStop(0, "#19212f");
+      wall.addColorStop(0.55, "#283344");
+      wall.addColorStop(1, "#394558");
       ctx.fillStyle = wall;
       ctx.fillRect(0, 0, W, H);
-      const pool = ctx.createRadialGradient(W / 2, 540, 20, W / 2, 540, 560);
-      pool.addColorStop(0, "rgba(140,154,178,0.55)");
+      const pool = ctx.createRadialGradient(W / 2, 535, 24, W / 2, 535, 580);
+      pool.addColorStop(0, "rgba(162,174,196,0.52)");
       pool.addColorStop(1, "rgba(120,136,160,0)");
       ctx.fillStyle = pool;
       ctx.fillRect(0, 0, W, H);
       const state = ribbonState(t);
-      // cast shadow on the floor plane, drawn in device pixels and blurred to scale
+      // cast shadow on the floor plane, drawn as a continuous strip in device pixels and blurred to scale
       const cw = canvas.width,
         ch = canvas.height;
       if (shadowCanvas.width !== cw || shadowCanvas.height !== ch) {
@@ -902,7 +938,7 @@
       sg.setTransform(1, 0, 0, 1, 0, 0);
       sg.clearRect(0, 0, cw, ch);
       sg.setTransform(sx(), 0, 0, sy(), 0, 0);
-      sg.fillStyle = "#000";
+      sg.fillStyle = "#080c14";
       let lift = 0;
       for (const p of state.panels) {
         sg.beginPath();
@@ -919,14 +955,14 @@
       lift /= state.panels.length * 4;
       ctx.save();
       ctx.setTransform(1, 0, 0, 1, 0, 0);
-      const blurPx = (6 + lift * 0.04) * sx();
+      const blurPx = (8 + lift * 0.042) * sx();
       ctx.filter = "blur(" + blurPx.toFixed(2) + "px)";
-      ctx.globalAlpha = clamp(0.8 - lift * 0.0007, 0.3, 0.72);
+      ctx.globalAlpha = clamp(0.76 - lift * 0.00065, 0.28, 0.68);
       ctx.drawImage(shadowCanvas, 0, 0);
       ctx.restore();
       ctx.filter = "none";
       ctx.globalAlpha = 1;
-      // panels, far to near
+      // continuous ribbon segments sorted far to near, smooth warm shading, zero polygon crease strokes
       const toCamera = (p) => norm(CAM.map((c, i) => c - p[i]));
       const order = [...state.panels].sort((a, b) => b.depth - a.depth);
       ctx.imageSmoothingEnabled = true;
@@ -936,75 +972,82 @@
         const front = dot3(p.nrm, view) > 0;
         const n = front ? p.nrm : p.nrm.map((x) => -x);
         const diff = Math.max(0, dot3(n, LIGHT_DIR));
-        const refl = norm(n.map((x, i) => 2 * dot3(n, LIGHT_DIR) * x - LIGHT_DIR[i]));
-        const spec = Math.pow(Math.max(0, dot3(refl, view)), 24) * 0.22;
+        const halfVec = norm([LIGHT_DIR[0] + view[0], LIGHT_DIR[1] + view[1], LIGHT_DIR[2] + view[2]]);
+        const spec = Math.pow(Math.max(0, dot3(n, halfVec)), 34) * (front ? 0.20 : 0.15);
         const img = front ? ribbonTex.front : ribbonTex.back;
         const scr = p.w.map(project);
-        const tx = (u) => (front ? u : PANELS * PA_LEN * 2 - u);
-        for (let j = 0; j < SUB; j++) {
-          const f0 = j / SUB,
-            f1 = (j + 1) / SUB;
-          const lerp2 = (A, B, k) => [lerp(A[0], B[0], k), lerp(A[1], B[1], k)];
-          const s00 = lerp2(scr[0], scr[1], f0),
-            s10 = lerp2(scr[0], scr[1], f1),
-            s11 = lerp2(scr[3], scr[2], f1),
-            s01 = lerp2(scr[3], scr[2], f0);
-          const u0 = tx((p.k + f0) * PA_LEN * 2),
-            u1 = tx((p.k + f1) * PA_LEN * 2);
-          // texture row 0 is the material edge y = +PB/2
-          triangle(img, [u0, PB * 2], [u1, PB * 2], [u1, 0], s00, s10, s11);
-          triangle(img, [u0, PB * 2], [u1, 0], [u0, 0], s00, s11, s01);
-        }
-        const shade = Math.min(1, 0.46 + 0.5 * diff + 0.18 * Math.max(0, dot3(n, view)));
+        const tx = (u) => (front ? u : STRIP_LEN * 2 - u);
+        const u0 = tx(p.k * SEG_LEN * 2),
+          u1 = tx((p.k + 1) * SEG_LEN * 2);
+        triangle(img, [u0, PB * 2], [u1, PB * 2], [u1, 0], scr[0], scr[1], scr[2]);
+        triangle(img, [u0, PB * 2], [u1, 0], [u0, 0], scr[0], scr[2], scr[3]);
+
+        const shade = Math.min(1, 0.50 + 0.44 * diff + 0.16 * Math.max(0, dot3(n, view)));
+        const growQ = (q, cxq, cyq) => {
+          const dx = q[0] - cxq,
+            dy = q[1] - cyq,
+            l = Math.hypot(dx, dy) || 1;
+          return [q[0] + (dx / l) * 0.65, q[1] + (dy / l) * 0.65];
+        };
+        const cxq = (scr[0][0] + scr[1][0] + scr[2][0] + scr[3][0]) * 0.25,
+          cyq = (scr[0][1] + scr[1][1] + scr[2][1] + scr[3][1]) * 0.25;
         ctx.beginPath();
-        scr.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])));
+        scr.forEach((q, i) => {
+          const gq = growQ(q, cxq, cyq);
+          if (i) ctx.lineTo(gq[0], gq[1]);
+          else ctx.moveTo(gq[0], gq[1]);
+        });
         ctx.closePath();
         ctx.globalCompositeOperation = "multiply";
-        const g = Math.round(255 * shade);
-        ctx.fillStyle = "rgb(" + g + "," + g + "," + Math.round(g * 0.97 + 8) + ")";
+        const rCh = Math.round(255 * Math.min(1, shade * 1.01)),
+          gCh = Math.round(255 * shade),
+          bCh = Math.round(255 * Math.min(1, shade * 0.96 + 0.03));
+        ctx.fillStyle = "rgb(" + rCh + "," + gCh + "," + bCh + ")";
         ctx.fill();
         if (spec > 0.004) {
           ctx.globalCompositeOperation = "lighter";
-          ctx.fillStyle = "rgba(255,250,240," + spec.toFixed(4) + ")";
+          ctx.fillStyle = "rgba(255,248,236," + spec.toFixed(4) + ")";
           ctx.fill();
         }
         ctx.globalCompositeOperation = "source-over";
-        // creases: the two short edges of every panel
-        ctx.lineWidth = 1.4;
-        ctx.strokeStyle = front ? "rgba(40,30,20,0.28)" : "rgba(90,20,10,0.35)";
-        ctx.beginPath();
-        if (p.k > 0) {
-          ctx.moveTo(scr[0][0], scr[0][1]);
-          ctx.lineTo(scr[3][0], scr[3][1]);
-        }
-        if (p.k < PANELS - 1) {
-          ctx.moveTo(scr[1][0], scr[1][1]);
-          ctx.lineTo(scr[2][0], scr[2][1]);
-        }
-        ctx.stroke();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = "rgba(255,255,255,0.10)";
+        // crisp paper rim highlight along the continuous top and bottom edges only
+        ctx.lineWidth = 1.15;
+        ctx.strokeStyle = front ? "rgba(255,252,244,0.28)" : "rgba(255,232,216,0.22)";
         ctx.beginPath();
         ctx.moveTo(scr[0][0], scr[0][1]);
         ctx.lineTo(scr[1][0], scr[1][1]);
         ctx.moveTo(scr[3][0], scr[3][1]);
         ctx.lineTo(scr[2][0], scr[2][1]);
         ctx.stroke();
+        if (!state.closed && (p.k === 0 || p.k === SEGMENTS - 1)) {
+          ctx.strokeStyle = "rgba(255,250,240,0.24)";
+          ctx.beginPath();
+          if (p.k === 0) {
+            ctx.moveTo(scr[0][0], scr[0][1]);
+            ctx.lineTo(scr[3][0], scr[3][1]);
+          } else {
+            ctx.moveTo(scr[1][0], scr[1][1]);
+            ctx.lineTo(scr[2][0], scr[2][1]);
+          }
+          ctx.stroke();
+        }
       }
-      label("PAPER RIBBON", "CANVAS 2D · 7 CREASES · CAST SHADOW");
+      label("PAPER RIBBON", "CANVAS 2D · CONTINUOUS CURL · CAST SHADOW");
     }
 
-    // ------------------------------------------------ path morph (unchanged)
+    // ------------------------------------------------ path morph (aligned clockwise contours)
+    // All three emblems start at top-centre and wind clockwise with filleted corners,
+    // so Flubber's perimeter correspondence never twists or self-intersects mid-morph.
     const shapes = [
-      "M-130,-110 L-40,-110 L0,-20 L40,-110 L130,-110 L130,110 L45,110 L45,10 L0,95 L-45,10 L-45,110 L-130,110 Z",
-      "M-5,-155 L-135,25 L-25,25 L-55,155 L140,-45 L25,-45 L80,-155 Z",
-      "M0,130 C-200,5 -140,-150 -45,-90 C-18,-75 0,-52 0,-52 C0,-52 18,-75 45,-90 C140,-150 200,5 0,130 Z",
+      "M0,-34 Q8,-34 15,-48 L38,-94 Q47,-112 66,-112 L108,-112 Q128,-112 128,-92 L128,92 Q128,112 108,112 L74,112 Q56,112 56,94 L56,18 Q56,4 46,20 L16,68 Q0,92 -16,68 L-46,20 Q-56,4 -56,18 L-56,94 Q-56,112 -74,112 L-108,112 Q-128,112 -128,92 L-128,-92 Q-128,-112 -108,-112 L-66,-112 Q-47,-112 -38,-94 L-15,-48 Q-8,-34 0,-34 Z",
+      "M18,-142 L68,-142 Q86,-142 76,-124 L30,-32 Q22,-18 38,-18 L98,-18 Q118,-18 104,-2 L-16,136 Q-30,152 -25,131 L-4,32 Q0,16 -16,16 L-88,16 Q-108,16 -96,-2 L-2,-130 Q6,-142 18,-142 Z",
+      "M0,-62 C22,-112 108,-122 138,-56 C166,6 106,72 14,120 Q0,128 -14,120 C-106,72 -166,6 -138,-56 C-108,-122 -22,-112 0,-62 Z",
     ];
     let interpolators = [];
     if (mode === "morph" && window.flubber) {
       interpolators = shapes.map((s, i) =>
         window.flubber.interpolate(s, shapes[(i + 1) % 3], {
-          maxSegmentLength: 6,
+          maxSegmentLength: 3,
         }),
       );
     }

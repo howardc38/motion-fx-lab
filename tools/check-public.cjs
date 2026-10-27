@@ -19,9 +19,11 @@ const EXAMPLES_OUTSIDE_FILMS = [
   'examples/stack-lab/index.html', 'examples/stack-lab/app.js', 'examples/stack-lab/style.css',
   'examples/stack-lab/README.md', 'examples/stack-lab/NOTICE',
   // Source pages of films that left the published list (impact-orbit merged into dot-battle, shadow-lab
-  // retired, word-forms replaced by the titles use case, scene-eras kept only as a live preset); tests and
-  // the family READMEs still open them.
+  // retired, word-forms replaced by the titles use case, scene-eras kept only as a live preset, and the three
+  // multi-effect sampler pages retired now that every effect has its own gallery card); tests and the family
+  // READMEs still open them.
   'examples/impact-orbit.html', 'examples/shadow-lab.html', 'examples/word-forms.html', 'examples/scene-eras.html',
+  'examples/optical.html', 'examples/stacks.html', 'examples/graphic-extensions.html',
 ];
 // assets/ holds media and data only, each inside a folder (or below one) that has a manifest.json or README.md.
 const ASSET_TYPES = /\.(png|jpe?g|webp|avif|gif|svg|mp4|webm|wav|mp3|ogg|m4a|flac|glb|gltf|bin|hdr|ktx2|woff2?|ttf|otf|json|csv|gz|md|txt)$/i;

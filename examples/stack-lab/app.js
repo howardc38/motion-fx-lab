@@ -2,10 +2,10 @@ const $ = (s) => document.querySelector(s);
 const studyById = Object.fromEntries(FXStack.studies.map((s) => [s.id, s]));
 const defaults = { pixi: 45, rapier: 50, gpu: 50 };
 const descriptions = {
-  pixi: "水波、模糊及色彩濾鏡按時間啟動；1.4 秒之前係原圖，之後係扭曲效果。",
+  pixi: "Wave displacement, blur and colour grading ramp up on schedule: untouched until 1.4 s, then progressively warped.",
   rapier:
-    "48 塊骨牌按固定 120 Hz 模擬；鏡頭移動已寫入時間軸，倒播會由初始狀態重算。",
-  gpu: "65,536 粒 GPU 粒子按固定步數推進；4.5 秒開始散開。吸引中心沿預設路徑移動。",
+    "48 dominoes step at a fixed 120 Hz; the camera move is authored on the timeline and backward seeks replay from rest.",
+  gpu: "65,536 GPU particles advance in fixed compute steps and disperse at 4.5 s while the attractor follows an authored path.",
 };
 let current,
   selected = "pixi",
@@ -24,7 +24,7 @@ function options() {
       : { spin: 0.25 + v * 3 };
 }
 function playback() {
-  $("#play").textContent = playing ? "暫停" : "播放";
+  $("#play").textContent = playing ? "Pause" : "Play";
 }
 async function draw() {
   if (!current || busy) return;
@@ -60,7 +60,7 @@ async function select(id) {
   playback();
   const study = studyById[id];
   $("#loading").hidden = false;
-  $("#loading").textContent = "載入 " + study.name + "…";
+  $("#loading").textContent = "Loading " + study.name + "…";
   $("#error").textContent = "";
   $("#backend").textContent = "INITIALIZING";
   document
@@ -74,7 +74,7 @@ async function select(id) {
   $("#seek").max = study.duration;
   $("#seek").value = 0;
   $("#parameter-label").firstChild.textContent =
-    { pixi: "扭曲程度", rapier: "動作速度", gpu: "旋轉強度" }[id] + " ";
+    { pixi: "Distortion strength", rapier: "Simulation speed", gpu: "Swirl intensity" }[id] + " ";
   $("#parameter").value = defaults[id];
   $("#value").textContent = defaults[id] + "%";
   for (const s of ["#play", "#reset", "#action", "#parameter", "#seek"])
@@ -97,7 +97,7 @@ async function select(id) {
       current = null;
       cache.delete(id);
       $("#backend").textContent = "UNAVAILABLE — NO FALLBACK";
-      $("#loading").textContent = "未能載入效果";
+      $("#loading").textContent = "Effect unavailable";
       $("#error").textContent = e.message;
     }
   }
@@ -114,7 +114,7 @@ $("#reset").onclick = () => {
   draw();
 };
 $("#action").onclick = () => {
-  location.href = "../stacks.html";
+  location.href = "../../index.html#effects";
 };
 $("#seek").oninput = () => {
   playing = false;

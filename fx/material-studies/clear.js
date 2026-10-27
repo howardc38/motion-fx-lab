@@ -161,21 +161,51 @@ export async function createClearFilm({ format = "16:9", brand = BRAND } = {}) {
   const liquid = K.createLiquid(K.waterMaterial({ thickness: 1.2, attenuationDistance: 3 }), { resolution: 56, half: 1.6, maxPolys: 160000 });
   liquid.mesh.position.set(0, 1.35, 0);
   scene.add(liquid.mesh);
-  // water-material: the product bottle
+  // Soft aquatic environment for underwater chapters so submerged glass shows
+  // translucent water-matched Fresnel rims instead of white studio strip-boxes.
+  const underwaterEnv = (() => {
+    const c = document.createElement("canvas");
+    c.width = 512;
+    c.height = 256;
+    const ug = c.getContext("2d");
+    const lg = ug.createLinearGradient(0, 0, 0, 256);
+    lg.addColorStop(0, "#7bf0f5");
+    lg.addColorStop(0.22, "#2cb4c4");
+    lg.addColorStop(0.55, "#0d657b");
+    lg.addColorStop(1, "#021d2c");
+    ug.fillStyle = lg;
+    ug.fillRect(0, 0, 512, 256);
+    const rg = ug.createRadialGradient(256, 26, 4, 256, 26, 150);
+    rg.addColorStop(0, "rgba(210,255,255,0.65)");
+    rg.addColorStop(1, "rgba(95,208,214,0)");
+    ug.fillStyle = rg;
+    ug.fillRect(0, 0, 512, 180);
+    const tex = new THREE.CanvasTexture(c);
+    tex.mapping = THREE.EquirectangularReflectionMapping;
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const pm = new THREE.PMREMGenerator(renderer);
+    const env = pm.fromEquirectangular(tex).texture;
+    pm.dispose();
+    tex.dispose();
+    return env;
+  })();
+  const productEnv = K.productEnvironment(renderer);
+  // water-material: the product bottle (thickness > focal length ~1.9 so the
+  // cylindrical water-filled bottle genuinely inverts & curves the letters behind it)
   const bottle = new THREE.Group(),
     glass = new THREE.MeshPhysicalMaterial({
       color: "#f3fdff",
       transmission: 1,
-      thickness: 1.7,
-      ior: 1.42,
-      roughness: 0.015,
+      thickness: 5.1,
+      ior: 1.48,
+      roughness: 0.012,
       metalness: 0,
       attenuationColor: "#8fdbe3",
-      attenuationDistance: 7,
+      attenuationDistance: 22,
       clearcoat: 1,
-      clearcoatRoughness: 0.02,
-      envMap: K.productEnvironment(renderer),
-      envMapIntensity: 2.4,
+      clearcoatRoughness: 0.025,
+      envMap: productEnv,
+      envMapIntensity: 2.1,
       specularIntensity: 1,
     });
   const body = new THREE.Mesh(K.bottleGeometry(128), glass);
@@ -223,7 +253,7 @@ export async function createClearFilm({ format = "16:9", brand = BRAND } = {}) {
   const LETTER_Y = 0.86; // letter centre: the word stands from the waterline to the bottle shoulder
   scene.add(word.group);
   // water-underwater
-  const bubbles = K.createBubbles(110),
+  const bubbles = K.createBubbles(150),
     rays = K.createLightRays(sky, 9);
   scene.add(bubbles.mesh, rays.group);
 
@@ -239,6 +269,16 @@ export async function createClearFilm({ format = "16:9", brand = BRAND } = {}) {
     scene.fog.color.copy(K.horizonColor(on));
     scene.fog.density = on ? 0.06 : 0.05;
     sky.fogDensity.value = on ? 0.06 : 0.05;
+    glass.envMap = on ? underwaterEnv : productEnv;
+    glass.envMapIntensity = on ? 0.62 : 2.1;
+    glass.clearcoat = on ? 0.1 : 1;
+    glass.ior = on ? 1.15 : 1.48;
+    glass.thickness = on ? 1.35 : 5.1;
+    glass.attenuationDistance = on ? 7 : 22;
+    rim.color.set(on ? "#8cf2ff" : "#ffffff");
+    rim.intensity = on ? 1.15 : 3.2;
+    fill.color.set(on ? "#4ad6e8" : "#fff3e0");
+    fill.intensity = on ? 0.72 : 1.1;
   }
 
   function placeCamera(t) {
@@ -362,7 +402,7 @@ export async function createClearFilm({ format = "16:9", brand = BRAND } = {}) {
     const bubbleOn = t > 7.75 && t < 12.2;
     bubbles.mesh.visible = bubbleOn;
     if (bubbleOn) {
-      for (let i = 0; i < 110; i++) {
+      for (let i = 0; i < 150; i++) {
         let x, y, z, r;
         if (i < 40) {
           // released along the plunge path, rising and spreading
@@ -383,12 +423,22 @@ export async function createClearFilm({ format = "16:9", brand = BRAND } = {}) {
           y = base.y - 0.3 + phase * 4.2;
           x = Math.cos(a) * (0.75 + 0.35 * hash(k));
           z = Math.sin(a) * (0.75 + 0.35 * hash(k + 1));
-        } else {
+        } else if (i < 110) {
           const sp = 0.4 + hash(i) * 0.5;
           r = 0.03 + 0.07 * hash(i + 8);
           y = -6.2 + ((t * sp + hash(i + 9) * 6.2) % 6.2);
           x = (hash(i + 10) - 0.5) * 11;
           z = (hash(i + 11) - 0.5) * 8 - 1.5;
+        } else {
+          // fine rising micro-bubbles hugging and peeling off the submerged glass silhouette
+          const sp = 0.55 + hash(i + 12) * 0.45,
+            ly = 0.06 + ((t * sp + hash(i + 13) * 2.8) % 2.8),
+            br = K.bottleRadius(Math.min(2.6, ly)) + 0.028 + 0.06 * Math.max(0, ly - 1.8) + 0.035 * hash(i + 14),
+            a = hash(i + 15) * TAU + Math.sin(t * 2.4 + i) * 0.16;
+          r = 0.013 + 0.016 * hash(i + 16);
+          y = base.y + ly;
+          x = Math.cos(a) * br;
+          z = Math.sin(a) * br;
         }
         bubbles.set(i, x, Math.min(-0.04, y), z, y < -0.04 ? r : 0, 1.08);
       }

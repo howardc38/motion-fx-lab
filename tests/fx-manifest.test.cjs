@@ -106,7 +106,7 @@ test('pages load the generated block, then the gallery scripts in dependency ord
   const index = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   const at = text => { const i = index.indexOf(text); assert.ok(i >= 0, text); return i; };
   const sequence = ['window.FX_RENDER_SIZE', '<!-- fx:scripts:start -->', 'src="fx/demos.js"', 'src="fx/catalog.js?v=', '<!-- fx:scripts:end -->',
-    'src="fx/gallery-layout.js"', 'src="fx/films-data.js?v=graphic-1"', 'src="fx/gallery-meta.js?v=graphic-1"', 'src="fx/gallery-page.js?v=copy-1"'].map(at);
+    'src="fx/gallery-layout.js"', 'src="fx/films-data.js?v=', 'src="fx/gallery-meta.js?v=', 'src="fx/gallery-page.js?v='].map(at);
   assert.deepEqual(sequence, [...sequence].sort((a, b) => a - b));
   assert.doesNotMatch(index, /const (ORDER|PREVIEW_DEFAULT|PREVIEW_HERO|KINDS|STACKS|NEEDS)\b/);
   const manifest = fxm.load(), intro = fxm.renderScripts(manifest, 'video/intro.html');

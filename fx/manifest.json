@@ -72,7 +72,7 @@
     {
       "id": "optical",
       "scripts": ["https://cdn.jsdelivr.net/npm/flubber@0.4.2/build/flubber.min.js", "fx/optical-effects.js", "fx/pack-optical.js"],
-      "cacheTag": null,
+      "cacheTag": "optical-2",
       "readme": null,
       "prefix": "optical-",
       "anchor": "\"{key}\"",
@@ -88,7 +88,7 @@
     {
       "id": "stacks",
       "scripts": ["fx/stack-effects.js", "fx/pack-stacks.js"],
-      "cacheTag": null,
+      "cacheTag": "stacks-2",
       "readme": "examples/stack-lab/README.md",
       "sources": {
         "stack-pixi": ["fx/pack-stacks.js", "fx/stack-effects.js", "fx/stacks/pixi.js"],
@@ -99,7 +99,7 @@
     {
       "id": "studio",
       "scripts": ["fx/studio-effects.js", "fx/pack-studio.js"],
-      "cacheTag": null,
+      "cacheTag": "studio-2",
       "readme": "assets/studio/README.md",
       "prefix": "studio-",
       "anchor": "\"{key}\"",
@@ -122,7 +122,7 @@
     {
       "id": "materials",
       "scripts": ["fx/material-effects.js", "fx/pack-materials.js"],
-      "cacheTag": null,
+      "cacheTag": "materials-2",
       "readme": "fx/material-studies/README.md",
       "sources": {
         "water-material": ["fx/material-effects.js", "fx/pack-materials.js", "fx/material-studies/water.js", "fx/material-studies/water-kit.js"],
@@ -172,7 +172,7 @@
     {
       "id": "design",
       "scripts": ["fx/design-effects.js", "fx/pack-design.js"],
-      "cacheTag": "design-3",
+      "cacheTag": "design-4",
       "readme": "fx/design/README.md",
       "prefix": "design-",
       "anchor": "id:'{key}'",
@@ -187,7 +187,7 @@
     {
       "id": "signals",
       "scripts": ["fx/signal-effects.js", "fx/pack-signals.js"],
-      "cacheTag": "signal-2",
+      "cacheTag": "signal-3",
       "readme": "fx/signals/README.md",
       "prefix": "signal-",
       "anchor": "id:'{key}'",
@@ -267,7 +267,7 @@
     {
       "id": "dialogue",
       "scripts": ["fx/dialogue-effects.js", "fx/pack-dialogue.js"],
-      "cacheTag": "dialogue-2",
+      "cacheTag": "dialogue-3",
       "readme": "fx/dialogue/README.md",
       "sources": {
         "dialogue-lipsync": [
@@ -289,11 +289,22 @@
     {
       "id": "plush",
       "scripts": ["fx/pack-plush.js"],
-      "cacheTag": "plush-1",
+      "cacheTag": "plush-2",
       "readme": "fx/plush/README.md",
       "sources": {
         "plush-fur": [
           "fx/pack-plush.js",
+          "fx/plush/effect.js",
+          "fx/plush/bear.js",
+          "fx/plush/fur.js",
+          "fx/plush/stage.js",
+          "fx/plush/textures.js",
+          "assets/plush/manifest.json",
+          "fx/plush/README.md"
+        ],
+        "plush-webgpu": [
+          "fx/pack-plush.js",
+          "fx/plush/webgpu.js",
           "fx/plush/effect.js",
           "fx/plush/bear.js",
           "fx/plush/fur.js",
@@ -310,7 +321,7 @@
         "fx/mechanical-effects.js",
         "fx/pack-mechanical.js"
       ],
-      "cacheTag": "mechanical-1",
+      "cacheTag": "mechanical-2",
       "readme": "fx/mechanical/README.md",
       "anchor": "id:'{id}'",
       "sources": {
@@ -464,26 +475,145 @@
           "fx/graphic/README.md"
         ]
       }
+    },
+    {
+      "id": "collage",
+      "scripts": ["fx/pack-collage.js"],
+      "cacheTag": "collage-1",
+      "readme": "fx/collage/README.md",
+      "anchor": "id: '{id}'",
+      "sources": {
+        "paper-collage": ["fx/pack-collage.js", "fx/collage/index.js", "fx/collage/README.md"],
+        "collage-halftone": ["fx/pack-collage.js", "fx/collage/index.js", "fx/collage/README.md"]
+      }
+    },
+    {
+      "id": "presenter",
+      "scripts": ["fx/pack-presenter.js"],
+      "cacheTag": "presenter-1",
+      "readme": "fx/presenter/README.md",
+      "anchor": "id: '{id}'",
+      "sources": {
+        "sticker-stage": ["fx/pack-presenter.js", "fx/presenter/index.js", "fx/presenter/README.md"]
+      }
+    },
+    {
+      "id": "mural",
+      "scripts": ["fx/pack-mural.js"],
+      "cacheTag": "mural-1",
+      "readme": "fx/mural/README.md",
+      "anchor": "id: \"{id}\"",
+      "sources": {
+        "graphic-stroke-mural": ["fx/pack-mural.js", "fx/mural/index.js", "fx/mural/README.md"],
+        "wipe-dot-polarity": ["fx/pack-mural.js", "fx/mural/index.js", "fx/mural/README.md"]
+      }
+    },
+    {
+      "id": "chrome-type",
+      "scripts": ["fx/pack-chrome-type.js"],
+      "cacheTag": "chrome-type-1",
+      "readme": "fx/chrome-type/README.md",
+      "anchor": "id: \"{id}\"",
+      "sources": {
+        "liquid-chrome-type": ["fx/pack-chrome-type.js", "fx/chrome-type/index.js", "fx/chrome-type/README.md"]
+      }
+    },
+    {
+      "id": "ui-stage",
+      "scripts": ["fx/pack-ui-stage.js"],
+      "cacheTag": "ui-stage-1",
+      "readme": "fx/ui-stage/README.md",
+      "anchor": "id: '{id}'",
+      "sources": {
+        "ui-cursor-loupe": ["fx/pack-ui-stage.js", "fx/ui-stage/index.js", "fx/ui-stage/README.md"],
+        "ui-cmd-palette": ["fx/pack-ui-stage.js", "fx/ui-stage/index.js", "fx/ui-stage/README.md"],
+        "ui-flip-modal": ["fx/pack-ui-stage.js", "fx/ui-stage/index.js", "fx/ui-stage/README.md"],
+        "ui-chat-flow": ["fx/pack-ui-stage.js", "fx/ui-stage/index.js", "fx/ui-stage/README.md"]
+      }
+    },
+    {
+      "id": "telemetry",
+      "scripts": ["fx/pack-telemetry.js"],
+      "cacheTag": "telemetry-1",
+      "readme": "fx/telemetry/README.md",
+      "anchor": "id: '{id}'",
+      "sources": {
+        "cad-telemetry-hud": ["fx/pack-telemetry.js", "fx/telemetry/index.js", "fx/telemetry/README.md"],
+        "ferrofluid-orb": ["fx/pack-telemetry.js", "fx/telemetry/index.js", "fx/telemetry/README.md"]
+      }
+    },
+    {
+      "id": "editorial",
+      "scripts": ["fx/pack-editorial.js"],
+      "cacheTag": "editorial-1",
+      "readme": "fx/editorial/README.md",
+      "anchor": "id: '{id}'",
+      "sources": {
+        "type-editorial-strike": ["fx/pack-editorial.js", "fx/editorial/index.js", "fx/editorial/README.md"],
+        "type-cipher": ["fx/pack-editorial.js", "fx/editorial/index.js", "fx/editorial/README.md"],
+        "type-split-cut": ["fx/pack-editorial.js", "fx/editorial/index.js", "fx/editorial/README.md"],
+        "type-knockout": ["fx/pack-editorial.js", "fx/editorial/index.js", "fx/editorial/README.md"],
+        "svg-hand-circle": ["fx/pack-editorial.js", "fx/editorial/index.js", "fx/editorial/README.md"]
+      }
+    },
+    {
+      "id": "diagrams",
+      "scripts": ["fx/pack-diagrams.js"],
+      "cacheTag": "diagrams-1",
+      "readme": "fx/diagrams/README.md",
+      "anchor": "id: '{id}'",
+      "sources": {
+        "data-node-flow": ["fx/pack-diagrams.js", "fx/diagrams/index.js", "fx/diagrams/README.md"],
+        "data-donut": ["fx/pack-diagrams.js", "fx/diagrams/index.js", "fx/diagrams/README.md"],
+        "data-map-route": ["fx/pack-diagrams.js", "fx/diagrams/index.js", "fx/diagrams/README.md"],
+        "data-timeline": ["fx/pack-diagrams.js", "fx/diagrams/index.js", "fx/diagrams/README.md"]
+      }
+    },
+    {
+      "id": "sakuga",
+      "scripts": ["fx/pack-sakuga.js"],
+      "cacheTag": "sakuga-1",
+      "readme": "fx/sakuga/README.md",
+      "anchor": "id: '{id}'",
+      "sources": {
+        "ink-slash": ["fx/pack-sakuga.js", "fx/sakuga/index.js", "fx/sakuga/README.md"],
+        "ink-impact-frame": ["fx/pack-sakuga.js", "fx/sakuga/index.js", "fx/sakuga/README.md"],
+        "ink-bleed-wipe": ["fx/pack-sakuga.js", "fx/sakuga/index.js", "fx/sakuga/README.md"]
+      }
+    },
+    {
+      "id": "ascii",
+      "scripts": ["fx/pack-ascii.js"],
+      "cacheTag": "ascii-1",
+      "readme": "fx/ascii/README.md",
+      "anchor": "id: '{id}'",
+      "sources": {
+        "ascii-spine-boids": ["fx/pack-ascii.js", "fx/ascii/index.js", "fx/ascii/README.md"]
+      }
     }
   ],
   "catalog": {
     "scripts": ["fx/catalog.js"],
-    "cacheTag": "catalog-graphic-1"
+    "cacheTag": "catalog-v3"
   },
   "pages": ["index.html", "video/intro.html"],
   "gallery": {
-    "$comment": "order: effect cards curated by visual impact (judged on tile screenshots) and contrast between neighbouring looks, then the Motion basics; every gallery family must be listed once. showcaseOrder: the same for the comparison and scene presets. previewDefault: the variant a card shows first. previewHero: the frame time shown while motion is paused (gpuparticles shows the flowing form). previewWindow: [start, end] of the demo time a card loops, where a shared film timeline starts or ends with a long calm stretch (films and the intro still play the whole timeline).",
+    "$comment": "order: effect cards curated by visual design craft and motion feel (judged on tile screenshots and live motion, not 3D complexity) with contrast between neighbouring looks, then the Motion basics; every gallery family must be listed once. showcaseOrder: the same for the scene presets. previewDefault: the variant a card shows first. previewHero: the frame time shown while motion is paused (gpuparticles shows the flowing form). previewWindow: [start, end] of the demo time a card loops, where a shared film timeline starts or ends with a long calm stretch (films and the intro still play the whole timeline).",
     "order": [
-      "optical-foil", "graphic-field", "mechanical-cutaway", "domainrep", "graphic-fill",
-      "plush-fur", "fluid-smoke", "reaction", "mechanical-assembly", "graphic-shadow",
-      "studio-lowpoly", "gpuparticles", "studio-freeze-orbit", "organic-contours", "dissolve",
-      "graphic-network", "mechanical-linkage", "dialogue-lipsync", "studio-skin-cloud",
-      "studio-echo", "rays", "stack-gpu", "design-type-orbit", "studio-video-dots", "chrome",
-      "optical-slit", "clay", "water-material", "toon", "signal-motion-fragments", "cjk-solid",
-      "studio-depth-dots", "optical-moire", "studio-portal", "optical-caustic", "optical-morph",
-      "water-impact", "rhythm", "vartype", "optical-ribbon", "glitch", "cardflip",
-      "fluid-overflow", "liquid", "ridgelines", "rigid", "character-rig", "design-surface-ink",
-      "whip", "uifly", "hook", "chars", "karaoke", "datachart", "timing", "glass", "sweep",
+      "graphic-stroke-mural", "liquid-chrome-type", "paper-collage", "ink-slash", "optical-foil",
+      "graphic-fill", "wipe-dot-polarity", "ui-cursor-loupe", "cad-telemetry-hud", "graphic-bands",
+      "sticker-stage", "plush-fur", "type-editorial-strike", "mechanical-cutaway", "ascii-spine-boids",
+      "graphic-field", "data-node-flow", "domainrep", "design-letter-flow", "fluid-smoke",
+      "graphic-shadow", "reaction", "design-dot-reveal", "mechanical-assembly", "graphic-reels",
+      "studio-freeze-orbit", "gpuparticles", "design-surface-ink", "stack-rapier", "dissolve",
+      "graphic-network", "dialogue-lipsync", "mechanical-linkage", "water-material", "cjk-solid",
+      "optical-ribbon", "studio-skin-cloud", "organic-contours", "studio-lowpoly", "design-type-orbit",
+      "studio-echo", "rays", "stack-gpu", "studio-video-dots", "chrome",
+      "optical-slit", "clay", "toon", "signal-motion-fragments", "studio-depth-dots",
+      "optical-moire", "studio-portal", "optical-caustic", "optical-morph", "water-impact",
+      "rhythm", "vartype", "glitch", "cardflip", "fluid-overflow",
+      "liquid", "ridgelines", "rigid", "character-rig", "whip",
+      "uifly", "hook", "chars", "karaoke", "datachart", "timing", "glass", "sweep",
       "stamp", "beat", "sticker", "gradient", "ring", "count", "type", "mark", "scan", "wipe",
       "lut", "design-soft-shadow", "grain"
     ],

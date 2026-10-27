@@ -98,13 +98,13 @@ export async function create(spec, data, {width = 1280, height = 720, mode = 'fi
     return m.id;
   }
 
-  // Cameras. The close-up keeps the mouth in the upper two thirds, above the captions.
+  // Cameras. The close-up keeps the mouth in the upper two thirds, above the captions, with safe headroom for the top-left label.
   const up = mode === 'tile' ? .035 : 0;
   function bearCam(t) {
     const sm = smooth((t - K.fine) / 1.6), punch = smooth((t - K.burst + .02) / .2) * (1 - smooth((t - K.burstEnd - .25) / .6));
-    const x = lerp(-.46 + .06 * smooth(t / 2), -.08, sm), z = lerp(2.62 - .1 * smooth(t / 2.2), 2.48, sm);
+    const x = lerp(-.30 + .05 * smooth(t / 2), -.06, sm), z = lerp(2.76 - .09 * smooth(t / 2.2), 2.58, sm);
     const shake = .012 * Math.max(0, spring(t, K.burst, 6, 7));
-    return {pos: [x, 1.26 + up, z], target: [-.02 + x * .1, 1.165 + up + .02 * punch, 0], fov: 30 - 3.2 * punch, roll: shake, aperture: .0013};
+    return {pos: [x, 1.29 + up, z], target: [.02 + x * .08, 1.19 + up + .022 * punch, 0], fov: 31.8 - 2.3 * punch, roll: shake, aperture: .0013};
   }
   const splitBear = {pos: [.6, 1.26, 2.5], target: [.6, 1.17, 0], fov: 31, aperture: .0013};   // bear centred in the left half
   const splitPip = {pos: [1.72, 1.16, 2.7], target: [1.72, .98, .3], fov: 31, aperture: .0013};   // Pip centred in the right half
@@ -158,7 +158,7 @@ export async function create(spec, data, {width = 1280, height = 720, mode = 'fi
       drawCaption(ctx, active, t, {size: tile ? 54 : 40, y: tile ? 700 : 684, max: tile ? 1180 : 1040});
       drawCueStrip(ctx, bp.mouthId, {x: 1252, y: tile ? 112 : 104, size: tile ? 30 : 22, speaking: !!bearTurn, label: tile ? '' : 'mouth cue'});
     }
-    if (branding && endCard < 1) { label(ctx, 'SAY IT. MEAN IT.', 40, 52, {size: 15}); label(ctx, 'MOTION FX LAB · PLUSH FUR + LIP SYNC', 40, 74, {size: 11, colour: '#a8c4c8', spacing: 2}); }
+    if (branding && endCard < 1) { label(ctx, 'SAY IT. MEAN IT.', 28, 38, {size: 14}); label(ctx, 'MOTION FX LAB · PLUSH FUR + LIP SYNC', 28, 57, {size: 10.5, colour: '#a8c4c8', spacing: 1.8}); }
     if (endCard > 0) {
       ctx.globalAlpha = endCard; ctx.fillStyle = '#0d272c'; ctx.fillRect(0, 0, 1280, 720);
       const rise = 18 * (1 - endCard);

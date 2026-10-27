@@ -18,12 +18,12 @@ import {
 export async function create() {
   if (!navigator.gpu)
     throw new Error(
-      "瀏覽器未提供 WebGPU。請用支援 WebGPU 的 Chrome 開啟；這裡不會用 WebGL 代替。",
+      "WebGPU is not available in this browser. Open in a WebGPU-capable browser such as Chrome; this demo does not fall back to WebGL.",
     );
   const adapter = await navigator.gpu.requestAdapter();
   if (!adapter)
     throw new Error(
-      "WebGPU 找不到可用 GPU adapter；此 demo 不會降級成 WebGL。",
+      "WebGPU could not find a compatible GPU adapter; this demo does not fall back to WebGL.",
     );
   const renderer = new THREE.WebGPURenderer({
     antialias: true,
@@ -31,7 +31,7 @@ export async function create() {
   });
   await renderer.init();
   if (!renderer.backend.isWebGPUBackend)
-    throw new Error("未取得真正 WebGPU backend，已停止 demo。");
+    throw new Error("A native WebGPU backend was not acquired; stopping demo.");
   renderer.setSize(1280, 720);
   renderer.setClearColor("#04050c");
   const scene = new THREE.Scene(),

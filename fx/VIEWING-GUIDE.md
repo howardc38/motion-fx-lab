@@ -4,13 +4,12 @@ The site and the README use one set of words:
 
 | Word | Meaning |
 |---|---|
-| Use case | A familiar video format with editable copy, data or brand, such as a shop promo or an event countdown |
-| Demo film | A finished piece that combines several effects around one subject or story |
-| Effect | One distinct visible operation or material response, shown on its own gallery card |
+| Use case | A familiar video format with editable copy, data or brand, such as a shop promo, drinks advert or event countdown |
+| Demo film | A finished short film or multi-treatment study built around one subject, story or choreography |
+| Effect | One distinct visible operation or material response, shown on its own gallery card under Unique effects |
 | Variant | Another version of an effect, chosen in that card's selector |
 | Effect film | The full render of one effect; it plays from that effect's card |
-| Comparison | The same input under different treatments, for choosing an effect |
-| Motion basics | Everyday moves the use cases are built from; listed apart and not counted as effects |
+| Motion basics | Everyday moves the use cases are built from; shown inside Unique effects below the main grid and not counted as effects |
 
 Counts are not written here: the gallery and the film list count themselves from the catalogue and from `examples/films.json`.
 
@@ -43,7 +42,7 @@ Some similar-looking previews stay separate for a reason:
 
 ## Where each film lives
 
-Every published film has one layer. Use cases and demo films get cards in their own sections, comparisons have a section after the effects, and effect films play from their effect cards. Versions of a film (another ratio or brand from the same page) are linked from their parent's card. An effect film can also have a visible watch link above the gallery when its film entry sets `galleryShortcut`; this does not change its layer or add a second film. The full list on the site groups every film by layer and links each effect to the seconds where it appears.
+Every published film has one layer. Use cases and demo films get cards in their own sections, and effect films play from their effect cards. Versions of a film (another ratio or brand from the same page) are linked from their parent's card. The full list on the site groups every film by layer and links each effect to the seconds where it appears.
 
 <!-- films:guide:start -->
 | Film | Layer | Role | Placement |
@@ -64,31 +63,30 @@ Every published film has one layer. Use cases and demo films get cards in their 
 | Product spotlight | Use case | A code-drawn product drops in, gains three callouts, changes colourway and ends on price and call to action. | Card in Use cases |
 | Product spotlight (vertical) | Use case | Vertical version of Product spotlight, rendered from the same page. | Linked from the Product spotlight card |
 | Product spotlight (square) | Use case | Square version of Product spotlight, rendered from the same page. | Linked from the Product spotlight card |
+| Clear | Use case | A 15-second drinks advert: a drop crowns, rises into a glass bottle, dives underwater and surfaces as the brand. | Card in Use cases |
+| Clear (9:16) | Use case | The Clear drinks advert recomposed for 9:16 from the same page. | Linked from the Clear card |
+| Every Stroke Is Code | Demo film | Over 1,000 stroke-sliced Latin and CJK vectors swarm into a Bento mural, invert polarity from one expanding dot and loop seamlessly. | Card in Demo films |
+| Liquid Mercury Type | Demo film | A top-down studio raymarcher pours liquid mercury into Latin and CJK letterforms, settles with specular glints and melts cleanly back into the cyclorama. | Card in Demo films |
 | Spark / Form | Demo film | An ember traces a construction drawing, the camera enters its O, and the same word resolves as engraved three-dimensional lettering. | Card in Demo films |
 | The Final Final | Demo film | The plush bear asks for the launch video; Pip has made one small, dramatic improvement. Nine library effects play a part in the story. | Card in Demo films |
 | One flight. Twenty worlds. | Demo film | One character travels through twenty art directions. | Card in Demo films |
-| Clear | Demo film | A 15-second drinks advert: a drop crowns, rises into a glass bottle, dives underwater and surfaces as the brand. | Card in Demo films |
-| Clear (9:16) | Demo film | The Clear drinks advert recomposed for 9:16 from the same page. | Linked from the Clear card |
 | One dot. Many roles. | Demo film | One orange dot becomes a switch, a letter, a spring trace and a reveal before returning to the start. | Card in Demo films |
 | COUNTERFORM | Demo film | A complete fight with authored action and contact timing, and a 1.2 s freeze-orbit at the climax. | Card in Demo films |
-| Same fight. Eight treatments. | Comparison | Compare eight operations on the same choreography. | Card in Comparisons |
+| Same fight. Eight treatments. | Demo film | Compare eight operations on the same choreography. | Card in Demo films |
+| Inside the machine. | Demo film | A section plane opens closed housings while the detailed core keeps moving; real cap geometry preserves wall thickness. | Card in Demo films |
+| Apart. Together. | Demo film | A detailed turbofan opens into seven service assemblies and returns along their ordered paths. | Card in Demo films |
+| One block. A drawn city. | Demo film | Surface hatching, staged construction and camera travel in one scene. | Card in Demo films |
 | Find the Form | Effect film | An extended rendered example of volumetric smoke. | Effect card: Volumetric smoke around geometry |
 | Overflow | Effect film | Partly filled bowl → rising water → overflow → settling. | Effect card: Fluid flow and overflow |
 | Slow Gold | Effect film | Inspect liquid contact, stretching and drainage over a ring. | Effect card: Fluid flow and overflow |
-| One block. A drawn city. | Effect film | Surface hatching, staged construction and camera travel in one scene. | Effect card: Light-responsive surface hatching |
-| Optical effects | Effect film | A sampler of six optical effects; each segment plays inside its own effect card. | Effect cards: Holographic foil, Slit-scan typography, Moiré interference, Folding paper ribbon, Caustic light, Shape morphing |
-| Image distortion, collisions and particles | Effect film | Three unrelated operations with separate settings. | Effect cards: Image displacement, Rigid bodies with Matter.js, Orbital particles |
 | Pulse / Form | Effect film | Measured loudness pushes Milo’s portrait out into solid pins; silence is flat. | Effect card: Image relief |
 | Motion / Release | Effect film | Apricot shatters only where measured motion is fast and reassembles when she lands. | Effect card: Motion shatter and reassemble |
-| Say it. Mean it. | Effect film | The plush bear in close-up: three named expressions, a split-screen line and the nine mouth shapes. | Effect cards: Speech, expression and lip sync, Plush fur |
-| Apart. Together. | Effect film | A detailed turbofan opens into seven service assemblies and returns along their ordered paths. | Effect card: Exploded assembly and reassembly |
-| Inside the machine. | Effect film | A section plane opens closed housings while the detailed core keeps moving; real cap geometry preserves wall thickness. | Effect card: Solid longitudinal cutaway |
+| Say it. Mean it. | Effect film | The plush bear in close-up: three named expressions, a split-screen line and the nine mouth shapes. | Effect cards: Speech, expression and lip sync, Plush fur and soft-body physics |
 | One turn. Everything moves. | Effect film | A 20:40 gear pair drives a crank, rod, piston and tachometer from one analytic model. | Effect card: Geared slider-crank mechanism |
 | Pull. Warp. Return. | Effect film | A dot lattice pulls into an authored force field, recovers, then becomes a perspective wave floor. | Effect card: Force-field dot deformation |
 | Inside the letters. | Effect film | One glyph silhouette contains moving stripes, an authored liquid level and a two-tone boundary. | Effect card: Animated glyph interiors |
 | Near enough to connect. | Effect film | Distance changes which particles connect; pulses travel along the surviving links. | Effect card: Proximity particle connections |
 | A different kind of depth. | Effect film | The same flat word gains a long graphic shadow whose direction and length keep changing. | Effect card: Graphic long-shadow type |
-| Type. Flip. Flow. | Effect film | Split-flap letters, rolling reels, counter-moving bands, three spatial arrangements, grid choreography, LED type and temporal echoes. | Effect cards: 3D card flip grid, Counting number, Staggered letter animation, Type in three-dimensional space, Bauhaus tile rhythm, Image and footage halftone dots, Time echoes and speed ramps; watch link above Effects |
 <!-- films:guide:end -->
 
 The effect links on a film name the catalogue effects its source actually runs; `tools/films.cjs --check` finds each one in the film's code. Effects that only inspired a film are listed as related, not as effects.

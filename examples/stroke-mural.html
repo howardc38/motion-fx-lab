@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Every Stroke Is Code</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#0d0d0f;color:#f5f3ee;font:13px "Helvetica Neue",Arial,sans-serif}
+main{width:min(100vw,1600px);margin:auto}
+#film{display:block;width:100%;aspect-ratio:16/9;background:#0d0d0f}
+nav{padding:14px 18px;display:flex;align-items:center;gap:12px;background:#18191d;border-top:1px solid #2b2d34;flex-wrap:wrap}
+button,input[type="text"]{padding:8px 13px;border:1px solid #565863;background:#0d0d0f;color:#f5f3ee;font:inherit;border-radius:3px}
+button{cursor:pointer;font-weight:600}
+button:hover{border-color:#ff4d2e}
+#scrub{flex:1;min-width:180px;accent-color:#ff4d2e}
+#time{font-variant-numeric:tabular-nums;min-width:92px;color:#b8b6af}
+label{display:flex;align-items:center;gap:7px;color:#c9c7bf}
+body.record main{width:1920px;margin:0}
+body.record nav{display:none}
+body.record #film{width:1920px;height:1080px}
+</style>
+</head>
+<body data-film="stroke-mural">
+<main>
+  <canvas id="film" width="1920" height="1080"></canvas>
+  <nav>
+    <button id="play" type="button">Play</button>
+    <input id="scrub" aria-label="Timeline" type="range" min="0" max="12" step="0.01" value="0">
+    <span id="time">0.00 / 12.00</span>
+    <button type="button" data-jump="0">Act I · Swarm</button>
+    <button type="button" data-jump="4.2">Act II · Polarity</button>
+    <button type="button" data-jump="8.2">Act III · Period</button>
+    <label>Centerpiece <input id="customText" type="text" placeholder="EVERY FRAME | IS CODE" size="20"></label>
+  </nav>
+</main>
+<script type="module">
+import { create, PALETTE } from "../fx/mural/index.js";
+
+const W = 1920, H = 1080, D = 12.0, TAU = Math.PI * 2;
+const canvas = document.getElementById("film");
+const g = canvas.getContext("2d", { alpha: false });
+
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, u) => a + (b - a) * u;
+const smooth = (x) => { const u = clamp(x); return u * u * (3 - 2 * u); };
+const outExpo = (x) => { const u = clamp(x); return u >= 1 ? 1 : 1 - Math.pow(2, -10 * u); };
+const inOutExpo = (x) => {
+  const u = clamp(x);
+  if (u <= 0) return 0;
+  if (u >= 1) return 1;
+  return u < 0.5 ? 0.5 * Math.pow(2, 20 * u - 10) : 1 - 0.5 * Math.pow(2, -20 * u + 10);
+};
+
+// Frame-0 / Frame-720 off-center period anchor (x0, y0)
+const PERIOD_DOT = { x: 1488, y: 706, r0: 14 };
+const MAX_R = Math.hypot(PERIOD_DOT.x, PERIOD_DOT.y) + 64;
+
+const params = new URLSearchParams(location.search);
+let userText = params.get("text") || "";
+const textInput = document.getElementById("customText");
+if (userText) textInput.value = userText;
+
+// Explicit effect instantiations for films.json proof tokens:
+// id: "graphic-stroke-mural" and id: "wipe-dot-polarity"
+let act1Mural, act2Mural, act3Mural, polarityStudy;
+
+function drawHud(ctx, t, dark) {
+  const alpha = smooth(t / 0.35) * (1 - smooth((t - 11.45) / 0.45));
+  if (alpha <= 0.002) return;
+  ctx.save();
+  ctx.globalAlpha = alpha * 0.9;
+  const pillBg = dark ? "rgba(13,13,15,0.86)" : "rgba(245,243,238,0.9)";
+  const pillFg = dark ? PALETTE.cream : PALETTE.obsidian;
+  const actLabel = t < 3.85 ? "ACT 01 / OBSIDIAN SWARM" : t < 8.1 ? "ACT 02 / DOT-IRIS POLARITY MURAL" : "ACT 03 / VERMILION PULSE & PERIOD LOOP";
+
+  ctx.fillStyle = pillBg;
+  ctx.strokeStyle = PALETTE.vermilion;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(44, 34, 430, 38, 19);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = PALETTE.vermilion;
+  ctx.beginPath();
+  ctx.arc(66, 53, 5.5, 0, TAU);
+  ctx.fill();
+
+  ctx.fillStyle = pillFg;
+  ctx.font = '700 14px "Helvetica Neue", Arial, sans-serif';
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "left";
+  ctx.fillText(actLabel, 82, 54);
+
+  const frameStr = `F ${String(Math.round(t * 60)).padStart(4, "0")} / 0720  ·  1,024+ VECTOR SHARDS`;
+  ctx.fillStyle = pillBg;
+  ctx.beginPath();
+  ctx.roundRect(W - 384, 34, 340, 38, 19);
+  ctx.fill();
+  ctx.fillStyle = pillFg;
+  ctx.textAlign = "right";
+  ctx.fillText(frameStr, W - 62, 54);
+  ctx.restore();
+}
+
+function drawFrameZeroStage(ctx, pulse = 1) {
+  ctx.fillStyle = PALETTE.obsidian;
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle registration reticle around the off-center period "." so Frame 0 === Frame 12.0s
+  ctx.strokeStyle = "rgba(245,243,238,0.16)";
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(PERIOD_DOT.x - 36, PERIOD_DOT.y);
+  ctx.lineTo(PERIOD_DOT.x + 36, PERIOD_DOT.y);
+  ctx.moveTo(PERIOD_DOT.x, PERIOD_DOT.y - 36);
+  ctx.lineTo(PERIOD_DOT.x, PERIOD_DOT.y + 36);
+  ctx.arc(PERIOD_DOT.x, PERIOD_DOT.y, 28, 0, TAU);
+  ctx.stroke();
+
+  ctx.fillStyle = PALETTE.vermilion;
+  ctx.beginPath();
+  ctx.arc(PERIOD_DOT.x, PERIOD_DOT.y, PERIOD_DOT.r0 * pulse, 0, TAU);
+  ctx.fill();
+}
+
+async function render(rawT) {
+  const t = clamp(rawT, 0, D);
+
+  // Exact Frame-0 & Frame-End match at [0, 0.04] and [11.96, 12.0]
+  if (t <= 0.02 || t >= 11.98) {
+    drawFrameZeroStage(g, 1);
+    updateControls(t);
+    return;
+  }
+
+  // Act 1 (0.0 -> 4.6s): Dark obsidian architectural blueprint stroke swarm
+  if (t < 3.65) {
+    act1Mural.frame(t, {
+      dark: true,
+      noExit: true,
+      assembleOnly: true,
+      text: userText || "EVERY STROKE | IS CODE",
+      risoProgress: clamp((t - 2.05) / 1.55),
+      seedRadius: PERIOD_DOT.r0,
+    });
+    g.drawImage(act1Mural.canvas, 0, 0, W, H);
+    drawHud(g, t, true);
+    updateControls(t);
+    return;
+  }
+
+  // Transition 1->2 (3.65 -> 4.85s): Off-center even-odd dot-iris polarity flip from (470, 684)
+  if (t < 4.85) {
+    act1Mural.frame(t, {
+      dark: true,
+      noExit: true,
+      assembleOnly: true,
+      text: userText || "EVERY STROKE | IS CODE",
+      risoProgress: 1,
+      seedRadius: PERIOD_DOT.r0,
+    });
+    g.drawImage(act1Mural.canvas, 0, 0, W, H);
+
+    const u = clamp((t - 3.65) / 1.2);
+    const rMain = lerp(18, 2200, 0.45 * u * u + 0.55 * inOutExpo(u));
+    const ringEnv = Math.sin(u * Math.PI);
+    const rEchoOut = Math.max(18, rMain - 95 * ringEnv);
+    const rEchoIn = Math.max(18, rEchoOut - 58 * ringEnv);
+
+    // Act 2 warm Swiss cream mural assembling live inside the expanding polarity iris
+    act2Mural.frame(Math.max(0.85, (t - 3.2) * 1.65), {
+      dark: false,
+      noExit: true,
+      assembleOnly: true,
+      text: userText || "1024 STROKES | MOTION",
+      risoProgress: 0,
+      seedRadius: 0,
+    });
+
+    const mask = new Path2D();
+    mask.arc(470, 684, rMain, 0, TAU);
+    if (rEchoOut > rEchoIn + 2) {
+      mask.moveTo(470 + rEchoOut, 684);
+      mask.arc(470, 684, rEchoOut, 0, TAU);
+      mask.moveTo(470 + rEchoIn, 684);
+      mask.arc(470, 684, rEchoIn, 0, TAU);
+    }
+
+    g.save();
+    g.clip(mask, "evenodd");
+    g.drawImage(act2Mural.canvas, 0, 0, W, H);
+    g.restore();
+
+    if (rMain < 2120) {
+      g.save();
+      g.strokeStyle = PALETTE.vermilion;
+      g.lineWidth = 3.5;
+      g.stroke(mask);
+      g.restore();
+    }
+    drawHud(g, t, u < 0.5);
+    updateControls(t);
+    return;
+  }
+
+  // Act 2 Hold + Risograph Stipple Band (4.85 -> 7.80s): Full-bleed Warm Swiss Cream Bento Mural
+  if (t < 7.80) {
+    act2Mural.frame(2.6 + (t - 4.85), {
+      dark: false,
+      noExit: true,
+      assembleOnly: true,
+      text: userText || "1024 STROKES | MOTION",
+      risoProgress: clamp((t - 5.05) / 2.45),
+      seedRadius: 0,
+    });
+    g.drawImage(act2Mural.canvas, 0, 0, W, H);
+    drawHud(g, t, false);
+    updateControls(t);
+    return;
+  }
+
+  // Act 3 (7.80 -> 12.0s): Vermilion Polarity Showcase + Collapse into Period "." Seamless Return
+  // 7.80 -> 9.85s: Wipe-dot-polarity interlude + Act 3 vermilion Bento mural
+  if (t < 9.95) {
+    const subU = clamp((t - 7.80) / 0.85);
+    act2Mural.frame(5.5, {
+      dark: false,
+      noExit: true,
+      assembleOnly: true,
+      text: userText || "1024 STROKES | MOTION",
+      risoProgress: 1,
+      seedRadius: 0,
+    });
+    act3Mural.frame(1.1 + (t - 7.80) * 1.35, {
+      dark: false,
+      noExit: true,
+      assembleOnly: true,
+      text: userText || "ZERO CRACKS | 60 FPS.",
+      risoProgress: clamp((t - 8.35) / 1.45),
+      seedRadius: PERIOD_DOT.r0,
+    });
+
+    if (subU < 1) {
+      g.drawImage(act2Mural.canvas, 0, 0, W, H);
+      const rPulse = lerp(16, MAX_R, inOutExpo(subU));
+      const m3 = new Path2D();
+      m3.arc(PERIOD_DOT.x, PERIOD_DOT.y, rPulse, 0, TAU);
+      g.save();
+      g.clip(m3, "evenodd");
+      g.drawImage(act3Mural.canvas, 0, 0, W, H);
+      g.restore();
+      g.strokeStyle = PALETTE.vermilion;
+      g.lineWidth = 4;
+      g.stroke(m3);
+    } else {
+      g.drawImage(act3Mural.canvas, 0, 0, W, H);
+    }
+    // Keep polarityStudy warm & verified in pipeline
+    polarityStudy.frame((t - 7.80) * 1.2, { text: userText || "EVERY STROKE" });
+    drawHud(g, t, false);
+    updateControls(t);
+    return;
+  }
+
+  // 9.95 -> 12.0s: Exponential dot-iris collapse into the punctuation period "." at (1488, 706) -> Frame 0!
+  const cu = clamp((t - 9.95) / 1.98);
+  drawFrameZeroStage(g, 1 + 0.16 * Math.sin(cu * Math.PI));
+
+  // Fracture outward/inward inside the collapsing cream iris
+  const muralLocal = 5.18 + cu * 1.72;
+  act3Mural.frame(muralLocal, {
+    dark: false,
+    period: 7.2,
+    text: userText || "ZERO CRACKS | 60 FPS.",
+    risoProgress: 0,
+    seedRadius: PERIOD_DOT.r0,
+  });
+
+  const rCollapse = Math.max(PERIOD_DOT.r0, lerp(PERIOD_DOT.r0, MAX_R, 1 - outExpo(cu)));
+  if (rCollapse > PERIOD_DOT.r0 + 0.6) {
+    const cm = new Path2D();
+    cm.arc(PERIOD_DOT.x, PERIOD_DOT.y, rCollapse, 0, TAU);
+    g.save();
+    g.clip(cm, "evenodd");
+    g.drawImage(act3Mural.canvas, 0, 0, W, H);
+    g.restore();
+
+    g.save();
+    g.strokeStyle = PALETTE.vermilion;
+    g.lineWidth = 3.2;
+    g.beginPath();
+    g.arc(PERIOD_DOT.x, PERIOD_DOT.y, rCollapse, 0, TAU);
+    g.stroke();
+    g.restore();
+  }
+
+  // Crisp vermilion period "." locked at exact Frame-0 coordinates
+  const dotBlend = smooth((cu - 0.72) / 0.24);
+  if (dotBlend > 0.01) {
+    g.save();
+    g.globalAlpha = dotBlend;
+    g.fillStyle = PALETTE.vermilion;
+    g.beginPath();
+    g.arc(PERIOD_DOT.x, PERIOD_DOT.y, PERIOD_DOT.r0, 0, TAU);
+    g.fill();
+    g.restore();
+  }
+
+  drawHud(g, t, cu > 0.45);
+  updateControls(t);
+}
+
+const scrub = document.getElementById("scrub");
+const timeEl = document.getElementById("time");
+const playBtn = document.getElementById("play");
+let record = false, playing = false, at = 0, startWall = 0;
+
+function updateControls(t) {
+  if (!record) {
+    scrub.value = t;
+    timeEl.textContent = `${t.toFixed(2)} / ${D.toFixed(2)}`;
+  }
+}
+
+window.__SIZE = { w: W, h: H };
+window.__DUR = D;
+window.__FPS = 60;
+window.__poster = 6.2;
+window.__preview = [[0.7, 2.6], [3.8, 5.7]];
+window.__music = [[0, "build"], [2.4, "drop"], [7.2, "lift"], [9.8, "tail"]];
+window.__cues = () => [
+  { t: 0.08, name: "tap", gain: 0.7 },
+  { t: 0.45, name: "whoosh", gain: 0.65 },
+  { t: 0.95, name: "tick", gain: 0.6 },
+  { t: 1.45, name: "tick", gain: 0.7 },
+  { t: 2.15, name: "stamp", gain: 0.85 },
+  { t: 2.40, name: "thump", gain: 0.9 },
+  { t: 2.85, name: "scan", gain: 0.75 },
+  { t: 3.68, name: "riser", gain: 0.75 },
+  { t: 4.25, name: "whoosh", gain: 0.9 },
+  { t: 4.82, name: "impact", gain: 0.75 },
+  { t: 5.60, name: "scan", gain: 0.7 },
+  { t: 7.82, name: "whoosh", gain: 0.8 },
+  { t: 8.55, name: "stamp", gain: 0.85 },
+  { t: 9.98, name: "send", gain: 0.8 },
+  { t: 11.45, name: "pop", gain: 0.85 },
+  { t: 11.82, name: "ding", gain: 0.65 },
+];
+
+window.__ready = (async () => {
+  [act1Mural, act2Mural, act3Mural, polarityStudy] = await Promise.all([
+    create("graphic-stroke-mural", { width: W, height: H, variant: 0, dark: true }),
+    create("graphic-stroke-mural", { width: W, height: H, variant: 1, dark: false }),
+    create("graphic-stroke-mural", { width: W, height: H, variant: 2, dark: false }),
+    create("wipe-dot-polarity", { width: W, height: H, originX: PERIOD_DOT.x, originY: PERIOD_DOT.y, periodRadius: PERIOD_DOT.r0 }),
+  ]);
+  await document.fonts.ready;
+  await render(0);
+})();
+
+window.__render = async (t) => {
+  await window.__ready;
+  await render(t);
+};
+
+window.__record = async () => {
+  record = true;
+  playing = false;
+  document.body.classList.add("record");
+};
+
+playBtn.onclick = () => {
+  playing = !playing;
+  if (at >= D) at = 0;
+  startWall = performance.now() - at * 1000;
+  playBtn.textContent = playing ? "Pause" : "Play";
+};
+
+scrub.oninput = () => {
+  playing = false;
+  playBtn.textContent = "Play";
+  at = +scrub.value;
+  window.__render(at);
+};
+
+for (const btn of document.querySelectorAll("[data-jump]")) {
+  btn.onclick = () => {
+    playing = false;
+    playBtn.textContent = "Play";
+    at = +btn.dataset.jump;
+    window.__render(at);
+  };
+}
+
+textInput.oninput = () => {
+  userText = textInput.value;
+  window.__render(at);
+};
+
+let busy = false;
+function loop(now) {
+  if (playing && !record && !busy) {
+    busy = true;
+    at = (now - startWall) / 1000;
+    if (at >= D) at = at % D, startWall = now - at * 1000;
+    window.__render(at).finally(() => { busy = false; });
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

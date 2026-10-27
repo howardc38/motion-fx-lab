@@ -471,110 +471,193 @@ export function flyer(id, t, scale = 1) {
   g.save();
   if (scale !== 1) g.scale(scale, scale);
   g.translate(153, 90);
-  g.rotate(Math.sin(t * 1.6) * 0.025);
+  const bob = Math.sin(t * 2.4) * 2.5;
+  g.translate(0, bob);
+  g.rotate(Math.sin(t * 1.6) * 0.028);
   const outline = th.mode === "outline" || th.mode === "neon",
+    isSil = th.mode === "silhouette",
     ink = th.ink,
-    body = th.mode === "silhouette" ? ink : id === 16 ? "#355238" : "#2b6982",
-    cape = th.mode === "silhouette" ? (id === 18 ? th.accent : ink) : th.accent;
+    body = isSil ? ink : id === 16 ? "#355238" : "#245f78",
+    darkBody = isSil ? ink : id === 16 ? "#233926" : "#173e50",
+    visorCol = isSil ? th.bg : id === 16 ? "#d8f0c8" : "#fff6df",
+    cape = isSil ? (id === 18 ? th.accent : ink) : th.accent;
   if (th.mode === "neon") {
     g.shadowColor = th.accent;
     g.shadowBlur = S(10);
   }
   const shape = (pts, co) =>
     poly(g, pts, outline ? null : co, outline ? ink : "#15272d");
-  g.lineWidth = outline ? 2.5 : 1.2;
+  g.lineWidth = outline ? 2.4 : 1.25;
+
+  // 1. Billowing swallowtail cape streaming behind shoulders (spans to x ≈ -125 for portal seams)
   const cap = [];
-  for (let i = 0; i <= 20; i++) {
-    const u = i / 20;
-    cap.push([25 - u * 146, -24 + u * 10 + Math.sin(t * 4 - u * 7) * u * 16]);
-  }
-  for (let i = 20; i >= 0; i--) {
-    const u = i / 20;
+  for (let i = 0; i <= 16; i++) {
+    const u = i / 16;
     cap.push([
-      25 - u * 146,
-      22 + u * 18 + Math.sin(t * 4 - u * 7 + 1) * u * 17,
+      42 - u * 167,
+      -21 - u * 6 + Math.sin(t * 4.2 - u * 6.2) * u * 13,
+    ]);
+  }
+  // Swallowtail notch at trailing edge
+  const wEnd = Math.sin(t * 4.2 - 6.2) * 13;
+  cap.push([-96, -2 + wEnd * 0.85]);
+  for (let i = 16; i >= 0; i--) {
+    const u = i / 16;
+    cap.push([
+      34 - u * 150,
+      -2 + u * 22 + Math.sin(t * 4.2 - u * 6.2 + 0.9) * u * 14,
     ]);
   }
   shape(cap, cape);
+
+  // 2. Dorsal jetpack pod & warm thruster wake behind back
+  if (!isSil) {
+    shape(
+      [
+        [-8, 2],
+        [-48, 15 + Math.sin(t * 14) * 2.5],
+        [-34, 6],
+        [-56, 8 + Math.cos(t * 12) * 2],
+        [-12, -5],
+      ],
+      cape,
+    );
+  }
   shape(
     [
-      [-24, 1],
-      [-105, 28],
-      [-124, 27],
-      [-119, 36],
-      [-100, 37],
-      [-15, 23],
+      [28, -22],
+      [-6, -9],
+      [-12, 2],
+      [22, -10],
+    ],
+    darkBody,
+  );
+
+  // 3. Staggered aerodynamic flight legs (swept back along ~22° climb angle)
+  // Far leg (higher/further back for clear silhouette separation)
+  shape(
+    [
+      [-8, 8],
+      [-48, 20],
+      [-90, 31],
+      [-104, 41],
+      [-94, 45],
+      [-84, 39],
+      [-42, 30],
+      [-2, 18],
+    ],
+    darkBody,
+  );
+  // Near leg (sculpted thigh, slight knee bend, tapered shin & crisp boot)
+  shape(
+    [
+      [2, 12],
+      [-30, 34],
+      [-70, 50],
+      [-85, 60],
+      [-74, 65],
+      [-62, 57],
+      [-22, 43],
+      [14, 21],
     ],
     body,
   );
+
+  // 4. Streamlined V-tapered star-pilot torso banking at ~22°
   shape(
     [
-      [-21, 7],
-      [-97, 3],
-      [-119, -1],
-      [-127, 8],
-      [-103, 15],
-      [-8, 28],
+      [-10, 9],
+      [34, -18],
+      [51, -13],
+      [46, 5],
+      [8, 23],
     ],
     body,
   );
+  if (!outline && !isSil) {
+    // High-contrast diagonal flight harness / chest chevron
+    poly(
+      g,
+      [
+        [18, -8],
+        [44, -15],
+        [47, -4],
+        [20, 4],
+      ],
+      cape,
+      null,
+    );
+  }
+
+  // 5. Swept-back pilot arm along lower flank (NEVER in front of face!)
   shape(
     [
-      [-30, -13],
-      [25, -25],
-      [48, -14],
-      [36, 20],
-      [-17, 29],
+      [36, -4],
+      [12, 18],
+      [-18, 26],
+      [-26, 22],
+      [-22, 15],
+      [6, 9],
+      [26, -10],
     ],
-    body,
+    darkBody,
   );
+  if (!outline && !isSil) {
+    // Gloved gauntlet cuff
+    poly(
+      g,
+      [
+        [-8, 14],
+        [-22, 16],
+        [-24, 24],
+        [-10, 23],
+      ],
+      cape,
+      null,
+    );
+  }
+
+  // 6. Leading rounded star-pilot helmet + crisp wrap-around visor (nothing ahead of helmet!)
+  // Neck bridge
   shape(
     [
-      [18, -20],
-      [64, -26],
-      [102, -30],
-      [126, -25],
-      [126, -17],
-      [106, -16],
-      [65, -12],
-      [34, -4],
+      [44, -15],
+      [57, -21],
+      [59, -11],
+      [45, -5],
     ],
-    body,
-  );
-  shape(
-    [
-      [9, 0],
-      [39, 17],
-      [69, 14],
-      [74, 24],
-      [34, 33],
-      [-1, 18],
-    ],
-    body,
+    darkBody,
   );
   circle(
     g,
-    49,
-    -14,
-    14,
-    outline ? null : th.mode === "silhouette" ? ink : "#f1c79b",
-    ink,
+    68,
+    -22,
+    16.5,
+    outline ? null : isSil ? ink : body,
+    outline ? ink : "#15272d",
   );
+  // Aerodynamic helmet crest fin hugging the crown (swept back, never forward)
   shape(
     [
-      [36, -25],
-      [45, -32],
-      [58, -27],
-      [63, -20],
-      [47, -23],
+      [50, -31],
+      [65, -40],
+      [78, -35],
+      [68, -29],
     ],
-    ink,
+    cape,
   );
-  if (!outline && th.mode !== "silhouette") {
-    g.fillStyle = th.bg;
-    g.fillRect(53, -17, 6, 2);
-    word(g, "F", 10, 9, 16, th.bg);
-  }
+  // Contrasting wrap-around pilot visor slit on leading brow
+  poly(
+    g,
+    [
+      [66, -28],
+      [85, -25],
+      [84, -16],
+      [68, -18],
+    ],
+    outline ? null : visorCol,
+    outline ? ink : isSil ? null : "#15272d",
+  );
   g.restore();
   g.shadowBlur = 0;
   if (

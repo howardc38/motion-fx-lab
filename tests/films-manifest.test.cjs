@@ -104,7 +104,7 @@ test('the checker rejects broken structure and broken film rules', () => {
     [m => { m.films[1].effects.push({ id: 'no-such-effect' }); }, /not in the effect catalogue/],
     [m => { const f = m.films[1]; (f.related ||= []).push({ id: f.effects[0].id }); }, /in both effects and related/],
     [m => { const f = m.films[1]; f.effects[0].at = [0, f.duration + 1]; }, /outside 0/],
-    [m => { const f = m.films.find(x => x.layer === 'effect-film' && x.effects.length > 1); delete f.effects[0].at; }, /sampler/],
+    [m => { const f = m.films.find(x => x.layer === 'effect-film'); f.effects = [{ id: f.effects[0].id }, { id: 'whip', at: [0, 2], proof: [f.page, 'html'] }]; }, /multi-effect film/],
     [m => { m.films[1].mergeInto = 'no-such-film'; }, /cannot merge into/],
     [m => { m.films[1].page = 'examples/no-such-page.html'; }, /missing or outside file/],
     [m => { m.films[1].media.gif = 'media/no-such.gif'; }, /missing or outside file|media\/ differs/],
@@ -144,25 +144,13 @@ test('generated blocks are current and cover every film', () => {
   for (const f of manifest.films.filter(x => x.tier === 'featured')) assert.ok(cards.includes(`data-film-id="${f.id}"`), f.id);
 });
 
-test('gallery shortcuts use film metadata and do not change a film into another card', () => {
-  const m=copy(manifest),f=film(m,'graphic-extensions');
-  assert.equal(f.galleryShortcut,true);
-  const html=tool.render.galleryShortcuts(m);
-  assert.match(html,/Watch all 7 motion variations/);
-  assert.ok(html.includes('href="'+f.media.mp4+'"'));
-  assert.ok(html.includes(f.title+' · '+f.duration+' s · with sound'));
-  assert.ok(!html.includes('<figure'));
-  f.title='Renamed sampler';f.duration=27.5;f.media.mp4='media/renamed.mp4';
-  const updated=tool.render.galleryShortcuts(m);
-  assert.ok(updated.includes('Renamed sampler · 27.5 s'));
-  assert.ok(updated.includes('href="media/renamed.mp4"'));
-  assert.ok(!updated.includes('Type. Flip. Flow.'));
-  f.galleryShortcut=false;assert.equal(tool.render.galleryShortcuts(m),'');
-  assert.match(errorsAfter(m=>{film(m,'reel').galleryShortcut=true}),/galleryShortcut is only for an in-card effect film/);
+test('retired sampler shortcuts and comparison layer are rejected by schema', () => {
+  assert.match(errorsAfter(m => { m.films[1].galleryShortcut = true; }), /unknown field galleryShortcut/);
+  assert.match(errorsAfter(m => { m.films[1].layer = 'comparison'; }), /is not one of/);
 });
 
 test('every film is reachable from its layer: the hero, a card, a version link on a card, or an effect card', () => {
-  const cards = tool.render.cards(manifest, 'use-case') + tool.render.cards(manifest, 'demo') + tool.render.cards(manifest, 'demo', undefined, 'listed') + tool.render.cards(manifest, 'comparison', undefined, 'listed');
+  const cards = tool.render.cards(manifest, 'use-case') + tool.render.cards(manifest, 'demo') + tool.render.cards(manifest, 'demo', undefined, 'listed');
   for (const f of manifest.films) {
     if (f.tier === 'hero') assert.match(tool.render.hero(manifest), new RegExp(`data-film-id="${f.id}"`));
     else if (f.tier === 'in-card') assert.equal(f.layer, 'effect-film', f.id);

@@ -1,6 +1,6 @@
 # Film effect settings
 
-PixiJS, Rapier and WebGPU/TSL power three film demonstrations in the gallery's **71 effect families**. The PixiJS poster is a variation of Image displacement; the domino chain and orbital particles have their own family cards.
+PixiJS, Rapier and WebGPU/TSL power three film demonstrations in the effect gallery. The PixiJS poster is a variation of Image displacement; the domino chain and orbital particles have their own standalone cards.
 Use this page to preview parameters and scrub the timeline. Their production
 implementations live in `fx/stacks/` and all expose an asynchronous `frame(t)`.
 The frame recorder awaits completion before capturing each frame.
