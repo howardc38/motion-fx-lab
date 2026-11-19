@@ -64,6 +64,10 @@ Every published film has one layer. Use cases and demo films get cards in their 
 | Product spotlight (square) | Use case | Square version of Product spotlight, rendered from the same page. | Linked from the Product spotlight card |
 | Clear | Use case | A 15-second drinks advert: a drop crowns, rises into a glass bottle, dives underwater and surfaces as the brand. | Card in Use cases |
 | Clear (9:16) | Use case | The Clear drinks advert recomposed for 9:16 from the same page. | Linked from the Clear card |
+| Crystal & Liquid Glass | Demo film | Voronoi 3D glass shards shatter and reassemble over a headline, transition into optical refracting Liquid Glass UI widgets and finish in a periodic aurora shader. | Card in Demo films |
+| Portal to Production | Demo film | Fly through eighteen nested wireframe portals into a machined 3D extruded code slab, then glide across linked desktop, tablet and smartphone workspaces. | Card in Demo films |
+| Peel. Draw. Dissolve. | Demo film | A vector pen pulls Bézier handles and sculpts an enamel mark, a corner sticker peels back, botanical foliage parts into sunlight and particles disperse cleanly. | Card in Demo films |
+| Signal in the Numbers | Demo film | Staggered shutter bands and a split-slot verb reel open onto a broadsheet dual-axis chart, an illuminated decision tree and spring-tracked viewfinder brackets. | Card in Demo films |
 | Every Stroke Is Code | Demo film | Over 1,000 stroke-sliced Latin and CJK vectors swarm into a Bento mural, invert polarity from one expanding dot and loop seamlessly. | Card in Demo films |
 | Liquid Mercury Type | Demo film | A top-down studio raymarcher pours liquid mercury into Latin and CJK letterforms, settles with specular glints and melts cleanly back into the cyclorama. | Card in Demo films |
 | The Final Final | Demo film | The plush bear asks for the launch video; Pip has made one small, dramatic improvement. Nine library effects play a part in the story. | Card in Demo films |
@@ -86,6 +90,7 @@ Every published film has one layer. Use cases and demo films get cards in their 
 | Inside the letters. | Effect film | One glyph silhouette contains moving stripes, an authored liquid level and a two-tone boundary. | Effect card: Animated glyph interiors |
 | Near enough to connect. | Effect film | Distance changes which particles connect; pulses travel along the surviving links. | Effect card: Proximity particle connections |
 | A different kind of depth. | Effect film | The same flat word gains a long graphic shadow whose direction and length keep changing. | Effect card: Graphic long-shadow type |
+| Four Shader Worlds | Effect film | Four periodic WebGL1 procedural worlds cycle smoothly from polar aurora curtains to prismatic Voronoi frost, nebula plasma and gold-veined obsidian marble. | Effect card: Procedural optical shader worlds |
 <!-- films:guide:end -->
 
 The effect links on a film name the catalogue effects its source actually runs; `tools/films.cjs --check` finds each one in the film's code. Effects that only inspired a film are listed as related, not as effects.

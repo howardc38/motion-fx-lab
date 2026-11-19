@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portal to Production</title>
+<link rel="icon" href="data:,">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#060811;color:#f4f6fb;font:13px "Archivo","Helvetica Neue",Arial,sans-serif}
+main{width:min(100vw,1600px);margin:auto;position:relative}
+#stage{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:#060811}
+#film{display:block;width:100%;height:100%}
+#hud{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:28px 38px}
+.hud-row{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.pill{background:rgba(8,12,24,0.74);backdrop-filter:blur(8px);color:#e2e8f0;padding:7px 16px;border-radius:999px;font:700 12px/1.2 "JetBrains Mono",monospace;letter-spacing:0.06em;border:1px solid rgba(125,211,252,0.22);font-variant-numeric:tabular-nums}
+nav{padding:14px 18px;display:flex;align-items:center;gap:12px;background:#0e1324;border-top:1px solid #1e293b;flex-wrap:wrap}
+button,input[type="text"]{padding:8px 13px;border:1px solid #334155;background:#070a14;color:#f1f5f9;font:inherit;border-radius:4px}
+button{cursor:pointer;font-weight:700}
+#scrub{flex:1;min-width:180px;accent-color:#38bdf8}
+#time{font-variant-numeric:tabular-nums;min-width:92px;color:#94a3b8}
+body.record main{width:1920px;margin:0}
+body.record nav{display:none}
+body.record #stage,body.record #film{width:1920px;height:1080px}
+</style>
+</head>
+<body data-film="spatial-code-stage">
+<main>
+  <div id="stage">
+    <canvas id="film" width="1920" height="1080"></canvas>
+    <div id="hud">
+      <div class="hud-row">
+        <span class="pill" id="hudAct">ACT 01 · 3D WIREFRAME PORTAL</span>
+        <span class="pill">THREE.JS SPATIAL STAGE · 60 FPS</span>
+      </div>
+      <div class="hud-row">
+        <span class="pill" id="hudEffect">wireframe-portal</span>
+        <span class="pill" id="hudFrame">F 0000 / 0720</span>
+      </div>
+    </div>
+  </div>
+  <nav>
+    <button id="play" type="button">Play</button>
+    <input id="scrub" aria-label="Timeline" type="range" min="0" max="12" step="0.01" value="0">
+    <span id="time">0.00 / 12.00</span>
+    <label>Title (?text=) <input id="customText" type="text" placeholder="PORTAL" size="16"></label>
+  </nav>
+</main>
+<script type="module">
+import { create } from "../fx/spatial/index.js";
+
+const W = 1920, H = 1080, D = 12.0;
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const smooth = (a, b, x) => { const u = clamp((x - a) / (b - a)); return u * u * (3 - 2 * u); };
+
+const canvas = document.getElementById("film");
+const g = canvas.getContext("2d");
+const hud = document.getElementById("hud");
+const hudAct = document.getElementById("hudAct");
+const hudEffect = document.getElementById("hudEffect");
+const hudFrame = document.getElementById("hudFrame");
+const scrub = document.getElementById("scrub");
+const timeEl = document.getElementById("time");
+const playBtn = document.getElementById("play");
+const customInput = document.getElementById("customText");
+
+const params = new URLSearchParams(location.search);
+let customOverride = params.get("text") || "";
+if (customOverride) customInput.value = customOverride;
+
+let portal, codeSlab, devices;
+let record = false, playing = false, at = 0, startWall = 0;
+
+function crossDissolve(aCanvas, bCanvas, k) {
+  g.clearRect(0, 0, W, H);
+  g.globalAlpha = 1;
+  g.drawImage(aCanvas, 0, 0, W, H);
+  g.globalAlpha = k;
+  g.drawImage(bCanvas, 0, 0, W, H);
+  g.globalAlpha = 1;
+}
+
+async function render(rawT) {
+  const t = clamp(rawT, 0, D);
+  const label = customOverride.trim();
+
+  // Act 1 (0.0 - 3.8s): 3D wireframe portal title
+  // Act 2 (3.8 - 7.8s): 3D extruded syntax code slab
+  // Act 3 (7.8 - 12.0s): 3D multi-device UI flythrough
+  if (t < 3.55) {
+    portal.frame(t * 1.15 + 0.5, { text: label || "PORTAL" });
+    g.drawImage(portal.canvas, 0, 0, W, H);
+    hudAct.textContent = "ACT 01 · 3D WIREFRAME PORTAL";
+    hudEffect.textContent = "id: wireframe-portal";
+  } else if (t < 4.05) {
+    portal.frame(t * 1.15 + 0.5, { text: label || "PORTAL" });
+    codeSlab.frame(t - 3.55 + 1.2, { text: label || "renderFrame" });
+    crossDissolve(portal.canvas, codeSlab.canvas, smooth(3.55, 4.05, t));
+    hudAct.textContent = "ACT 02 · 3D EXTRUDED SYNTAX CODE SLAB";
+    hudEffect.textContent = "id: code-3d-extrude";
+  } else if (t < 7.55) {
+    codeSlab.frame(t - 3.55 + 1.2, { text: label || "renderFrame" });
+    g.drawImage(codeSlab.canvas, 0, 0, W, H);
+    hudAct.textContent = "ACT 02 · 3D EXTRUDED SYNTAX CODE SLAB";
+    hudEffect.textContent = "id: code-3d-extrude";
+  } else if (t < 8.05) {
+    codeSlab.frame(t - 3.55 + 1.2, { text: label || "renderFrame" });
+    devices.frame((t - 7.55) * 1.25 + 0.4, { text: label || "STUDIO" });
+    crossDissolve(codeSlab.canvas, devices.canvas, smooth(7.55, 8.05, t));
+    hudAct.textContent = "ACT 03 · 3D MULTI-DEVICE FLYTHROUGH";
+    hudEffect.textContent = "id: device-flythrough";
+  } else {
+    devices.frame((t - 7.55) * 1.25 + 0.4, { text: label || "STUDIO" });
+    g.drawImage(devices.canvas, 0, 0, W, H);
+    hudAct.textContent = "ACT 03 · 3D MULTI-DEVICE FLYTHROUGH";
+    hudEffect.textContent = "id: device-flythrough";
+  }
+
+  const hudAlpha = smooth(0.15, 0.45, t) * (1 - smooth(11.45, 11.9, t));
+  hud.style.opacity = hudAlpha.toFixed(3);
+  hudFrame.textContent = `F ${String(Math.round(t * 60)).padStart(4, "0")} / 0720`;
+  if (!record) {
+    scrub.value = t;
+    timeEl.textContent = `${t.toFixed(2)} / ${D.toFixed(2)}`;
+  }
+}
+
+window.__SIZE = { w: W, h: H };
+window.__DUR = D;
+window.__FPS = 60;
+window.__poster = 5.45;
+window.__preview = [[1.0, 2.6], [4.7, 6.4], [8.8, 10.6]];
+window.__music = [[0, "build"], [2.4, "drop"], [7.2, "lift"], [9.6, "final"], [11.0, "tail"]];
+window.__cues = () => [
+  { t: 0.15, name: "riser", gain: 0.65 },
+  { t: 1.2, name: "ping", gain: 0.7 },
+  { t: 2.4, name: "thump", gain: 0.78 },
+  { t: 3.65, name: "whoosh", gain: 0.76 },
+  { t: 4.5, name: "type", gain: 0.7 },
+  { t: 5.8, name: "scan", gain: 0.74 },
+  { t: 7.65, name: "whoosh", gain: 0.8 },
+  { t: 8.9, name: "pop", gain: 0.72 },
+  { t: 10.2, name: "chime", gain: 0.75 },
+  { t: 11.3, name: "ding", gain: 0.65 },
+];
+
+window.__ready = (async () => {
+  [portal, codeSlab, devices] = await Promise.all([
+    create("wireframe-portal", { width: W, height: H }),
+    create("code-3d-extrude", { width: W, height: H }),
+    create("device-flythrough", { width: W, height: H }),
+  ]);
+  await document.fonts.ready;
+  await render(0);
+})();
+
+window.__render = async (t) => { await window.__ready; await render(t); };
+window.__record = async () => { record = true; playing = false; document.body.classList.add("record"); };
+
+playBtn.onclick = () => {
+  playing = !playing;
+  if (at >= D) at = 0;
+  startWall = performance.now() - at * 1000;
+  playBtn.textContent = playing ? "Pause" : "Play";
+};
+scrub.oninput = () => { playing = false; playBtn.textContent = "Play"; at = +scrub.value; window.__render(at); };
+customInput.oninput = () => { customOverride = customInput.value; window.__render(at); };
+
+let busy = false;
+function loop(now) {
+  if (playing && !record && !busy) {
+    busy = true;
+    at = (now - startWall) / 1000;
+    if (at >= D) { at = at % D; startWall = now - at * 1000; }
+    window.__render(at).finally(() => { busy = false; });
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

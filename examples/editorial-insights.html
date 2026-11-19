@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Signal in the Numbers</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#101218;color:#f4f3ee;font:13px "Archivo","Helvetica Neue",Arial,sans-serif}
+main{width:min(100vw,1600px);margin:auto;position:relative}
+#stage{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:#0e0e12}
+#film{display:block;width:100%;height:100%}
+#hud{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:28px 38px}
+.hud-row{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.pill{background:rgba(14,16,24,0.78);backdrop-filter:blur(8px);color:#f8fafc;padding:7px 16px;border-radius:999px;font:700 12px/1.2 "JetBrains Mono",monospace;letter-spacing:0.06em;border:1px solid rgba(255,255,255,0.16);font-variant-numeric:tabular-nums}
+nav{padding:14px 18px;display:flex;align-items:center;gap:12px;background:#181b24;border-top:1px solid #2b3142;flex-wrap:wrap}
+button,input[type="text"]{padding:8px 13px;border:1px solid #3f485e;background:#0d0f15;color:#f4f3ee;font:inherit;border-radius:4px}
+button{cursor:pointer;font-weight:700}
+#scrub{flex:1;min-width:180px;accent-color:#ff4d2e}
+#time{font-variant-numeric:tabular-nums;min-width:92px;color:#94a3b8}
+body.record main{width:1920px;margin:0}
+body.record nav{display:none}
+body.record #stage,body.record #film{width:1920px;height:1080px}
+</style>
+</head>
+<body data-film="editorial-insights">
+<main>
+  <div id="stage">
+    <canvas id="film" width="1920" height="1080"></canvas>
+    <div id="hud">
+      <div class="hud-row">
+        <span class="pill" id="hudAct">ACT 01 · SHUTTER BAND OPENER</span>
+        <span class="pill">EDITORIAL DATA &amp; KINETIC TYPE · 60 FPS</span>
+      </div>
+      <div class="hud-row">
+        <span class="pill" id="hudEffect">kinetic-shutter</span>
+        <span class="pill" id="hudFrame">F 0000 / 0720</span>
+      </div>
+    </div>
+  </div>
+  <nav>
+    <button id="play" type="button">Play</button>
+    <input id="scrub" aria-label="Timeline" type="range" min="0" max="12" step="0.01" value="0">
+    <span id="time">0.00 / 12.00</span>
+    <label>Headline (?text=) <input id="customText" type="text" placeholder="SIGNAL" size="16"></label>
+  </nav>
+</main>
+<script type="module">
+import { create as createTactile } from "../fx/tactile/index.js";
+import { create as createEd } from "../fx/editorial-data/index.js";
+
+const W = 1920, H = 1080, D = 12.0;
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const smooth = (a, b, x) => { const u = clamp((x - a) / (b - a)); return u * u * (3 - 2 * u); };
+
+const canvas = document.getElementById("film");
+const g = canvas.getContext("2d");
+const hud = document.getElementById("hud");
+const hudAct = document.getElementById("hudAct");
+const hudEffect = document.getElementById("hudEffect");
+const hudFrame = document.getElementById("hudFrame");
+const scrub = document.getElementById("scrub");
+const timeEl = document.getElementById("time");
+const playBtn = document.getElementById("play");
+const customInput = document.getElementById("customText");
+
+const params = new URLSearchParams(location.search);
+let customOverride = params.get("text") || "";
+if (customOverride) customInput.value = customOverride;
+
+let shutter, slotType, chart, tree, brackets;
+let record = false, playing = false, at = 0, startWall = 0;
+
+function slideBlend(a, b, k) {
+  g.clearRect(0, 0, W, H);
+  const shift = k * W;
+  g.drawImage(a, -shift * 0.3, 0, W, H);
+  g.drawImage(b, W - shift, 0, W, H);
+}
+
+async function render(rawT) {
+  const t = clamp(rawT, 0, D);
+  const label = customOverride.trim();
+
+  // Act 1 (0.0 - 2.4s): Kinetic shutter colour bands
+  // Act 2 (2.4 - 4.8s): Split-slot verb reel typography
+  // Act 3 (4.8 - 7.8s): Editorial NYT dual-axis chart
+  // Act 4 (7.8 - 10.0s): Animated branching decision tree
+  // Act 5 (10.0 - 12.0s): Corner viewfinder brackets tracking lock
+  if (t < 2.2) {
+    shutter.frame(t * 1.15, { text: label });
+    g.drawImage(shutter.canvas, 0, 0, W, H);
+    hudAct.textContent = "ACT 01 · KINETIC SHUTTER BANDS";
+    hudEffect.textContent = "id: kinetic-shutter";
+  } else if (t < 2.55) {
+    shutter.frame(t * 1.15, { text: label });
+    slotType.frame((t - 2.2) * 1.55 + 0.45, { text: label || "SCALE" });
+    slideBlend(shutter.canvas, slotType.canvas, smooth(2.2, 2.55, t));
+    hudAct.textContent = "ACT 02 · SPLIT-SLOT TYPE REEL";
+    hudEffect.textContent = "id: split-slot-type";
+  } else if (t < 4.65) {
+    slotType.frame((t - 2.2) * 1.55 + 0.45, { text: label || "SCALE" });
+    g.drawImage(slotType.canvas, 0, 0, W, H);
+    hudAct.textContent = "ACT 02 · SPLIT-SLOT TYPE REEL";
+    hudEffect.textContent = "id: split-slot-type";
+  } else if (t < 5.0) {
+    slotType.frame((t - 2.2) * 1.55 + 0.45, { text: label || "SCALE" });
+    chart.frame((t - 4.65) * 1.35 + 0.25, { text: label });
+    slideBlend(slotType.canvas, chart.canvas, smooth(4.65, 5.0, t));
+    hudAct.textContent = "ACT 03 · EDITORIAL DUAL-AXIS CHART";
+    hudEffect.textContent = "id: nyt-dual-chart";
+  } else if (t < 7.65) {
+    chart.frame((t - 4.65) * 1.35 + 0.25, { text: label });
+    g.drawImage(chart.canvas, 0, 0, W, H);
+    hudAct.textContent = "ACT 03 · EDITORIAL DUAL-AXIS CHART";
+    hudEffect.textContent = "id: nyt-dual-chart";
+  } else if (t < 8.0) {
+    chart.frame((t - 4.65) * 1.35 + 0.25, { text: label });
+    tree.frame((t - 7.65) * 1.65 + 0.2, { text: label });
+    slideBlend(chart.canvas, tree.canvas, smooth(7.65, 8.0, t));
+    hudAct.textContent = "ACT 04 · BRANCHING DECISION TREE";
+    hudEffect.textContent = "id: decision-tree";
+  } else if (t < 9.85) {
+    tree.frame((t - 7.65) * 1.65 + 0.2, { text: label });
+    g.drawImage(tree.canvas, 0, 0, W, H);
+    hudAct.textContent = "ACT 04 · BRANCHING DECISION TREE";
+    hudEffect.textContent = "id: decision-tree";
+  } else if (t < 10.15) {
+    tree.frame((t - 7.65) * 1.65 + 0.2, { text: label });
+    brackets.frame((t - 9.85) * 2.2 + 0.3, { text: label });
+    slideBlend(tree.canvas, brackets.canvas, smooth(9.85, 10.15, t));
+    hudAct.textContent = "ACT 05 · CORNER VIEWFINDER BRACKETS";
+    hudEffect.textContent = "id: corner-brackets";
+  } else {
+    brackets.frame((t - 9.85) * 2.2 + 0.3, { text: label });
+    g.drawImage(brackets.canvas, 0, 0, W, H);
+    hudAct.textContent = "ACT 05 · CORNER VIEWFINDER BRACKETS";
+    hudEffect.textContent = "id: corner-brackets";
+  }
+
+  const hudAlpha = smooth(0.15, 0.45, t) * (1 - smooth(11.5, 11.9, t));
+  hud.style.opacity = hudAlpha.toFixed(3);
+  hudFrame.textContent = `F ${String(Math.round(t * 60)).padStart(4, "0")} / 0720`;
+  if (!record) {
+    scrub.value = t;
+    timeEl.textContent = `${t.toFixed(2)} / ${D.toFixed(2)}`;
+  }
+}
+
+window.__SIZE = { w: W, h: H };
+window.__DUR = D;
+window.__FPS = 60;
+window.__poster = 7.07;
+window.__preview = [[0.8, 2.1], [3.1, 4.4], [5.8, 7.3], [8.5, 9.7]];
+window.__music = [[0, "build"], [2.4, "drop"], [4.8, "lift"], [7.8, "break"], [10.0, "final"], [11.1, "tail"]];
+window.__cues = () => [
+  { t: 0.65, name: "whoosh", gain: 0.78 },
+  { t: 1.4, name: "tap", gain: 0.7 },
+  { t: 2.35, name: "stamp", gain: 0.76 },
+  { t: 3.7, name: "tick", gain: 0.74 },
+  { t: 4.75, name: "whoosh", gain: 0.74 },
+  { t: 5.5, name: "pop", gain: 0.72 },
+  { t: 6.8, name: "ping", gain: 0.75 },
+  { t: 7.8, name: "whoosh", gain: 0.74 },
+  { t: 9.2, name: "chime", gain: 0.78 },
+  { t: 10.1, name: "scan", gain: 0.72 },
+  { t: 11.2, name: "ding", gain: 0.68 },
+];
+
+window.__ready = (async () => {
+  [shutter, slotType, chart, tree, brackets] = await Promise.all([
+    createTactile("kinetic-shutter", { width: W, height: H }),
+    createTactile("split-slot-type", { width: W, height: H }),
+    createEd("nyt-dual-chart", { width: W, height: H }),
+    createEd("decision-tree", { width: W, height: H }),
+    createTactile("corner-brackets", { width: W, height: H }),
+  ]);
+  await document.fonts.ready;
+  await render(0);
+})();
+
+window.__render = async (t) => { await window.__ready; await render(t); };
+window.__record = async () => { record = true; playing = false; document.body.classList.add("record"); };
+
+playBtn.onclick = () => {
+  playing = !playing;
+  if (at >= D) at = 0;
+  startWall = performance.now() - at * 1000;
+  playBtn.textContent = playing ? "Pause" : "Play";
+};
+scrub.oninput = () => { playing = false; playBtn.textContent = "Play"; at = +scrub.value; window.__render(at); };
+customInput.oninput = () => { customOverride = customInput.value; window.__render(at); };
+
+let busy = false;
+function loop(now) {
+  if (playing && !record && !busy) {
+    busy = true;
+    at = (now - startWall) / 1000;
+    if (at >= D) { at = at % D; startWall = now - at * 1000; }
+    window.__render(at).finally(() => { busy = false; });
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

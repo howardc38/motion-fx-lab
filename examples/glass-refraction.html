@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crystal &amp; Liquid Glass</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#090b12;color:#f4f6fb;font:13px "Archivo","Helvetica Neue",Arial,sans-serif}
+main{width:min(100vw,1600px);margin:auto;position:relative}
+#stage{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:#070912}
+#film{display:block;width:100%;height:100%}
+#hud{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:28px 38px}
+.hud-row{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.pill{background:rgba(10,13,22,0.72);backdrop-filter:blur(8px);color:#f1f5f9;padding:7px 16px;border-radius:999px;font:700 12px/1.2 "JetBrains Mono",monospace;letter-spacing:0.06em;border:1px solid rgba(255,255,255,0.16);font-variant-numeric:tabular-nums}
+nav{padding:14px 18px;display:flex;align-items:center;gap:12px;background:#111524;border-top:1px solid #242c44;flex-wrap:wrap}
+button,input[type="text"]{padding:8px 13px;border:1px solid #334155;background:#090c14;color:#f1f5f9;font:inherit;border-radius:4px}
+button{cursor:pointer;font-weight:700}
+#scrub{flex:1;min-width:180px;accent-color:#38bdf8}
+#time{font-variant-numeric:tabular-nums;min-width:92px;color:#94a3b8}
+body.record main{width:1920px;margin:0}
+body.record nav{display:none}
+body.record #stage,body.record #film{width:1920px;height:1080px}
+</style>
+</head>
+<body data-film="glass-refraction">
+<main>
+  <div id="stage">
+    <canvas id="film" width="1920" height="1080"></canvas>
+    <div id="hud">
+      <div class="hud-row">
+        <span class="pill" id="hudAct">ACT 01 · VORONOI GLASS SHARD TITLE</span>
+        <span class="pill">GLSL OPTICAL REFRACTION · 60 FPS</span>
+      </div>
+      <div class="hud-row">
+        <span class="pill" id="hudEffect">glass-shard-title</span>
+        <span class="pill" id="hudFrame">F 0000 / 0720</span>
+      </div>
+    </div>
+  </div>
+  <nav>
+    <button id="play" type="button">Play</button>
+    <input id="scrub" aria-label="Timeline" type="range" min="0" max="12" step="0.01" value="0">
+    <span id="time">0.00 / 12.00</span>
+    <label>Title (?text=) <input id="customText" type="text" placeholder="CRYSTAL" size="16"></label>
+  </nav>
+</main>
+<script type="module">
+import { create } from "../fx/refraction/index.js";
+
+const W = 1920, H = 1080, D = 12.0;
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const smooth = (a, b, x) => { const u = clamp((x - a) / (b - a)); return u * u * (3 - 2 * u); };
+
+const canvas = document.getElementById("film");
+const g = canvas.getContext("2d");
+const hud = document.getElementById("hud");
+const hudAct = document.getElementById("hudAct");
+const hudEffect = document.getElementById("hudEffect");
+const hudFrame = document.getElementById("hudFrame");
+const scrub = document.getElementById("scrub");
+const timeEl = document.getElementById("time");
+const playBtn = document.getElementById("play");
+const customInput = document.getElementById("customText");
+
+const params = new URLSearchParams(location.search);
+let customOverride = params.get("text") || "";
+if (customOverride) customInput.value = customOverride;
+
+let shards, liquid, aurora;
+let record = false, playing = false, at = 0, startWall = 0;
+
+function drawWipeBlend(fromCanvas, toCanvas, mix) {
+  g.clearRect(0, 0, W, H);
+  g.drawImage(fromCanvas, 0, 0, W, H);
+  if (mix <= 0.001) return;
+  const edgeX = mix * W;
+  g.save();
+  g.beginPath();
+  g.rect(0, 0, edgeX, H);
+  g.clip();
+  g.drawImage(toCanvas, 0, 0, W, H);
+  g.restore();
+  if (mix < 0.999) {
+    const gr = g.createLinearGradient(edgeX - 36, 0, edgeX + 18, 0);
+    gr.addColorStop(0, "rgba(125,211,252,0)");
+    gr.addColorStop(0.7, "rgba(224,242,254,0.85)");
+    gr.addColorStop(1, "rgba(125,211,252,0)");
+    g.fillStyle = gr;
+    g.fillRect(edgeX - 36, 0, 54, H);
+  }
+}
+
+async function render(rawT) {
+  const t = clamp(rawT, 0, D);
+  const word = customOverride.trim() || "CRYSTAL";
+
+  // Act 1 (0.0 - 4.8s): Voronoi 3D glass shard title
+  // Act 2 (4.8 - 9.0s): Liquid glass optical UI widgets
+  // Act 3 (9.0 - 12.0s): Aurora borealis optical backdrop finale
+  if (t < 4.55) {
+    shards.frame((t / 4.8) * 5.6, { text: word });
+    g.drawImage(shards.canvas, 0, 0, W, H);
+    hudAct.textContent = "ACT 01 · VORONOI 3D GLASS SHARD TITLE";
+    hudEffect.textContent = "id: glass-shard-title";
+  } else if (t < 5.05) {
+    shards.frame((t / 4.8) * 5.6, { text: word });
+    liquid.frame(t - 4.55, { text: word });
+    drawWipeBlend(shards.canvas, liquid.canvas, smooth(4.55, 5.05, t));
+    hudAct.textContent = "ACT 02 · LIQUID GLASS OPTICAL WIDGETS";
+    hudEffect.textContent = "id: liquid-glass-ui";
+  } else if (t < 8.75) {
+    liquid.frame(t - 4.55, { text: word });
+    g.drawImage(liquid.canvas, 0, 0, W, H);
+    hudAct.textContent = "ACT 02 · LIQUID GLASS OPTICAL WIDGETS";
+    hudEffect.textContent = "id: liquid-glass-ui";
+  } else if (t < 9.25) {
+    liquid.frame(t - 4.55, { text: word });
+    aurora.frame(t - 8.5, { text: word });
+    drawWipeBlend(liquid.canvas, aurora.canvas, smooth(8.75, 9.25, t));
+    hudAct.textContent = "ACT 03 · CURTAIN AURORA OPTICAL SHADER";
+    hudEffect.textContent = "id: aurora-shaders";
+  } else {
+    aurora.frame(t - 8.5, { text: word });
+    g.drawImage(aurora.canvas, 0, 0, W, H);
+    hudAct.textContent = "ACT 03 · CURTAIN AURORA OPTICAL SHADER";
+    hudEffect.textContent = "id: aurora-shaders";
+  }
+
+  const hudAlpha = smooth(0.15, 0.45, t) * (1 - smooth(11.45, 11.9, t));
+  hud.style.opacity = hudAlpha.toFixed(3);
+  hudFrame.textContent = `F ${String(Math.round(t * 60)).padStart(4, "0")} / 0720`;
+  if (!record) {
+    scrub.value = t;
+    timeEl.textContent = `${t.toFixed(2)} / ${D.toFixed(2)}`;
+  }
+}
+
+window.__SIZE = { w: W, h: H };
+window.__DUR = D;
+window.__FPS = 60;
+window.__poster = 2.45;
+window.__preview = [[1.4, 3.1], [5.8, 7.5], [9.6, 11.1]];
+window.__music = [[0, "build"], [2.4, "drop"], [4.8, "lift"], [9.0, "final"], [10.8, "tail"]];
+window.__cues = () => [
+  { t: 0.2, name: "whoosh", gain: 0.68 },
+  { t: 1.05, name: "impact", gain: 0.82 },
+  { t: 2.4, name: "chime", gain: 0.72 },
+  { t: 3.35, name: "ping", gain: 0.65 },
+  { t: 4.6, name: "whoosh", gain: 0.8 },
+  { t: 5.4, name: "tap", gain: 0.68 },
+  { t: 6.9, name: "scan", gain: 0.7 },
+  { t: 8.8, name: "whoosh", gain: 0.78 },
+  { t: 9.6, name: "chime", gain: 0.72 },
+  { t: 11.2, name: "ding", gain: 0.62 },
+];
+
+window.__ready = (async () => {
+  [shards, liquid, aurora] = await Promise.all([
+    create("glass-shard-title", { width: W, height: H }),
+    create("liquid-glass-ui", { width: W, height: H }),
+    create("aurora-shaders", { width: W, height: H }),
+  ]);
+  await document.fonts.ready;
+  await render(0);
+})();
+
+window.__render = async (t) => { await window.__ready; await render(t); };
+window.__record = async () => { record = true; playing = false; document.body.classList.add("record"); };
+
+playBtn.onclick = () => {
+  playing = !playing;
+  if (at >= D) at = 0;
+  startWall = performance.now() - at * 1000;
+  playBtn.textContent = playing ? "Pause" : "Play";
+};
+scrub.oninput = () => { playing = false; playBtn.textContent = "Play"; at = +scrub.value; window.__render(at); };
+customInput.oninput = () => { customOverride = customInput.value; window.__render(at); };
+
+let busy = false;
+function loop(now) {
+  if (playing && !record && !busy) {
+    busy = true;
+    at = (now - startWall) / 1000;
+    if (at >= D) { at = at % D; startWall = now - at * 1000; }
+    window.__render(at).finally(() => { busy = false; });
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

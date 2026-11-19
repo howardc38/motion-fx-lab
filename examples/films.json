@@ -591,6 +591,113 @@
       "groups": ["all", "uses", "showcase", "materials"]
     },
     {
+      "id": "glass-refraction",
+      "layer": "demo",
+      "tier": "featured",
+      "title": "Crystal & Liquid Glass",
+      "summary": "Voronoi 3D glass shards shatter and reassemble over a headline, transition into optical refracting Liquid Glass UI widgets and finish in a periodic aurora shader.",
+      "duration": 12,
+      "fps": 60,
+      "format": "16:9",
+      "page": "examples/glass-refraction.html",
+      "media": {"mp4": "media/glass-refraction.mp4", "poster": "media/glass-refraction.jpg", "preview": "media/glass-refraction.preview.mp4"},
+      "card": {
+        "headline": "Crystal & Liquid Glass",
+        "description": "Seeded Voronoi glass shards refract and lock into a headline, followed by Snell-lensed Liquid Glass UI widgets and a volumetric aurora finale.",
+        "useFor": "Product hero openers, luxury brand reveals and optical UI launches.",
+        "relation": "Combines Voronoi glass-shard refraction, SDF meniscus Liquid Glass widgets and the curtain aurora GLSL backdrop.",
+        "guide": "fx/refraction/README.md"
+      },
+      "audience": "Motion designers and product teams crafting glass, crystal and optical UI reveals.",
+      "effects": [
+        {"id": "glass-shard-title", "at": [0, 4.8], "label": "Voronoi 3D glass shards"},
+        {"id": "liquid-glass-ui", "at": [4.8, 9.0], "label": "Liquid glass optical UI"},
+        {"id": "aurora-shaders", "at": [9.0, 12], "label": "Curtain aurora shader"}
+      ],
+      "groups": ["all", "showcase", "refraction"]
+    },
+    {
+      "id": "spatial-code-stage",
+      "layer": "demo",
+      "tier": "featured",
+      "title": "Portal to Production",
+      "summary": "Fly through eighteen nested wireframe portals into a machined 3D extruded code slab, then glide across linked desktop, tablet and smartphone workspaces.",
+      "duration": 12,
+      "fps": 60,
+      "format": "16:9",
+      "page": "examples/spatial-code-stage.html",
+      "media": {"mp4": "media/spatial-code-stage.mp4", "poster": "media/spatial-code-stage.jpg", "preview": "media/spatial-code-stage.preview.mp4"},
+      "card": {
+        "headline": "Portal to Production",
+        "description": "An architectural wireframe portal opens onto a beveled 3D syntax code slab and glides across desktop, tablet and phone screens linked by a guide orb.",
+        "useFor": "Developer tool launches, technical keynotes and multi-device SaaS reveals.",
+        "relation": "Sequences the wireframe portal, 3D extruded syntax slab and multi-device flythrough on one shared Three.js renderer.",
+        "guide": "fx/spatial/README.md"
+      },
+      "audience": "Developer-relations teams and technical founders launching engineering tools.",
+      "effects": [
+        {"id": "wireframe-portal", "at": [0, 3.8], "label": "3D wireframe portal"},
+        {"id": "code-3d-extrude", "at": [3.8, 7.8], "label": "3D extruded code slab"},
+        {"id": "device-flythrough", "at": [7.8, 12], "label": "3D multi-device flythrough"}
+      ],
+      "groups": ["all", "showcase", "spatial"]
+    },
+    {
+      "id": "tactile-craft",
+      "layer": "demo",
+      "tier": "featured",
+      "title": "Peel. Draw. Dissolve.",
+      "summary": "A vector pen pulls Bézier handles and sculpts an enamel mark, a corner sticker peels back, botanical foliage parts into sunlight and particles disperse cleanly.",
+      "duration": 12,
+      "fps": 60,
+      "format": "16:9",
+      "page": "examples/tactile-craft.html",
+      "media": {"mp4": "media/tactile-craft.mp4", "poster": "media/tactile-craft.jpg", "preview": "media/tactile-craft.preview.mp4"},
+      "card": {
+        "headline": "Peel. Draw. Dissolve.",
+        "description": "Bézier handles draw and enamel a mark, a vinyl sticker peels diagonally away, sunlit foliage parts and energy-conserving particles disperse.",
+        "useFor": "Creative studio reels, brand identity stories and tactile campaign launches.",
+        "relation": "Pairs vector construction, Householder corner peel, multi-plane canopy bokeh and energy-conserving particle dissolve.",
+        "guide": "fx/tactile/README.md"
+      },
+      "audience": "Brand studios and creative directors seeking tactile, crafted transitions in code.",
+      "effects": [
+        {"id": "vector-bezier-draw", "at": [0, 3.6], "label": "Vector Bézier construction"},
+        {"id": "sticker-peel", "at": [3.6, 6.6], "label": "Curled sticker peel"},
+        {"id": "canopy-part-title", "at": [6.6, 9.2], "label": "Botanical canopy parting"},
+        {"id": "particle-dissolve", "at": [9.2, 12], "label": "Energy-preserving dissolve"}
+      ],
+      "groups": ["all", "showcase", "tactile"]
+    },
+    {
+      "id": "editorial-insights",
+      "layer": "demo",
+      "tier": "featured",
+      "title": "Signal in the Numbers",
+      "summary": "Staggered shutter bands and a split-slot verb reel open onto a broadsheet dual-axis chart, an illuminated decision tree and spring-tracked viewfinder brackets.",
+      "duration": 12,
+      "fps": 60,
+      "format": "16:9",
+      "page": "examples/editorial-insights.html",
+      "media": {"mp4": "media/editorial-insights.mp4", "poster": "media/editorial-insights.jpg", "preview": "media/editorial-insights.preview.mp4"},
+      "card": {
+        "headline": "Signal in the Numbers",
+        "description": "Kinetic shutter bands and split-slot typography lead into a dual-axis editorial chart, an illuminated decision tree and viewfinder corner brackets.",
+        "useFor": "Quarterly reports, data journalism explainers and executive product briefings.",
+        "relation": "Combines kinetic shutters, split-slot reels, broadsheet charting, orthogonal decision trees and viewfinder framing.",
+        "guide": "fx/editorial-data/README.md"
+      },
+      "audience": "Editorial teams, analysts and SaaS marketers turning numbers into narrative films.",
+      "effects": [
+        {"id": "kinetic-shutter", "at": [0, 2.4], "label": "Kinetic shutter bands"},
+        {"id": "split-slot-type", "at": [2.4, 4.8], "label": "Split-slot verb reel"},
+        {"id": "nyt-dual-chart", "at": [4.8, 7.8], "label": "Editorial dual-axis chart"},
+        {"id": "decision-tree", "at": [7.8, 10.0], "label": "Branching decision tree"},
+        {"id": "corner-brackets", "at": [10.0, 12], "label": "Corner viewfinder brackets"}
+      ],
+      "groups": ["all", "showcase", "editorial-data"]
+    },
+    {
       "id": "stroke-mural",
       "layer": "demo",
       "tier": "featured",
@@ -1139,6 +1246,33 @@
         {"id": "graphic-shadow"}
       ],
       "groups": ["all", "showcase", "graphic"]
+    },
+    {
+      "id": "aurora-worlds",
+      "layer": "effect-film",
+      "tier": "in-card",
+      "title": "Four Shader Worlds",
+      "summary": "Four periodic WebGL1 procedural worlds cycle smoothly from polar aurora curtains to prismatic Voronoi frost, nebula plasma and gold-veined obsidian marble.",
+      "duration": 9.6,
+      "fps": 60,
+      "format": "16:9",
+      "page": "examples/aurora-worlds.html",
+      "media": {"mp4": "media/aurora-worlds.mp4", "poster": "media/aurora-worlds.jpg"},
+      "card": {
+        "headline": "Four Shader Worlds",
+        "description": "Four seamless periodic WebGL1 fragment shaders cycle through curtain aurora, prismatic frost, nebula plasma and gold-veined obsidian marble.",
+        "useFor": "Atmospheric title backdrops, hero canvas loops and luxury motion backgrounds.",
+        "relation": "Full render of the four procedural optical shader worlds; plays directly inside the aurora-shaders card.",
+        "guide": "fx/refraction/README.md"
+      },
+      "audience": "Motion designers looking for seamless GLSL backgrounds that run without WebGPU.",
+      "effects": [
+        {"id": "aurora-shaders", "at": [0, 2.4], "label": "Curtain aurora"},
+        {"id": "shader-prism-frost", "at": [2.4, 4.8], "label": "Prismatic frost"},
+        {"id": "shader-nebula-plasma", "at": [4.8, 7.2], "label": "Nebula plasma"},
+        {"id": "shader-marble-obsidian", "at": [7.2, 9.6], "label": "Obsidian marble"}
+      ],
+      "groups": ["all", "showcase", "refraction"]
     }
   ]
 }

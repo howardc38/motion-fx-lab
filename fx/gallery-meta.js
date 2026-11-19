@@ -5,9 +5,12 @@
   // Generated from fx/manifest.json by tools/fx-manifest.cjs; edit the manifest, not this block.
   const GALLERY = {
     order: [
-      "graphic-stroke-mural", "liquid-chrome-type", "paper-collage", "ink-slash", "optical-foil",
-      "graphic-fill", "wipe-dot-polarity", "ui-cursor-loupe", "cad-telemetry-hud", "graphic-bands",
-      "sticker-stage", "plush-fur", "type-editorial-strike", "mechanical-cutaway",
+      "graphic-stroke-mural", "liquid-chrome-type", "glass-shard-title", "liquid-glass-ui",
+      "paper-collage", "wireframe-portal", "ink-slash", "code-3d-extrude", "sticker-peel",
+      "optical-foil", "vector-bezier-draw", "graphic-fill", "device-flythrough",
+      "wipe-dot-polarity", "canopy-part-title", "ui-cursor-loupe", "aurora-shaders",
+      "cad-telemetry-hud", "particle-dissolve", "graphic-bands", "nyt-dual-chart", "sticker-stage",
+      "kinetic-shutter", "plush-fur", "type-editorial-strike", "mechanical-cutaway",
       "ascii-spine-boids", "graphic-field", "data-node-flow", "domainrep", "design-letter-flow",
       "fluid-smoke", "graphic-shadow", "reaction", "design-dot-reveal", "mechanical-assembly",
       "graphic-reels", "studio-freeze-orbit", "gpuparticles", "design-surface-ink", "stack-rapier",
@@ -50,6 +53,10 @@
     "fluid-overflow": "Watch the full 9.6 s render",
     "fluid-smoke": "Watch the full 9.6 s render",
     "fluid-viscous": "Watch the full 9.6 s render",
+    "glass-refraction": "Watch Crystal & Liquid Glass (12 s)",
+    "spatial-code-stage": "Watch Portal to Production (12 s)",
+    "tactile-craft": "Watch Peel. Draw. Dissolve. (12 s)",
+    "editorial-insights": "Watch Signal in the Numbers (12 s)",
   };
   // Old #film-<id> bookmarks that open an effect card: effect films that play there, and retired or merged films.
   // scene-eras is no longer a published film (most of it held still); its bookmark opens the live preset.

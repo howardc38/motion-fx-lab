@@ -590,31 +590,90 @@
       "sources": {
         "ascii-spine-boids": ["fx/pack-ascii.js", "fx/ascii/index.js", "fx/ascii/README.md"]
       }
+    },
+    {
+      "id": "refraction",
+      "scripts": ["fx/pack-refraction.js"],
+      "cacheTag": "refraction-1",
+      "readme": "fx/refraction/README.md",
+      "anchor": "id: '{id}'",
+      "sources": {
+        "glass-shard-title": ["fx/pack-refraction.js", "fx/refraction/index.js", "fx/refraction/README.md"],
+        "liquid-glass-ui": ["fx/pack-refraction.js", "fx/refraction/index.js", "fx/refraction/README.md"],
+        "aurora-shaders": ["fx/pack-refraction.js", "fx/refraction/index.js", "fx/refraction/README.md"],
+        "shader-prism-frost": ["fx/pack-refraction.js", "fx/refraction/index.js", "fx/refraction/README.md"],
+        "shader-nebula-plasma": ["fx/pack-refraction.js", "fx/refraction/index.js", "fx/refraction/README.md"],
+        "shader-marble-obsidian": ["fx/pack-refraction.js", "fx/refraction/index.js", "fx/refraction/README.md"]
+      }
+    },
+    {
+      "id": "spatial",
+      "scripts": ["fx/pack-spatial.js"],
+      "cacheTag": "spatial-1",
+      "readme": "fx/spatial/README.md",
+      "anchor": "id: '{id}'",
+      "sources": {
+        "wireframe-portal": ["fx/pack-spatial.js", "fx/spatial/index.js", "fx/spatial/README.md"],
+        "code-3d-extrude": ["fx/pack-spatial.js", "fx/spatial/index.js", "fx/spatial/README.md"],
+        "canopy-part-title": ["fx/pack-spatial.js", "fx/spatial/index.js", "fx/spatial/README.md"],
+        "device-flythrough": ["fx/pack-spatial.js", "fx/spatial/index.js", "fx/spatial/README.md"]
+      }
+    },
+    {
+      "id": "editorial-data",
+      "scripts": ["fx/pack-editorial-data.js"],
+      "cacheTag": "editorial-data-1",
+      "readme": "fx/editorial-data/README.md",
+      "anchor": "id: '{id}'",
+      "sources": {
+        "nyt-dual-chart": ["fx/pack-editorial-data.js", "fx/editorial-data/index.js", "fx/editorial-data/README.md"],
+        "decision-tree": ["fx/pack-editorial-data.js", "fx/editorial-data/index.js", "fx/editorial-data/README.md"],
+        "vector-bezier-draw": ["fx/pack-editorial-data.js", "fx/editorial-data/index.js", "fx/editorial-data/README.md"]
+      }
+    },
+    {
+      "id": "tactile",
+      "scripts": ["fx/pack-tactile.js"],
+      "cacheTag": "tactile-1",
+      "readme": "fx/tactile/README.md",
+      "anchor": "id: '{id}'",
+      "sources": {
+        "particle-dissolve": ["fx/pack-tactile.js", "fx/tactile/index.js", "fx/tactile/README.md"],
+        "sticker-peel": ["fx/pack-tactile.js", "fx/tactile/index.js", "fx/tactile/README.md"],
+        "paper-diorama": ["fx/pack-tactile.js", "fx/tactile/index.js", "fx/tactile/README.md"],
+        "kinetic-shutter": ["fx/pack-tactile.js", "fx/tactile/index.js", "fx/tactile/README.md"],
+        "split-slot-type": ["fx/pack-tactile.js", "fx/tactile/index.js", "fx/tactile/README.md"],
+        "corner-brackets": ["fx/pack-tactile.js", "fx/tactile/index.js", "fx/tactile/README.md"]
+      }
     }
   ],
   "catalog": {
     "scripts": ["fx/catalog.js"],
-    "cacheTag": "catalog-v4"
+    "cacheTag": "catalog-v5"
   },
   "pages": ["index.html", "video/intro.html"],
   "gallery": {
-    "$comment": "order: all 86 reusable effect cards curated by visual design craft and motion feel (judged on tile screenshots and live motion, not 3D complexity) with contrast between neighbouring looks; every gallery family must be listed once. showcaseOrder: the same for the scene presets. previewDefault: the variant a card shows first. previewHero: the frame time shown while motion is paused (gpuparticles shows the flowing form). previewWindow: [start, end] of the demo time a card loops, where a shared film timeline starts or ends with a long calm stretch (films and the intro still play the whole timeline).",
+    "$comment": "order: all 98 reusable effect cards curated by visual design craft and motion feel (judged on tile screenshots and live motion, not 3D complexity) with contrast between neighbouring looks; every gallery family must be listed once. showcaseOrder: the same for the scene presets. previewDefault: the variant a card shows first. previewHero: the frame time shown while motion is paused (gpuparticles shows the flowing form). previewWindow: [start, end] of the demo time a card loops, where a shared film timeline starts or ends with a long calm stretch (films and the intro still play the whole timeline).",
     "order": [
-      "graphic-stroke-mural", "liquid-chrome-type", "paper-collage", "ink-slash", "optical-foil",
-      "graphic-fill", "wipe-dot-polarity", "ui-cursor-loupe", "cad-telemetry-hud", "graphic-bands",
-      "sticker-stage", "plush-fur", "type-editorial-strike", "mechanical-cutaway", "ascii-spine-boids",
-      "graphic-field", "data-node-flow", "domainrep", "design-letter-flow", "fluid-smoke",
-      "graphic-shadow", "reaction", "design-dot-reveal", "mechanical-assembly", "graphic-reels",
-      "studio-freeze-orbit", "gpuparticles", "design-surface-ink", "stack-rapier", "dissolve",
-      "graphic-network", "dialogue-lipsync", "mechanical-linkage", "water-material", "cjk-solid",
-      "optical-ribbon", "studio-skin-cloud", "organic-contours", "studio-lowpoly", "design-type-orbit",
-      "studio-echo", "rays", "stack-gpu", "studio-video-dots", "chrome",
-      "optical-slit", "clay", "toon", "signal-motion-fragments", "studio-depth-dots",
-      "optical-moire", "studio-portal", "optical-caustic", "optical-morph", "water-impact",
-      "rhythm", "vartype", "glitch", "cardflip", "fluid-overflow",
-      "liquid", "ridgelines", "rigid", "character-rig", "whip",
-      "uifly", "hook", "chars", "karaoke", "datachart", "timing", "glass", "sweep",
-      "stamp", "beat", "sticker", "gradient", "ring", "count", "type", "mark", "scan", "wipe",
+      "graphic-stroke-mural", "liquid-chrome-type", "glass-shard-title", "liquid-glass-ui", "paper-collage",
+      "wireframe-portal", "ink-slash", "code-3d-extrude", "sticker-peel", "optical-foil",
+      "vector-bezier-draw", "graphic-fill", "device-flythrough", "wipe-dot-polarity", "canopy-part-title",
+      "ui-cursor-loupe", "aurora-shaders", "cad-telemetry-hud", "particle-dissolve", "graphic-bands",
+      "nyt-dual-chart", "sticker-stage", "kinetic-shutter", "plush-fur", "type-editorial-strike",
+      "mechanical-cutaway", "ascii-spine-boids", "graphic-field", "data-node-flow", "domainrep",
+      "design-letter-flow", "fluid-smoke", "graphic-shadow", "reaction", "design-dot-reveal",
+      "mechanical-assembly", "graphic-reels", "studio-freeze-orbit", "gpuparticles", "design-surface-ink",
+      "stack-rapier", "dissolve", "graphic-network", "dialogue-lipsync", "mechanical-linkage",
+      "water-material", "cjk-solid", "optical-ribbon", "studio-skin-cloud", "organic-contours",
+      "studio-lowpoly", "design-type-orbit", "studio-echo", "rays", "stack-gpu",
+      "studio-video-dots", "chrome", "optical-slit", "clay", "toon",
+      "signal-motion-fragments", "studio-depth-dots", "optical-moire", "studio-portal", "optical-caustic",
+      "optical-morph", "water-impact", "rhythm", "vartype", "glitch",
+      "cardflip", "fluid-overflow", "liquid", "ridgelines", "rigid",
+      "character-rig", "whip", "uifly", "hook", "chars",
+      "karaoke", "datachart", "timing", "glass", "sweep",
+      "stamp", "beat", "sticker", "gradient", "ring",
+      "count", "type", "mark", "scan", "wipe",
       "lut", "design-soft-shadow", "grain"
     ],
     "showcaseOrder": ["styles", "studio-themes", "studio-gallery", "water-underwater", "scene-eras"],

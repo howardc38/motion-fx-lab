@@ -40,6 +40,13 @@
     'data-timeline': 'data-node-flow',
     'ink-impact-frame': 'ink-slash',
     'ink-bleed-wipe': 'ink-slash',
+    'shader-prism-frost': 'aurora-shaders',
+    'shader-nebula-plasma': 'aurora-shaders',
+    'shader-marble-obsidian': 'aurora-shaders',
+    'decision-tree': 'nyt-dual-chart',
+    'paper-diorama': 'sticker-peel',
+    'split-slot-type': 'kinetic-shutter',
+    'corner-brackets': 'kinetic-shutter',
   };
   const collections = new Set(['styles', 'studio-themes', 'studio-gallery', 'water-underwater', 'scene-eras']);
   const names = {
@@ -67,6 +74,10 @@
     'type-editorial-strike': 'Editorial markup and kinetic type',
     'data-node-flow': 'Flowing architecture and data diagrams',
     'ink-slash': 'Sumi-e dry-brush and Sakuga impact',
+    'aurora-shaders': 'Procedural optical shader worlds',
+    'nyt-dual-chart': 'Editorial charts and decision trees',
+    'sticker-peel': 'Sticker peel and cut-paper diorama',
+    'kinetic-shutter': 'Kinetic shutters, slot type and brackets',
   };
   const descriptions = {
     'studio-depth-dots': 'Turn image samples into shallow depth. Compare a dot surface with solid cells driven by measured sound energy.',
@@ -98,6 +109,10 @@
     'type-editorial-strike': 'Authoritative editorial typography: pressure-varied marker strike-throughs, cryptographic glyph locks, laser split-cuts, live cinema knockouts and hand-drawn margin circles.',
     'data-node-flow': 'Structured system and business diagrams: packet-routed architecture graphs, spring-swept donut rings, cartographic great-circle routes and causal milestone timelines.',
     'ink-slash': 'Eastern dry-brush Feibai calligraphy slashes with cinnabar seals, three-frame binary Sakuga impact flashes and fibrous Xuan-paper ink-bleed transitions.',
+    'aurora-shaders': 'Four seamless periodic WebGL1 fragment shader worlds: curtain aurora borealis, prismatic Voronoi frost, domain-warped nebula plasma and gold-veined obsidian marble.',
+    'nyt-dual-chart': 'Broadsheet-style editorial data storytelling: dual-axis quarterly revenue bars with a synchronized conversion curve, plus an animated orthogonal decision tree with winning-path illumination.',
+    'sticker-peel': 'Tactile paper and vinyl depth transitions: an analytical Householder corner sticker peel with shaded paper backing, plus a six-plane cut-paper dusk diorama push.',
+    'kinetic-shutter': 'High-tempo graphic typography choreography: staggered horizontal shutter colour bands, a midline split opening onto a mechanical verb slot reel and spring-tracked viewfinder corner brackets.',
   };
   // Gallery kind (the Kind filter and the README grouping) where it differs from the registering pack's
   // broad 'shader': flights, particles and point clouds read as 3D space; light and image treatments

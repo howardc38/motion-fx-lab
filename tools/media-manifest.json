@@ -4,7 +4,7 @@
   "films": {
     "intro": {
       "page": "video/intro.html",
-      "source_digest": "f79172620b467a111c2e29c5f4a96bfedf9c2954de4044aca8615a0576e1e66b",
+      "source_digest": "7ea99c61f31660634b769c8cfaeb5b60d99b3a4221383ef430b8fb0197e14dbe",
       "video": {
         "width": 1920,
         "height": 1080,
@@ -15,23 +15,23 @@
       "files": {
         "mp4": {
           "path": "media/intro.mp4",
-          "bytes": 13879675,
-          "sha256": "b20350e93d446156febdf1f5ba9bba64c660d35e9859cf1d2491d23ee0e8ac22"
+          "bytes": 13870944,
+          "sha256": "92f721a706ecb11d9c27f5a4273bd28ff517e48ac34f0b284055529af1963bca"
         },
         "poster": {
           "path": "media/intro.jpg",
-          "bytes": 90488,
-          "sha256": "1674ee6488dec3729cbd65c82794d22f9958f378f54a9fde3a63a1598ca29d82"
+          "bytes": 90448,
+          "sha256": "776d26a4744a385731ebb05871fb4d493b6576ce0718e166708801b3009d77b2"
         },
         "preview": {
           "path": "media/intro.preview.mp4",
-          "bytes": 760951,
-          "sha256": "e505866f8cbdcaceaa6e03258a4b978bc84215ca4963c57d6cd758e678420ef6"
+          "bytes": 765777,
+          "sha256": "ecb3351fc6ccbcef26e357da42dadcb55284c607a3fe912b7cf5646fb5fc1142"
         },
         "gif": {
           "path": "media/intro.gif",
-          "bytes": 2887908,
-          "sha256": "c021871962482bb6c162969d7600942acd20060c976ca3252b84ae02f95b0429"
+          "bytes": 2898484,
+          "sha256": "b38899757347ea350a12015a5b6e3b6b594387f8c50df17d981ebbb4adea79cf"
         }
       }
     },
@@ -463,6 +463,118 @@
           "path": "media/water-forms-vertical.jpg",
           "bytes": 55127,
           "sha256": "3aef3e27ec4b92c959d97713fd63fba9d4758971ee7c4396bf01320e8cd1fd86"
+        }
+      }
+    },
+    "glass-refraction": {
+      "page": "examples/glass-refraction.html",
+      "source_digest": "fec97db6964f6adf1fcb72accd627f1586e5060c3030fa5c284f982399ae215a",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "fps": 60,
+        "duration_sec": 12.071,
+        "has_audio": true
+      },
+      "files": {
+        "mp4": {
+          "path": "media/glass-refraction.mp4",
+          "bytes": 6363130,
+          "sha256": "64cf4ae5786fabaf322cd5941259d379bda220fd72b85867ed4a5c03936d76ae"
+        },
+        "poster": {
+          "path": "media/glass-refraction.jpg",
+          "bytes": 203679,
+          "sha256": "efc706dac07db54235cfe4e3d3cad544c218ece846ea2018b29035f898282ec7"
+        },
+        "preview": {
+          "path": "media/glass-refraction.preview.mp4",
+          "bytes": 387035,
+          "sha256": "bdcd77fadb51a4543e6475f40fecb1ffc73be072c678d6b178bae5b238f93dec"
+        }
+      }
+    },
+    "spatial-code-stage": {
+      "page": "examples/spatial-code-stage.html",
+      "source_digest": "09201f4329fac631d58e20a65de98174cd6e7a80a39b31f0806fdb8cacf2ca2f",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "fps": 60,
+        "duration_sec": 12.071,
+        "has_audio": true
+      },
+      "files": {
+        "mp4": {
+          "path": "media/spatial-code-stage.mp4",
+          "bytes": 8770011,
+          "sha256": "ec6731c5581e354ab2933d1f9b9b26914db2852f09111ef2f8c60cc0c8c69ccd"
+        },
+        "poster": {
+          "path": "media/spatial-code-stage.jpg",
+          "bytes": 98408,
+          "sha256": "8cad29c89f044c6b765d10f55cf562c9225db5eb15ca095e308468b361c5ea6a"
+        },
+        "preview": {
+          "path": "media/spatial-code-stage.preview.mp4",
+          "bytes": 362466,
+          "sha256": "4cdcfc1e5b457def9002ba53221b8d124da5da7b781f163e1a52ed7fd97e9129"
+        }
+      }
+    },
+    "tactile-craft": {
+      "page": "examples/tactile-craft.html",
+      "source_digest": "50f6fabcd4e7b94185914646a82f2878ce1b151b8c8961102b8c80aa3a1a3b35",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "fps": 60,
+        "duration_sec": 12.071,
+        "has_audio": true
+      },
+      "files": {
+        "mp4": {
+          "path": "media/tactile-craft.mp4",
+          "bytes": 4918740,
+          "sha256": "7930f62522055e21f60f274e7d09ce1d96f7e397d89710501bf2ce6ac14cc247"
+        },
+        "poster": {
+          "path": "media/tactile-craft.jpg",
+          "bytes": 84107,
+          "sha256": "5004829f117bf47375540ac4f6f458e6a35c3419c5ec692b071d4de4450b1bbb"
+        },
+        "preview": {
+          "path": "media/tactile-craft.preview.mp4",
+          "bytes": 353592,
+          "sha256": "846903ec98b3663b6cb2c202eefcf481e948dc35331e7ce201caa4498bb08206"
+        }
+      }
+    },
+    "editorial-insights": {
+      "page": "examples/editorial-insights.html",
+      "source_digest": "fb8edb60a86a0f5c8f81915f83e27490e3fc85552393b60bb8d831016a8d2f6d",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "fps": 60,
+        "duration_sec": 12.071,
+        "has_audio": true
+      },
+      "files": {
+        "mp4": {
+          "path": "media/editorial-insights.mp4",
+          "bytes": 1584689,
+          "sha256": "fccbb36dc61d804223f0346226748b93061e5e7b34964e1874797b1698c9f664"
+        },
+        "poster": {
+          "path": "media/editorial-insights.jpg",
+          "bytes": 134785,
+          "sha256": "327f6940c2c6fa73a84b048d9a7d8f9e2815711ad0b040d1d59a5656dd2acf65"
+        },
+        "preview": {
+          "path": "media/editorial-insights.preview.mp4",
+          "bytes": 125961,
+          "sha256": "a1d6c528cf4e1049831aeb67dbdd5bd550f4e87d789601c1e298670e89971ae2"
         }
       }
     },
@@ -1024,6 +1136,29 @@
           "path": "media/graphic-shadow.jpg",
           "bytes": 68071,
           "sha256": "ba01e60850c318e423617d05c0624f54039d5786e237c8121f5ea9c71ee47e0c"
+        }
+      }
+    },
+    "aurora-worlds": {
+      "page": "examples/aurora-worlds.html",
+      "source_digest": "8cac18bf18a8e8b673c1f177872040ab35ea698256d5dac7b4c2f6bd4442538a",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "fps": 60,
+        "duration_sec": 9.671,
+        "has_audio": true
+      },
+      "files": {
+        "mp4": {
+          "path": "media/aurora-worlds.mp4",
+          "bytes": 8990172,
+          "sha256": "0783d42d8c8921a3dfc187b326d1cc1ce13ff1fc27bc62dee127451ab21377e6"
+        },
+        "poster": {
+          "path": "media/aurora-worlds.jpg",
+          "bytes": 57151,
+          "sha256": "93b02e0b45cfded26c8f297184eafe791d6667f2b30f64bd69809025aabecc50"
         }
       }
     }

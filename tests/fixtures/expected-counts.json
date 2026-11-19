@@ -1,24 +1,24 @@
 {
-  "$comment": "Expected gallery and film counts, in one place. Adding, merging or removing an effect, variant or film changes these on purpose: update the numbers here and say why in the commit. Filters name the gallery buttons; families counts visible cards, demos and variants count the matching entries. This revision unifies all 86 reusable effect families in one WOW-ordered gallery and gives all 11 Demo films uniform 3-column featured cards.",
-  "catalog": {"techniques": 86, "variants": 37, "showcases": 5, "demos": 128},
+  "$comment": "Expected gallery and film counts, in one place. Adding, merging or removing an effect, variant or film changes these on purpose: update the numbers here and say why in the commit. Filters name the gallery buttons; families counts visible cards, demos and variants count the matching entries. This revision adds 12 new 0BSD effect families (+7 variants = 19 demos) across refraction, spatial, editorial-data, and tactile packs, plus 4 featured Demo films (15 total = 5x3 grid) and 1 effect film.",
+  "catalog": {"techniques": 98, "variants": 44, "showcases": 5, "demos": 147},
   "filters": [
-    {"kind": "All", "stack": "All", "families": 86, "demos": 123, "variants": 37},
+    {"kind": "All", "stack": "All", "families": 98, "demos": 142, "variants": 44},
     {"kind": "Characters", "stack": "All", "families": 4, "demos": 8, "variants": 4},
     {"kind": "Characters", "stack": "Flubber", "families": 0, "demos": 0, "variants": 0},
     {"kind": "All", "stack": "Flubber", "families": 1, "demos": 1, "variants": 0},
     {"kind": "Light & image treatments", "stack": "PixiJS", "families": 1, "demos": 1, "variants": 1}
   ],
   "films": {
-    "total": 40,
-    "layers": {"intro": 1, "use-case": 17, "demo": 11, "effect-film": 11},
+    "total": 45,
+    "layers": {"intro": 1, "use-case": 17, "demo": 15, "effect-film": 12},
     "featured": {
       "use-case": ["reel", "product", "infographic", "broll", "titles", "countdown", "spotlight", "water-forms"],
-      "demo": ["stroke-mural", "liquid-chrome-type", "character-dialogue", "dot-battle", "mechanical-cutaway", "mechanical-assembly", "spark-form", "style-journey", "ink-city", "dot-story", "fight-effects"]
+      "demo": ["glass-refraction", "spatial-code-stage", "tactile-craft", "editorial-insights", "stroke-mural", "liquid-chrome-type", "character-dialogue", "dot-battle", "mechanical-cutaway", "mechanical-assembly", "spark-form", "style-journey", "ink-city", "dot-story", "fight-effects"]
     },
     "$cards": "Film cards on the home page by section, in page order.",
     "cards": {
       "use-case": ["reel", "product", "infographic", "broll", "titles", "countdown", "spotlight", "water-forms"],
-      "demo": ["stroke-mural", "liquid-chrome-type", "character-dialogue", "dot-battle", "mechanical-cutaway", "mechanical-assembly", "spark-form", "style-journey", "ink-city", "dot-story", "fight-effects"]
+      "demo": ["glass-refraction", "spatial-code-stage", "tactile-craft", "editorial-insights", "stroke-mural", "liquid-chrome-type", "character-dialogue", "dot-battle", "mechanical-cutaway", "mechanical-assembly", "spark-form", "style-journey", "ink-city", "dot-story", "fight-effects"]
     }
   }
 }

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Four Shader Worlds</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#05070e;color:#f1f5f9;font:13px "Archivo","Helvetica Neue",Arial,sans-serif}
+main{width:min(100vw,1600px);margin:auto;position:relative}
+#stage{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:#05070e}
+#film{display:block;width:100%;height:100%}
+nav{padding:14px 18px;display:flex;align-items:center;gap:12px;background:#0c111e;border-top:1px solid #1e293b}
+button{padding:8px 13px;border:1px solid #334155;background:#070a14;color:#f1f5f9;font:inherit;border-radius:4px;cursor:pointer;font-weight:700}
+#scrub{flex:1;accent-color:#38bdf8}
+#time{font-variant-numeric:tabular-nums;min-width:92px;color:#94a3b8}
+body.record main{width:1920px;margin:0}
+body.record nav{display:none}
+body.record #stage,body.record #film{width:1920px;height:1080px}
+</style>
+</head>
+<body data-film="aurora-worlds" data-demo="aurora-shaders">
+<main>
+  <div id="stage"><canvas id="film" width="1920" height="1080"></canvas></div>
+  <nav>
+    <button id="play" type="button">Play</button>
+    <input id="scrub" aria-label="Timeline" type="range" min="0" max="9.6" step="0.01" value="0">
+    <span id="time">0.00 / 9.60</span>
+  </nav>
+</main>
+<script type="module">
+import { create } from "../fx/refraction/index.js";
+
+const W = 1920, H = 1080, D = 9.6;
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const smooth = (a, b, x) => { const u = clamp((x - a) / (b - a)); return u * u * (3 - 2 * u); };
+
+const canvas = document.getElementById("film");
+const g = canvas.getContext("2d");
+const scrub = document.getElementById("scrub");
+const timeEl = document.getElementById("time");
+const playBtn = document.getElementById("play");
+
+const IDS = ["aurora-shaders", "shader-prism-frost", "shader-nebula-plasma", "shader-marble-obsidian"];
+let worlds = [];
+let record = false, playing = false, at = 0, startWall = 0;
+
+async function render(rawT) {
+  const t = clamp(rawT, 0, D);
+  const segDur = D / 4; // 2.4s per procedural GLSL shader world
+  const idx = Math.min(3, Math.floor(t / segDur));
+  const localT = t - idx * segDur;
+  const fadeLen = 0.35;
+
+  worlds[idx].frame(localT * 1.45 + 1.2);
+  g.clearRect(0, 0, W, H);
+  g.globalAlpha = 1;
+  g.drawImage(worlds[idx].canvas, 0, 0, W, H);
+
+  if (idx < 3 && localT > segDur - fadeLen) {
+    const k = smooth(segDur - fadeLen, segDur, localT);
+    worlds[idx + 1].frame((localT - (segDur - fadeLen)) * 1.45 + 1.2);
+    g.globalAlpha = k;
+    g.drawImage(worlds[idx + 1].canvas, 0, 0, W, H);
+    g.globalAlpha = 1;
+  }
+
+  if (!record) {
+    scrub.value = t;
+    timeEl.textContent = `${t.toFixed(2)} / ${D.toFixed(2)}`;
+  }
+}
+
+// Effect film (layer: "effect-film", tier: "in-card"): poster only, NO __preview and NO __gif.
+window.__SIZE = { w: W, h: H };
+window.__DUR = D;
+window.__FPS = 60;
+window.__poster = 1.15;
+window.__music = [[0, "build"], [2.4, "drop"], [4.8, "lift"], [7.2, "final"], [8.6, "tail"]];
+window.__cues = () => [
+  { t: 0.2, name: "chime", gain: 0.65 },
+  { t: 2.35, name: "whoosh", gain: 0.72 },
+  { t: 4.75, name: "whoosh", gain: 0.72 },
+  { t: 7.15, name: "whoosh", gain: 0.72 },
+  { t: 8.8, name: "ding", gain: 0.6 },
+];
+
+window.__ready = (async () => {
+  worlds = await Promise.all(IDS.map((id) => create(id, { width: W, height: H })));
+  await document.fonts.ready;
+  await render(0);
+})();
+
+window.__render = async (t) => { await window.__ready; await render(t); };
+window.__record = async () => { record = true; playing = false; document.body.classList.add("record"); };
+
+playBtn.onclick = () => {
+  playing = !playing;
+  if (at >= D) at = 0;
+  startWall = performance.now() - at * 1000;
+  playBtn.textContent = playing ? "Pause" : "Play";
+};
+scrub.oninput = () => { playing = false; playBtn.textContent = "Play"; at = +scrub.value; window.__render(at); };
+
+let busy = false;
+function loop(now) {
+  if (playing && !record && !busy) {
+    busy = true;
+    at = (now - startWall) / 1000;
+    if (at >= D) { at = at % D; startWall = now - at * 1000; }
+    window.__render(at).finally(() => { busy = false; });
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
